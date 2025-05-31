@@ -3,16 +3,17 @@ import {observer} from 'mobx-react';
 
 import Fighter from '../Fighter.js';
 
-function Hub() {
+function Train() {
   const fighter = React.useContext(Fighter);
 
   return (<>
-    <h1>HUB</h1>
+    <h1>Training</h1>
     <h3>Stats:</h3>
-    Speeed: {fighter.speed}
+    Speed: {fighter.speed}
     Strength: {fighter.strength}
     Vitality: {fighter.vitality}
+    <button onClick={() => fighter.train('speed')}>Train</button>
   </>);
 }
 
-export default observer(Hub);
+export default observer(Train);
