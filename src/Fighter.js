@@ -5,12 +5,14 @@ import {makeAutoObservable} from 'mobx';
 class Fighter {
   constructor() {
     // Innate stats
-    this.durability = 1;
+    // Affect training result
     this.innateSpeed = 1;
     this.innateStrength = 1;
-    this.reach = 1;
     this.vitality = 1;
     this.willpower = 1;
+    // Affect combat directly
+    this.durability = 1;
+    this.reach = 1;
 
     // Exnate stats
     this.constitution = 1;
@@ -33,7 +35,7 @@ class Fighter {
     return Math.log(this.speed) + Math.sqrt(this.stamina) + this.skill;
   }
   get health() {
-    return this.stamina + this.constitution + this.durability * this.durability;
+    return this.stamina + this.constitution * this.constitution + this.durability * this.durability;
   }
   get power() {
     return this.strength + this.speed + this.skill;
