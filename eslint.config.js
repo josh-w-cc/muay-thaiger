@@ -65,7 +65,7 @@ export default [
         {allowConstantExport: true},
       ],
       '@stylistic/js/comma-dangle': ['error', 'always-multiline'],
-      '@stylistic/js/indent': ['error', 2],
+      '@stylistic/js/indent': ['error', 2, {SwitchCase: 1}],
       '@stylistic/js/semi': 'error',
       '@stylistic/js/quotes': ['error', 'single'],
     },
