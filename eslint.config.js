@@ -60,10 +60,7 @@ export default [
       'react/jsx-no-bind': 'off',
       'react/prop-types': 'off',
       'react-hooks/exhaustive-deps': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
-        {allowConstantExport: true},
-      ],
+      'react-refresh/only-export-components': 'off',
       '@stylistic/js/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/js/indent': ['error', 2, {SwitchCase: 1}],
       '@stylistic/js/semi': 'error',

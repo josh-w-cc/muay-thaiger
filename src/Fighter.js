@@ -45,7 +45,7 @@ class Fighter {
       constitution: this.vitality, skill: this.willpower, speed: this.innateSpeed, strength: this.innateStrength, stamina: this.vitality,
     };
     if(Object.keys(trainingEffect).includes(stat)) {
-      this[stat] += trainingEffect[stat]; //etc
+      this[stat] += trainingEffect[stat];
     }
     else {
       console.error('Tried to train unknown stat:', stat);
