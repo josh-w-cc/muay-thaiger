@@ -5,6 +5,7 @@ import Hub from './menus/Hub.jsx';
 import './App.css';
 import Header from './menus/Header.jsx';
 import Train from './menus/Train.jsx';
+import Fight from "./menus/Fight.jsx";
 
 function App() {
   const [screen, setScreen] = React.useState('hub');
@@ -12,6 +13,9 @@ function App() {
   switch(screen) {
     case 'hub':
       content = (<Hub setScreen={setScreen} />);
+      break;
+    case 'fight':
+      content = (<Fight />);
       break;
     case 'train':
       content = (<Train />);
