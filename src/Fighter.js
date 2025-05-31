@@ -40,6 +40,15 @@ class Fighter {
   get power() {
     return this.strength + this.speed + this.skill;
   }
+  // Fight rules
+  //
+  // Increase turn meter +apm (or onClick)
+  // if(turnMeter > ?)
+  //   randomly pick a move (e.g. spearhand)
+  //   turnMeter -= moveCost
+  //   if(moveAttack + fighterAttack + random > defense + random)
+  //      enemyHealth -= movePower + fighterPower + random
+  // Stamina decrease as the fight continues?
 
 
   train(stat) {
