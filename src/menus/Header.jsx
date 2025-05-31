@@ -1,11 +1,12 @@
 import React from 'react';
 
 import css from './Header.module.css';
+import Button from '../components/Button'
 
 function HeaderButton ({onClick, children}) {
-  return (<button className={css.button} onClick={onClick}>
+  return (<Button className={css.button} onClick={onClick}>
     MENU: {children}
-  </button>);
+  </Button>);
 }
 
 function Header({setScreen}) {
