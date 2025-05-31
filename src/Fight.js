@@ -1,0 +1,47 @@
+import React from 'react';
+import {makeAutoObservable} from 'mobx';
+
+export const FIGHT_NOT_STARTED = 0;
+export const FIGHT_STARTED = 1;
+export const FIGHT_WON = 2;
+
+class Fight {
+  constructor() {
+    this.fighters = [];
+    this.state = FIGHT_NOT_STARTED;
+
+    makeAutoObservable(this, {}, {autoBind: true});
+  }
+
+  start(left, right) {
+    this.fighters = [{stats:left, currentHealth: left.health}, {stats:right, currentHealth: right.health}];
+    this.state = FIGHT_STARTED;
+  }
+
+  attack(who) {
+    if(!who) {
+      const you = this.fighters[0];
+      const them = this.fighters[1];
+      if(you.stats.attack * Math.random() < them.stats.defense * Math.random()) {
+        const damage = you.stats.power * Math.random();
+        them.currentHealth -= damage;
+        if(them.currentHealth < 0) {
+          this.state = FIGHT_WON;
+          return 'You win!!!!';
+        }
+        return 'You hit \'im';
+      }
+      return 'You missed :(';
+    }
+    return 'They attacks!';
+  }
+
+  finish() {
+    if(this.state === FIGHT_WON) {
+      this.state = FIGHT_NOT_STARTED;
+    }
+  }
+}
+
+
+export default React.createContext(new Fight());

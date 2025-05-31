@@ -1,7 +1,7 @@
 import React from 'react';
 import {observer} from 'mobx-react';
 
-import Button from '../components/Button'
+import Button from '../components/Button';
 import Fighter from '../Fighter.js';
 
 function Train() {

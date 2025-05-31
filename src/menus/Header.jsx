@@ -1,7 +1,7 @@
 import React from 'react';
 
 import css from './Header.module.css';
-import Button from '../components/Button'
+import Button from '../components/Button';
 
 function HeaderButton ({onClick, children}) {
   return (<Button className={css.button} onClick={onClick}>

@@ -2,23 +2,59 @@ import React from 'react';
 import {observer} from 'mobx-react';
 
 import Fighter from '../Fighter.js';
+import Fight, {FIGHT_NOT_STARTED, FIGHT_STARTED, FIGHT_WON} from '../Fight.js';
+import Button from '../components/Button.jsx';
 
 function Train() {
+  const fight = React.useContext(Fight);
   const fighter = React.useContext(Fighter);
   const [announcer, setAnnouncer] = React.useState('');
 
+  let content;
+  if(fight.state === FIGHT_NOT_STARTED) {
+    const enemy = {
+      apm: fighter.apm * (0.5 + Math.random()),
+      attack: fighter.attack * (0.5 + Math.random()),
+      defense: fighter.defense * (0.5 + Math.random()),
+      health: fighter.health * (0.5 + Math.random()),
+      power: fighter.power * (0.5 + Math.random()),
+      stamina: fighter.stamina * (0.5 + Math.random()),
+    };
+    content = (<>
+      <h3>Enemy Stats:</h3>
+      APM: {enemy.apm}
+      Attack: {enemy.attack}
+      Defense: {enemy.defense}
+      Health: {enemy.health}
+      Power: {enemy.power}
+      Stamina: {enemy.stamina}
+      <Button onClick={() => fight.start(fighter, enemy)}>Fight!</Button>
+      <h3>Stats:</h3>
+      APM: {fighter.apm}
+      Attack: {fighter.attack}
+      Defense: {fighter.defense}
+      Health: {fighter.health}
+      Power: {fighter.power}
+      Stamina: {fighter.stamina}
+    </>);
+  }
+  else if(fight.state === FIGHT_STARTED) {
+    const [you, them] = fight.fighters;
+    content = (<>
+      <h3>Enemy Stats:</h3>
+      Health: {them.currentHealth}
+      <Button onClick={() => setAnnouncer(fight.attack(0))}>Attack!</Button>
+      <h3>Stats:</h3>
+      Health: {you.currentHealth}
+    </>);
+  }
+  else if(fight.state === FIGHT_WON) {
+    content = (<Button onClick={fight.finish}>Again?</Button>);
+  }
   return (<>
     <h1>Fight</h1>
     <h2>{announcer}</h2>
-    <h3>Enemy Stats:</h3>
-    Speed: {fighter.speed}
-    Strength: {fighter.strength}
-    Vitality: {fighter.vitality}
-    <button onClick={() => setAnnouncer(Math.random() > 0.5 ? 'You a Winner, hahaha!' : 'Loo-hoo-seh-her')}>Fight!</button>
-    <h3>Stats:</h3>
-    Speed: {fighter.speed}
-    Strength: {fighter.strength}
-    Vitality: {fighter.vitality}
+    {content}
   </>);
 }
 
