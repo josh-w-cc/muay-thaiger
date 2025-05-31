@@ -5,7 +5,7 @@ import Fighter from '../Fighter.js';
 
 function Train() {
   const fighter = React.useContext(Fighter);
-  const [announcer, setAnnouncer] = React.useState('')
+  const [announcer, setAnnouncer] = React.useState('');
 
   return (<>
     <h1>Fight</h1>

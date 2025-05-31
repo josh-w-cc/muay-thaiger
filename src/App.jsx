@@ -1,11 +1,11 @@
 import React from 'react';
 
-import Hub from './menus/Hub.jsx';
 
 import './App.css';
+import Fight from './menus/Fight.jsx';
 import Header from './menus/Header.jsx';
+import Hub from './menus/Hub.jsx';
 import Train from './menus/Train.jsx';
-import Fight from "./menus/Fight.jsx";
 
 function App() {
   const [screen, setScreen] = React.useState('hub');
