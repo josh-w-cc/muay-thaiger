@@ -9,9 +9,17 @@ function Hub() {
   return (<>
     <h1>HUB</h1>
     <h3>Stats:</h3>
-    Speeed: {fighter.speed}
-    Strength: {fighter.strength}
-    Vitality: {fighter.vitality}
+    Speeed: {fighter.speed}<br/>
+    Innate Speeed: {fighter.innateSpeed}<br/>
+    Strength: {fighter.strength}<br/>
+    Innate Strength: {fighter.innateStrength}<br/>
+    Vitality: {fighter.vitality}<br/>
+    Willpower: {fighter.willpower}<br/>
+    Durability: {fighter.durability}<br/>
+    Reach: {fighter.reach}<br/>
+    Constitution: {fighter.constitution}<br/>
+    Skill: {fighter.skill}<br/>
+    Stanima: {fighter.stamina}
   </>);
 }
 

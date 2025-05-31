@@ -10,9 +10,15 @@ function Train() {
     <h1>Training</h1>
     <h3>Stats:</h3>
     Speed: {fighter.speed}
+    <button onClick={() => fighter.train('speed')}>Train</button><br/>
     Strength: {fighter.strength}
-    Vitality: {fighter.vitality}
-    <button onClick={() => fighter.train('speed')}>Train</button>
+    <button onClick={() => fighter.train('strength')}>Train</button><br/>
+    Constitution: {fighter.constitution}
+    <button onClick={() => fighter.train('constitution')}>Train</button><br/>
+    Skill: {fighter.skill}
+    <button onClick={() => fighter.train('skill')}>Train</button><br/>
+    Stanima: {fighter.stamina}
+    <button onClick={() => fighter.train('stamina')}>Train</button><br/>
   </>);
 }
 
