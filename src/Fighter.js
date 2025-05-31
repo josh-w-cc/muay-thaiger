@@ -9,7 +9,7 @@ class Fighter {
     this.innateSpeed = 1;
     this.innateStrength = 1;
     this.vitality = 1;
-    this.willpower = 1;
+    this.anima = 1;
     // Affect combat directly
     this.durability = 1;
     this.reach = 1;
@@ -53,7 +53,11 @@ class Fighter {
 
   train(stat) {
     const trainingEffect = {
-      constitution: this.vitality, skill: this.willpower, speed: this.innateSpeed, strength: this.innateStrength, stamina: this.vitality,
+      constitution: this.vitality,
+      skill: this.anima,
+      speed: this.innateSpeed,
+      strength: this.innateStrength,
+      stamina: this.vitality,
     };
     if(Object.keys(trainingEffect).includes(stat)) {
       this[stat] += trainingEffect[stat];

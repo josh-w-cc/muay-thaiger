@@ -1,10 +1,18 @@
 import React from 'react';
 
+import css from './Header.module.css';
+
+function HeaderButton ({onClick, children}) {
+  return (<button className={css.button} onClick={onClick}>
+    MENU: {children}
+  </button>);
+}
+
 function Header({setScreen}) {
   return (<>
-    <button onClick={() => setScreen('fight')}>Fight</button>
-    <button onClick={() => setScreen('hub')}>Hub</button>
-    <button onClick={() => setScreen('train')}>Train</button>
+    <HeaderButton onClick={() => setScreen('fight')}>Fight</HeaderButton>
+    <HeaderButton onClick={() => setScreen('hub')}>Hub</HeaderButton>
+    <HeaderButton onClick={() => setScreen('train')}>Train</HeaderButton>
   </>);
 }
 

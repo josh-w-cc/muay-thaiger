@@ -14,7 +14,7 @@ function Hub() {
     Strength: {fighter.strength}<br/>
     Innate Strength: {fighter.innateStrength}<br/>
     Vitality: {fighter.vitality}<br/>
-    Willpower: {fighter.willpower}<br/>
+    Anima: {fighter.anima}<br/>
     Durability: {fighter.durability}<br/>
     Reach: {fighter.reach}<br/>
     Constitution: {fighter.constitution}<br/>
