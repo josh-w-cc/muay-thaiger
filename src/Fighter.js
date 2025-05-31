@@ -38,7 +38,7 @@ class Fighter {
     return this.stamina + this.constitution * this.constitution + this.durability * this.durability;
   }
   get power() {
-    return this.strength + this.speed + this.skill;
+    return (this.strength + this.speed) * this.stamina + this.skill;
   }
   // Fight rules
   //
