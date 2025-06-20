@@ -1,27 +1,12 @@
 import React from 'react';
 import {makeAutoObservable} from 'mobx';
 
+import BaseStats from './menus/CharacterSelect/BaseStats.js';
+
 
 class Fighter {
   constructor() {
-    // Innate stats
-    // Affect training result
-    this.innateSpeed = 1;
-    this.innateStrength = 1;
-    this.vitality = 1;
-    this.anima = 1;
-    // Affect combat directly
-    this.durability = 1;
-    this.reach = 1;
-
-    // Exnate stats
-    this.constitution = 1;
-    this.skill = 1;
-    this.speed = 1;
-    this.strength = 1;
-    this.stamina = 1;
-
-    this.idling = false;
+    this.select(Object.keys(BaseStats).pop()); // Select whatever for initialization
 
     makeAutoObservable(this, {}, {autoBind: true});
 
@@ -47,6 +32,29 @@ class Fighter {
 
   idle(key, action) {
     this.idling = {key, action, lastAction: +new Date()};
+  }
+
+  select(id) {
+    const stats = BaseStats[id].stats;
+
+    this.race = id;
+    // Affect training result
+    this.innateSpeed = stats.innateSpeed;
+    this.innateStrength = stats.innateStrength;
+    this.vitality = stats.vitality;
+    this.anima = stats.anima;
+    // Affect combat directly
+    this.durability = stats.durability;
+    this.reach = stats.reach;
+
+    // Exnate stats
+    this.constitution = 1;
+    this.skill = 1;
+    this.speed = 1;
+    this.strength = 1;
+    this.stamina = 1;
+
+    this.idling = false;
   }
 
   tick() {

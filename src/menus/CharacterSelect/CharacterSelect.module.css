@@ -1,0 +1,21 @@
+.outer {
+  display: flex;
+  flex-direction: column;
+  height: 20vh;
+  max-height: 300px;
+  min-height: 225px;
+  max-width: 50%;
+  overflow: hidden;
+}
+
+.inner {
+  display: flex;
+}
+
+.avatar {
+  width: 50%;
+}
+
+.stats {
+  text-align: left;
+}
