@@ -1,13 +1,12 @@
 import React from 'react';
 
-import css from './Header.module.css';
 import Button from '../components/Button';
 import FightButton from '../assets/FightButton.png';
 import HubButton from '../assets/HubButton.png';
-import TrainButton from '../assets/TrainButton.png'
+import TrainButton from '../assets/TrainButton.png';
 
 function HeaderButton ({onClick, children}) {
-  return (<Button className={css.button} onClick={onClick}>
+  return (<Button onClick={onClick}>
     {children}
   </Button>);
 }
