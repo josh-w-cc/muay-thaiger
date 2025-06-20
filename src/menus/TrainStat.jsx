@@ -10,7 +10,7 @@ function TrainStat({name, stat}) {
 
   const style = {};
   if(fighter.idling?.key === `train-${stat}`) {
-    style.color = 'blue';
+    style.color = 'orange';
   }
 
   return (<>
