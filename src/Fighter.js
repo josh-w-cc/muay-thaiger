@@ -21,7 +21,11 @@ class Fighter {
     this.strength = 1;
     this.stamina = 1;
 
+    this.idling = false;
+
     makeAutoObservable(this, {}, {autoBind: true});
+
+    setInterval(this.tick, 10);
   }
 
   // Combat stats (derived)
@@ -40,18 +44,27 @@ class Fighter {
   get power() {
     return (this.strength + this.speed) * Math.sqrt(this.stamina) + this.skill;
   }
-  // Fight rules
-  //
-  // Increase turn meter +apm (or onClick)
-  // if(turnMeter > ?)
-  //   randomly pick a move (e.g. spearhand)
-  //   turnMeter -= moveCost
-  //   if(moveAttack + fighterAttack + random > defense + random)
-  //      enemyHealth -= movePower + fighterPower + random
-  // Stamina decrease as the fight continues?
 
+  idle(key, action) {
+    this.idling = {key, action, lastAction: +new Date()};
+  }
 
-  train(stat) {
+  tick() {
+    if(!this.idling?.action) {
+      return;
+    }
+    if(this.idling.lastAction < +new Date()) {
+      const last = this.idling.lastAction;
+      this.idling.lastAction = last ? last + 1000 : +new Date();
+      this.idling.action();
+    }
+  }
+
+  train(stat, idle = false) {
+    if(idle) {
+      this.idle(`train-${stat}`, () => this.train(stat));
+      return;
+    }
     const trainingEffect = {
       constitution: this.vitality,
       skill: this.anima,

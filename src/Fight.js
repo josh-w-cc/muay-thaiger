@@ -5,6 +5,17 @@ export const FIGHT_NOT_STARTED = 0;
 export const FIGHT_STARTED = 1;
 export const FIGHT_WON = 2;
 
+
+// Fight rules
+//
+// Increase turn meter +apm (or onClick)
+// if(turnMeter > ?)
+//   randomly pick a move (e.g. spearhand)
+//   turnMeter -= moveCost
+//   if(moveAttack + fighterAttack + random > defense + random)
+//      enemyHealth -= movePower + fighterPower + random
+// Stamina decrease as the fight continues?
+
 class Fight {
   constructor() {
     this.fighters = [];
