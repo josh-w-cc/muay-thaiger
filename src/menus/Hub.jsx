@@ -19,7 +19,8 @@ function Hub() {
     Reach: {fighter.reach}<br/>
     Constitution: {fighter.constitution}<br/>
     Skill: {fighter.skill}<br/>
-    Stanima: {fighter.stamina}
+    Stanima: {fighter.stamina}<br/>
+    ฿: {fighter.gold / 100}<br/>
   </>);
 }
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import {observer} from 'mobx-react';
 
-import Button from '../components/Button';
-import Fighter from '../Fighter.js';
+import Button from '../../components/Button';
+import Fighter from '../../Fighter.js';
 
 
 function TrainStat({name, stat}) {
@@ -16,7 +16,7 @@ function TrainStat({name, stat}) {
   return (<>
     {name}: {fighter[stat]}
     <Button onClick={() => fighter.train(stat)}>Train</Button>
-    <Button onClick={() => fighter.train(stat, true)} style={style}>Idle</Button>
+    <Button onClick={() => fighter.idle(`train-${stat}`, () => fighter.train(stat))} style={style}>Idle</Button>
     <br/>
   </>);
 }

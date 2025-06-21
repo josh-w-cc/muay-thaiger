@@ -1,11 +1,12 @@
 import React from 'react';
 import {makeAutoObservable} from 'mobx';
 
-import BaseStats from './menus/CharacterSelect/BaseStats.js';
+import BaseStats from './menus/CharacterSelect/BaseStats.jsx';
 
 
 class Fighter {
   constructor() {
+    this.gold = 0;
     this.select(Object.keys(BaseStats).pop()); // Select whatever for initialization
 
     makeAutoObservable(this, {}, {autoBind: true});
@@ -48,11 +49,11 @@ class Fighter {
     this.reach = stats.reach;
 
     // Exnate stats
-    this.constitution = 1;
-    this.skill = 1;
-    this.speed = 1;
-    this.strength = 1;
-    this.stamina = 1;
+    this.constitution = this.vitality;
+    this.skill = 0;
+    this.speed = this.innateSpeed;
+    this.strength = this.innateStrength;
+    this.stamina = this.vitality;
 
     this.idling = false;
   }
@@ -68,11 +69,7 @@ class Fighter {
     }
   }
 
-  train(stat, idle = false) {
-    if(idle) {
-      this.idle(`train-${stat}`, () => this.train(stat));
-      return;
-    }
+  train(stat, amount = 1) {
     const trainingEffect = {
       constitution: this.vitality,
       skill: this.anima,
@@ -81,7 +78,7 @@ class Fighter {
       stamina: this.vitality,
     };
     if(Object.keys(trainingEffect).includes(stat)) {
-      this[stat] += trainingEffect[stat];
+      this[stat] += trainingEffect[stat] * amount;
     }
     else {
       console.error('Tried to train unknown stat:', stat);

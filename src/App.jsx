@@ -4,7 +4,7 @@ import CharacterSelect from './menus/CharacterSelect';
 import Fight from './menus/Fight.jsx';
 import Header from './menus/Header.jsx';
 import Hub from './menus/Hub.jsx';
-import Train from './menus/Train.jsx';
+import Train from './menus/Train';
 
 import './App.css';
 

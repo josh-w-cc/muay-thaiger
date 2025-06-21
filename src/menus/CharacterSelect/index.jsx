@@ -3,7 +3,7 @@ import {observer} from 'mobx-react';
 
 import Fighter from '../../Fighter.js';
 import Button from '../../components/Button.jsx';
-import BaseStats from './BaseStats.js';
+import BaseStats from './BaseStats.jsx';
 
 import css from './CharacterSelect.module.css';
 
