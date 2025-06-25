@@ -16,13 +16,13 @@ class Fighter {
 
   // Combat stats (derived)
   get apm() {
-    return Math.log(this.speed) + Math.sqrt(this.skill);
+    return Math.max(0, Math.log(this.speed)) + Math.sqrt(this.skill);
   }
   get attack() {
     return Math.log(this.stamina) + Math.sqrt(this.speed) + this.skill + this.reach;
   }
   get defense() {
-    return Math.log(this.speed) + Math.sqrt(this.stamina) + this.skill;
+    return Math.max(0, Math.log(this.speed)) + Math.sqrt(this.stamina) + this.skill;
   }
   get health() {
     return this.stamina + this.constitution * this.constitution + this.durability * this.durability;
