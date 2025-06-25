@@ -20,8 +20,23 @@ class Fight {
   constructor() {
     this.fighters = [];
     this.state = FIGHT_NOT_STARTED;
+    this.bet = 0;
 
     makeAutoObservable(this, {}, {autoBind: true});
+  }
+
+  forGold(fighter, risk) {
+    const riskPercentages = [.001, .1, .25, .5, 1];
+    const amount = this.bet = Math.max(100, Math.floor(fighter.gold * riskPercentages[risk]));
+    const enemy = {
+      apm: Math.log(Math.log(amount)) * (Math.random() + 0.5),
+      attack: Math.sqrt(amount) * (Math.random() + 0.5),
+      defense: Math.sqrt(amount) * (Math.random() + 0.5),
+      health: amount * 10 * (Math.random() + 0.5),
+      power: amount * (Math.random() + 0.5),
+      stamina: amount * Math.sqrt(amount) * (Math.random() + 0.5),
+    };
+    this.start(fighter, enemy);
   }
 
   start(left, right) {
@@ -49,6 +64,10 @@ class Fight {
 
   finish() {
     if(this.state === FIGHT_WON) {
+      this.fighters[0].stats.train('skill', 1);
+      this.fighters[0].stats.gold += this.bet;
+
+      this.bet = 0;
       this.state = FIGHT_NOT_STARTED;
     }
   }

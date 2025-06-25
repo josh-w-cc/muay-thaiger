@@ -13,6 +13,7 @@ function FightMenu() {
   const fight = React.useContext(Fight);
   const fighter = React.useContext(Fighter);
   const [announcer, setAnnouncer] = React.useState('');
+  const [risk, setRisk] = React.useState(1);
 
   if(needsZerothFight(fighter)) {
     return (<ZerothFight />);
@@ -20,47 +21,41 @@ function FightMenu() {
 
   let content;
   if(fight.state === FIGHT_NOT_STARTED) {
-    const enemy = {
-      apm: fighter.apm * (0.5 + Math.random()),
-      attack: fighter.attack * (0.5 + Math.random()),
-      defense: fighter.defense * (0.5 + Math.random()),
-      health: fighter.health * (0.5 + Math.random()),
-      power: fighter.power * (0.5 + Math.random()),
-      stamina: fighter.stamina * (0.5 + Math.random()),
-    };
     content = (<>
-      <h3>Enemy Stats:</h3>
-      APM: {enemy.apm}
-      Attack: {enemy.attack}
-      Defense: {enemy.defense}
-      Health: {enemy.health}
-      Power: {enemy.power}
-      Stamina: {enemy.stamina}
-      <Button onClick={() => fight.start(fighter, enemy)}>Fight!</Button>
-      <h3>Stats:</h3>
-      APM: {fighter.apm}
-      Attack: {fighter.attack}
-      Defense: {fighter.defense}
-      Health: {fighter.health}
-      Power: {fighter.power}
-      Stamina: {fighter.stamina}
+      Risk: <select onChange={e => setRisk(e.target.options[e.target.selectedIndex].value)}>
+        <option value={0}>Minimal</option>
+        <option value={1}>Low</option>
+        <option value={2}>Moderate</option>
+        <option value={3}>High</option>
+        <option value={4}>ALL!</option>
+      </select>
+      <Button onClick={() => fight.forGold(fighter, risk)}>Fight!</Button>
     </>);
   }
   else if(fight.state === FIGHT_STARTED) {
     const [you, them] = fight.fighters;
     content = (<>
       <h3>Enemy Stats:</h3>
-      Health: {them.currentHealth}
+      APM: {them.stats.apm}<br/>
+      Attack: {them.stats.attack}<br/>
+      Defense: {them.stats.defense}<br/>
+      Health: {them.stats.health}<br/>
+      Power: {them.stats.power}<br/>
+      Stamina: {them.stats.stamina}<br/>
+      Health: {them.currentHealth}<br/>
       <Button onClick={() => setAnnouncer(fight.attack(0))}>Attack!</Button>
       <h3>Stats:</h3>
       Health: {you.currentHealth}
     </>);
   }
   else if(fight.state === FIGHT_WON) {
-    content = (<Button onClick={fight.finish}>Again?</Button>);
+    content = (<Button onClick={() => {
+      fight.finish();
+      setAnnouncer('');
+    }}>Again?</Button>);
   }
   return (<>
-    <h1>Fight</h1>
+    <h1>Fight for ฿</h1>
     <h2>{announcer}</h2>
     {content}
   </>);
