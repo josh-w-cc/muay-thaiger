@@ -1,16 +1,20 @@
 import React from 'react';
 import {observer} from 'mobx-react';
 
-import Fighter from '../Fighter.js';
-import Fight, {FIGHT_NOT_STARTED, FIGHT_STARTED, FIGHT_WON} from '../Fight.js';
-import Button from '../components/Button.jsx';
+import Fighter from '../../Fighter.js';
+import Fight, {FIGHT_NOT_STARTED, FIGHT_STARTED, FIGHT_WON} from '../../Fight.js';
+
+import Button from '../../components/Button.jsx';
+
+import ZerothFight, {needsZerothFight} from './ZerothFight.jsx';
+
 
 function FightMenu() {
   const fight = React.useContext(Fight);
   const fighter = React.useContext(Fighter);
   const [announcer, setAnnouncer] = React.useState('');
 
-  if(fighter.gold < 100 || !fighter.strength || !fighter.stamina) {
+  if(needsZerothFight(fighter)) {
     return (<ZerothFight />);
   }
 
@@ -63,23 +67,3 @@ function FightMenu() {
 }
 
 export default observer(FightMenu);
-
-
-function ZerothFight() {
-  const fighter = React.useContext(Fighter);
-  const [event, setEvent] = React.useState('');
-
-  if(event) {
-    return event;
-  }
-  if(fighter.gold < 100) {
-    setEvent(<span>Come back when you've got some <strong style={{color: 'orange'}}>฿</strong>, kid.</span>);
-  }
-  else if(!fighter.strength || !fighter.stamina) {
-    fighter.gold = 0;
-    setEvent(<span>He takes your ฿ and pushes you down.  He runs off.  {fighter.stamina ?
-      <span>You catch him, but you don't have the <strong>strength</strong> to get your ฿ back.</span> :
-      <span>You don't have the <strong>stanima</strong> to catch him.</span>}
-    </span>);
-  }
-}

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import CharacterSelect from './menus/CharacterSelect';
-import Fight from './menus/Fight.jsx';
+import Fight from './menus/Fight';
 import Header from './menus/Header.jsx';
 import Hub from './menus/Hub.jsx';
 import Train from './menus/Train';

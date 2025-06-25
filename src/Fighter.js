@@ -19,7 +19,7 @@ class Fighter {
     return Math.max(0, Math.log(this.speed)) + Math.sqrt(this.skill);
   }
   get attack() {
-    return Math.log(this.stamina) + Math.sqrt(this.speed) + this.skill + this.reach;
+    return Math.max(0, Math.log(this.stamina)) + Math.sqrt(this.speed) + this.skill + this.reach;
   }
   get defense() {
     return Math.max(0, Math.log(this.speed)) + Math.sqrt(this.stamina) + this.skill;
