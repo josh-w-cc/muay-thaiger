@@ -1,11 +1,10 @@
 const Skills = {
   beg: {
-    name: 'Begging',
+    name: '฿egging',
     action: (fighter) => {
       fighter.gold += 1;
-      fighter.train('constitution');
     },
-    requires: (fighter) => fighter.stamina > 10,
+    requires: () => true,
   },
   walk: {
     name: 'Walking',
@@ -21,7 +20,7 @@ const Skills = {
       fighter.train('strength');
       fighter.train('constitution');
     },
-    requires: (fighter) => fighter.stamina > 10 && fighter.constitution > 100,
+    requires: (fighter) => fighter.stamina > 100,
   },
   calisthenics: {
     name: 'Calisthenics',
@@ -33,7 +32,7 @@ const Skills = {
     requires: (fighter) => fighter.stamina > 1000 && fighter.constitution > 100 && fighter.strength > 100,
   },
   labor: {
-    name: 'Laboring',
+    name: 'La฿oring',
     action: (fighter) => {
       fighter.gold += 100;
       fighter.train('stamina', 1);
@@ -47,7 +46,7 @@ const Skills = {
     action: (fighter) => {
       fighter.train('stamina', 125);
     },
-    requires: (fighter) => fighter.stamina > 10000 && fighter.constitution > 1000,
+    requires: (fighter) => fighter.stamina > 10000 && fighter.constitution > 100,
   },
 };
 

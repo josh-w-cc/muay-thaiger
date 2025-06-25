@@ -21,6 +21,11 @@ function Hub() {
     Skill: {fighter.skill}<br/>
     Stanima: {fighter.stamina}<br/>
     ฿: {fighter.gold / 100}<br/>
+    APM: {fighter.apm}<br/>
+    Attack: {fighter.attack}<br/>
+    Defense: {fighter.defense}<br/>
+    Health: {fighter.health}<br/>
+    Power: {fighter.power}<br/>
   </>);
 }
 

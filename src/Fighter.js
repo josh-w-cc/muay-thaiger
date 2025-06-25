@@ -49,11 +49,7 @@ class Fighter {
     this.reach = stats.reach;
 
     // Exnate stats
-    this.constitution = this.vitality;
-    this.skill = 0;
-    this.speed = this.innateSpeed;
-    this.strength = this.innateStrength;
-    this.stamina = this.vitality;
+    this.constitution = this.skill = this.speed = this.strength = this.stamina = 0;
 
     this.idling = false;
   }
