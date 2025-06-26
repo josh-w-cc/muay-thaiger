@@ -10,8 +10,6 @@ class Fighter {
     this.select(Object.keys(BaseStats).pop()); // Select whatever for initialization
 
     makeAutoObservable(this, {}, {autoBind: true});
-
-    setInterval(this.tick, 10);
   }
 
   // Combat stats (derived)
@@ -31,10 +29,6 @@ class Fighter {
     return (this.strength + this.speed) * Math.sqrt(this.stamina) + this.skill;
   }
 
-  idle(key, action) {
-    this.idling = {key, action, lastAction: +new Date()};
-  }
-
   select(id) {
     const stats = BaseStats[id].stats;
 
@@ -50,19 +44,6 @@ class Fighter {
 
     // Exnate stats
     this.constitution = this.skill = this.speed = this.strength = this.stamina = 0;
-
-    this.idling = false;
-  }
-
-  tick() {
-    if(!this.idling?.action) {
-      return;
-    }
-    if(this.idling.lastAction < +new Date()) {
-      const last = this.idling.lastAction;
-      this.idling.lastAction = last ? last + 1000 : +new Date();
-      this.idling.action();
-    }
   }
 
   train(stat, amount = 1) {
