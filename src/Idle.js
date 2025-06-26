@@ -4,7 +4,10 @@ import {makeAutoObservable} from 'mobx';
 
 class Idle {
   constructor() {
-    this.idling = false;
+    this.action = false;
+    this.key = '';
+    this.lastAction = +new Date();
+    this.fractional = false;
 
     makeAutoObservable(this, {}, {autoBind: true});
 
@@ -12,21 +15,37 @@ class Idle {
   }
 
 
-  start(key, action) {
-    this.idling = {key, action, lastAction: +new Date()};
+  start(key, action, fractional) {
+    this.action = action;
+    this.key = key;
+    this.lastAction = +new Date();
+    this.fractional = fractional;
+  }
+
+  stop() {
+    this.action = null;
+    this.key = '';
   }
 
   tick() {
-    if(!this.idling?.action) {
+    if(!this.action) {
       return;
     }
-    if(this.idling.lastAction < +new Date()) {
-      const last = this.idling.lastAction;
-      this.idling.lastAction = last ? last + 1000 : +new Date();
-      this.idling.action();
+    if(this.lastAction < +new Date()) {
+      if(this.fractional) {
+        if(this.action(+new Date() - this.lastAction)) {
+          this.stop();
+        };
+        this.lastAction = +new Date();
+      }
+      else {
+        this.lastAction = this.lastAction ? this.lastAction + 1000 : +new Date();
+        this.action();
+      }
     }
   }
 }
 
 
-export default React.createContext(new Idle());
+export const IdleState = new Idle();
+export default React.createContext(IdleState);

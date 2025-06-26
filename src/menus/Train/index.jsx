@@ -24,7 +24,7 @@ function Train() {
     {Object.keys(Skills).filter(s => Skills[s].requires(fighter)).map(s => <div key={s}>{Skills[s].name}
       <Button onClick={() => Skills[s].action(fighter)}>Once</Button>
       <Button onClick={() =>
-        idle.start(`train-${s}`, () => Skills[s].action(fighter))} style={{color: idle.idling?.key === `train-${s}` ? 'orange' : 'blue'}}>
+        idle.start(`train-${s}`, () => Skills[s].action(fighter))} style={{color: idle.key === `train-${s}` ? 'orange' : 'blue'}}>
         Idle
       </Button>
     </div>)}

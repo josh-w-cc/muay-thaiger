@@ -6,7 +6,7 @@ import BaseStats from './menus/CharacterSelect/BaseStats.jsx';
 
 class Fighter {
   constructor() {
-    this.gold = 0;
+    this.gold = 100;
     this.select(Object.keys(BaseStats).pop()); // Select whatever for initialization
 
     makeAutoObservable(this, {}, {autoBind: true});

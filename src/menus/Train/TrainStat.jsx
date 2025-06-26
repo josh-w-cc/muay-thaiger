@@ -11,7 +11,7 @@ function TrainStat({name, stat}) {
   const idle = React.useContext(Idle);
 
   const style = {};
-  if(idle.idling?.key === `train-${stat}`) {
+  if(idle.key === `train-${stat}`) {
     style.color = 'orange';
   }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import {observer} from 'mobx-react';
 
 import Fighter from '../../Fighter.js';
-import Fight, {FIGHT_NOT_STARTED, FIGHT_STARTED, FIGHT_WON} from '../../Fight.js';
+import Fight, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_WON} from '../../Fight.js';
 
 import Button from '../../components/Button.jsx';
 
@@ -32,7 +32,7 @@ function FightMenu() {
       <Button onClick={() => fight.forGold(fighter, risk)}>Fight!</Button>
     </>);
   }
-  else if(fight.state === FIGHT_STARTED) {
+  else if(fight.state === FIGHT_IN_PROGRESS) {
     const [you, them] = fight.fighters;
     content = (<>
       <h3>Enemy Stats:</h3>
@@ -46,6 +46,7 @@ function FightMenu() {
       <Button onClick={() => setAnnouncer(fight.attack(0))}>Attack!</Button>
       <h3>Stats:</h3>
       Health: {you.currentHealth}
+      <h3>MSG</h3>
     </>);
   }
   else if(fight.state === FIGHT_WON) {
@@ -58,6 +59,7 @@ function FightMenu() {
     <h1>Fight for ฿</h1>
     <h2>{announcer}</h2>
     {content}
+    {fight.messages.slice().reverse()}
   </>);
 }
 
