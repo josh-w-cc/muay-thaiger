@@ -2,7 +2,7 @@ import React from 'react';
 import {observer} from 'mobx-react';
 
 import Fighter from '../../Fighter.js';
-import Fight, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_WON} from '../../Fight.js';
+import Fight, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '../../Fight.js';
 
 import Button from '../../components/Button.jsx';
 
@@ -49,7 +49,7 @@ function FightMenu() {
       <h3>MSG</h3>
     </>);
   }
-  else if(fight.state === FIGHT_WON) {
+  else if(fight.state === FIGHT_WON || fight.state === FIGHT_LOST) {
     content = (<Button onClick={() => {
       fight.finish();
       setAnnouncer('');

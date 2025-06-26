@@ -35,7 +35,7 @@ class Idle {
       if(this.fractional) {
         if(this.action(+new Date() - this.lastAction)) {
           this.stop();
-        };
+        }
         this.lastAction = +new Date();
       }
       else {

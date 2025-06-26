@@ -61,6 +61,14 @@ class Fighter {
       console.error('Tried to train unknown stat:', stat);
     }
   }
+
+  win(gold) {
+    this.gold += gold;
+  }
+
+  lose(gold) {
+    this.gold -= gold;
+  }
 }
 
 

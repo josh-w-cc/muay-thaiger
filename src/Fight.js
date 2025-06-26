@@ -4,7 +4,8 @@ import {IdleState} from './Idle.js';
 
 export const FIGHT_NOT_STARTED = 0;
 export const FIGHT_IN_PROGRESS = 1;
-export const FIGHT_WON = 2;
+export const FIGHT_LOST = 2;
+export const FIGHT_WON = 3;
 
 
 // Fight rules
@@ -32,7 +33,7 @@ class Fight {
     this.bet = Math.max(100, Math.floor(fighter.gold * riskPercentages[risk]));
     const amount = Math.sqrt(this.bet);
     const enemy = {
-      apm: Math.log(Math.log(amount)) * (Math.random() + 0.5),
+      apm: Math.max(4, Math.log(amount)) * (Math.random() + 0.5),
       attack: Math.sqrt(amount) * (Math.random() + 0.5),
       defense: Math.sqrt(amount) * (Math.random() + 0.5),
       health: amount * 10 * (Math.random() + 0.5),
@@ -44,8 +45,8 @@ class Fight {
 
   start(left, right) {
     this.fighters = [
-      {stats:left, currentAPM: left.apm, currentStamina: left.stamina, currentHealth: left.health},
-      {stats:right, currentAPM: right.apm, currentStamina: right.stamina, currentHealth: right.health},
+      {stats:left, currentAPM: 0, currentStamina: left.stamina, currentHealth: left.health},
+      {stats:right, currentAPM: 0, currentStamina: right.stamina, currentHealth: right.health},
     ];
     this.state = FIGHT_IN_PROGRESS;
     IdleState.start('FIGHT', this.tick, true);
@@ -66,14 +67,32 @@ class Fight {
       }
       return 'You missed :(';
     }
-    return 'They attacks!';
+    else {
+      const you = this.fighters[1];
+      const them = this.fighters[0];
+      if(you.stats.attack * Math.random() > them.stats.defense * Math.random()) {
+        const damage = you.stats.power * (Math.random() + 0.5);
+        them.currentHealth -= damage;
+        if(them.currentHealth < 0) {
+          this.state = FIGHT_LOST;
+          return 'You lost!!!!';
+        }
+        return `He hit you for ${damage}. (What a jerk)`;
+      }
+      return 'Je missed :D';
+    }
   }
 
   finish() {
-    if(this.state === FIGHT_WON) {
-      this.fighters[0].stats.train('skill', 1);
-      this.fighters[0].stats.gold += this.bet;
+    if(this.state === FIGHT_WON || this.state === FIGHT_LOST) {
+      if(this.state === FIGHT_WON) {
+        this.fighters[0].stats.win(this.bet);
+      }
+      else {
+        this.fighters[0].stats.lose(this.bet);
+      }
 
+      this.fighters[0].stats.train('skill', 1);
       this.bet = 0;
       this.state = FIGHT_NOT_STARTED;
       this.messages = [];
@@ -85,15 +104,15 @@ class Fight {
     const bPerTick = this.fighters[1].stats.apm / 60000;
     this.fighters[0].currentAPM += aPerTick * amount;
     this.fighters[1].currentAPM += bPerTick * amount;
-    console.log(this.fighters[0].currentAPM)
-    console.log(this.fighters[1].currentAPM)
-    if(this.fighters[0].currentAPM > 1) {
-      this.messages.push(this.attack(0));
-      this.fighters[0].currentAPM -= 1;
-    }
-    if(this.fighters[1].currentAPM > 1) {
-      this.messages.push(this.attack(1));
-      this.fighters[1].currentAPM -= 1;
+    while(this.fighters[0].currentAPM > 1 || this.fighters[1].currentAPM > 1) {
+      if(this.fighters[0].currentAPM > 1) {
+        this.messages.push(this.attack(0));
+        this.fighters[0].currentAPM -= 1;
+      }
+      if(this.fighters[1].currentAPM > 1) {
+        this.messages.push(this.attack(1));
+        this.fighters[1].currentAPM -= 1;
+      }
     }
     if(this.state !== FIGHT_IN_PROGRESS) {
       return true;

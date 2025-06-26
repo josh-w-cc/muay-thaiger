@@ -2,7 +2,7 @@ const Skills = {
   beg: {
     name: '฿egging',
     action: (fighter) => {
-      fighter.gold += 1;
+      fighter.win(1);
     },
     requires: () => true,
   },
@@ -34,7 +34,7 @@ const Skills = {
   labor: {
     name: 'La฿oring',
     action: (fighter) => {
-      fighter.gold += 100;
+      fighter.win(100);
       fighter.train('stamina', 1);
       fighter.train('strength', 1);
       fighter.train('constitution', 1);

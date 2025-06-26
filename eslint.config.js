@@ -64,6 +64,7 @@ export default [
       '@stylistic/js/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/js/indent': ['error', 2, {SwitchCase: 1}],
       '@stylistic/js/max-statements-per-line': 'error',
+      '@stylistic/js/no-extra-semi': 'error',
       '@stylistic/js/object-curly-newline': ['error', {consistent: true, minProperties: 5, multiline: true} ],
       '@stylistic/js/quote-props': ['error', 'as-needed'],
       '@stylistic/js/quotes': ['error', 'single'],
