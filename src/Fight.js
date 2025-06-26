@@ -48,7 +48,7 @@ class Fight {
     if(!who) {
       const you = this.fighters[0];
       const them = this.fighters[1];
-      if(you.stats.attack * Math.random() < them.stats.defense * Math.random()) {
+      if(you.stats.attack * Math.random() > them.stats.defense * Math.random()) {
         const damage = you.stats.power * Math.random();
         them.currentHealth -= damage;
         if(them.currentHealth < 0) {
