@@ -17,19 +17,19 @@ class Fighter {
 
   // Combat stats (derived)
   get apm() {
-    return Math.max(0, Math.log(this.speed)) + Math.sqrt(this.skill);
+    return Math.max(0, Math.log(this.agility)) + Math.sqrt(this.skill);
   }
   get attack() {
-    return Math.max(0, Math.log(this.stamina)) + Math.sqrt(this.speed) + this.skill + this.reach;
+    return Math.max(0, Math.log(this.stamina)) + Math.sqrt(this.agility) + this.skill + this.reach;
   }
   get defense() {
-    return Math.max(0, Math.log(this.speed)) + Math.sqrt(this.stamina) + this.skill;
+    return Math.max(0, Math.log(this.agility)) + Math.sqrt(this.stamina) + this.skill;
   }
   get health() {
     return this.stamina + this.constitution * this.constitution + this.durability * this.durability;
   }
   get power() {
-    return (this.strength + this.speed) * Math.sqrt(this.stamina) + this.skill;
+    return (this.strength + this.agility) * Math.sqrt(this.stamina) + this.skill;
   }
 
   idle(key, action) {
@@ -44,8 +44,8 @@ class Fighter {
 
     this.race = id;
     // Affect training result
-    this.innateSpeed = stats.innateSpeed;
-    this.innateStrength = stats.innateStrength;
+    this.speed = stats.speed;
+    this.innateStrength = stats.strength;
     this.vitality = stats.vitality;
     this.anima = stats.anima;
     // Affect combat directly
@@ -53,14 +53,14 @@ class Fighter {
     this.reach = stats.reach;
 
     // Exnate stats
-    this.constitution = this.skill = this.speed = this.strength = this.stamina = 0;
+    this.constitution = this.skill = this.agility = this.strength = this.stamina = 0;
   }
 
   train(stat, amount = 1) {
     const trainingEffect = {
       constitution: this.vitality,
       skill: this.anima,
-      speed: this.innateSpeed,
+      agility: this.speed,
       strength: this.innateStrength,
       stamina: this.vitality,
     };

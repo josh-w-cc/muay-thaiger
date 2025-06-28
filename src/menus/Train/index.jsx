@@ -13,7 +13,7 @@ function Train() {
   return (<>
     <h1>Training</h1>
     <h3>Stats:</h3>
-    <TrainStat name="Speeed" stat="speed"/>
+    <TrainStat name="Agility" stat="agility"/>
     <TrainStat name="Strength" stat="strength"/>
     <TrainStat name="Constitution" stat="constitution"/>
     <TrainStat name="Skill" stat="skill"/>
