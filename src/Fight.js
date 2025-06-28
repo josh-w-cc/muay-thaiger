@@ -1,6 +1,6 @@
 import React from 'react';
 import {makeAutoObservable} from 'mobx';
-import {IdleState} from './Idle.js';
+
 
 export const FIGHT_NOT_STARTED = 0;
 export const FIGHT_IN_PROGRESS = 1;
@@ -31,7 +31,7 @@ class Fight {
   forGold(fighter, risk) {
     const riskPercentages = [.001, .1, .25, .5, 1];
     this.bet = Math.max(100, Math.floor(fighter.gold * riskPercentages[risk]));
-    const amount = Math.sqrt(this.bet);
+    const amount = this.bet;
     const enemy = {
       apm: Math.max(4, Math.log(amount)) * (Math.random() + 0.5),
       attack: Math.sqrt(amount) * (Math.random() + 0.5),
@@ -49,7 +49,7 @@ class Fight {
       {stats:right, currentAPM: 0, currentStamina: right.stamina, currentHealth: right.health},
     ];
     this.state = FIGHT_IN_PROGRESS;
-    IdleState.start('FIGHT', this.tick, true);
+    left.idle('FIGHT', (delta) => this.tick(delta));
   }
 
   attack(who) {

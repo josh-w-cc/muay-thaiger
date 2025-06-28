@@ -2,13 +2,16 @@ import React from 'react';
 import {makeAutoObservable} from 'mobx';
 
 import BaseStats from './menus/CharacterSelect/BaseStats.jsx';
+import {TickerState} from './Ticker.js';
 
 
 class Fighter {
   constructor() {
+    this.idling = false;
     this.gold = 100;
     this.select(Object.keys(BaseStats).pop()); // Select whatever for initialization
 
+    TickerState.addListener((delta) => this.tick(delta));
     makeAutoObservable(this, {}, {autoBind: true});
   }
 
@@ -27,6 +30,10 @@ class Fighter {
   }
   get power() {
     return (this.strength + this.speed) * Math.sqrt(this.stamina) + this.skill;
+  }
+
+  idle(key, action) {
+    this.idling = {key, action, delta: 0};
   }
 
   select(id) {
@@ -59,6 +66,23 @@ class Fighter {
     }
     else {
       console.error('Tried to train unknown stat:', stat);
+    }
+  }
+
+  tick(delta) {
+    if(this.idling?.action) {
+      if(this.idling.key.substring(0, 5).toLowerCase() === 'train') { // Kinda janky?
+        this.idling.delta += delta;
+        if(this.idling.delta > 1000) {
+          this.idling.action();
+          this.idling.delta -= 1000;
+        }
+      }
+      else {
+        if(this.idling.action(delta)) {
+          this.idling = false;
+        }
+      }
     }
   }
 

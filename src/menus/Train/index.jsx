@@ -3,14 +3,12 @@ import {observer} from 'mobx-react';
 
 import Button from '../../components/Button';
 import Fighter from '../../Fighter.js';
-import Idle from '../../Idle.js';
 import Skills from './Skills.jsx';
 import TrainStat from './TrainStat.jsx';
 
 
 function Train() {
   const fighter = React.useContext(Fighter);
-  const idle = React.useContext(Idle);
 
   return (<>
     <h1>Training</h1>
@@ -24,7 +22,7 @@ function Train() {
     {Object.keys(Skills).filter(s => Skills[s].requires(fighter)).map(s => <div key={s}>{Skills[s].name}
       <Button onClick={() => Skills[s].action(fighter)}>Once</Button>
       <Button onClick={() =>
-        idle.start(`train-${s}`, () => Skills[s].action(fighter))} style={{color: idle.key === `train-${s}` ? 'orange' : 'blue'}}>
+        fighter.idle(`train-${s}`, () => Skills[s].action(fighter))} style={{color: fighter.idling?.key === `train-${s}` ? 'orange' : 'blue'}}>
         Idle
       </Button>
     </div>)}
