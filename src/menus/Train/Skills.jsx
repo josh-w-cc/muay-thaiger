@@ -16,7 +16,7 @@ const Skills = {
   yoga: {
     name: 'Yoga',
     action: (fighter) => {
-      fighter.train('stamina');
+      fighter.train('agility');
       fighter.train('strength');
       fighter.train('constitution');
     },
