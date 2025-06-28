@@ -33,6 +33,9 @@ class Fighter {
   }
 
   idle(key, action) {
+    if(this.idling?.key?.substring(0, 5).toUpperCase() === 'FIGHT') {
+      return;
+    }
     this.idling = {key, action, delta: 0};
   }
 
