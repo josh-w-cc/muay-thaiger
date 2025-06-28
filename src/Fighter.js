@@ -57,6 +57,9 @@ class Fighter {
   }
 
   train(stat, amount = 1) {
+    if(this.idling?.key?.substring(0, 5).toUpperCase() === 'FIGHT') {
+      return;
+    }
     const trainingEffect = {
       constitution: this.vitality,
       skill: this.anima,
