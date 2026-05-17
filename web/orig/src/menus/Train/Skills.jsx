@@ -13,12 +13,26 @@ const Skills = {
     },
     requires: () => true, //Always available
   },
+  shadowbox: {
+    name: 'Shadow Boxing',
+    action: (fighter) => {
+      fighter.train('stamina', 2);
+    },
+    requires: (fighter) => fighter.stamina > 50,
+  },
+  breathwork: {
+    name: 'Breathwork',
+    action: (fighter) => {
+      fighter.train('constitution');
+      fighter.train('stamina');
+    },
+    requires: (fighter) => fighter.stamina > 50,
+  },
   yoga: {
     name: 'Yoga',
     action: (fighter) => {
       fighter.train('agility');
       fighter.train('strength');
-      fighter.train('constitution');
     },
     requires: (fighter) => fighter.stamina > 100,
   },
@@ -47,6 +61,16 @@ const Skills = {
       fighter.train('stamina', 125);
     },
     requires: (fighter) => fighter.stamina > 10000 && fighter.constitution > 100,
+  },
+  gymnastics: {
+    name: 'Gymnastics',
+    action: (fighter) => {
+      fighter.train('stamina', 15);
+      fighter.train('strength', 15);
+      fighter.train('constitution', 5);
+      fighter.train('agility', 25);
+    },
+    requires: (fighter) => fighter.stamina > 10000 && fighter.strength > 1000 && fighter.constitution > 1000 && fighter.agility > 1000,
   },
 };
 
