@@ -24,7 +24,7 @@
 body {
   background-color: var(--color-bg);
   color: var(--color-fg);
-  font-family: 'Sriracha', system-ui, sans-serif;
+  font-family: 'Brush Script MT', 'Segoe Script', 'Lucida Handwriting', cursive;
   margin: 0;
   padding: 0;
 }
