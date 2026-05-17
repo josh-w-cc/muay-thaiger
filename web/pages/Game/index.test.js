@@ -4,7 +4,6 @@ vi.mock('./Game.js', () => ({
   default: () => <div data-testid="game-app" />,
 }));
 
-
 describe('Game', () => {
   afterEach(() => {
     vi.clearAllMocks();
