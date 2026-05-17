@@ -77,7 +77,7 @@ describe('Game', () => {
     const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
 
     expect(socketURL.host).toBe(window.location.host);
-    expect(socketURL.pathname).toBe('/api/connect');
+    expect(socketURL.pathname).toBe('/ws/connect');
     expect(socketURL.protocol).toBe('ws:');
   });
 

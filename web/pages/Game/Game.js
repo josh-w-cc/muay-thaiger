@@ -33,7 +33,7 @@ export default function Game() {
 }
 
 function createWebSocketURL() {
-  const url = new URL('/api/connect', window.location.href);
+  const url = new URL('/ws/connect', window.location.href);
   url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
   return url.toString();
 }

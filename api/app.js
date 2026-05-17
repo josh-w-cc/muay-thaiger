@@ -14,7 +14,7 @@ export default async function build(opts = {}) {
   await app.register(dbPlugin);
   await app.register(websocket);
   await app.register(healthRoutes);
-  await app.register(connectRoutes, {prefix: '/api'});
+  await app.register(connectRoutes, {prefix: '/ws'});
   await app.register(playersRoutes, {prefix: '/api'});
 
   if(process.env.NODE_ENV !== 'production') {
