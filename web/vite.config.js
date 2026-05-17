@@ -35,6 +35,7 @@ export default defineConfig({
       '/api': {
         changeOrigin: true,
         target: apiTarget,
+        ws: true,
       },
     },
   },

@@ -12,6 +12,14 @@ import './App.css';
 
 export default function App() {
   const [screen, setScreen] = React.useState('character-select');
+
+  React.useEffect(() => {
+    const socket = new WebSocket(createWebSocketURL());
+    return () => {
+      socket.close();
+    };
+  }, []);
+
   if(screen === 'character-select') {
     return <CharacterSelect onExit={() => setScreen('hub')} />;
   }
@@ -24,13 +32,10 @@ export default function App() {
   );
 }
 
-function getFallback(setScreen) {
-  return (
-    <>
-      <h1>You broke it!?</h1>
-      <button onClick={() => setScreen('hub')}>We have to go back</button>
-    </>
-  );
+function createWebSocketURL() {
+  const url = new URL('/api/connect', window.location.href);
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  return url.toString();
 }
 
 function renderScreen(screen, setScreen) {
@@ -46,4 +51,13 @@ function renderScreen(screen, setScreen) {
     default:
       return getFallback(setScreen);
   }
+}
+
+function getFallback(setScreen) {
+  return (
+    <>
+      <h1>You broke it!?</h1>
+      <button onClick={() => setScreen('hub')}>We have to go back</button>
+    </>
+  );
 }

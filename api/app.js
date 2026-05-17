@@ -1,5 +1,7 @@
+import websocket from '@fastify/websocket';
 import Fastify from 'fastify';
 
+import connectRoutes from './routes/connect.js';
 import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
 import healthRoutes from './routes/health.js';
@@ -10,7 +12,9 @@ export default async function build(opts = {}) {
   const app = Fastify(opts);
 
   await app.register(dbPlugin);
+  await app.register(websocket);
   await app.register(healthRoutes);
+  await app.register(connectRoutes, {prefix: '/api'});
   await app.register(playersRoutes, {prefix: '/api'});
 
   if(process.env.NODE_ENV !== 'production') {

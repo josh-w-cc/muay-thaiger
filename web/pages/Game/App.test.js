@@ -1,6 +1,9 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+
+const originalWebSocket = globalThis.WebSocket;
+
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
     return <button onClick={onExit}>Character Select</button>;
@@ -50,14 +53,31 @@ vi.mock('../../orig/src/menus/Train', () => ({
 }));
 
 describe('Game App', () => {
+  beforeEach(() => {
+    globalThis.WebSocket = vi.fn(function () {
+      return {close: vi.fn()};
+    });
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
+    globalThis.WebSocket = originalWebSocket;
   });
 
   it('renders the character select screen first', async () => {
     const {default: App} = await import('./App.js');
     render(<App />);
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
+  });
+
+  it('connects to the websocket when the app loads', async () => {
+    const {default: App} = await import('./App.js');
+    const url = new URL('/api/connect', window.location.href);
+    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+
+    render(<App />);
+
+    expect(globalThis.WebSocket).toHaveBeenCalledWith(url.toString());
   });
 
   it('renders each game screen from header controls', async () => {
@@ -91,5 +111,18 @@ describe('Game App', () => {
 
     await user.click(screen.getByRole('button', {name: 'We have to go back'}));
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
+  });
+
+  it('closes the websocket when the app unmounts', async () => {
+    const close = vi.fn();
+    globalThis.WebSocket = vi.fn(function () {
+      return {close};
+    });
+    const {default: App} = await import('./App.js');
+
+    const {unmount} = render(<App />);
+    unmount();
+
+    expect(close).toHaveBeenCalledTimes(1);
   });
 });
