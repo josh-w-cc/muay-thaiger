@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS players (
   password TEXT,
   token TEXT NOT NULL,
   last_active_at TIMESTAMPTZ,
+  cheater DOUBLE PRECISION NOT NULL DEFAULT 0 CHECK (cheater >= 0 AND cheater <= 1),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
