@@ -50,7 +50,7 @@ vi.mock('../../orig/src/menus/Train', () => ({
   },
 }));
 
-describe('Dashboard App', () => {
+describe('Game App', () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -61,7 +61,7 @@ describe('Dashboard App', () => {
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
   });
 
-  it('renders each dashboard screen from header controls', async () => {
+  it('renders each game screen from header controls', async () => {
     const user = userEvent.setup();
     const {default: App} = await import('./App.js');
 
