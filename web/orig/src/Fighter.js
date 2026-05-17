@@ -2,7 +2,7 @@ import React from 'react';
 import {makeAutoObservable} from 'mobx';
 
 import BaseStats from './menus/CharacterSelect/BaseStats.jsx';
-import {TickerState} from './Ticker.js';
+import {TickerState} from '../../pages/Game/Ticker.js';
 
 
 class Fighter {
