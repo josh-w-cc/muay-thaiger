@@ -1,8 +1,8 @@
 export const SEED_PLAYERS = [
-  {display_name: 'RamrodRit', id: 1, level: 5},
-  {display_name: 'SaklekSilva', id: 2, level: 11},
-  {display_name: 'ChokdeeChen', id: 3, level: 17},
-  {display_name: 'TigerJab', id: 4, level: 2},
+  {display_name: 'RamrodRit', id: 1},
+  {display_name: 'SaklekSilva', id: 2},
+  {display_name: 'ChokdeeChen', id: 3},
+  {display_name: 'TigerJab', id: 4},
 ];
 
 export async function seed(knex) {

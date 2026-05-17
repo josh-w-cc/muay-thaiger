@@ -3,10 +3,6 @@ CREATE TABLE IF NOT EXISTS players (
   display_name TEXT NOT NULL,
   email TEXT,
   password TEXT,
-  level SMALLINT NOT NULL DEFAULT 1,
-  experience INTEGER NOT NULL DEFAULT 0,
-  fight_losses INTEGER NOT NULL DEFAULT 0,
-  fight_wins INTEGER NOT NULL DEFAULT 0,
   last_active_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
