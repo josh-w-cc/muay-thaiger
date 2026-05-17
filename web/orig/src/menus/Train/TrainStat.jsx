@@ -4,7 +4,7 @@ import {observer} from 'mobx-react';
 import Button from '../../components/Button';
 import Fighter from '../../Fighter.js';
 
-import css from './TrainStat.module.css';
+import css from './Train.module.css';
 
 
 function TrainStat({name, stat}) {

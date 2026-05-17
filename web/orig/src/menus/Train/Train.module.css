@@ -6,5 +6,5 @@
 .idleActive:hover {
   background-color: var(--color-gold);
   border-color: var(--color-gold);
-  color: #1a1a1a;
+  color: var(--color-on-gold);
 }
