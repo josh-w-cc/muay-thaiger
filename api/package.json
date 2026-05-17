@@ -1,0 +1,48 @@
+{
+  "name": "api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#api/*.js": "./*.js"
+  },
+  "scripts": {
+    "dev": "node --watch index.js",
+    "lint": "eslint --config config/eslint.config.js --fix .",
+    "lint:ci": "eslint --config config/eslint.config.js .",
+    "migrate": "knex migrate:latest --knexfile data/knexfile.js",
+    "migrate:make": "knex migrate:make --knexfile data/knexfile.js",
+    "migrate:rollback": "knex migrate:rollback --knexfile data/knexfile.js",
+    "migrate:seed": "knex seed:run --knexfile data/knexfile.js",
+    "start": "node index.js",
+    "test": "node --test",
+    "test:coverage": "c8 node --test"
+  },
+  "dependencies": {
+    "@fastify/static": "^9.1.3",
+    "fastify": "^5",
+    "fastify-plugin": "^5",
+    "knex": "^3.2.10",
+    "pg": "^8.20.0",
+    "toad-scheduler": "^4.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10",
+    "@stylistic/eslint-plugin": "^5",
+    "c8": "^11",
+    "eslint": "^10",
+    "globals": "^17"
+  },
+  "c8": {
+    "branches": 95,
+    "check-coverage": true,
+    "exclude": [
+      "**/*.test.js",
+      "data/seed-data/**",
+      "data/utils/mock-knex.js"
+    ],
+    "functions": 95,
+    "lines": 95,
+    "statements": 95
+  }
+}

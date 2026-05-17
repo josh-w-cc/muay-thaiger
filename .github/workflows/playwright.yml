@@ -1,0 +1,104 @@
+name: Playwright
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/playwright.yml'
+      - 'docker-compose.yml'
+      - 'api/Dockerfile'
+      - 'playwright/Dockerfile'
+      - 'web/Dockerfile'
+  pull_request:
+    paths:
+      - '.github/workflows/playwright.yml'
+      - 'api/**'
+      - '!api/AGENTS.md'
+      - 'docker-compose.yml'
+      - 'playwright/**'
+      - '!playwright/AGENTS.md'
+      - 'web/**'
+      - '!web/AGENTS.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: playwright
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 25
+          cache: npm
+          cache-dependency-path: playwright/package-lock.json
+      - run: npm ci
+      - run: npm run lint:ci
+
+  playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache Docker base images
+        id: docker-cache
+        uses: actions/cache@v5
+        with:
+          path: /tmp/docker-images.tar.gz
+          key: docker-images-${{ runner.os }}-${{ hashFiles('docker-compose.yml', 'api/Dockerfile', 'web/Dockerfile', 'playwright/Dockerfile') }}
+          restore-keys: |
+            docker-images-${{ runner.os }}-
+
+      - name: Load cached Docker images
+        id: docker-load
+        if: steps.docker-cache.outputs.cache-hit == 'true'
+        continue-on-error: true
+        run: gunzip -c /tmp/docker-images.tar.gz | docker load
+
+      - name: Pull Docker base images
+        if: steps.docker-cache.outputs.cache-hit != 'true' || steps.docker-load.outcome == 'failure'
+        run: |
+          base=$(awk '/^FROM/{print $2}' api/Dockerfile web/Dockerfile playwright/Dockerfile)
+          echo postgres:18 $base | xargs -n1 docker pull
+
+      - name: Save Docker base images to cache
+        if: steps.docker-cache.outputs.cache-hit != 'true'
+        run: |
+          set -o pipefail
+          base=$(awk '/^FROM/{print $2}' api/Dockerfile web/Dockerfile playwright/Dockerfile)
+          docker save postgres:18 $base | gzip > /tmp/docker-images.tar.gz
+
+      - name: Start services
+        run: docker compose up -d --wait --build postgres api web
+        timeout-minutes: 5
+
+      - name: Run Playwright tests
+        run: docker compose run --rm playwright
+        timeout-minutes: 10
+
+      - name: Docker logs
+        if: failure()
+        run: docker compose logs
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright/playwright-report/
+          retention-days: 14
+
+      - name: Stop services
+        if: always()
+        run: docker compose down
