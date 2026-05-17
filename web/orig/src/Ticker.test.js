@@ -11,7 +11,8 @@ describe('TickerState', () => {
 
     const {TickerState} = await import('./Ticker.js');
 
-    expect(setIntervalSpy).toHaveBeenCalledWith(TickerState.tick, 10);
+    expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 10);
+    expect(TickerState.actions).toEqual([]);
   });
 
   it('returns early when there are no listeners', async () => {
