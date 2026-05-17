@@ -19,15 +19,9 @@ h1 {
   line-height: 1.1;
 }
 
-h2,
-h3 {
-  font-family: var(--font-accent);
-}
-
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  font-family: var(--font-accent);
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
