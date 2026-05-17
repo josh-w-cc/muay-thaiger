@@ -62,6 +62,16 @@ const Skills = {
     },
     requires: (fighter) => fighter.stamina > 10000 && fighter.constitution > 100,
   },
+  gymnastics: {
+    name: 'Gymnastics',
+    action: (fighter) => {
+      fighter.train('stamina', 15);
+      fighter.train('strength', 15);
+      fighter.train('constitution', 5);
+      fighter.train('agility', 25);
+    },
+    requires: (fighter) => fighter.stamina > 10000 && fighter.strength > 1000 && fighter.constitution > 1000 && fighter.agility > 1000,
+  },
 };
 
 export default Skills;
