@@ -1,13 +1,17 @@
 import useInventoryStore, {COST_MULTIPLIER, resetInventoryStore} from './Inventory.js';
 
 
+const AFFORDABLE_GOLD = 600;
+const UNAFFORDABLE_GOLD = 499;
+
+
 describe('useInventoryStore', () => {
   afterEach(() => {
     resetInventoryStore();
   });
 
   it('buys an item when the fighter can afford it', () => {
-    const {fighter, spend} = createMockFighter(600);
+    const {fighter, spend} = createMockFighter(AFFORDABLE_GOLD);
     const item = {cost: 5};
 
     useInventoryStore.getState().buy(fighter, item);
@@ -17,7 +21,7 @@ describe('useInventoryStore', () => {
   });
 
   it('does not buy an item when the fighter cannot afford it', () => {
-    const {fighter, spend} = createMockFighter(499);
+    const {fighter, spend} = createMockFighter(UNAFFORDABLE_GOLD);
     const item = {cost: 5};
 
     useInventoryStore.getState().buy(fighter, item);
