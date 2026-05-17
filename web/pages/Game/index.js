@@ -16,6 +16,14 @@ export function loader() {
 
 export default function Game() {
   const [screen, setScreen] = React.useState('character-select');
+
+  React.useEffect(() => {
+    const socket = new WebSocket(createWebSocketURL());
+    return () => {
+      socket.close();
+    };
+  }, []);
+
   if(screen === 'character-select') {
     return <CharacterSelect onExit={() => setScreen('hub')} />;
   }
@@ -26,6 +34,12 @@ export default function Game() {
       {renderScreen(screen, setScreen)}
     </>
   );
+}
+
+function createWebSocketURL() {
+  const url = new URL('/ws/connect', window.location.href);
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  return url.toString();
 }
 
 function getFallback(setScreen) {
