@@ -1,14 +1,13 @@
 import React from 'react';
-import {observer} from 'mobx-react';
 
 import Button from '../../components/Button.jsx';
-import Inventory from '../../Inventory.js';
 import useFighterStore from '../../Fighter.js';
+import useInventoryStore from '../../Inventory.js';
 import Items from './Items.js';
 
 
 function Shop() {
-  const items = React.useContext(Inventory);
+  const buy = useInventoryStore((state) => state.buy);
   const fighter = useFighterStore();
 
   return (<>
@@ -17,10 +16,10 @@ function Shop() {
       {Items[i].name}
       {' '}
       {Items[i].cost}฿
-      <Button onClick={() => items.buy(fighter, Items[i])}>Buy</Button>
+      <Button onClick={() => buy(fighter, Items[i])}>Buy</Button>
       <br />
     </>)}
   </>);
 }
 
-export default observer(Shop);
+export default Shop;

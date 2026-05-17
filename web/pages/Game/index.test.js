@@ -1,19 +1,17 @@
 import {render, screen} from '@testing-library/react';
 
-vi.mock('./Game.js', () => ({
-  default: () => <div data-testid="game-app" />,
-}));
-
+import {TickerState} from './Ticker.js';
 
 describe('Game', () => {
   afterEach(() => {
+    TickerState.actions.splice(0);
     vi.clearAllMocks();
   });
 
   it('renders the game app', async () => {
     const {default: Game} = await import('./index.js');
     render(<Game />);
-    expect(screen.getByTestId('game-app')).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: 'Choose your fighter:'})).toBeInTheDocument();
   });
 
   it('loader returns null', async () => {
