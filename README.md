@@ -5,7 +5,7 @@ Muay Thaiger is a PvP incremental fighting game where players choose an anthropo
 Built with:
 
 - **[Fastify](https://fastify.dev/)** – fast Node.js API server (JavaScript)
-- **[Vite](https://vitejs.dev/) + React** – frontend SPA (TypeScript)
+- **[Vite](https://vitejs.dev/) + React** – frontend SPA (JavaScript)
 - **[PostgreSQL](https://www.postgresql.org/)** – relational database (v18)
 - **[Docker Compose](https://docs.docker.com/compose/)** – local orchestration
 - **[Playwright](https://playwright.dev/)** – end-to-end tests
