@@ -1,4 +1,4 @@
-# muay-thaiger
+# Muay Thaiger
 
 Muay Thaiger is a PvP incremental fighting game where players choose an anthropomorphic animal race and martial art style, train their character, and enter fights mostly against bots with occasional real-player matchups.
 
