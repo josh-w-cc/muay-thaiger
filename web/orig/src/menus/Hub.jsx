@@ -1,10 +1,9 @@
 import React from 'react';
-import {observer} from 'mobx-react';
 
-import Fighter from '../Fighter.js';
+import useFighterStore from '../Fighter.js';
 
 function Hub() {
-  const fighter = React.useContext(Fighter);
+  const fighter = useFighterStore();
 
   return (<>
     <h1>HUB</h1>
@@ -29,4 +28,4 @@ function Hub() {
   </>);
 }
 
-export default observer(Hub);
+export default Hub;
