@@ -48,7 +48,7 @@ function getMain(screen, setScreen) {
 function getFallback(setScreen) {
   return (
     <>
-      <h1>Yuo broke it!?</h1>
+      <h1>You broke it!?</h1>
       <button onClick={() => setScreen('hub')}>We have to go back</button>
     </>
   );
