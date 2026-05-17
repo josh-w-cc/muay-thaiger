@@ -1,5 +1,5 @@
 :root {
-  --font-accent: 'Sriracha', 'Brush Script MT', 'Segoe Script', 'Lucida Handwriting', cursive;
+  --font-heading-accent: 'Sriracha', 'Brush Script MT', 'Segoe Script', 'Lucida Handwriting', cursive;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   color: rgba(255, 255, 255, 0.87);
   background-color: #333333;
@@ -14,7 +14,7 @@ body {
 }
 
 h1 {
-  font-family: var(--font-accent);
+  font-family: var(--font-heading-accent);
   font-size: 3.2em;
   line-height: 1.1;
 }
