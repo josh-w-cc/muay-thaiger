@@ -1,4 +1,4 @@
-import App from '../../orig/src/App.jsx';
+import App from './App.js';
 import '../../orig/src/index.css';
 
 export function loader() {
