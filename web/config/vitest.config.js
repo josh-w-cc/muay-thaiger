@@ -26,6 +26,7 @@ export default defineConfig({
   test: {
     coverage: {
       exclude: [
+        '**/*.{avif,gif,ico,jpeg,jpg,png,svg,webp}',
         'config/**',
         'dist/**',
         'index.html',
