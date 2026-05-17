@@ -1,35 +1,39 @@
 import React from 'react';
-import {makeAutoObservable} from 'mobx';
+import {createStore} from 'zustand/vanilla';
 
 
-class Ticker {
-  constructor() {
-    this.actions = [];
-    this.lastAction = +new Date();
+const tickerStore = createStore(() => ({
+  actions: [],
+  lastAction: +new Date(),
+}));
 
-    makeAutoObservable(this, {}, {autoBind: true});
-
-    setInterval(this.tick, 10);
-  }
-
-
+export const TickerState = {
   addListener(action) {
-    this.actions.push(action);
-  }
+    tickerStore.setState((state) => ({actions: [...state.actions, action]}));
+  },
+
+  get actions() {
+    return tickerStore.getState().actions;
+  },
+
+  get lastAction() {
+    return tickerStore.getState().lastAction;
+  },
 
   tick() {
-    if(!this.actions.length) {
+    const {actions, lastAction} = tickerStore.getState();
+    if(!actions.length) {
       return;
     }
+
     const now = +new Date();
-    if(this.lastAction < now) {
-      const delta = now - this.lastAction;
-      this.lastAction = now;
-      this.actions.forEach((action) => action(delta));
+    if(lastAction < now) {
+      const delta = now - lastAction;
+      tickerStore.setState({lastAction: now});
+      actions.forEach((action) => action(delta));
     }
-  }
-}
+  },
+};
 
-
-export const TickerState = new Ticker();
+setInterval(TickerState.tick, 10);
 export default React.createContext(TickerState);
