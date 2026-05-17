@@ -1,30 +1,30 @@
-import React from 'react';
-import {makeAutoObservable} from 'mobx';
-
-import {TickerState} from '../../pages/Game/Ticker.js';
+import {create} from 'zustand';
 
 
-class Inventory {
-  constructor() {
-    this.items = [];
+export const COST_MULTIPLIER = 100;
 
-    TickerState.addListener((delta) => this.tick(delta));
-    makeAutoObservable(this, {}, {autoBind: true});
-  }
 
+const useInventoryStore = create((set) => ({
+  ...getInitialState(),
   buy(fighter, item) {
-    if(fighter.gold < item.cost * 100) {
+    if(fighter.gold < item.cost * COST_MULTIPLIER) {
       return;
     }
-    this.items.push(item);
-    fighter.spend(item.cost * 100);
-  }
+    set((state) => ({items: [...state.items, item]}));
+    fighter.spend(item.cost * COST_MULTIPLIER);
+  },
+}));
 
-  tick(delta) {
-    console.log(delta);
-    console.log(this.items);
-  }
+export default useInventoryStore;
+
+
+export function resetInventoryStore() {
+  useInventoryStore.setState(getInitialState());
 }
 
 
-export default React.createContext(new Inventory());
+function getInitialState() {
+  return {
+    items: [],
+  };
+}

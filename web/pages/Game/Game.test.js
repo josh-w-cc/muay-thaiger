@@ -42,14 +42,14 @@ describe('Game', () => {
   });
 
   it('renders the character select screen first', async () => {
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
     render(<Game />);
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
   });
 
   it('renders each game screen from header controls', async () => {
     const user = userEvent.setup();
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     render(<Game />);
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
@@ -70,7 +70,7 @@ describe('Game', () => {
 
   it('renders and recovers from the fallback screen', async () => {
     const user = userEvent.setup();
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     render(<Game />);
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
