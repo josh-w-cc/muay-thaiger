@@ -24,7 +24,7 @@
 body {
   background-color: var(--color-bg);
   color: var(--color-fg);
-  font-family: system-ui, sans-serif;
+  font-family: 'Sriracha', system-ui, sans-serif;
   margin: 0;
   padding: 0;
 }
