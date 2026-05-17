@@ -2,45 +2,49 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
-  default: function CharacterSelect({onExit}) {
+  default: function MockCharacterSelect({onExit}) {
     return <button onClick={onExit}>Character Select</button>;
   },
 }));
 
 vi.mock('../../orig/src/menus/Fight', () => ({
-  default: function Fight() {
+  default: function MockFight() {
     return <h2>Fight Screen</h2>;
   },
 }));
 
 vi.mock('../../orig/src/menus/Header.jsx', () => ({
-  default: function Header({setScreen}) {
+  default: function MockHeader({setScreen}) {
     return (
       <>
         <button onClick={() => setScreen('hub')}>Go Hub</button>
         <button onClick={() => setScreen('fight')}>Go Fight</button>
         <button onClick={() => setScreen('shop')}>Go Shop</button>
         <button onClick={() => setScreen('train')}>Go Train</button>
-        <button onClick={() => setScreen('broken')}>Go Broken</button>
       </>
     );
   },
 }));
 
 vi.mock('../../orig/src/menus/Hub.jsx', () => ({
-  default: function Hub() {
-    return <h2>Hub Screen</h2>;
+  default: function MockHub({setScreen}) {
+    return (
+      <>
+        <h2>Hub Screen</h2>
+        <button onClick={() => setScreen('broken')}>Break Screen</button>
+      </>
+    );
   },
 }));
 
 vi.mock('../../orig/src/menus/Shop', () => ({
-  default: function Shop() {
+  default: function MockShop() {
     return <h2>Shop Screen</h2>;
   },
 }));
 
 vi.mock('../../orig/src/menus/Train', () => ({
-  default: function Train() {
+  default: function MockTrain() {
     return <h2>Train Screen</h2>;
   },
 }));
@@ -81,7 +85,7 @@ describe('Dashboard App', () => {
 
     render(<App />);
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
-    await user.click(screen.getByRole('button', {name: 'Go Broken'}));
+    await user.click(screen.getByRole('button', {name: 'Break Screen'}));
 
     expect(screen.getByRole('heading', {name: 'You broke it!?'})).toBeInTheDocument();
 
