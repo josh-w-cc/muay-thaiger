@@ -1,4 +1,5 @@
 import React from 'react';
+import {observer} from 'mobx-react';
 
 import Button from '../../components/Button.jsx';
 import Inventory from '../../Inventory.js';
@@ -22,4 +23,4 @@ function Shop() {
   </>);
 }
 
-export default Shop;
+export default observer(Shop);

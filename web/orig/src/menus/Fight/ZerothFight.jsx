@@ -1,4 +1,5 @@
 import React from 'react';
+import {observer} from 'mobx-react';
 
 import Fighter from '../../Fighter.js';
 
@@ -24,7 +25,7 @@ function ZerothFight() {
   </div>);
 }
 
-export default ZerothFight;
+export default observer(ZerothFight);
 
 
 export function needsZerothFight(fighter) {

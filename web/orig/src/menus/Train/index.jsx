@@ -1,4 +1,5 @@
 import React from 'react';
+import {observer} from 'mobx-react';
 
 import Button from '../../components/Button';
 import Fighter from '../../Fighter.js';
@@ -28,4 +29,4 @@ function Train() {
   </>);
 }
 
-export default Train;
+export default observer(Train);
