@@ -2,9 +2,12 @@
   --color-bg: #333333;
   --color-fg: rgba(255, 255, 255, 0.87);
   --color-border: #e0e0e0;
+  --color-gold: #c9952a;
   --color-muted: #666666;
   --color-primary: #0070f3;
   --color-primary-hover: #0051a2;
+  --color-red: #c0392b;
+  --color-red-hover: #962d22;
   --radius-sm: 4px;
   --radius-md: 8px;
   --space-xs: 4px;
