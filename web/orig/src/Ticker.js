@@ -35,5 +35,5 @@ export const TickerState = {
   },
 };
 
-setInterval(TickerState.tick, 10);
+setInterval(() => TickerState.tick(), 10);
 export default React.createContext(TickerState);
