@@ -55,13 +55,13 @@ describe('Game', () => {
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
-    await user.click(screen.getByRole('button', {name: 'Hub'}));
-    expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
-
     await user.click(screen.getByRole('button', {name: 'Fight'}));
     expect(screen.getByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', {name: 'SHOP'}));
+    await user.click(screen.getByRole('button', {name: 'Hub'}));
+    expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', {name: /shop/i}));
     expect(screen.getByRole('heading', {name: 'Shop Screen'})).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', {name: 'Train'}));
