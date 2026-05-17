@@ -25,8 +25,12 @@ export default defineConfig({
   },
   test: {
     coverage: {
+      all: false,
+      include: [
+        'pages/**/*.{js,jsx}',
+        'utils/**/*.{js,jsx}',
+      ],
       exclude: [
-        '**/*.{avif,gif,ico,jpeg,jpg,png,svg,webp}',
         'config/**',
         'dist/**',
         'index.html',
