@@ -4,9 +4,10 @@ import {TickerState} from '../../pages/Game/Ticker.js';
 
 
 export const COST_MULTIPLIER = 100;
+const INVENTORY_TICKER_LISTENER_KEY = 'muayThaigerInventoryTickerListenerRegistered';
 
 
-const useInventoryStore = create((set, get) => ({
+const useInventoryStore = create((set) => ({
   ...getInitialState(),
   buy(fighter, item) {
     if(fighter.gold < item.cost * COST_MULTIPLIER) {
@@ -16,13 +17,10 @@ const useInventoryStore = create((set, get) => ({
     fighter.spend(item.cost * COST_MULTIPLIER);
   },
 
-  tick(delta) {
-    console.log(delta);
-    console.log(get().items);
-  },
+  tick() {},
 }));
 
-TickerState.addListener((delta) => useInventoryStore.getState().tick(delta));
+registerTickerListener();
 
 export default useInventoryStore;
 
@@ -36,4 +34,12 @@ function getInitialState() {
   return {
     items: [],
   };
+}
+
+function registerTickerListener() {
+  if(globalThis[INVENTORY_TICKER_LISTENER_KEY]) {
+    return;
+  }
+  TickerState.addListener((delta) => useInventoryStore.getState().tick(delta));
+  globalThis[INVENTORY_TICKER_LISTENER_KEY] = true;
 }
