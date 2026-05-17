@@ -1,4 +1,4 @@
-import App from './App.js';
+import GameApp from './Game.js';
 import '../../orig/src/index.css';
 
 export function loader() {
@@ -6,5 +6,5 @@ export function loader() {
 }
 
 export default function Game() {
-  return <App />;
+  return <GameApp />;
 }
