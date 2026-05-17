@@ -25,7 +25,7 @@ class Ticker {
     if(this.lastAction < now) {
       const delta = now - this.lastAction;
       this.lastAction = now;
-      this.actions.forEach(action => action(delta));
+      this.actions.forEach((action) => action(delta));
     }
   }
 }

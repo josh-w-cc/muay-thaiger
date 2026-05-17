@@ -34,7 +34,7 @@ export default [
       ...react.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       'brace-style': ['error', 'stroustrup'],
-      complexity: ['error', 5],
+      'complexity': ['error', 5],
       'generator-star-spacing': ['error', {before: true, after: false}],
       'keyword-spacing': [
         'error', {
@@ -65,7 +65,7 @@ export default [
       '@stylistic/js/indent': ['error', 2, {SwitchCase: 1}],
       '@stylistic/js/max-statements-per-line': 'error',
       '@stylistic/js/no-extra-semi': 'error',
-      '@stylistic/js/object-curly-newline': ['error', {consistent: true, minProperties: 5, multiline: true} ],
+      '@stylistic/js/object-curly-newline': ['error', {consistent: true, minProperties: 5, multiline: true}],
       '@stylistic/js/quote-props': ['error', 'as-needed'],
       '@stylistic/js/quotes': ['error', 'single'],
       '@stylistic/js/semi': 'error',
