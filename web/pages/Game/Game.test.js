@@ -15,19 +15,6 @@ vi.mock('../../orig/src/menus/Fight', () => ({
   },
 }));
 
-vi.mock('./Header.js', () => ({
-  default: function MockHeader({setScreen}) {
-    return (
-      <>
-        <button onClick={() => setScreen('hub')}>Go Hub</button>
-        <button onClick={() => setScreen('fight')}>Go Fight</button>
-        <button onClick={() => setScreen('shop')}>Go Shop</button>
-        <button onClick={() => setScreen('train')}>Go Train</button>
-      </>
-    );
-  },
-}));
-
 vi.mock('../../orig/src/menus/Hub.jsx', () => ({
   default: function MockHub({setScreen}) {
     return (
@@ -89,14 +76,16 @@ describe('Game', () => {
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', {name: 'Go Fight'}));
+    await user.click(screen.getByRole('button', {name: /fight/i}));
     expect(screen.getByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', {name: 'Go Shop'}));
+    await user.click(screen.getByRole('button', {name: /hub/i}));
+    expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', {name: /shop/i}));
     expect(screen.getByRole('heading', {name: 'Shop Screen'})).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', {name: 'Go Train'}));
+    await user.click(screen.getByRole('button', {name: /train/i}));
     expect(screen.getByRole('heading', {name: 'Train Screen'})).toBeInTheDocument();
   });
 
