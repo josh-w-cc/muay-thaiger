@@ -4,6 +4,7 @@ import CharacterSelect from './menus/CharacterSelect';
 import Fight from './menus/Fight';
 import Header from './menus/Header.jsx';
 import Hub from './menus/Hub.jsx';
+import Shop from './menus/Shop';
 import Train from './menus/Train';
 
 import './App.css';
@@ -18,6 +19,9 @@ function App() {
       break;
     case 'fight':
       content = (<Fight />);
+      break;
+    case 'shop':
+      content = (<Shop />);
       break;
     case 'train':
       content = (<Train />);

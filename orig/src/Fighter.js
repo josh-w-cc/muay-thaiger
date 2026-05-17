@@ -8,7 +8,7 @@ import {TickerState} from './Ticker.js';
 class Fighter {
   constructor() {
     this.idling = false;
-    this.gold = 100;
+    this.gold = 0;
     this.select(Object.keys(BaseStats).pop()); // Select whatever for initialization
 
     TickerState.addListener((delta) => this.tick(delta));
@@ -96,7 +96,7 @@ class Fighter {
     this.gold += gold;
   }
 
-  lose(gold) {
+  spend(gold) {
     this.gold -= gold;
   }
 }

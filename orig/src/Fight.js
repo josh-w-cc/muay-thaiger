@@ -89,7 +89,7 @@ class Fight {
         this.fighters[0].stats.win(this.bet);
       }
       else {
-        this.fighters[0].stats.lose(this.bet);
+        this.fighters[0].stats.spend(this.bet);
       }
 
       this.fighters[0].stats.train('skill', 1);
