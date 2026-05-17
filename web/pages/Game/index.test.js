@@ -1,7 +1,10 @@
 import {render, screen} from '@testing-library/react';
 
+import {TickerState} from './Ticker.js';
+
 describe('Game', () => {
   afterEach(() => {
+    TickerState.actions.length = 0;
     vi.clearAllMocks();
   });
 
