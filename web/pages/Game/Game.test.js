@@ -63,7 +63,7 @@ describe('Game', () => {
   it('connects to the websocket when the game loads', async () => {
     const {default: Game} = await import('./index.js');
 
-    render(<Game />);
+    renderGame({Game});
 
     const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
 
@@ -80,7 +80,7 @@ describe('Game', () => {
     globalThis.window = secureWindow;
     const {default: Game} = await import('./index.js');
 
-    render(<Game />);
+    renderGame({Game});
 
     const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
 
@@ -144,7 +144,7 @@ describe('Game', () => {
     });
     const {default: Game} = await import('./index.js');
 
-    const {unmount} = render(<Game />);
+    const {unmount} = renderGame({Game});
     unmount();
 
     expect(close).toHaveBeenCalledTimes(1);
@@ -152,7 +152,7 @@ describe('Game', () => {
 });
 
 function renderGame({Game, initialPath = '/'}) {
-  render(
+  return render(
     <MemoryRouter initialEntries={[initialPath]}>
       <Routes>
         <Route element={<Game />} path="/:screen?" />
