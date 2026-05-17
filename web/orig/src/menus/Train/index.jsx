@@ -1,8 +1,7 @@
 import React from 'react';
-import {observer} from 'mobx-react';
 
 import Button from '../../components/Button';
-import Fighter from '../../Fighter.js';
+import useFighterStore from '../../Fighter.js';
 import Skills from './Skills.jsx';
 import TrainStat from './TrainStat.jsx';
 
@@ -10,7 +9,7 @@ import css from './Train.module.css';
 
 
 function Train() {
-  const fighter = React.useContext(Fighter);
+  const fighter = useFighterStore();
 
   return (<>
     <h1>Training</h1>
@@ -33,4 +32,4 @@ function Train() {
   </>);
 }
 
-export default observer(Train);
+export default Train;
