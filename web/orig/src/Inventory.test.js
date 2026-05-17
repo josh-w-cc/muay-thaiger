@@ -1,4 +1,4 @@
-import useInventoryStore, {resetInventoryStore} from './Inventory.js';
+import useInventoryStore, {COST_MULTIPLIER, resetInventoryStore} from './Inventory.js';
 
 
 describe('useInventoryStore', () => {
@@ -13,7 +13,7 @@ describe('useInventoryStore', () => {
     useInventoryStore.getState().buy(fighter, item);
 
     expect(useInventoryStore.getState().items).toEqual([item]);
-    expect(spend).toHaveBeenCalledWith(item.cost * 100);
+    expect(spend).toHaveBeenCalledWith(item.cost * COST_MULTIPLIER);
   });
 
   it('does not buy an item when the fighter cannot afford it', () => {

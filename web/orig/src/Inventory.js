@@ -3,14 +3,17 @@ import {create} from 'zustand';
 import {TickerState} from '../../pages/Game/Ticker.js';
 
 
+export const COST_MULTIPLIER = 100;
+
+
 const useInventoryStore = create((set, get) => ({
   ...getInitialState(),
   buy(fighter, item) {
-    if(fighter.gold < item.cost * 100) {
+    if(fighter.gold < item.cost * COST_MULTIPLIER) {
       return;
     }
     set((state) => ({items: [...state.items, item]}));
-    fighter.spend(item.cost * 100);
+    fighter.spend(item.cost * COST_MULTIPLIER);
   },
 
   tick(delta) {
