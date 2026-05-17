@@ -1,3 +1,8 @@
+export const SEED_CHARACTERS = [
+  {display_name: 'RamrodRit Jr', id: 1, player_id: 1, race: 1},
+  {display_name: 'SaklekSilva Jr', id: 2, player_id: 2, race: 2},
+];
+
 export const SEED_PLAYERS = [
   {display_name: 'RamrodRit', id: 1, token: 'seed-token-ramrodrit'},
   {display_name: 'SaklekSilva', id: 2, token: 'seed-token-sakleksilva'},
@@ -23,12 +28,20 @@ export const SEED_ENTITIES = [
 export async function seed(knex) {
   await insertPlayers(knex);
   await insertEntities(knex);
+  await insertCharacters(knex);
   await resetSequences(knex);
 }
 
 async function insertPlayers(knex) {
   await knex('players')
     .insert(SEED_PLAYERS)
+    .onConflict('id')
+    .ignore();
+}
+
+async function insertCharacters(knex) {
+  await knex('characters')
+    .insert(SEED_CHARACTERS)
     .onConflict('id')
     .ignore();
 }
@@ -41,6 +54,10 @@ async function insertEntities(knex) {
 }
 
 async function resetSequences(knex) {
+  await knex.raw(
+    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "characters"), 0) + 1, false)`,
+    ['characters'],
+  );
   await knex.raw(
     `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "players"), 0) + 1, false)`,
     ['players'],
