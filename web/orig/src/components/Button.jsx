@@ -2,8 +2,9 @@ import React from 'react';
 
 import css from './Button.module.css';
 
-function Button ({onClick, style, children}) {
-  return (<button className={css.button} style={style} onClick={onClick}>
+function Button ({children, className, onClick, style}) {
+  const classes = [css.button, className].filter(Boolean).join(' ');
+  return (<button className={classes} style={style} onClick={onClick}>
     {children}
   </button>);
 }

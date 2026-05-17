@@ -5,6 +5,8 @@ import useFighterStore from '../../Fighter.js';
 import Skills from './Skills.jsx';
 import TrainStat from './TrainStat.jsx';
 
+import css from './Train.module.css';
+
 
 function Train() {
   const fighter = useFighterStore();
@@ -20,8 +22,10 @@ function Train() {
     <h3>Skills:</h3>
     {Object.keys(Skills).filter(s => Skills[s].requires(fighter)).map(s => <div key={s}>{Skills[s].name}
       <Button onClick={() => Skills[s].action(fighter)}>Once</Button>
-      <Button onClick={() =>
-        fighter.idle(`train-${s}`, () => Skills[s].action(fighter))} style={{color: fighter.idling?.key === `train-${s}` ? 'orange' : 'blue'}}>
+      <Button
+        className={fighter.idling?.key === `train-${s}` ? css.idleActive : ''}
+        onClick={() => fighter.idle(`train-${s}`, () => Skills[s].action(fighter))}
+      >
         Idle
       </Button>
     </div>)}

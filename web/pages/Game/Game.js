@@ -2,15 +2,15 @@ import React from 'react';
 
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
-import Header from '../../orig/src/menus/Header.jsx';
+import Header from './Header.js';
 import Hub from '../../orig/src/menus/Hub.jsx';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
 
-import './App.css';
+import './Game.css';
 
 
-export default function App() {
+export default function Game() {
   const [screen, setScreen] = React.useState('character-select');
   if(screen === 'character-select') {
     return <CharacterSelect onExit={() => setScreen('hub')} />;

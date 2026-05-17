@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 
 import BaseStats from './menus/CharacterSelect/BaseStats.jsx';
-import {TickerState} from './Ticker.js';
+import {TickerState} from '../../pages/Game/Ticker.js';
 
 
 const initialRace = Object.keys(BaseStats).pop();
