@@ -14,7 +14,7 @@ vi.mock('../../orig/src/menus/Fight', () => ({
   },
 }));
 
-vi.mock('../../orig/src/menus/Header.jsx', () => ({
+vi.mock('./Header.js', () => ({
   default: function MockHeader({setScreen}) {
     return (
       <>

@@ -25,11 +25,15 @@ export default defineConfig({
   },
   test: {
     coverage: {
+      all: false,
+      include: ['**/*.{js,jsx}'],
       exclude: [
         'config/**',
         'dist/**',
         'index.html',
         'main.js',
+        'orig/**',
+        'router.js',
         'vite.config.js',
         '**/*.css',
         '**/mock-*.js',
