@@ -2,6 +2,7 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const originalWebSocket = globalThis.WebSocket;
+const originalWindow = globalThis.window;
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
@@ -48,6 +49,7 @@ describe('Game', () => {
   afterEach(() => {
     vi.clearAllMocks();
     globalThis.WebSocket = originalWebSocket;
+    globalThis.window = originalWindow;
   });
 
   it('renders the character select screen first', async () => {
@@ -66,6 +68,21 @@ describe('Game', () => {
     expect(socketURL.host).toBe(window.location.host);
     expect(socketURL.pathname).toBe('/ws/connect');
     expect(socketURL.protocol).toBe('ws:');
+  });
+
+  it('uses the secure websocket protocol on https pages', async () => {
+    const secureWindow = Object.create(window);
+    Object.defineProperty(secureWindow, 'location', {
+      value: new URL('https://example.test/game'),
+    });
+    globalThis.window = secureWindow;
+    const {default: Game} = await import('./Game.js');
+
+    render(<Game />);
+
+    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+
+    expect(socketURL.protocol).toBe('wss:');
   });
 
   it('renders each game screen from header controls', async () => {
