@@ -12,25 +12,28 @@ import './App.css';
 
 export default function App() {
   const [screen, setScreen] = React.useState('character-select');
-  const content = getContent(screen, setScreen);
-
-  return content || (
-    <>
-      <Header setScreen={setScreen} />
-      {getMain(screen, setScreen)}
-    </>
-  );
-}
-
-function getContent(screen, setScreen) {
   if(screen === 'character-select') {
     return <CharacterSelect onExit={() => setScreen('hub')} />;
   }
 
-  return null;
+  return (
+    <>
+      <Header setScreen={setScreen} />
+      {renderScreen(screen, setScreen)}
+    </>
+  );
 }
 
-function getMain(screen, setScreen) {
+function getFallback(setScreen) {
+  return (
+    <>
+      <h1>You broke it!?</h1>
+      <button onClick={() => setScreen('hub')}>We have to go back</button>
+    </>
+  );
+}
+
+function renderScreen(screen, setScreen) {
   switch(screen) {
     case 'hub':
       return <Hub setScreen={setScreen} />;
@@ -43,13 +46,4 @@ function getMain(screen, setScreen) {
     default:
       return getFallback(setScreen);
   }
-}
-
-function getFallback(setScreen) {
-  return (
-    <>
-      <h1>You broke it!?</h1>
-      <button onClick={() => setScreen('hub')}>We have to go back</button>
-    </>
-  );
 }
