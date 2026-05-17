@@ -4,7 +4,7 @@ import {TickerState} from './Ticker.js';
 
 describe('Game', () => {
   afterEach(() => {
-    TickerState.actions.length = 0;
+    TickerState.actions.splice(0);
     vi.clearAllMocks();
   });
 
