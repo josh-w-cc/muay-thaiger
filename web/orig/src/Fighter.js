@@ -35,15 +35,15 @@ const useFighterStore = create((set, get) => ({
         },
       }));
 
-      const {idling: nextIdling} = get();
-      if(nextIdling.delta > 1000) {
-        nextIdling.action();
-        const {idling: updatedIdling} = get();
-        if(updatedIdling) {
+      const {idling: idlingAfterDeltaUpdate} = get();
+      if(idlingAfterDeltaUpdate.delta > 1000) {
+        idlingAfterDeltaUpdate.action();
+        const {idling: idlingAfterAction} = get();
+        if(idlingAfterAction) {
           set((state) => mergeState(state, {
             idling: {
-              ...updatedIdling,
-              delta: updatedIdling.delta - 1000,
+              ...idlingAfterAction,
+              delta: idlingAfterAction.delta - 1000,
             },
           }));
         }
