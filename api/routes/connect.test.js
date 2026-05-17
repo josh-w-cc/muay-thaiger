@@ -22,7 +22,7 @@ describe('WebSocket /connect', () => {
 });
 
 async function readMessage(socket) {
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     socket.once('error', reject);
     socket.once('message', (data) => resolve(JSON.parse(data)));
   });

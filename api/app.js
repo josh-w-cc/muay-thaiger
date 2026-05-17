@@ -1,9 +1,9 @@
 import websocket from '@fastify/websocket';
 import Fastify from 'fastify';
 
-import connectRoutes from './routes/connect.js';
 import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
+import connectRoutes from './routes/connect.js';
 import healthRoutes from './routes/health.js';
 import playersRoutes from './routes/players.js';
 

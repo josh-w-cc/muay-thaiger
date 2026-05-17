@@ -54,7 +54,7 @@ vi.mock('../../orig/src/menus/Train', () => ({
 describe('Game App', () => {
   beforeEach(() => {
     globalThis.WebSocket = vi.fn(function () {
-      return {close: vi.fn()};
+      return {close: vi.fn(), send: vi.fn()};
     });
   });
 
@@ -117,7 +117,7 @@ describe('Game App', () => {
   it('closes the websocket when the app unmounts', async () => {
     const close = vi.fn();
     globalThis.WebSocket = vi.fn(function () {
-      return {close};
+      return {close, send: vi.fn()};
     });
     const {default: App} = await import('./App.js');
 

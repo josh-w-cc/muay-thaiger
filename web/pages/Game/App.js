@@ -49,15 +49,11 @@ function renderScreen(screen, setScreen) {
     case 'train':
       return <Train />;
     default:
-      return getFallback(setScreen);
+      return (
+        <>
+          <h1>You broke it!?</h1>
+          <button onClick={() => setScreen('hub')}>We have to go back</button>
+        </>
+      );
   }
-}
-
-function getFallback(setScreen) {
-  return (
-    <>
-      <h1>You broke it!?</h1>
-      <button onClick={() => setScreen('hub')}>We have to go back</button>
-    </>
-  );
 }
