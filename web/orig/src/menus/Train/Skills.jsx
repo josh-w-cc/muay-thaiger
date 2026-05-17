@@ -34,7 +34,7 @@ const Skills = {
       fighter.train('agility');
       fighter.train('strength');
     },
-    requires: (fighter) => fighter.stamina > 100,
+    requires: (fighter) => fighter.stamina > 100 && fighter.constitution > 1,
   },
   calisthenics: {
     name: 'Calisthenics',
