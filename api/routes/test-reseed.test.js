@@ -8,7 +8,7 @@ import testReseedRoutes from '../routes/test-reseed.js';
 
 describe('POST /api/test/reseed', () => {
   it('truncates tables and reseeds data, returns 204', async () => {
-    const {knex, calls} = mockKnexMulti([[]], []);
+    const {knex, calls} = mockKnexMulti([[], [], []], []);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(testReseedRoutes);
@@ -24,6 +24,9 @@ describe('POST /api/test/reseed', () => {
     assert.equal(calls[3][0], 'table');
     assert.equal(calls[3][1], 'entities');
     assert.equal(calls[4][0], 'insert');
+    assert.equal(calls[5][0], 'table');
+    assert.equal(calls[5][1], 'characters');
+    assert.equal(calls[6][0], 'insert');
     await app.close();
   });
 });
