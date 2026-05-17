@@ -1,8 +1,8 @@
 .header {
   display: flex;
   justify-content: space-around;
+}
 
-  & img {
-    max-height: 120px;
-  }
+.navImage {
+  max-height: 120px;
 }
