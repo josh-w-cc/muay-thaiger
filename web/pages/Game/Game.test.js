@@ -51,7 +51,7 @@ vi.mock('../../orig/src/menus/Train', () => ({
   },
 }));
 
-describe('Game App', () => {
+describe('Game', () => {
   beforeEach(() => {
     globalThis.WebSocket = vi.fn(function () {
       return {close: vi.fn(), send: vi.fn()};
@@ -64,15 +64,15 @@ describe('Game App', () => {
   });
 
   it('renders the character select screen first', async () => {
-    const {default: App} = await import('./App.js');
-    render(<App />);
+    const {default: Game} = await import('./Game.js');
+    render(<Game />);
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
   });
 
-  it('connects to the websocket when the app loads', async () => {
-    const {default: App} = await import('./App.js');
+  it('connects to the websocket when the game loads', async () => {
+    const {default: Game} = await import('./Game.js');
 
-    render(<App />);
+    render(<Game />);
 
     const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
 
@@ -83,9 +83,9 @@ describe('Game App', () => {
 
   it('renders each game screen from header controls', async () => {
     const user = userEvent.setup();
-    const {default: App} = await import('./App.js');
+    const {default: Game} = await import('./Game.js');
 
-    render(<App />);
+    render(<Game />);
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
@@ -102,9 +102,9 @@ describe('Game App', () => {
 
   it('renders and recovers from the fallback screen', async () => {
     const user = userEvent.setup();
-    const {default: App} = await import('./App.js');
+    const {default: Game} = await import('./Game.js');
 
-    render(<App />);
+    render(<Game />);
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
     await user.click(screen.getByRole('button', {name: 'Break Screen'}));
 
@@ -114,14 +114,14 @@ describe('Game App', () => {
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
 
-  it('closes the websocket when the app unmounts', async () => {
+  it('closes the websocket when the game unmounts', async () => {
     const close = vi.fn();
     globalThis.WebSocket = vi.fn(function () {
       return {close, send: vi.fn()};
     });
-    const {default: App} = await import('./App.js');
+    const {default: Game} = await import('./Game.js');
 
-    const {unmount} = render(<App />);
+    const {unmount} = render(<Game />);
     unmount();
 
     expect(close).toHaveBeenCalledTimes(1);

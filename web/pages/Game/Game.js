@@ -7,10 +7,10 @@ import Hub from '../../orig/src/menus/Hub.jsx';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
 
-import './App.css';
+import './Game.css';
 
 
-export default function App() {
+export default function Game() {
   const [screen, setScreen] = React.useState('character-select');
 
   React.useEffect(() => {
