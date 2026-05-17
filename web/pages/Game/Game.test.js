@@ -20,6 +20,7 @@ vi.mock('../../orig/src/menus/Hub.jsx', () => ({
       <>
         <h2>Hub Screen</h2>
         <button onClick={() => setScreen('broken')}>Break Screen</button>
+        <button onClick={() => setScreen('character-select')}>Go Character Select</button>
       </>
     );
   },
@@ -87,6 +88,15 @@ describe('Game', () => {
     const {default: Game} = await import('./Game.js');
     renderGame({Game, initialPath: '/fight'});
     expect(screen.getByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
+  });
+
+  it('routes to root when navigating to character select from a game screen', async () => {
+    const user = userEvent.setup();
+    const {default: Game} = await import('./Game.js');
+
+    renderGame({Game, initialPath: '/hub'});
+    await user.click(screen.getByRole('button', {name: 'Go Character Select'}));
+    expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
   });
 });
 
