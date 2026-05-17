@@ -1,7 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function CharacterSelect({onExit}) {
     return <button onClick={onExit}>Character Select</button>;
@@ -45,7 +44,6 @@ vi.mock('../../orig/src/menus/Train', () => ({
     return <h2>Train Screen</h2>;
   },
 }));
-
 
 describe('Dashboard App', () => {
   afterEach(() => {
