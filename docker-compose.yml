@@ -17,7 +17,7 @@ services:
       test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))\""]
       timeout: 10s
     ports:
-      - "3334:3000"
+      - "3778:3000"
     restart: unless-stopped
     volumes:
       - ./api:/app
@@ -51,7 +51,7 @@ services:
       timeout: 5s
     image: postgres:18
     ports:
-      - "5333:5432"
+      - "5777:5432"
     restart: unless-stopped
     volumes:
       - postgres-data:/var/lib/postgresql
@@ -71,7 +71,7 @@ services:
       test: ["CMD-SHELL", "node -e \"fetch('http://localhost:5173').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))\""]
       timeout: 10s
     ports:
-      - "3333:5173"
+      - "3777:5173"
     restart: unless-stopped
     volumes:
       - ./web:/app
