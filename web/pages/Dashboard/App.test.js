@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 
-import App from './App.js';
+const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 
 describe('Dashboard App', () => {
@@ -8,7 +8,12 @@ describe('Dashboard App', () => {
     vi.clearAllMocks();
   });
 
-  it('renders orig content', () => {
+  afterAll(() => {
+    consoleLogSpy.mockRestore();
+  });
+
+  it('renders orig content', async () => {
+    const {default: App} = await import('./App.js');
     render(<App />);
     expect(screen.getByRole('heading', {name: 'Choose your fighter:'})).toBeInTheDocument();
   });
