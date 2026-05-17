@@ -2,6 +2,9 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter, Route, Routes} from 'react-router';
 
+const originalWebSocket = globalThis.WebSocket;
+const originalWindow = globalThis.window;
+
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
     return <button onClick={onExit}>Character Select</button>;
@@ -39,14 +42,49 @@ vi.mock('../../orig/src/menus/Train', () => ({
 }));
 
 describe('Game', () => {
+  beforeEach(() => {
+    globalThis.WebSocket = vi.fn(function () {
+      return {close: vi.fn(), send: vi.fn()};
+    });
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
+    globalThis.WebSocket = originalWebSocket;
+    globalThis.window = originalWindow;
   });
 
   it('renders the character select screen first', async () => {
     const {default: Game} = await import('./Game.js');
     renderGame({Game});
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
+  });
+
+  it('connects to the websocket when the game loads', async () => {
+    const {default: Game} = await import('./index.js');
+
+    render(<Game />);
+
+    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+
+    expect(socketURL.host).toBe(window.location.host);
+    expect(socketURL.pathname).toBe('/ws/connect');
+    expect(socketURL.protocol).toBe('ws:');
+  });
+
+  it('uses the secure websocket protocol on https pages', async () => {
+    const secureWindow = Object.create(window);
+    Object.defineProperty(secureWindow, 'location', {
+      value: new URL('https://example.test/game'),
+    });
+    globalThis.window = secureWindow;
+    const {default: Game} = await import('./index.js');
+
+    render(<Game />);
+
+    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+
+    expect(socketURL.protocol).toBe('wss:');
   });
 
   it('renders each game screen from header controls', async () => {
@@ -97,6 +135,19 @@ describe('Game', () => {
     renderGame({Game, initialPath: '/hub'});
     await user.click(screen.getByRole('button', {name: 'Go Character Select'}));
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
+  });
+
+  it('closes the websocket when the game unmounts', async () => {
+    const close = vi.fn();
+    globalThis.WebSocket = vi.fn(function () {
+      return {close, send: vi.fn()};
+    });
+    const {default: Game} = await import('./index.js');
+
+    const {unmount} = render(<Game />);
+    unmount();
+
+    expect(close).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -38,7 +38,7 @@ The web app is a Vite-built SPA using React Router for client-side routing. It h
 
 ## Infrastructure
 
-- **Vite config:** `vite.config.js` configures the `@vitejs/plugin-react` plugin, a `jsxInJs()` plugin (to support JSX in `.js` files), a `@/` path alias, and a dev server proxy for `/api` requests to the Fastify backend (`VITE_API_URL`, default `http://localhost:3334`).
+- **Vite config:** `vite.config.js` configures the `@vitejs/plugin-react` plugin, a `jsxInJs()` plugin (to support JSX in `.js` files), a `@/` path alias, and dev server proxies for `/api` requests plus `/ws` websocket connections to the Fastify backend (`VITE_API_URL`, default `http://localhost:3334`).
 
 ## Style conventions
 

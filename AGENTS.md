@@ -64,7 +64,7 @@ The root `package.json` provides aggregate scripts. Subproject commands (e.g., `
 
 - **Service connections:**
   - `api → postgres`: `DATABASE_URL` env var uses Docker's internal DNS (`postgres:5432`). Default DB is `app`.
-  - `web → api`: Vite dev server proxies `/api` requests to `http://api:3000` (via `VITE_API_URL`).
+  - `web → api`: Vite dev server proxies `/api` requests and `/ws` websocket connections to `http://api:3000` (via `VITE_API_URL`).
   - `playwright → web`: Playwright uses `BASE_URL` (`http://web:5173`) to reach the frontend.
 - **Environment variables:**
   - `DATABASE_URL` — Postgres connection string (knexfile default: `localhost:5333`)
