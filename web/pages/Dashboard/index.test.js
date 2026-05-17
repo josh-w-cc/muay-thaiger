@@ -8,9 +8,9 @@ describe('Dashboard', () => {
     vi.clearAllMocks();
   });
 
-  it('renders a heading', () => {
+  it('renders orig content', () => {
     render(<Dashboard />);
-    expect(screen.getByRole('heading')).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: 'Choose your fighter:'})).toBeInTheDocument();
   });
 
   it('loader returns null', () => {
