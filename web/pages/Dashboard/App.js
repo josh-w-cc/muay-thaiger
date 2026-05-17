@@ -1,4 +1,4 @@
-import React from 'react';
+import {useNavigate, useParams} from 'react-router';
 
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
@@ -11,7 +11,10 @@ import './App.css';
 
 
 export default function App() {
-  const [screen, setScreen] = React.useState('character-select');
+  const navigate = useNavigate();
+  const {screen = 'character-select'} = useParams();
+  const setScreen = generateSetScreenFn(navigate);
+
   if(screen === 'character-select') {
     return <CharacterSelect onExit={() => setScreen('hub')} />;
   }
@@ -22,6 +25,16 @@ export default function App() {
       {renderScreen(screen, setScreen)}
     </>
   );
+}
+
+function generateSetScreenFn(navigate) {
+  return (screen) => {
+    if(screen === 'character-select') {
+      navigate('/');
+      return;
+    }
+    navigate(`/${screen}`);
+  };
 }
 
 function getFallback(setScreen) {

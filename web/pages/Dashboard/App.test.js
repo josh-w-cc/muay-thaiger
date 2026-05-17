@@ -1,5 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {MemoryRouter, Route, Routes} from 'react-router';
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
@@ -56,7 +57,7 @@ describe('Dashboard App', () => {
 
   it('renders the character select screen first', async () => {
     const {default: App} = await import('./App.js');
-    render(<App />);
+    renderApp({App});
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
   });
 
@@ -64,7 +65,7 @@ describe('Dashboard App', () => {
     const user = userEvent.setup();
     const {default: App} = await import('./App.js');
 
-    render(<App />);
+    renderApp({App});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
@@ -83,7 +84,7 @@ describe('Dashboard App', () => {
     const user = userEvent.setup();
     const {default: App} = await import('./App.js');
 
-    render(<App />);
+    renderApp({App});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
     await user.click(screen.getByRole('button', {name: 'Break Screen'}));
 
@@ -92,4 +93,20 @@ describe('Dashboard App', () => {
     await user.click(screen.getByRole('button', {name: 'We have to go back'}));
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
+
+  it('renders a dashboard screen from the URL', async () => {
+    const {default: App} = await import('./App.js');
+    renderApp({App, initialPath: '/fight'});
+    expect(screen.getByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
+  });
 });
+
+function renderApp({App, initialPath = '/'}) {
+  render(
+    <MemoryRouter initialEntries={[initialPath]}>
+      <Routes>
+        <Route element={<App />} path="/:screen?" />
+      </Routes>
+    </MemoryRouter>,
+  );
+}

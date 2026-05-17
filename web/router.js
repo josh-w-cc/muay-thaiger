@@ -17,6 +17,7 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {path: '/', lazy: lazyPage(() => import('./pages/Dashboard/index.js'))},
+      {path: '/:screen', lazy: lazyPage(() => import('./pages/Dashboard/index.js'))},
       {path: '*', element: <NotFound />},
     ],
   },
