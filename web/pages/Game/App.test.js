@@ -1,7 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-
 const originalWebSocket = globalThis.WebSocket;
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
@@ -72,12 +71,14 @@ describe('Game App', () => {
 
   it('connects to the websocket when the app loads', async () => {
     const {default: App} = await import('./App.js');
-    const url = new URL('/api/connect', window.location.href);
-    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
 
     render(<App />);
 
-    expect(globalThis.WebSocket).toHaveBeenCalledWith(url.toString());
+    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+
+    expect(socketURL.host).toBe(window.location.host);
+    expect(socketURL.pathname).toBe('/api/connect');
+    expect(socketURL.protocol).toBe('ws:');
   });
 
   it('renders each game screen from header controls', async () => {

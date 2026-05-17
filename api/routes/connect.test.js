@@ -5,8 +5,7 @@ import websocket from '@fastify/websocket';
 
 import connectRoutes from '../routes/connect.js';
 
-
-describe('GET /connect', () => {
+describe('WebSocket /connect', () => {
   it('sends an auth request when the websocket connects', async () => {
     const app = Fastify();
     await app.register(websocket);
