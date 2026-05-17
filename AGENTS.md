@@ -1,6 +1,6 @@
-# Starter Kit
+# Muay Thaiger
 
-A minimal full-stack starter kit for building kanban-style applications. Application logic has been stripped out — this is a clean scaffold to build on top of.
+Muay Thaiger is a PvP incremental fighting game. Players pick an anthropomorphic animal race and a martial art style, train their fighter over time, and enter matches mostly against bots with occasional fights against real players.
 
 ## Terminology
 

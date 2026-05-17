@@ -1,14 +1,14 @@
-# starter-kit
+# muay-thaiger
 
-A minimal full-stack starter kit with:
+Muay Thaiger is a PvP incremental fighting game where players choose an anthropomorphic animal race and martial art style, train their character, and enter fights mostly against bots with occasional real-player matchups.
+
+Built with:
 
 - **[Fastify](https://fastify.dev/)** – fast Node.js API server (JavaScript)
 - **[Vite](https://vitejs.dev/) + React** – frontend SPA (TypeScript)
 - **[PostgreSQL](https://www.postgresql.org/)** – relational database (v18)
 - **[Docker Compose](https://docs.docker.com/compose/)** – local orchestration
 - **[Playwright](https://playwright.dev/)** – end-to-end tests
-
-All application logic has been stripped out. This is a clean scaffold to build on top of.
 
 ## Quick Start
 
