@@ -13,12 +13,26 @@ const Skills = {
     },
     requires: () => true, //Always available
   },
+  shadowbox: {
+    name: 'Shadow Boxing',
+    action: (fighter) => {
+      fighter.train('stamina', 2);
+    },
+    requires: (fighter) => fighter.stamina > 50,
+  },
+  breathwork: {
+    name: 'Breathwork',
+    action: (fighter) => {
+      fighter.train('constitution');
+      fighter.train('stamina');
+    },
+    requires: (fighter) => fighter.stamina > 50,
+  },
   yoga: {
     name: 'Yoga',
     action: (fighter) => {
       fighter.train('agility');
       fighter.train('strength');
-      fighter.train('constitution');
     },
     requires: (fighter) => fighter.stamina > 100,
   },
