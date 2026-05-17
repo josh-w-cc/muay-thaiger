@@ -5,6 +5,6 @@ export function loader() {
   return null;
 }
 
-export default function Dashboard() {
+export default function Game() {
   return <App />;
 }

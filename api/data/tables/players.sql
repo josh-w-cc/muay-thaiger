@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS players (
   display_name TEXT NOT NULL,
   email TEXT,
   password TEXT,
+  token TEXT NOT NULL,
   last_active_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
