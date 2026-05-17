@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Fighter from '../../Fighter.js';
+import useFighterStore from '../../Fighter.js';
 import Button from '../../components/Button.jsx';
 import BaseStats from './BaseStats.jsx';
 
@@ -8,7 +8,7 @@ import css from './CharacterSelect.module.css';
 
 
 function CharacterSelect({onExit}) {
-  const fighter = React.useContext(Fighter);
+  const fighter = useFighterStore();
 
   return (<>
     <h1>Choose your fighter:</h1>

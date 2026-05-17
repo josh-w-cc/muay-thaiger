@@ -1,14 +1,13 @@
 import React from 'react';
-import {observer} from 'mobx-react';
 
 import Button from '../../components/Button';
-import Fighter from '../../Fighter.js';
+import useFighterStore from '../../Fighter.js';
 
 import css from './Train.module.css';
 
 
 function TrainStat({name, stat}) {
-  const fighter = React.useContext(Fighter);
+  const fighter = useFighterStore();
 
   const idleActive = fighter.idling?.key === `train-${stat}`;
 
@@ -22,4 +21,4 @@ function TrainStat({name, stat}) {
     <br/>
   </>);
 }
-export default observer(TrainStat);
+export default TrainStat;

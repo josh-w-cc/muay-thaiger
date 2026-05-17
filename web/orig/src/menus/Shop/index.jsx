@@ -3,13 +3,13 @@ import {observer} from 'mobx-react';
 
 import Button from '../../components/Button.jsx';
 import Inventory from '../../Inventory.js';
-import Fighter from '../../Fighter.js';
-import Items from "./Items.js";
+import useFighterStore from '../../Fighter.js';
+import Items from './Items.js';
 
 
 function Shop() {
   const items = React.useContext(Inventory);
-  const fighter = React.useContext(Fighter);
+  const fighter = useFighterStore();
 
   return (<>
     <h1>SHOP</h1>
