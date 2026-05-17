@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 
-vi.mock('./App.js', () => ({
+vi.mock('./Game.js', () => ({
   default: () => <div data-testid="game-app" />,
 }));
 

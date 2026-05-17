@@ -1,7 +1,7 @@
 import React from 'react';
 import {makeAutoObservable} from 'mobx';
 
-import {TickerState} from './Ticker.js';
+import {TickerState} from '../../pages/Game/Ticker.js';
 
 
 class Inventory {
