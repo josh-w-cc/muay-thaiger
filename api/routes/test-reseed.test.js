@@ -20,6 +20,8 @@ describe('POST /api/test/reseed', () => {
     assert.ok(calls[0][1].includes('TRUNCATE'));
     assert.equal(calls[1][0], 'table');
     assert.equal(calls[1][1], 'players');
+    assert.equal(calls[3][0], 'table');
+    assert.equal(calls[3][1], 'races');
     await app.close();
   });
 });
