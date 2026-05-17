@@ -1,25 +1,25 @@
-export const SEED_ITEMS = [
-  {id: 1, name: 'Design database schema'},
-  {id: 2, name: 'Build API endpoints'},
-  {id: 3, name: 'Set up project scaffolding'},
-  {id: 4, name: 'Write project docs'},
+export const SEED_PLAYERS = [
+  {display_name: 'RamrodRit', id: 1},
+  {display_name: 'SaklekSilva', id: 2},
+  {display_name: 'ChokdeeChen', id: 3},
+  {display_name: 'TigerJab', id: 4},
 ];
 
 export async function seed(knex) {
-  await insertItems(knex);
+  await insertPlayers(knex);
   await resetSequences(knex);
 }
 
-async function insertItems(knex) {
-  await knex('items')
-    .insert(SEED_ITEMS)
+async function insertPlayers(knex) {
+  await knex('players')
+    .insert(SEED_PLAYERS)
     .onConflict('id')
     .ignore();
 }
 
 async function resetSequences(knex) {
   await knex.raw(
-    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "items"), 0) + 1, false)`,
-    ['items'],
+    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "players"), 0) + 1, false)`,
+    ['players'],
   );
 }
