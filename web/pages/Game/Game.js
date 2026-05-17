@@ -7,14 +7,13 @@ import Hub from '../../orig/src/menus/Hub.jsx';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
 
-import './App.css';
+import './Game.css';
 
 
-export default function App() {
+export default function Game() {
   const navigate = useNavigate();
   const {screen = 'character-select'} = useParams();
   const setScreen = generateSetScreenFn(navigate);
-
   if(screen === 'character-select') {
     return <CharacterSelect onExit={() => setScreen('hub')} />;
   }

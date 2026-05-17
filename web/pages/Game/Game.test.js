@@ -50,22 +50,22 @@ vi.mock('../../orig/src/menus/Train', () => ({
   },
 }));
 
-describe('Game App', () => {
+describe('Game', () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders the character select screen first', async () => {
-    const {default: App} = await import('./App.js');
-    renderApp({App});
+    const {default: Game} = await import('./Game.js');
+    renderGame({Game});
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
   });
 
   it('renders each game screen from header controls', async () => {
     const user = userEvent.setup();
-    const {default: App} = await import('./App.js');
+    const {default: Game} = await import('./Game.js');
 
-    renderApp({App});
+    renderGame({Game});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
@@ -82,9 +82,9 @@ describe('Game App', () => {
 
   it('renders and recovers from the fallback screen', async () => {
     const user = userEvent.setup();
-    const {default: App} = await import('./App.js');
+    const {default: Game} = await import('./Game.js');
 
-    renderApp({App});
+    renderGame({Game});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
     await user.click(screen.getByRole('button', {name: 'Break Screen'}));
 
@@ -94,18 +94,18 @@ describe('Game App', () => {
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
 
-  it('renders a dashboard screen from the URL', async () => {
-    const {default: App} = await import('./App.js');
-    renderApp({App, initialPath: '/fight'});
+  it('renders a game screen from the URL', async () => {
+    const {default: Game} = await import('./Game.js');
+    renderGame({Game, initialPath: '/fight'});
     expect(screen.getByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
   });
 });
 
-function renderApp({App, initialPath = '/'}) {
+function renderGame({Game, initialPath = '/'}) {
   render(
     <MemoryRouter initialEntries={[initialPath]}>
       <Routes>
-        <Route element={<App />} path="/:screen?" />
+        <Route element={<Game />} path="/:screen?" />
       </Routes>
     </MemoryRouter>,
   );
