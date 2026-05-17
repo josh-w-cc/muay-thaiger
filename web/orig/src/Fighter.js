@@ -19,15 +19,19 @@ class Fighter {
   get apm() {
     return Math.max(0, Math.log(this.agility)) + Math.sqrt(this.skill);
   }
+
   get attack() {
     return Math.max(0, Math.log(this.stamina)) + Math.sqrt(this.agility) + this.skill + this.reach;
   }
+
   get defense() {
     return Math.max(0, Math.log(this.agility)) + Math.sqrt(this.stamina) + this.skill;
   }
+
   get health() {
     return this.stamina + this.constitution * this.constitution + this.durability * this.durability;
   }
+
   get power() {
     return (this.strength + this.agility) * Math.sqrt(this.stamina) + this.skill;
   }

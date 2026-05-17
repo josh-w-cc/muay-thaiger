@@ -29,7 +29,7 @@ class Fight {
   }
 
   forGold(fighter, risk) {
-    const riskPercentages = [.001, .1, .25, .5, 1];
+    const riskPercentages = [0.001, 0.1, 0.25, 0.5, 1];
     this.bet = Math.max(100, Math.floor(fighter.gold * riskPercentages[risk]));
     const amount = this.bet;
     const enemy = {
@@ -45,8 +45,8 @@ class Fight {
 
   start(left, right) {
     this.fighters = [
-      {stats:left, currentAPM: 0, currentStamina: left.stamina, currentHealth: left.health},
-      {stats:right, currentAPM: 0, currentStamina: right.stamina, currentHealth: right.health},
+      {stats: left, currentAPM: 0, currentStamina: left.stamina, currentHealth: left.health},
+      {stats: right, currentAPM: 0, currentStamina: right.stamina, currentHealth: right.health},
     ];
     this.state = FIGHT_IN_PROGRESS;
     left.idle('FIGHT', (delta) => this.tick(delta));
