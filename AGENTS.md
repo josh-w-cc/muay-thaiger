@@ -1,23 +1,14 @@
-# Starter Kit
+# Muay Thaiger
 
-A minimal full-stack starter kit for building kanban-style applications. Application logic has been stripped out — this is a clean scaffold to build on top of.
+Muay Thaiger is a PvP incremental fighting game. Players pick an anthropomorphic animal race and a martial art style, train their fighter over time, and enter matches mostly against bots with occasional fights against real players.
 
 ## Terminology
 
-The data model uses **task** as the single core entity. The frontend uses familiar kanban terms for the UI, but they all map to tasks in the database and API:
-
-- **Card** = a task.
-- **Board / Project** = a task that has subtasks (children). There is no separate "board" table — a board is simply a task whose children are rendered as a kanban view.
-- **Story Map** = a 2D view of a task's children (stories) and grandchildren (cards), cross-referenced by lane. Like a board, it is not a separate database entity — it is a rendering of two levels of the task hierarchy.
-- **Lane** = a status category that cards move through. Ordered top-to-bottom: Done, Review, In Progress, Must Have, Could Use, Would Be Nice, Idea. Lanes are a separate `stages` table, shared globally across all boards.
-- **Acceptance Criterion** = a checklist item on a card, stored in the `task_acceptance_criteria` table.
-- **Dashboard** = the `/` route showing two widgets: Fresh Ideas (recent Idea-lane tasks) and In Progress (leaf tasks in the In Progress lane).
-- **Position** = SMALLINT column determining display order within a parent. Uses a deferred unique constraint on `(parent, position)` to allow batch reordering in a transaction.
-- **Question** = an AI-generated question for a task, stored in `task_questions`. Part of an AI-assisted refinement prototype — extend cautiously and expect schema changes.
-- **Suggestion** = an AI-generated improvement suggestion for a task, stored in `task_suggestions`. Same caveat as Questions.
-- **Archive** = soft-delete. A task with a non-null `archived_at` timestamp is archived, not destroyed. Boards auto-archive stale tasks (Done 14+ days, Idea 90+ days) and permanently delete tasks archived 365+ days with no children.
-
-When working in frontend code (components, labels, copy), use the user-facing terms (card, board, story map). When working in the data model, API, or backend code, use **task**.
+- **Fighter** = the player character.
+- **Race** = the fighter's anthropomorphic animal species.
+- **Style** = the fighter's martial art.
+- **Training** = incremental progression that improves fighter stats over time.
+- **Fight** = a combat match, usually against bots and occasionally against real players.
 
 ## Data flow
 

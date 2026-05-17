@@ -1,5 +1,4 @@
 import React from 'react';
-import {observer} from 'mobx-react';
 
 import Fighter from '../../Fighter.js';
 import Button from '../../components/Button.jsx';
@@ -21,7 +20,7 @@ function CharacterSelect({onExit}) {
     }
   </>);
 }
-export default observer(CharacterSelect);
+export default CharacterSelect;
 
 
 function Character({name, image, stats, onSelect}) {

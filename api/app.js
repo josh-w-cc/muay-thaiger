@@ -3,7 +3,7 @@ import Fastify from 'fastify';
 import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
 import healthRoutes from './routes/health.js';
-import itemsRoutes from './routes/items.js';
+import playersRoutes from './routes/players.js';
 
 
 export default async function build(opts = {}) {
@@ -11,7 +11,7 @@ export default async function build(opts = {}) {
 
   await app.register(dbPlugin);
   await app.register(healthRoutes);
-  await app.register(itemsRoutes, {prefix: '/api'});
+  await app.register(playersRoutes, {prefix: '/api'});
 
   if(process.env.NODE_ENV !== 'production') {
     const {default: testReseed} = await import('./routes/test-reseed.js');
