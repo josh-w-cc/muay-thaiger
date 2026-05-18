@@ -12,10 +12,10 @@ describe('usePlayerStore', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    resetPlayerStore();
     if(globalThis.localStorage) {
       localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
     }
-    resetPlayerStore();
     setLocalStorage(originalLocalStorage);
     globalThis.WebSocket = originalWebSocket;
   });
