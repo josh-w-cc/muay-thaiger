@@ -18,7 +18,7 @@ describe('withFoundItem', () => {
       find: async () => undefined,
     };
 
-    const result = await withFoundItem(model, () => 'unused')(req, reply);
+    const result = await withFoundItem(model, () => 'should-not-be-called')(req, reply);
 
     assert.deepEqual(result, {body: {error: 'Not found'}, statusCode: 404});
   });
