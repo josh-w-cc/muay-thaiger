@@ -3,12 +3,11 @@ import {useNavigate, useParams} from 'react-router';
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
 import Header from './Header.js';
-import Hub from '../../orig/src/menus/Hub.jsx';
+import Hub from '../../orig/src/menus/Hub.js';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
 
 import './Game.css';
-
 
 export default function Game() {
   const navigate = useNavigate();
