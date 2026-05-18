@@ -29,7 +29,7 @@ function Character({name, image, stats, onSelect}) {
     <div className={css.inner}>
       <img src={image} className={css.avatar} />
       <div className={css.stats}>
-        Speeed: {stats.speed}<br/>
+        Speed: {stats.speed}<br/>
         Strength: {stats.strength}<br/>
         Vitality: {stats.vitality}<br/>
         Anima: {stats.anima}<br/>
