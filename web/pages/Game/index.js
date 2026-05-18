@@ -3,7 +3,7 @@ import {fetchJSON} from '@/utils/fetchAPI.js';
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
 import Header from './Header.js';
-import Hub from '../../orig/src/menus/Hub.js';
+import Hub from './Hub.js';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
 import useAuthSocket, {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
