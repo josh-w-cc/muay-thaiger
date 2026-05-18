@@ -49,7 +49,7 @@ function parseMessage(raw) {
 }
 
 function getRace(message) {
-  if(!Object.hasOwn(message, 'race')) {
+  if(message.race == null) {
     return null;
   }
   const parsedRace = Number.parseInt(message.race, 10);
