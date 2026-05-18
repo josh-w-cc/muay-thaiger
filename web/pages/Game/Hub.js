@@ -23,6 +23,12 @@ const STAT_FIELDS = [
   {key: 'power', label: 'Power'},
 ];
 
+const EVENTS = [
+  {name: 'Temple Sparring Night', reward: 'Reward: +120 XP'},
+  {name: 'Lumpinee Showcase', reward: 'Reward: ฿350'},
+  {name: 'Tiger Knee Clinic', reward: 'Reward: +2 Skill'},
+];
+
 export default function Hub() {
   const fighter = useFighterStore();
 
@@ -35,6 +41,15 @@ export default function Hub() {
           <Stat key={key} label={label} value={formatHugeNumber(getStatValue({fighter, key}))} />
         ))}
       </dl>
+      <h3>Events:</h3>
+      <ul className={css.events}>
+        {EVENTS.map(({name, reward}) => (
+          <li className={css.event} key={name}>
+            <strong>{name}</strong>
+            <span>{reward}</span>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
