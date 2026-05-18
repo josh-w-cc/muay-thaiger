@@ -18,6 +18,7 @@ describe('POST /api/test/reseed', () => {
     assert.equal(response.statusCode, 204);
     assert.equal(calls[0][0], 'raw');
     assert.ok(calls[0][1].includes('TRUNCATE'));
+    assert.ok(calls[0][1].includes('character_actions'));
     assert.equal(calls[1][0], 'table');
     assert.equal(calls[1][1], 'players');
     assert.equal(calls[2][0], 'insert');
