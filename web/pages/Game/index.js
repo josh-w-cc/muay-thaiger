@@ -1,6 +1,6 @@
 import {redirect, useLoaderData, useNavigate, useParams} from 'react-router';
 
-import {loadPlayerToken} from '@/data/playerStore.js';
+import {loadPlayerToken} from '@/data/player.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
