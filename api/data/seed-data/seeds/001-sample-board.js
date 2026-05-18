@@ -1,6 +1,6 @@
 export const SEED_CHARACTERS = [
-  {display_name: 'RamrodRit Jr', id: 1, player_id: 1, race: 1},
-  {display_name: 'SaklekSilva Jr', id: 2, player_id: 2, race: 2},
+  {display_name: 'RamrodRit Jr', gold: '0', id: 1, player_id: 1, race: 1},
+  {display_name: 'SaklekSilva Jr', gold: '0', id: 2, player_id: 2, race: 2},
 ];
 
 export const SEED_PLAYERS = [

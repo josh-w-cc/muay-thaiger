@@ -6,6 +6,7 @@ import Header from './Header.js';
 import Hub from '../../orig/src/menus/Hub.js';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
+import useAuthSocket from './useAuthSocket.js';
 
 import './Game.css';
 
@@ -13,8 +14,10 @@ export default function Game() {
   const navigate = useNavigate();
   const {screen = 'character-select'} = useParams();
   const setScreen = generateSetScreenFn(navigate);
+  const onCharacterSelectExit = useAuthSocket(setScreen);
+
   if(screen === 'character-select') {
-    return <CharacterSelect onExit={() => setScreen('hub')} />;
+    return <CharacterSelect onExit={onCharacterSelectExit} />;
   }
 
   return (
