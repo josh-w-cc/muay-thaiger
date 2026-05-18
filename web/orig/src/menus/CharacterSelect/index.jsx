@@ -4,7 +4,7 @@ import formatHugeNumber from "@/utils/formatHugeNumber.js";
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import useFighterStore from '../../Fighter.js';
 import Button from '../../components/Button.jsx';
-import BaseStats from './BaseStats.jsx';
+import BaseStats from './BaseStats.js';
 
 import css from './CharacterSelect.module.css';
 
