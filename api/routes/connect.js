@@ -14,7 +14,7 @@ export default async function connectRoutes(app) {
     characters: charactersModel(app.db),
     players: playersModel(app.db),
   };
-  const scheduler = createScheduler(
+  const scheduler = createPlayerStateSyncScheduler(
     activeSockets,
     models,
     (error) => app.log.error(error, 'sync-player-state failed'),
@@ -57,19 +57,6 @@ export async function onMessage(raw, socket, models) {
   }
 }
 
-export async function syncCharacterState(activeSockets, {characters}) {
-  for(const socket of activeSockets) {
-    if(socket.readyState !== socket.OPEN || !Number.isInteger(socket.playerID)) {
-      continue;
-    }
-    const character = await characters.findCurrentByPlayerID(socket.playerID);
-    if(!character) {
-      continue;
-    }
-    socket.send(JSON.stringify({character, type: 'character_state'}));
-  }
-}
-
 async function onAuthCmd(message, socket, models) {
   if(typeof message.token !== 'string') {
     return;
@@ -80,7 +67,7 @@ async function onAuthCmd(message, socket, models) {
   }
 }
 
-function createScheduler(activeSockets, models, onError) {
+function createPlayerStateSyncScheduler(activeSockets, models, onError) {
   const scheduler = new ToadScheduler();
   const task = new AsyncTask(
     'sync-player-state',
@@ -93,6 +80,19 @@ function createScheduler(activeSockets, models, onError) {
   );
   scheduler.addSimpleIntervalJob(syncJob);
   return scheduler;
+}
+
+export async function syncCharacterState(activeSockets, {characters}) {
+  for(const socket of activeSockets) {
+    if(socket.readyState !== socket.OPEN || !Number.isInteger(socket.playerID)) {
+      continue;
+    }
+    const character = await characters.findCurrentByPlayerID(socket.playerID);
+    if(!character) {
+      continue;
+    }
+    socket.send(JSON.stringify({character, type: 'character_state'}));
+  }
 }
 
 function parseMessage(raw) {
