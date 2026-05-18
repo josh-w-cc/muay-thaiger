@@ -16,9 +16,4 @@ export default async function charactersRoutes(app) {
     }
     return character;
   });
-
-  app.post('/characters', async (req, reply) => {
-    const character = await characters.create(req.body);
-    return reply.code(201).send(character);
-  });
 }

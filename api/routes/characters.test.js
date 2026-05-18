@@ -50,8 +50,8 @@ describe('GET /characters/:id', () => {
 });
 
 describe('POST /characters', () => {
-  it('creates character and returns 201', async () => {
-    const {knex} = mockKnex([{display_name: 'NewChar', gold: '0', id: 1, player_id: 1, race: 1}]);
+  it('returns 404', async () => {
+    const {knex} = mockKnex(undefined);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(charactersRoutes);
@@ -62,8 +62,7 @@ describe('POST /characters', () => {
       url: '/characters',
     });
 
-    assert.equal(response.statusCode, 201);
-    assert.deepEqual(response.json(), {display_name: 'NewChar', gold: '0', id: 1, player_id: 1, race: 1});
+    assert.equal(response.statusCode, 404);
     await app.close();
   });
 });

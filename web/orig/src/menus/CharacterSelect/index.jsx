@@ -1,6 +1,6 @@
 import React from 'react';
 
-import formatHugeNumber from '../../formatHugeNumber.js';
+import formatHugeNumber from "@/utils/formatHugeNumber.js";
 import useFighterStore from '../../Fighter.js';
 import Button from '../../components/Button.jsx';
 import BaseStats from './BaseStats.jsx';
