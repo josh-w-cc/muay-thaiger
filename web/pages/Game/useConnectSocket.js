@@ -54,7 +54,7 @@ function parseMessage(event) {
   try {
     return JSON.parse(event.data);
   }
-  catch{
+  catch {
     return null;
   }
 }
