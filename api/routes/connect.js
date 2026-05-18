@@ -14,7 +14,11 @@ export default async function connectRoutes(app) {
     characters: charactersModel(app.db),
     players: playersModel(app.db),
   };
-  const scheduler = createScheduler(activeSockets, models);
+  const scheduler = createScheduler(
+    activeSockets,
+    models,
+    (error) => app.log.error(error, 'sync-player-state failed'),
+  );
 
   app.addHook('onClose', () => {
     scheduler.stop();
@@ -23,8 +27,12 @@ export default async function connectRoutes(app) {
 }
 
 export function onConnect(socket, activeSockets, models) {
-  activeSockets.add(socket);
-  socket.on('close', () => activeSockets.delete(socket));
+  if(socket.readyState === socket.OPEN) {
+    activeSockets.add(socket);
+  }
+  const removeSocket = () => activeSockets.delete(socket);
+  socket.on('close', removeSocket);
+  socket.on('error', removeSocket);
   socket.on('message', (raw) => onMessage(raw, socket, models));
   setImmediate(() => {
     if(socket.readyState !== socket.OPEN) {
@@ -72,12 +80,12 @@ async function onAuthCmd(message, socket, models) {
   }
 }
 
-function createScheduler(activeSockets, models) {
+function createScheduler(activeSockets, models, onError) {
   const scheduler = new ToadScheduler();
   const task = new AsyncTask(
     'sync-player-state',
     () => syncCharacterState(activeSockets, models),
-    () => {},
+    onError,
   );
   const syncJob = new SimpleIntervalJob(
     {minutes: PLAYER_SYNC_INTERVAL_MINUTES},

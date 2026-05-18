@@ -76,7 +76,7 @@ describe('WebSocket /ws/connect', () => {
     onConnect(socket, activeSockets, {});
     await waitForImmediate();
 
-    assert.equal(activeSockets.has(socket), true);
+    assert.equal(activeSockets.has(socket), false);
     assert.equal(send.calls.length, 0);
   });
 
