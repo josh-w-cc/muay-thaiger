@@ -1,9 +1,6 @@
 import React from 'react';
 import {getPlayerToken, PLAYER_TOKEN_STORAGE_KEY} from './playerToken.js';
 
-export {PLAYER_TOKEN_STORAGE_KEY} from './playerToken.js';
-
-
 export default function useAuthSocket(setScreen) {
   const hasReceivedAuthRequest = React.useRef(false);
   const hasRespondedToAuth = React.useRef(false);

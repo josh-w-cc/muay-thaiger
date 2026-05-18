@@ -2,7 +2,7 @@ import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter, Route, Routes} from 'react-router';
 
-import {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
+import {PLAYER_TOKEN_STORAGE_KEY} from './playerToken.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
