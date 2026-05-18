@@ -31,7 +31,7 @@ export async function onMessage(raw, socket, models) {
   switch(message.cmd) {
     case 'auth':
       return onAuthCmd(message, socket, models);
-    case 'create':
+    case 'idle':
       return createAndSend(models, message, socket);
     default:
       socket.send(JSON.stringify({error: 'invalid-cmd', type: 'error'}));
