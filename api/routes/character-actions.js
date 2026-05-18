@@ -1,3 +1,4 @@
+import charactersModel from '../data/models/characters.js';
 import characterActionsModel from '../data/models/character-actions.js';
 
 
@@ -6,28 +7,45 @@ import characterActionsModel from '../data/models/character-actions.js';
  */
 export default async function characterActionsRoutes(app) {
   const characterActions = characterActionsModel(app.db);
-  app.get('/character-actions', {websocket: true}, (socket) => onConnect(socket, characterActions));
+  const characters = charactersModel(app.db);
+  app.get('/character-actions', {websocket: true}, (socket) => onConnect(socket, characterActions, characters));
 }
 
-export function onConnect(socket, characterActions) {
-  socket.on('message', (raw) => onMessage(raw, socket, characterActions));
+export function onConnect(socket, characterActions, characters) {
+  socket.on('message', (raw) => onMessage(raw, socket, characterActions, characters));
 }
 
-export async function onMessage(raw, socket, characterActions) {
+export async function onMessage(raw, socket, characterActions, characters) {
   const message = parseMessage(raw);
-  if(!isValidMessage(message) || socket.readyState !== socket.OPEN) {
+  const normalizedMessage = normalizeMessage(message);
+  if(!normalizedMessage || socket.readyState !== socket.OPEN) {
+    return;
+  }
+  const currentCharacter = await characters.findCurrentByPlayerID(normalizedMessage.player_id);
+  if(!currentCharacter) {
     return;
   }
   const characterAction = await characterActions.create({
-    action_id: message.action_id,
-    character_id: message.character_id,
+    action_id: normalizedMessage.action_id,
+    character_id: currentCharacter.id,
   });
   socket.send(JSON.stringify({characterAction, type: 'character_action'}));
 }
 
-function isValidMessage(message) {
-  return message && message.type === 'create'
-    && Number.isInteger(message.action_id) && Number.isInteger(message.character_id);
+function normalizeMessage(message) {
+  if(!message || message.type !== 'create') {
+    return null;
+  }
+  const actionId = Number(message.action_id);
+  const playerId = Number(message.player_id);
+  if(!Number.isInteger(actionId) || !Number.isInteger(playerId)) {
+    return null;
+  }
+  return {
+    action_id: actionId,
+    player_id: playerId,
+    type: message.type,
+  };
 }
 
 function parseMessage(raw) {
