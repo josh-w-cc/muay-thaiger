@@ -10,7 +10,7 @@ function Hub() {
     <h1>HUB</h1>
     <h3>Stats:</h3>
     Agility: {formatHugeNumber(fighter.agility)}<br/>
-    Speeed: {formatHugeNumber(fighter.speed)}<br/>
+    Speed: {formatHugeNumber(fighter.speed)}<br/>
     Strength: {formatHugeNumber(fighter.strength)}<br/>
     Innate Strength: {formatHugeNumber(fighter.innateStrength)}<br/>
     Vitality: {formatHugeNumber(fighter.vitality)}<br/>
@@ -19,7 +19,7 @@ function Hub() {
     Reach: {formatHugeNumber(fighter.reach)}<br/>
     Constitution: {formatHugeNumber(fighter.constitution)}<br/>
     Skill: {formatHugeNumber(fighter.skill)}<br/>
-    Stanima: {formatHugeNumber(fighter.stamina)}<br/>
+    Stamina: {formatHugeNumber(fighter.stamina)}<br/>
     ฿: {formatHugeNumber(fighter.gold / 100)}<br/>
     APM: {formatHugeNumber(fighter.apm)}<br/>
     Attack: {formatHugeNumber(fighter.attack)}<br/>
