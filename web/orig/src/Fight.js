@@ -85,10 +85,10 @@ const useFightStore = create((set, get) => ({
     const nextFighters = fighters.map((fighter) => ({...fighter}));
     const nextMessages = [...messages];
     let nextState = get().state;
-    const aPerTick = nextFighters[PLAYER_POSITION].stats.apm / 60000;
-    const bPerTick = nextFighters[ENEMY_POSITION].stats.apm / 60000;
-    nextFighters[PLAYER_POSITION].currentAPM += aPerTick * amount;
-    nextFighters[ENEMY_POSITION].currentAPM += bPerTick * amount;
+    const playerAPMPerTick = nextFighters[PLAYER_POSITION].stats.apm / 60000;
+    const enemyAPMPerTick = nextFighters[ENEMY_POSITION].stats.apm / 60000;
+    nextFighters[PLAYER_POSITION].currentAPM += playerAPMPerTick * amount;
+    nextFighters[ENEMY_POSITION].currentAPM += enemyAPMPerTick * amount;
     while(nextFighters[PLAYER_POSITION].currentAPM > 1 || nextFighters[ENEMY_POSITION].currentAPM > 1) {
       if(nextFighters[PLAYER_POSITION].currentAPM > 1) {
         const result = attackFighter({attackerIndex: PLAYER_POSITION, fighters: nextFighters, state: nextState});

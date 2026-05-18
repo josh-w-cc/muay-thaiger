@@ -10,8 +10,8 @@ export default function formatHugeNumber(value) {
   return value;
 }
 
-const DECIMAL_END_INDEX = 3;
-const DECIMAL_START_INDEX = 1;
+const DECIMAL_DIGIT_END = 3;
+const DECIMAL_DIGIT_START = 1;
 const MAX_UNFORMATTED_DIGITS = 5;
 const SIGNIFICANT_DECIMAL_DIGITS = 2;
 
@@ -30,7 +30,7 @@ function formatIntegerString(value) {
   const exponent = trimmedDigits.length - 1;
   const whole = trimmedDigits[0];
   const decimal = trimmedDigits
-    .slice(DECIMAL_START_INDEX, DECIMAL_END_INDEX)
+    .slice(DECIMAL_DIGIT_START, DECIMAL_DIGIT_END)
     .padEnd(SIGNIFICANT_DECIMAL_DIGITS, '0');
   const sign = isNegative ? '-' : '';
 
