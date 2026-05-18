@@ -2,6 +2,7 @@ import {randomUUID} from 'node:crypto';
 import charactersModel from '../data/models/characters.js';
 import characterActionsModel from '../data/models/character-actions.js';
 import playersModel from '../data/models/players.js';
+import {onMessage as onCharacterActionsMessage} from './character-actions.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
 
@@ -27,18 +28,7 @@ export async function onMessage(raw, socket, characterActions, characters, playe
   if(canHandleAuthMessage({message, socket})) {
     return onAuthMessage(message, socket, characters, players);
   }
-  if(!canHandleCreateMessage({message, socket})) {
-    return;
-  }
-  const currentCharacter = await characters.findCurrentByPlayerID(message.player_id);
-  if(!currentCharacter) {
-    return;
-  }
-  const characterAction = await characterActions.create({
-    action_id: message.action_id,
-    character_id: currentCharacter.id,
-  });
-  socket.send(JSON.stringify({characterAction, type: 'character_action'}));
+  return onCharacterActionsMessage(raw, socket, characterActions, characters);
 }
 
 async function onAuthMessage(message, socket, characters, players) {
@@ -68,24 +58,6 @@ function canHandleAuthMessage({message, socket}) {
     && socket.readyState === socket.OPEN
     && typeof message.token === 'string',
   );
-}
-
-function canHandleCreateMessage({message, socket}) {
-  if(
-    !message
-    || message.type !== 'create'
-    || socket.readyState !== socket.OPEN
-  ) {
-    return false;
-  }
-  const actionID = Number(message.action_id);
-  const playerID = Number(message.player_id);
-  if(!Number.isInteger(actionID) || !Number.isInteger(playerID)) {
-    return false;
-  }
-  message.action_id = actionID;
-  message.player_id = playerID;
-  return true;
 }
 
 async function getPlayer({characters, players}, token, race) {
