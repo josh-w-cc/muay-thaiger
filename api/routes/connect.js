@@ -1,4 +1,4 @@
-import charactersModel from '../data/models/characters.js';
+import fightersModel from '../data/models/fighters.js';
 import characterActionsModel from '../data/models/character-actions.js';
 import playersModel from '../data/models/players.js';
 import {authenticate} from '../logic/auth.js';
@@ -7,7 +7,7 @@ import {createAndSend} from '../logic/character-actions.js';
 export default async function connectRoutes(app) {
   const models = {
     characterActions: characterActionsModel(app.db),
-    characters: charactersModel(app.db),
+    characters: fightersModel(app.db),
     players: playersModel(app.db),
   };
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models));

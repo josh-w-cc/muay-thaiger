@@ -1,11 +1,11 @@
-import charactersModel from '../data/models/characters.js';
+import fightersModel from '../data/models/fighters.js';
 
 
 /**
  * @param {import('fastify').FastifyInstance} app
  */
 export default async function charactersRoutes(app) {
-  const characters = charactersModel(app.db);
+  const characters = fightersModel(app.db);
 
   app.get('/characters', async () => characters.list());
 
