@@ -1,4 +1,5 @@
 import React from 'react';
+import useFighterStore from '../../orig/src/Fighter.js';
 
 export const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
 
@@ -60,7 +61,7 @@ function respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedF
     return;
   }
   hasRespondedToAuth.current = true;
-  activeSocket.send(JSON.stringify({token: getPlayerToken() || 'new', type: 'auth'}));
+  activeSocket.send(JSON.stringify(getAuthResponse()));
 }
 
 function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
@@ -78,6 +79,14 @@ function getPlayerToken() {
     return null;
   }
   return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
+}
+
+function getAuthResponse() {
+  const token = getPlayerToken();
+  if(token) {
+    return {token, type: 'auth'};
+  }
+  return {race: useFighterStore.getState().race, token: 'new', type: 'auth'};
 }
 
 function routeToHubIfAuthorized({hasSelectedFighter, setScreen}) {
