@@ -227,6 +227,25 @@ describe('Game', () => {
     expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
   });
 
+  it('responds with auth/local token after auth when fighter is selected', async () => {
+    const user = userEvent.setup();
+    const send = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game, loader} = await import('./index.js');
+
+    renderGame({Game, loader});
+    await screen.findByRole('button', {name: 'Character Select'});
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
+    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+
+    expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'existing-token', type: 'auth'}));
+  });
+
   it('stores the auth token in localStorage when server responds with a token', async () => {
     const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
     globalThis.WebSocket = vi.fn(function () {
