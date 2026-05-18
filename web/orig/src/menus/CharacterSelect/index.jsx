@@ -22,7 +22,7 @@ function CharacterSelect({onExit, raceStatics = []}) {
     {raceStatics.map((raceStatic) =>
       <Character key={raceStatic.id} name={raceStatic.name} image={getRaceImage(raceStatic.id)} stats={raceStatic.stats} onSelect={() => {
         fighter.select(`${raceStatic.id}`);
-        onExit();
+        onExit(`${raceStatic.id}`);
       }} />)
     }
   </>);

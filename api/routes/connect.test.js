@@ -118,6 +118,17 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(characterCreateCalls[0], {display_name: 'Player-abcdefgh', player_id: 1, race: 2});
   });
 
+  it('does not create a player when auth new race is invalid', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const characters = {create: async () => null};
+    const players = {create: async () => ({id: 1, token: 'player-uuid-token'})};
+
+    await onMessage(JSON.stringify({race: 'not-a-race', token: 'new', type: 'auth'}), socket, characters, players);
+
+    assert.equal(send.calls.length, 0);
+  });
+
   it('translates an existing player token to player id on auth', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};

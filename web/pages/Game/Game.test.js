@@ -12,7 +12,7 @@ let fetchJSONMock;
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
-    return <button onClick={onExit}>Character Select</button>;
+    return <button onClick={() => onExit('1')}>Character Select</button>;
   },
 }));
 
