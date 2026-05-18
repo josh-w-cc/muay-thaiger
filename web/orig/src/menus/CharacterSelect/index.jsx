@@ -1,7 +1,7 @@
 import React from 'react';
 
 import formatHugeNumber from "@/utils/formatHugeNumber.js";
-import useFighterStore from '../../Fighter.js';
+import selectFighter from '@/actions/selectFighter.js';
 import Button from '../../components/Button.jsx';
 import SnowLeopard from './assets/SnowLeopard.png';
 import Tiger from './assets/Tiger.png';
@@ -15,13 +15,11 @@ const RACE_IMAGES_BY_ID = {
 };
 
 function CharacterSelect({onExit, raceStatics = []}) {
-  const fighter = useFighterStore();
-
   return (<>
     <h1>Choose your fighter:</h1>
     {raceStatics.map((raceStatic) =>
       <Character key={raceStatic.id} name={raceStatic.name} image={getRaceImage(raceStatic.id)} stats={raceStatic.stats} onSelect={() => {
-        fighter.select(`${raceStatic.id}`);
+        selectFighter(`${raceStatic.id}`);
         onExit(`${raceStatic.id}`);
       }} />)
     }
