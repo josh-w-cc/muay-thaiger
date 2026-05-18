@@ -9,10 +9,10 @@ import {
 export default function characterActions(db) {
   const characters = fightersModel(db);
   return {
-    create: generateCreateFn(db, 'character_actions'),
-    find: generateFindFn(db, 'character_actions'),
+    create: generateCreateFn(db, 'fighter_actions'),
+    find: generateFindFn(db, 'fighter_actions'),
     list: generateListCharacterActionsFn(db, characters),
-    remove: generateRemoveFn(db, 'character_actions'),
+    remove: generateRemoveFn(db, 'fighter_actions'),
   };
 }
 
@@ -22,7 +22,7 @@ function generateListCharacterActionsFn(db, characters) {
     if(!currentCharacter) {
       return [];
     }
-    return db('character_actions')
+    return db('fighter_actions')
       .where({character_id: currentCharacter.id})
       .orderBy('created_at');
   };
