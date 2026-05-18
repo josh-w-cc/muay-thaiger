@@ -1,23 +1,26 @@
 import {create} from 'zustand';
+import {clearStoredPlayerToken, getStoredPlayerToken, setStoredPlayerToken} from './playerTokenStorage.js';
 
-
-export const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
-
-
+export {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 const usePlayerStore = create((set, get) => ({
   ...getInitialState(),
+  clearPlayerToken: () => {
+    clearStoredPlayerToken();
+    set({token: null});
+  },
+  loadPlayerToken: () => loadPlayerTokenIntoState(set),
   onFighterSelect: generateOnFighterSelectFn({get, set}),
   onSocketMessage: generateOnSocketMessageFn({get, set}),
+  setPlayerToken: (token) => {
+    setStoredPlayerToken(token);
+    set({token});
+  },
 }));
-
 export default usePlayerStore;
-
-
-export function resetPlayerStore() {
-  usePlayerStore.setState(getInitialState());
-}
-
-
+export const clearPlayerToken = () => usePlayerStore.getState().clearPlayerToken();
+export const loadPlayerToken = () => usePlayerStore.getState().loadPlayerToken();
+export const resetPlayerStore = () => usePlayerStore.setState(getInitialState());
+export const setPlayerToken = (token) => usePlayerStore.getState().setPlayerToken(token);
 function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
   return Boolean(
     !hasRespondedToAuth
@@ -27,14 +30,6 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
     && socket.readyState === WebSocket.OPEN,
   );
 }
-
-function clearPlayerToken() {
-  if(typeof localStorage === 'undefined') {
-    return;
-  }
-  localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
-}
-
 function generateOnFighterSelectFn({get, set}) {
   return ({race, setScreen, socket}) => {
     set({hasSelectedFighter: true, selectedRace: race});
@@ -42,7 +37,6 @@ function generateOnFighterSelectFn({get, set}) {
     routeToHubIfAuthorized({get, setScreen});
   };
 }
-
 function generateOnSocketMessageFn({get, set}) {
   return ({message, setScreen, socket}) => {
     const messageType = message?.type;
@@ -58,49 +52,40 @@ function generateOnSocketMessageFn({get, set}) {
     onAuth({get, message, set, setScreen, socket});
   };
 }
-
-function getAuthResponse(selectedRace) {
-  const token = getPlayerToken();
-  return token ? {cmd: 'auth', token} : {cmd: 'auth', race: selectedRace, token: 'new'};
-}
-
+const getAuthResponse = ({selectedRace, token}) => token ? {cmd: 'auth', token} : {cmd: 'auth', race: selectedRace, token: 'new'};
 function getInitialState() {
   return {
     hasReceivedAuthRequest: false,
     hasRespondedToAuth: false,
     hasSelectedFighter: false,
     selectedRace: null,
+    token: getStoredPlayerToken(),
   };
 }
-
-function getPlayerToken() {
-  if(typeof localStorage === 'undefined') {
-    return null;
-  }
-  return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
+function loadPlayerTokenIntoState(set) {
+  const token = getStoredPlayerToken();
+  set({token});
+  return token;
 }
-
 function onAuth({get, message, set, setScreen, socket}) {
   if(message.token) {
-    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, message.token);
+    setPlayerToken(message.token);
     routeToHubIfAuthorized({get, setScreen});
   }
   set({hasReceivedAuthRequest: true});
   respondToAuth({get, set, socket});
 }
-
 function respondToAuth({get, set, socket}) {
-  const {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace} = get();
+  const {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, token} = get();
   if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket})) {
     return;
   }
   set({hasRespondedToAuth: true});
-  socket.send(JSON.stringify(getAuthResponse(selectedRace)));
+  socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
 }
-
 function routeToHubIfAuthorized({get, setScreen}) {
-  const {hasSelectedFighter} = get();
-  if(!hasSelectedFighter || !getPlayerToken()) {
+  const {hasSelectedFighter, token} = get();
+  if(!hasSelectedFighter || !token) {
     return;
   }
   setScreen('hub');

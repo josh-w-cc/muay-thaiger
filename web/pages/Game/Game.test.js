@@ -2,7 +2,7 @@ import {act, render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {createMemoryRouter, RouterProvider} from 'react-router';
 
-import {PLAYER_TOKEN_STORAGE_KEY, resetPlayerStore} from '@/data/playerStore.js';
+import {PLAYER_TOKEN_STORAGE_KEY, resetPlayerStore, setPlayerToken} from '@/data/playerStore.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -61,13 +61,13 @@ describe('Game', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    if(globalThis.localStorage) {
+      localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
+    }
     resetPlayerStore();
     setLocalStorage(originalLocalStorage);
     globalThis.WebSocket = originalWebSocket;
     globalThis.window = originalWindow;
-    if(globalThis.localStorage) {
-      localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
-    }
   });
 
   it('loader redirects to hub from index when token exists', async () => {
@@ -246,7 +246,7 @@ describe('Game', () => {
 
     renderGame({Game, loader});
     await screen.findByRole('button', {name: 'Character Select'});
-    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
+    setPlayerToken('existing-token');
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
@@ -280,7 +280,7 @@ describe('Game', () => {
 
     renderGame({Game, loader});
     await screen.findByRole('button', {name: 'Character Select'});
-    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
+    setPlayerToken('existing-token');
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
     socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
