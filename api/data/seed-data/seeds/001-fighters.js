@@ -1,3 +1,6 @@
+import {SKILL_IDS, SKILL_SEED_ACTIONS} from 'shared/skills.js';
+
+
 export const SEED_CHARACTERS = [
   {display_name: 'RamrodRit Jr', gold: '0', id: 1, player_id: 1, race: 1},
   {display_name: 'SaklekSilva Jr', gold: '0', id: 2, player_id: 2, race: 2},
@@ -10,29 +13,8 @@ export const SEED_PLAYERS = [
   {display_name: 'TigerJab', id: 4, token: 'seed-token-tigerjab'},
 ];
 
-export const SKILL_IDS = Object.freeze({
-  begging: 1,
-  breathwork: 4,
-  calisthenics: 6,
-  gymnastics: 9,
-  laboring: 7,
-  running: 8,
-  shadowBoxing: 3,
-  walking: 2,
-  yoga: 5,
-});
-
-export const SEED_ACTIONS = [
-  {id: SKILL_IDS.begging, name: '฿egging', type: 'train'},
-  {id: SKILL_IDS.walking, name: 'Walking', type: 'train'},
-  {id: SKILL_IDS.shadowBoxing, name: 'Shadow Boxing', type: 'train'},
-  {id: SKILL_IDS.breathwork, name: 'Breathwork', type: 'train'},
-  {id: SKILL_IDS.yoga, name: 'Yoga', type: 'train'},
-  {id: SKILL_IDS.calisthenics, name: 'Calisthenics', type: 'train'},
-  {id: SKILL_IDS.laboring, name: 'La฿oring', type: 'train'},
-  {id: SKILL_IDS.running, name: 'Running', type: 'train'},
-  {id: SKILL_IDS.gymnastics, name: 'Gymnastics', type: 'train'},
-];
+export {SKILL_IDS};
+export const SEED_ACTIONS = SKILL_SEED_ACTIONS;
 
 export const SEED_STATICS = [
   {

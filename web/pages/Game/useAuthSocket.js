@@ -60,7 +60,7 @@ function respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedF
     return;
   }
   hasRespondedToAuth.current = true;
-  activeSocket.send(JSON.stringify({token: 'new', type: 'auth'}));
+  activeSocket.send(JSON.stringify({token: getPlayerToken() || 'new', type: 'auth'}));
 }
 
 function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
