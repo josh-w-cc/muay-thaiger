@@ -1,9 +1,10 @@
 import React from 'react';
 
 import useInventoryStore from '@/data/inventory.js';
+import useFighterStore from '@/data/fighter.js';
+import formatHugeNumber from '@/utils/formatHugeNumber.js';
+
 import Button from '../../components/Button.jsx';
-import useFighterStore from '../../Fighter.js';
-import formatHugeNumber from "@/utils/formatHugeNumber.js";
 import Items from './Items.js';
 
 

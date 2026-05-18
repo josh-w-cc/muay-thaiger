@@ -1,4 +1,4 @@
-import useFighterStore from '@/orig/src/Fighter.js';
+import useFighterStore from '@/data/fighter.js';
 
 
 export default function selectFighter(id) {

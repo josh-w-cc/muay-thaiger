@@ -1,7 +1,8 @@
 import React from 'react';
 
+import useFighterStore from '@/data/fighter.js';
+
 import Button from '../../components/Button';
-import useFighterStore from '../../Fighter.js';
 import Skills from './Skills.js';
 import TrainStat from './TrainStat.jsx';
 
