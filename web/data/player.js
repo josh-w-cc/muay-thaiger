@@ -1,7 +1,6 @@
 import {create} from 'zustand';
 import {clearStoredPlayerToken, getStoredPlayerToken, setStoredPlayerToken} from './playerTokenStorage.js';
 
-export {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 const usePlayerStore = create((set, get) => ({
   ...getInitialState(),
   clearToken: () => {
