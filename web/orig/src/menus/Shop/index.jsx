@@ -1,6 +1,6 @@
 import React from 'react';
 
-import useInventoryStore from '@/data/inventoryStore.js';
+import useInventoryStore from '@/data/inventory.js';
 import Button from '../../components/Button.jsx';
 import useFighterStore from '../../Fighter.js';
 import formatHugeNumber from "@/utils/formatHugeNumber.js";
