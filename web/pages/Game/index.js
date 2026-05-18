@@ -1,5 +1,4 @@
 import {redirect, useLoaderData, useNavigate, useParams} from 'react-router';
-
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
@@ -8,14 +7,18 @@ import Hub from '../../orig/src/menus/Hub.js';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
 import useAuthSocket, {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
-
 import './Game.css';
 import '../../orig/src/index.css';
-
 const CHARACTER_SELECT_SCREEN = 'character-select';
-
 export async function loader({params}) {
   const screen = params?.screen;
+  const preLoadResponse = getPreLoadResponse(screen);
+  if(preLoadResponse !== undefined) {
+    return preLoadResponse;
+  }
+  return loadRaceStatics();
+}
+function getPreLoadResponse(screen) {
   if(shouldRedirectToHub(screen)) {
     return redirect('/hub');
   }
@@ -25,6 +28,9 @@ export async function loader({params}) {
   if((screen ?? CHARACTER_SELECT_SCREEN) !== CHARACTER_SELECT_SCREEN) {
     return null;
   }
+  return undefined;
+}
+async function loadRaceStatics() {
   try {
     return await fetchJSON('race');
   }
@@ -33,18 +39,15 @@ export async function loader({params}) {
     return [];
   }
 }
-
 export default function Game() {
   const raceStatics = useLoaderData() ?? [];
   const navigate = useNavigate();
   const {screen = CHARACTER_SELECT_SCREEN} = useParams();
   const setScreen = generateSetScreenFn(navigate);
   const onCharacterSelectExit = useAuthSocket(setScreen);
-
   if(screen === CHARACTER_SELECT_SCREEN) {
     return <CharacterSelect onExit={onCharacterSelectExit} raceStatics={raceStatics} />;
   }
-
   return (
     <>
       <Header setScreen={setScreen} />
@@ -52,7 +55,6 @@ export default function Game() {
     </>
   );
 }
-
 function generateSetScreenFn(navigate) {
   return (screen) => {
     if(screen === CHARACTER_SELECT_SCREEN) {
@@ -62,7 +64,6 @@ function generateSetScreenFn(navigate) {
     navigate(`/${screen}`);
   };
 }
-
 function getFallback(setScreen) {
   return (
     <>
@@ -71,7 +72,6 @@ function getFallback(setScreen) {
     </>
   );
 }
-
 function renderScreen(screen, setScreen) {
   switch(screen) {
     case 'hub':
@@ -86,16 +86,12 @@ function renderScreen(screen, setScreen) {
       return getFallback(setScreen);
   }
 }
-
 function shouldRedirectToCharacterSelect(screen) {
-  const hasToken = getPlayerToken();
-  return screen && screen !== CHARACTER_SELECT_SCREEN && !hasToken;
+  return screen && screen !== CHARACTER_SELECT_SCREEN && !getPlayerToken();
 }
-
 function shouldRedirectToHub(screen) {
   return !screen && !!getPlayerToken();
 }
-
 function getPlayerToken() {
   if(typeof localStorage === 'undefined') {
     return null;
