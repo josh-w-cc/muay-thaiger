@@ -59,9 +59,23 @@ describe('Game', () => {
     localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
   });
 
-  it('loader returns null', async () => {
+  it('loader returns null for character select', async () => {
     const {loader} = await import('./index.js');
-    expect(loader()).toBeNull();
+    expect(loader({params: {screen: 'character-select'}})).toBeNull();
+  });
+
+  it('loader returns null for token-protected screens when token exists', async () => {
+    const {loader} = await import('./index.js');
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
+    expect(loader({params: {screen: 'hub'}})).toBeNull();
+  });
+
+  it('loader redirects to character select for token-protected screens when token is missing', async () => {
+    const {loader} = await import('./index.js');
+    const response = loader({params: {screen: 'hub'}});
+
+    expect(response.headers.get('Location')).toBe('/');
+    expect(response.status).toBe(302);
   });
 
   it('renders the character select screen first', async () => {

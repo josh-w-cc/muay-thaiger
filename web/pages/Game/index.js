@@ -1,4 +1,4 @@
-import {useNavigate, useParams} from 'react-router';
+import {redirect, useNavigate, useParams} from 'react-router';
 
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
@@ -6,12 +6,15 @@ import Header from './Header.js';
 import Hub from '../../orig/src/menus/Hub.js';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
-import useAuthSocket from './useAuthSocket.js';
+import useAuthSocket, {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
 
 import './Game.css';
 import '../../orig/src/index.css';
 
-export function loader() {
+export function loader({params}) {
+  if(shouldRedirectToCharacterSelect(params?.screen)) {
+    return redirect('/');
+  }
   return null;
 }
 
@@ -65,4 +68,9 @@ function renderScreen(screen, setScreen) {
     default:
       return getFallback(setScreen);
   }
+}
+
+function shouldRedirectToCharacterSelect(screen) {
+  const hasToken = Boolean(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY));
+  return screen && screen !== 'character-select' && !hasToken;
 }
