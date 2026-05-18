@@ -21,6 +21,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./api:/app
+      - ./shared:/shared
       - /app/node_modules
 
   playwright:
@@ -75,6 +76,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./web:/app
+      - ./shared:/shared
       - /app/node_modules
 
 volumes:

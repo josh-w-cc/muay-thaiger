@@ -1,6 +1,8 @@
 import react from '@vitejs/plugin-react';
 import {defineConfig, transformWithOxc} from 'vite';
 
+import {API_PREFIX, WS_PREFIX} from '../shared/constants.js';
+
 
 function jsxInJs() {
   return {
@@ -32,12 +34,12 @@ export default defineConfig({
   server: {
     allowedHosts: ['web'],
     proxy: {
-      '/api': {
+      [API_PREFIX]: {
         changeOrigin: true,
         target: apiTarget,
         ws: true,
       },
-      '/ws': {
+      [WS_PREFIX]: {
         changeOrigin: true,
         target: apiTarget,
         ws: true,

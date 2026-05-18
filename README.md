@@ -22,3 +22,5 @@ The frontend will be available at <http://localhost:3333> and the API at <http:/
 ## Structure
 
 See [agents.md](./agents.md) for a detailed breakdown of the repository layout and how the services connect.
+
+- `shared/` contains code shared between the API and web apps (constants and pure utilities).

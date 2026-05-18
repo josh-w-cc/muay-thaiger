@@ -1,10 +1,13 @@
+import {API_PREFIX} from '../../shared/constants.js';
+
+
 export default function fetchAPI(path, method, body) {
   const options = {method};
   if(body !== undefined) {
     options.body = JSON.stringify(body);
     options.headers = {'Content-Type': 'application/json'};
   }
-  return fetch(`/api/${path}`, options);
+  return fetch(`${API_PREFIX}/${path}`, options);
 }
 
 export function fetchJSON(path) {
