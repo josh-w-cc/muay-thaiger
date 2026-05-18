@@ -1,4 +1,4 @@
-import {act, render, screen} from '@testing-library/react';
+import {act, render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {createMemoryRouter, RouterProvider} from 'react-router';
 
@@ -138,6 +138,9 @@ describe('Game', () => {
     renderGame({Game, loader});
     await screen.findByRole('button', {name: 'Character Select'});
 
+    await waitFor(() => {
+      expect(globalThis.WebSocket).toHaveBeenCalled();
+    });
     const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
 
     expect(socketURL.host).toBe(window.location.host);
@@ -156,6 +159,9 @@ describe('Game', () => {
     renderGame({Game, loader});
     await screen.findByRole('button', {name: 'Character Select'});
 
+    await waitFor(() => {
+      expect(globalThis.WebSocket).toHaveBeenCalled();
+    });
     const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
 
     expect(socketURL.protocol).toBe('wss:');
