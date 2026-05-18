@@ -240,8 +240,6 @@ describe('Game', () => {
 
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
-
-
   it('responds with auth/new after auth when fighter is selected', async () => {
     const user = userEvent.setup();
     const send = vi.fn();

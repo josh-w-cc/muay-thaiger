@@ -48,8 +48,6 @@ describe('usePlayerStore', () => {
 
     expect(setScreen).toHaveBeenCalledWith('hub');
   });
-
-
   it('sends auth/new after fighter selection when auth request is received', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
