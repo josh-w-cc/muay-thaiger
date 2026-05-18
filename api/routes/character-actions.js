@@ -33,7 +33,7 @@ export async function onMessage(raw, socket, characterActions, characters) {
 }
 
 function normalizeMessage(message) {
-  if(!message || message.type !== 'create') {
+  if(!message || message.cmd !== 'create') {
     return null;
   }
   const actionId = Number(message.action_id);
@@ -43,8 +43,8 @@ function normalizeMessage(message) {
   }
   return {
     action_id: actionId,
+    cmd: message.cmd,
     player_id: playerId,
-    type: message.type,
   };
 }
 
