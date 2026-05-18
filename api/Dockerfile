@@ -2,10 +2,11 @@ FROM node:26-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
+COPY shared /shared
+COPY api/package.json api/package-lock.json* ./
 
 RUN npm install
 
-COPY . .
+COPY api .
 
 EXPOSE 3000
