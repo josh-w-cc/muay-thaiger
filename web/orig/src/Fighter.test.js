@@ -1,4 +1,4 @@
-import BaseStats, {RACE_STATICS} from './menus/CharacterSelect/BaseStats.jsx';
+import BaseStats, {RACE_STATICS} from './menus/CharacterSelect/BaseStats.js';
 import useFighterStore, {resetFighterStore} from './Fighter.js';
 
 
