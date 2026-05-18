@@ -4,7 +4,7 @@ import useConnectSocket from './useConnectSocket.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
-const originalWindow = globalThis.window;
+const originalLocation = globalThis.window.location;
 
 describe('useConnectSocket', () => {
   beforeEach(() => {
@@ -17,7 +17,10 @@ describe('useConnectSocket', () => {
   afterEach(() => {
     vi.clearAllMocks();
     globalThis.WebSocket = originalWebSocket;
-    globalThis.window = originalWindow;
+    Object.defineProperty(globalThis.window, 'location', {
+      configurable: true,
+      value: originalLocation,
+    });
   });
 
   it('connects to /ws/connect using the current host', async () => {
@@ -34,11 +37,12 @@ describe('useConnectSocket', () => {
   });
 
   it('uses the secure websocket protocol on https pages', async () => {
-    const secureWindow = Object.create(window);
-    Object.defineProperty(secureWindow, 'location', {
+    Object.defineProperty(globalThis.window, 'location', {
+      configurable: true,
+      enumerable: true,
       value: new URL('https://example.test/game'),
+      writable: true,
     });
-    globalThis.window = secureWindow;
     render(<TestHarness onMessage={vi.fn()} />);
 
     await waitFor(() => {

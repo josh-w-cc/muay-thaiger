@@ -21,7 +21,7 @@ export default function useAuthSocket(setScreen) {
 }
 
 function onAuthMessage({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, message, selectedRace, setScreen, socket}) {
-  const messageType = message.type;
+  const messageType = message?.type;
   if(messageType === 'auth-invalid-token') {
     clearPlayerToken();
     hasRespondedToAuth.current = false;
