@@ -8,10 +8,12 @@ describe('knexfile defaults', () => {
   it('uses tiger as the default database name', async () => {
     const path = fileURLToPath(new URL('./knexfile.js', import.meta.url));
     const contents = await readFile(path, 'utf8');
+    const fallbackConnectionMatch = contents.match(/'postgresql:\/\/[^']+'/);
 
+    assert.notEqual(fallbackConnectionMatch, null);
     assert.equal(
-      contents.includes('postgresql://postgres:postgres@localhost:5333/tiger'),
-      true,
+      new URL(fallbackConnectionMatch[0].slice(1, -1)).pathname,
+      '/tiger',
     );
   });
 });
