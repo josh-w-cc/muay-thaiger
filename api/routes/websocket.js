@@ -4,7 +4,7 @@ import playersModel from '../data/models/players.js';
 import {authenticate} from '../logic/auth.js';
 import {createAndSend} from '../logic/character-actions.js';
 
-export default async function connectRoutes(app) {
+export default async function websocketRoutes(app) {
   const models = {
     characterActions: characterActionsModel(app.db),
     characters: fightersModel(app.db),
