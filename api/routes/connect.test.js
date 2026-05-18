@@ -28,10 +28,10 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    socket.send(JSON.stringify({token: 'new', type: 'auth'}));
+    socket.send(JSON.stringify({type: 'auth', token: 'new'}));
     const message = await readMessage(socket);
 
-    assert.deepEqual(message, {token: 'new', type: 'auth'});
+    assert.deepEqual(message, {type: 'auth', token: 'new'});
     socket.terminate();
     await app.close();
   });
