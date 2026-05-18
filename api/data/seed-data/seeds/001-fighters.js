@@ -10,16 +10,28 @@ export const SEED_PLAYERS = [
   {display_name: 'TigerJab', id: 4, token: 'seed-token-tigerjab'},
 ];
 
+export const SKILL_IDS = Object.freeze({
+  begging: 1,
+  breathwork: 4,
+  calisthenics: 6,
+  gymnastics: 9,
+  laboring: 7,
+  running: 8,
+  shadowBoxing: 3,
+  walking: 2,
+  yoga: 5,
+});
+
 export const SEED_ACTIONS = [
-  {id: 1, name: '฿egging', type: 'train'},
-  {id: 2, name: 'Walking', type: 'train'},
-  {id: 3, name: 'Shadow Boxing', type: 'train'},
-  {id: 4, name: 'Breathwork', type: 'train'},
-  {id: 5, name: 'Yoga', type: 'train'},
-  {id: 6, name: 'Calisthenics', type: 'train'},
-  {id: 7, name: 'La฿oring', type: 'train'},
-  {id: 8, name: 'Running', type: 'train'},
-  {id: 9, name: 'Gymnastics', type: 'train'},
+  {id: SKILL_IDS.begging, name: '฿egging', type: 'train'},
+  {id: SKILL_IDS.walking, name: 'Walking', type: 'train'},
+  {id: SKILL_IDS.shadowBoxing, name: 'Shadow Boxing', type: 'train'},
+  {id: SKILL_IDS.breathwork, name: 'Breathwork', type: 'train'},
+  {id: SKILL_IDS.yoga, name: 'Yoga', type: 'train'},
+  {id: SKILL_IDS.calisthenics, name: 'Calisthenics', type: 'train'},
+  {id: SKILL_IDS.laboring, name: 'La฿oring', type: 'train'},
+  {id: SKILL_IDS.running, name: 'Running', type: 'train'},
+  {id: SKILL_IDS.gymnastics, name: 'Gymnastics', type: 'train'},
 ];
 
 export const SEED_STATICS = [
