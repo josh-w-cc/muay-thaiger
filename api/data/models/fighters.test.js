@@ -5,12 +5,12 @@ import fightersModel from './fighters.js';
 import {mockKnex} from '../utils/mock-knex.js';
 
 
-describe('characters.findCurrentByPlayerID', () => {
-  it('finds the latest non-retired character for a player', async () => {
+describe('fighters.findCurrentByPlayerID', () => {
+  it('finds the latest non-retired fighter for a player', async () => {
     const {calls, knex} = mockKnex({id: 7, player_id: 3, retired: false});
-    const characters = fightersModel(knex);
+    const fighters = fightersModel(knex);
 
-    await characters.findCurrentByPlayerID(3);
+    await fighters.findCurrentByPlayerID(3);
 
     assert.deepEqual(calls[0], ['table', 'fighters']);
     assert.deepEqual(calls[1], ['where', {player_id: 3, retired: false}]);
