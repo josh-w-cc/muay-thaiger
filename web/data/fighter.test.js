@@ -113,5 +113,6 @@ describe('useFighterStore', () => {
 
     expect(error).toHaveBeenCalledWith('Tried to train unknown stat:', 'charisma');
     expect(useFighterStore.getState().strength).toBe(0);
+    error.mockRestore();
   });
 });

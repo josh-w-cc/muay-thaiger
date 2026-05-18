@@ -2,10 +2,6 @@ import {isFightIdling, isTrainIdling, tickTrain} from './fighterState.js';
 
 
 describe('fighterState helpers', () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('identifies fight and training idle keys defensively', () => {
     expect(isFightIdling()).toBe(false);
     expect(isFightIdling({key: 'FIGHT-club'})).toBe(true);
