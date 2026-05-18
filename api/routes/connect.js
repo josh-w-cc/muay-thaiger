@@ -26,7 +26,7 @@ export async function onMessage(raw, socket, characters, players) {
     return;
   }
   const race = getRace(message);
-  if(!canCreatePlayer({race, socket})) {
+  if(!canCreatePlayer({socket, race})) {
     return;
   }
   const token = randomUUID();
@@ -35,8 +35,8 @@ export async function onMessage(raw, socket, characters, players) {
   socket.send(JSON.stringify({token: player.token, type: 'auth'}));
 }
 
-function canCreatePlayer({race, socket}) {
-  return race !== null && socket.readyState === socket.OPEN;
+function canCreatePlayer({socket, race}) {
+  return socket.readyState === socket.OPEN && race !== null;
 }
 
 function parseMessage(raw) {
