@@ -52,7 +52,7 @@ export default function Game() {
   const navigate = useNavigate();
   const {screen = CHARACTER_SELECT_SCREEN} = useParams();
   const setScreen = generateSetScreenFn(navigate);
-  const onCharacterSelectExit = useAuthSocket(setScreen);
+  const onCharacterSelectExit = useAuthSocket();
   if(screen === CHARACTER_SELECT_SCREEN) {
     return <CharacterSelect onExit={onCharacterSelectExit} raceStatics={raceStatics} />;
   }

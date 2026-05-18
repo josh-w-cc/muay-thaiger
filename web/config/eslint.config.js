@@ -49,7 +49,7 @@ export default [
       }],
       '@stylistic/keyword-spacing': ['error', {
         overrides: {
-          catch: {after: false},
+          catch: {after: true},
           for: {after: false},
           if: {after: false},
           switch: {after: false},
