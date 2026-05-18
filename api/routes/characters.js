@@ -1,4 +1,5 @@
 import fightersModel from '../data/models/fighters.js';
+import {withFoundItem} from './shared/route-handlers.js';
 
 
 /**
@@ -9,11 +10,5 @@ export default async function charactersRoutes(app) {
 
   app.get('/characters', async () => characters.list());
 
-  app.get('/characters/:id', async (req, reply) => {
-    const character = await characters.find(Number(req.params.id));
-    if(!character) {
-      return reply.code(404).send({error: 'Not found'});
-    }
-    return character;
-  });
+  app.get('/characters/:id', withFoundItem(characters, (character) => character));
 }
