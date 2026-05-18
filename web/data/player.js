@@ -13,6 +13,7 @@ const usePlayerStore = create((set, get) => ({
 }));
 export default usePlayerStore;
 
+
 export const loadPlayerToken = () => usePlayerStore.getState().loadToken();
 export const resetPlayerStore = () => {
   clearStoredPlayerToken();
@@ -74,6 +75,7 @@ function loadPlayerTokenIntoState(set) {
   set({token});
   return token;
 }
+
 function onAuth({get, message, set, setScreen, socket}) {
   if(message.token) {
     get().setToken(message.token);
@@ -82,6 +84,7 @@ function onAuth({get, message, set, setScreen, socket}) {
   set({hasReceivedAuthRequest: true});
   respondToAuth({get, set, socket});
 }
+
 function respondToAuth({get, set, socket}) {
   const {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, token} = get();
   if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket})) {
@@ -90,6 +93,7 @@ function respondToAuth({get, set, socket}) {
   set({hasRespondedToAuth: true});
   socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
 }
+
 function routeToHubIfAuthorized({get, setScreen}) {
   const {hasSelectedFighter, token} = get();
   if(!hasSelectedFighter || !token) {
