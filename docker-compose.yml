@@ -1,6 +1,8 @@
 services:
   api:
-    build: ./api
+    build:
+      context: .
+      dockerfile: api/Dockerfile
     command: ["sh", "-c", "npm install && npm run migrate && npm run migrate:seed && node --watch-path=. index.js"]
     depends_on:
       postgres:
@@ -58,7 +60,9 @@ services:
       - postgres-data:/var/lib/postgresql
 
   web:
-    build: ./web
+    build:
+      context: .
+      dockerfile: web/Dockerfile
     command: ["sh", "-c", "npm ci && npm run dev -- --host"]
     depends_on:
       api:

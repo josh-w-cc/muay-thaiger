@@ -22,3 +22,5 @@ The frontend will be available at <http://localhost:3333> and the API at <http:/
 ## Structure
 
 See [agents.md](./agents.md) for a detailed breakdown of the repository layout and how the services connect.
+
+The `shared/` package is consumed by both `api/` and `web/` via local file dependencies (`file:../shared`), so Docker builds include the shared code without relying on bind mounts.
