@@ -8,7 +8,7 @@ import charactersRoutes from '../routes/characters.js';
 
 describe('GET /characters', () => {
   it('returns list of characters', async () => {
-    const {knex} = mockKnex([{display_name: 'TestChar', id: 1, player_id: 1, race: 1}]);
+    const {knex} = mockKnex([{display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1}]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(charactersRoutes);
@@ -16,14 +16,14 @@ describe('GET /characters', () => {
     const response = await app.inject({method: 'GET', url: '/characters'});
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), [{display_name: 'TestChar', id: 1, player_id: 1, race: 1}]);
+    assert.deepEqual(response.json(), [{display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1}]);
     await app.close();
   });
 });
 
 describe('GET /characters/:id', () => {
   it('returns character when found', async () => {
-    const {knex} = mockKnex({display_name: 'TestChar', id: 1, player_id: 1, race: 1});
+    const {knex} = mockKnex({display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1});
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(charactersRoutes);
@@ -31,7 +31,7 @@ describe('GET /characters/:id', () => {
     const response = await app.inject({method: 'GET', url: '/characters/1'});
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), {display_name: 'TestChar', id: 1, player_id: 1, race: 1});
+    assert.deepEqual(response.json(), {display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1});
     await app.close();
   });
 
@@ -51,7 +51,7 @@ describe('GET /characters/:id', () => {
 
 describe('POST /characters', () => {
   it('creates character and returns 201', async () => {
-    const {knex} = mockKnex([{display_name: 'NewChar', id: 1, player_id: 1, race: 1}]);
+    const {knex} = mockKnex([{display_name: 'NewChar', gold: '0', id: 1, player_id: 1, race: 1}]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(charactersRoutes);
@@ -63,7 +63,7 @@ describe('POST /characters', () => {
     });
 
     assert.equal(response.statusCode, 201);
-    assert.deepEqual(response.json(), {display_name: 'NewChar', id: 1, player_id: 1, race: 1});
+    assert.deepEqual(response.json(), {display_name: 'NewChar', gold: '0', id: 1, player_id: 1, race: 1});
     await app.close();
   });
 });
