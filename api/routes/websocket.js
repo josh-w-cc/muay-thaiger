@@ -42,7 +42,7 @@ function parseMessage(raw) {
   try {
     return JSON.parse(raw);
   }
-  catch{
+  catch {
     return null;
   }
 }
