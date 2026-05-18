@@ -9,7 +9,7 @@ test('player token redirects root route to hub', async ({page}) => {
   await page.goto('/');
   await expect(page.getByRole('heading', {name: 'Choose your fighter:'})).toBeVisible();
   await page.evaluate(() => {
-    localStorage.setItem('mt-player-token', 'token-value');
+    localStorage.setItem('mt-player-token', 'smoke-test-token');
   });
 
   await page.goto('/');
