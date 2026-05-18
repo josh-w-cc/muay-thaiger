@@ -6,8 +6,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "lint": "eslint . --config config/eslint.config.js --fix",
-    "lint:ci": "eslint . --config config/eslint.config.js",
+    "lint": "eslint . --config config/eslint.config.js --fix && eslint orig/src --config config/eslint.orig-import-quotes.config.js --fix",
+    "lint:ci": "eslint . --config config/eslint.config.js && eslint orig/src --config config/eslint.orig-import-quotes.config.js",
     "preview": "vite preview",
     "test": "vitest --config config/vitest.config.js",
     "test:coverage": "vitest run --config config/vitest.config.js --coverage"
