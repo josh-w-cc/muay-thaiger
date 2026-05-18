@@ -16,5 +16,4 @@ export default async function actionsRoutes(app) {
     }
     return action;
   });
-
 }
