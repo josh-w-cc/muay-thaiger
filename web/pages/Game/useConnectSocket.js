@@ -82,7 +82,7 @@ function flushPendingMessages() {
 
 function unsubscribeFromMessages(listener) {
   messageListeners.delete(listener);
-  if(messageListeners.size !== 0 || !socket) {
+  if(!socket || messageListeners.size !== 0) {
     return;
   }
   socket.close();
