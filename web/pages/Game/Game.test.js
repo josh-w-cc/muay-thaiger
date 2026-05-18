@@ -137,15 +137,15 @@ describe('Game', () => {
   });
 
   it('renders the character select screen first', async () => {
-    const {default: Game, loader} = await import('./index.js');
-    renderGame({Game, loader});
+    const gameModule = await import('./index.js');
+    renderGame({gameModule});
     expect(await screen.findByRole('button', {name: 'Character Select'})).toBeInTheDocument();
   });
 
   it('connects to the websocket when the game loads', async () => {
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
 
     await waitFor(() => {
@@ -164,9 +164,9 @@ describe('Game', () => {
       value: new URL('https://example.test/game'),
     });
     globalThis.window = secureWindow;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
 
     await waitFor(() => {
@@ -184,9 +184,9 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await user.click(await screen.findByRole('button', {name: 'Character Select'}));
     act(() => {
       socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
@@ -213,9 +213,9 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await user.click(await screen.findByRole('button', {name: 'Character Select'}));
 
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
@@ -233,9 +233,9 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
@@ -251,9 +251,9 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
     setPlayerToken('existing-token');
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
@@ -268,9 +268,9 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
     socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
 
@@ -285,9 +285,9 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
     setPlayerToken('existing-token');
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
@@ -307,10 +307,10 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
     setLocalStorage(undefined);
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
@@ -328,9 +328,9 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
     socket.onmessage({data: '{'});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
@@ -346,9 +346,9 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
     socket.onmessage({data: JSON.stringify({type: 'noop'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
@@ -363,9 +363,9 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, loader});
+    renderGame({gameModule});
     await user.click(await screen.findByRole('button', {name: 'Character Select'}));
     act(() => {
       socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
@@ -381,17 +381,17 @@ describe('Game', () => {
 
   it('renders a game screen from the URL', async () => {
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
-    const {default: Game, loader} = await import('./index.js');
-    renderGame({Game, initialPath: '/fight', loader});
+    const gameModule = await import('./index.js');
+    renderGame({gameModule, initialPath: '/fight'});
     expect(await screen.findByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
   });
 
   it('stays on hub when navigating to character select from a game screen with token', async () => {
     const user = userEvent.setup();
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    renderGame({Game, initialPath: '/hub', loader});
+    renderGame({gameModule, initialPath: '/hub'});
     await user.click(await screen.findByRole('button', {name: 'Go Character Select'}));
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
@@ -401,9 +401,9 @@ describe('Game', () => {
     globalThis.WebSocket = vi.fn(function () {
       return {close, send: vi.fn()};
     });
-    const {default: Game, loader} = await import('./index.js');
+    const gameModule = await import('./index.js');
 
-    const {unmount} = renderGame({Game, loader});
+    const {unmount} = renderGame({gameModule});
     await screen.findByRole('button', {name: 'Character Select'});
     unmount();
 
@@ -411,9 +411,38 @@ describe('Game', () => {
   });
 });
 
-function renderGame({Game, initialPath = '/', loader}) {
+function renderGame({gameModule, initialPath = '/'}) {
+  const {
+    default: Game,
+    FallbackScreen,
+    FightScreen,
+    GameLayout,
+    gameScreenLoader,
+    HubScreen,
+    loader,
+    ShopScreen,
+    TrainScreen,
+  } = gameModule;
   const router = createMemoryRouter(
-    [{element: <Game />, loader, path: '/:screen?'}],
+    [
+      {
+        children: [
+          {index: true, element: <Game />, loader},
+          {
+            children: [
+              {element: <FightScreen />, path: 'fight'},
+              {element: <HubScreen />, path: 'hub'},
+              {element: <ShopScreen />, path: 'shop'},
+              {element: <TrainScreen />, path: 'train'},
+              {element: <FallbackScreen />, path: '*'},
+            ],
+            element: <GameLayout />,
+            loader: gameScreenLoader,
+          },
+        ],
+        path: '/',
+      },
+    ],
     {initialEntries: [initialPath]},
   );
   routerNavigate.mockImplementation((screenPath) => router.navigate(screenPath));
