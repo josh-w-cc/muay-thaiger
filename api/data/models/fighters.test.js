@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import charactersModel from './characters.js';
+import fightersModel from './fighters.js';
 import {mockKnex} from '../utils/mock-knex.js';
 
 
 describe('characters.findCurrentByPlayerID', () => {
   it('finds the latest non-retired character for a player', async () => {
     const {calls, knex} = mockKnex({id: 7, player_id: 3, retired: false});
-    const characters = charactersModel(knex);
+    const characters = fightersModel(knex);
 
     await characters.findCurrentByPlayerID(3);
 

@@ -7,7 +7,7 @@ import {
 } from '../utils/crud.js';
 
 
-export default function characters(db) {
+export default function fighters(db) {
   return {
     create: generateCreateFn(db, 'fighters'),
     find: generateFindFn(db, 'fighters'),

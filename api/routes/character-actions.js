@@ -1,4 +1,4 @@
-import charactersModel from '../data/models/characters.js';
+import fightersModel from '../data/models/fighters.js';
 import characterActionsModel from '../data/models/character-actions.js';
 
 
@@ -8,7 +8,7 @@ import characterActionsModel from '../data/models/character-actions.js';
 export default async function characterActionsRoutes(app) {
   const models = {
     characterActions: characterActionsModel(app.db),
-    characters: charactersModel(app.db),
+    characters: fightersModel(app.db),
   };
   app.get('/character-actions', {websocket: true}, (socket) => onConnect(socket, models));
 }
