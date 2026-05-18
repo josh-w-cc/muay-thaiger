@@ -100,6 +100,7 @@ The root `package.json` provides aggregate scripts. Subproject commands (e.g., `
 ## CI
 
 - **`api.yml`** — Lint + tests (95% coverage) on PRs touching `api/`.
+- **`shared.yml`** — Lint + tests (95% coverage) on PRs touching `shared/`.
 - **`web.yml`** — Lint + tests (95% coverage) on PRs touching `web/`.
 - **`playwright.yml`** — Lint + E2E on PRs touching `api/`, `web/`, `playwright/`, or `docker-compose.yml`. Also runs on push to `main`. AGENTS.md changes are excluded from all triggers.
 - **Timeouts:** 5 min for lint/test/build jobs, 15 min for E2E. Steps prone to hanging (e.g., `docker compose up --wait`) need step-level `timeout-minutes`.
