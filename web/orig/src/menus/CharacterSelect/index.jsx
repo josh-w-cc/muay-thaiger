@@ -1,33 +1,21 @@
 import React from 'react';
 
 import formatHugeNumber from "@/utils/formatHugeNumber.js";
-import {fetchJSON} from '@/utils/fetchAPI.js';
 import useFighterStore from '../../Fighter.js';
 import Button from '../../components/Button.jsx';
-import BaseStats from './BaseStats.js';
+import SnowLeopard from './assets/SnowLeopard.png';
+import Tiger from './assets/Tiger.png';
 
 import css from './CharacterSelect.module.css';
 
 
-function CharacterSelect({onExit}) {
+const RACE_IMAGES_BY_ID = {
+  1: Tiger,
+  2: SnowLeopard,
+};
+
+function CharacterSelect({onExit, raceStatics = []}) {
   const fighter = useFighterStore();
-  const [raceStatics, setRaceStatics] = React.useState(() => getBaseRaceStatics());
-
-  React.useEffect(() => {
-    let isMounted = true;
-    fetchJSON('race')
-      .then((races) => {
-        if(!isMounted || !Array.isArray(races) || races.length === 0) {
-          return;
-        }
-        setRaceStatics(races);
-      })
-      .catch(() => {});
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   return (<>
     <h1>Choose your fighter:</h1>
@@ -60,14 +48,6 @@ function Character({name, image, stats, onSelect}) {
   </div>);
 }
 
-function getBaseRaceStatics() {
-  return Object.values(BaseStats).map((raceStatic) => ({
-    id: raceStatic.id,
-    name: raceStatic.name,
-    stats: raceStatic.stats,
-  }));
-}
-
 function getRaceImage(raceID) {
-  return BaseStats[`${raceID}`]?.image;
+  return RACE_IMAGES_BY_ID[raceID];
 }

@@ -22,21 +22,14 @@ export function onConnect(socket, characters, players) {
 
 export async function onMessage(raw, socket, characters, players) {
   const message = parseMessage(raw);
-  if(!message || message.type !== 'auth' || message.token !== 'new') {
+  if(!message || message.type !== 'auth' || socket.readyState !== socket.OPEN) {
     return;
   }
-  const race = getRace(message);
-  if(!canCreatePlayer({socket, race})) {
+  const player = await getPlayer({characters, message, players});
+  if(!player) {
     return;
   }
-  const token = randomUUID();
-  const player = await players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
-  await createCharacter({characters, player, race});
-  socket.send(JSON.stringify({token: player.token, type: 'auth'}));
-}
-
-function canCreatePlayer({socket, race}) {
-  return socket.readyState === socket.OPEN && race !== null;
+  socket.send(JSON.stringify({player_id: player.id, token: player.token, type: 'auth'}));
 }
 
 function parseMessage(raw) {
@@ -48,6 +41,16 @@ function parseMessage(raw) {
   }
 }
 
+async function getPlayer({characters, message, players}) {
+  if(message.token === 'new') {
+    return createPlayer({characters, players, race: getRace(message)});
+  }
+  if(typeof message.token !== 'string') {
+    return null;
+  }
+  return players.findByToken(message.token);
+}
+
 function getRace(message) {
   if(message.race == null) {
     return null;
@@ -57,6 +60,16 @@ function getRace(message) {
     return null;
   }
   return parsedRace;
+}
+
+async function createPlayer({characters, players, race}) {
+  if(race === null) {
+    return null;
+  }
+  const token = randomUUID();
+  const player = await players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
+  await createCharacter({characters, player, race});
+  return player;
 }
 
 async function createCharacter({characters, player, race}) {
