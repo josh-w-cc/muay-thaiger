@@ -4,7 +4,7 @@ import {describe, it} from 'node:test';
 import {syncActiveWebhooks} from './sync-player-state.js';
 
 describe('syncActiveWebhooks', () => {
-  it('sends each player current character state to active webhook URLs', async () => {
+  it('sends each player\'s current character state to active webhook URLs', async () => {
     const characters = {
       findCurrentByPlayerID: async (playerID) => ({display_name: `Char-${playerID}`, id: playerID * 10, player_id: playerID}),
     };
