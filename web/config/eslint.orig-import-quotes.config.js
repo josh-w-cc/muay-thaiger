@@ -1,6 +1,6 @@
 export default [
   {
-    files: ['orig/src/**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx}'],
     languageOptions: {
       parserOptions: {
         ecmaFeatures: {jsx: true},
