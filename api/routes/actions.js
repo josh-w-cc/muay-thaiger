@@ -1,4 +1,4 @@
-import actionsModel from '../data/models/actions.js';
+import actionsModel from '#api/data/models/actions.js';
 
 
 /**
