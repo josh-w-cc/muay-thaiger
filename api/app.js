@@ -5,10 +5,10 @@ import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
 import actionsRoutes from './routes/actions.js';
 import charactersRoutes from './routes/characters.js';
-import connectRoutes from './routes/connect.js';
 import healthRoutes from './routes/health.js';
 import playersRoutes from './routes/players.js';
 import raceRoutes from './routes/race.js';
+import websocketRoutes from './routes/websocket.js';
 
 
 export default async function build(opts = {}) {
@@ -19,7 +19,7 @@ export default async function build(opts = {}) {
   await app.register(actionsRoutes, {prefix: '/api'});
   await app.register(charactersRoutes, {prefix: '/api'});
   await app.register(healthRoutes);
-  await app.register(connectRoutes, {prefix: '/ws'});
+  await app.register(websocketRoutes, {prefix: '/ws'});
   await app.register(playersRoutes, {prefix: '/api'});
   await app.register(raceRoutes, {prefix: '/api'});
 

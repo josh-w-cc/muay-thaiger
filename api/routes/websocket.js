@@ -8,7 +8,7 @@ import {syncCharacterState} from '../logic/player-state-sync.js';
 
 const PLAYER_SYNC_INTERVAL_MINUTES = 1;
 
-export default async function connectRoutes(app) {
+export default async function websocketRoutes(app) {
   const activeSockets = new Set();
   const models = {
     characterActions: characterActionsModel(app.db),
