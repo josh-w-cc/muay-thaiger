@@ -69,7 +69,7 @@ function getPlayerToken() {
 }
 function getAuthResponse(selectedRace) {
   const token = getPlayerToken();
-  return token ? {token, type: 'auth'} : {race: selectedRace, token: 'new', type: 'auth'};
+  return token ? {cmd: 'auth', token} : {cmd: 'auth', race: selectedRace, token: 'new'};
 }
 function routeToHubIfAuthorized({hasSelectedFighter, setScreen}) {
   if(!hasSelectedFighter.current || !getPlayerToken()) {

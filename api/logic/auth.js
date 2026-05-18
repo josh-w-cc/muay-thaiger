@@ -2,15 +2,6 @@ import {randomUUID} from 'node:crypto';
 
 const TOKEN_PREVIEW_LENGTH = 8;
 
-export function canHandleAuthMessage({message, socket}) {
-  return Boolean(
-    message
-    && message.type === 'auth'
-    && socket.readyState === socket.OPEN
-    && typeof message.token === 'string',
-  );
-}
-
 export async function authenticate({characters, players}, message, socket) {
   const player = await getPlayer({characters, players}, message.token, message.race);
   if(!player) {

@@ -1,7 +1,7 @@
 import charactersModel from '../data/models/characters.js';
 import characterActionsModel from '../data/models/character-actions.js';
 import playersModel from '../data/models/players.js';
-import {authenticate, canHandleAuthMessage} from '../logic/auth.js';
+import {authenticate} from '../logic/auth.js';
 import {onMessage as onCharacterActionsMessage} from './character-actions.js';
 
 export default async function connectRoutes(app) {
@@ -23,10 +23,24 @@ export function onConnect(socket, characterActions, characters, players) {
 
 export async function onMessage(raw, socket, characterActions, characters, players) {
   const message = parseMessage(raw);
-  if(canHandleAuthMessage({message, socket})) {
-    return authenticate({characters, players}, message, socket);
+  if(!message || socket.readyState !== socket.OPEN) {
+    return;
   }
-  return onCharacterActionsMessage(raw, socket, characterActions, characters);
+  switch(message.cmd) {
+    case 'auth':
+      return onAuthCmd(message, socket, characters, players);
+    case 'create':
+      return onCharacterActionsMessage(raw, socket, characterActions, characters);
+    default:
+      socket.send(JSON.stringify({type: 'invalid-cmd'}));
+  }
+}
+
+function onAuthCmd(message, socket, characters, players) {
+  if(typeof message.token !== 'string') {
+    return;
+  }
+  return authenticate({characters, players}, message, socket);
 }
 
 function parseMessage(raw) {

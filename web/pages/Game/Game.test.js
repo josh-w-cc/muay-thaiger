@@ -230,7 +230,7 @@ describe('Game', () => {
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
-    expect(send).toHaveBeenCalledWith(JSON.stringify({race: '1', token: 'new', type: 'auth'}));
+    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
   });
 
   it('responds with auth/local token after auth when fighter is selected', async () => {
@@ -249,7 +249,7 @@ describe('Game', () => {
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
-    expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'existing-token', type: 'auth'}));
+    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'existing-token'}));
   });
 
   it('stores the auth token in localStorage when server responds with a token', async () => {
@@ -285,8 +285,8 @@ describe('Game', () => {
     socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
-    expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({token: 'existing-token', type: 'auth'}));
-    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({race: '1', token: 'new', type: 'auth'}));
+    expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({cmd: 'auth', token: 'existing-token'}));
+    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
   });
 
   it('retries auth with new token when localStorage is unavailable', async () => {
@@ -306,8 +306,8 @@ describe('Game', () => {
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
     socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
 
-    expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({race: '1', token: 'new', type: 'auth'}));
-    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({race: '1', token: 'new', type: 'auth'}));
+    expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
+    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
   });
 
   it('ignores invalid websocket auth messages', async () => {
