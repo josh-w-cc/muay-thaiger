@@ -5,7 +5,7 @@ import {createAndSend} from './fighter-actions.js';
 
 describe('createAndSend', () => {
   it('creates a fighter action for the player current fighter and sends it back on a valid message', async () => {
-    const created = {id: 1, action_id: 2, character_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
+    const created = {id: 1, action_id: 2, fighter_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const send = createCallTracker();
     const socket = {OPEN: 1, player: {id: 8}, readyState: 1, send};
     const fighterActions = {create: async () => created};
