@@ -18,7 +18,7 @@ function Train() {
     <TrainStat name="Strength" stat="strength"/>
     <TrainStat name="Constitution" stat="constitution"/>
     <TrainStat name="Skill" stat="skill"/>
-    <TrainStat name="Stamina" stat="stamina"/>
+    <TrainStat name="Stanima" stat="stamina"/>
     <h3>Skills:</h3>
     {Object.keys(Skills).filter(s => Skills[s].requires(fighter)).map(s => <div key={s}>{Skills[s].name}
       <Button
