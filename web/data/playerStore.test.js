@@ -1,4 +1,4 @@
-import usePlayerStore, {PLAYER_TOKEN_STORAGE_KEY, resetPlayerStore} from './playerStore.js';
+import usePlayerStore, {loadPlayerToken, PLAYER_TOKEN_STORAGE_KEY, resetPlayerStore, setPlayerToken} from './playerStore.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -12,12 +12,12 @@ describe('usePlayerStore', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    resetPlayerStore();
-    setLocalStorage(originalLocalStorage);
-    globalThis.WebSocket = originalWebSocket;
     if(globalThis.localStorage) {
       localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
     }
+    resetPlayerStore();
+    setLocalStorage(originalLocalStorage);
+    globalThis.WebSocket = originalWebSocket;
   });
 
   function setLocalStorage(value) {
@@ -48,14 +48,22 @@ describe('usePlayerStore', () => {
     usePlayerStore.getState().onSocketMessage({message: {token: 'new-token', type: 'auth'}, setScreen, socket});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new-token');
+    expect(usePlayerStore.getState().token).toBe('new-token');
     expect(setScreen).toHaveBeenCalledWith('hub');
+  });
+
+  it('loads auth token into the player store', () => {
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
+
+    expect(loadPlayerToken()).toBe('existing-token');
+    expect(usePlayerStore.getState().token).toBe('existing-token');
   });
 
   it('clears invalid token and retries auth with a new token', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
     const setScreen = vi.fn();
-    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
+    setPlayerToken('existing-token');
 
     usePlayerStore.setState({
       hasReceivedAuthRequest: true,
@@ -66,6 +74,7 @@ describe('usePlayerStore', () => {
     usePlayerStore.getState().onSocketMessage({message: {type: 'auth-invalid-token'}, setScreen, socket});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
+    expect(usePlayerStore.getState().token).toBeNull();
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
     expect(setScreen).not.toHaveBeenCalled();
   });

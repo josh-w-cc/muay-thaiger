@@ -52,7 +52,7 @@ async function insertPlayers(knex) {
 }
 
 async function insertCharacters(knex) {
-  await knex('characters')
+  await knex('fighters')
     .insert(SEED_CHARACTERS)
     .onConflict('id')
     .ignore();
@@ -71,8 +71,8 @@ async function resetSequences(knex) {
     ['actions'],
   );
   await knex.raw(
-    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "characters"), 0) + 1, false)`,
-    ['characters'],
+    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "fighters"), 0) + 1, false)`,
+    ['fighters'],
   );
   await knex.raw(
     `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "players"), 0) + 1, false)`,

@@ -1,4 +1,4 @@
-import charactersModel from '../data/models/characters.js';
+import fightersModel from '../data/models/fighters.js';
 import characterActionsModel from '../data/models/character-actions.js';
 import playersModel from '../data/models/players.js';
 import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
@@ -12,7 +12,7 @@ export default async function connectRoutes(app) {
   const activeSockets = new Set();
   const models = {
     characterActions: characterActionsModel(app.db),
-    characters: charactersModel(app.db),
+    characters: fightersModel(app.db),
     log: app.log,
     players: playersModel(app.db),
   };
@@ -59,9 +59,6 @@ export async function onMessage(raw, socket, models) {
 }
 
 async function onAuthCmd(message, socket, models) {
-  if(typeof message.token !== 'string') {
-    return;
-  }
   const player = await tryAuthenticate(models, message, socket);
   if(player) {
     socket.playerID = player.id;
@@ -96,7 +93,6 @@ function onAuthenticateError(error, socket, {log}) {
   }
   return null;
 }
-
 function parseMessage(raw) {
   try {
     return JSON.parse(raw);

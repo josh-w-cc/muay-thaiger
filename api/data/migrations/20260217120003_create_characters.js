@@ -2,10 +2,10 @@ import readSQL from '../utils/read-sql.js';
 
 
 export async function up(knex) {
-  const sql = await readSQL(import.meta.url, '../tables/characters.sql');
+  const sql = await readSQL(import.meta.url, '../tables/fighters.sql');
   await knex.raw(sql);
 }
 
 export async function down(knex) {
-  await knex.raw('DROP TABLE IF EXISTS characters CASCADE');
+  await knex.raw('DROP TABLE IF EXISTS fighters CASCADE');
 }

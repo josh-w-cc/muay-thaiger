@@ -1,4 +1,4 @@
-import charactersModel from './characters.js';
+import fightersModel from './fighters.js';
 import {
   generateCreateFn,
   generateFindFn,
@@ -7,7 +7,7 @@ import {
 
 
 export default function characterActions(db) {
-  const characters = charactersModel(db);
+  const characters = fightersModel(db);
   return {
     create: generateCreateFn(db, 'character_actions'),
     find: generateFindFn(db, 'character_actions'),
