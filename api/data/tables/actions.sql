@@ -1,6 +1,6 @@
 DO $$
 BEGIN
-  CREATE TYPE action_type AS ENUM ('strike');
+  CREATE TYPE action_type AS ENUM ('fight', 'train');
 EXCEPTION
   WHEN duplicate_object THEN NULL;
 END $$;
