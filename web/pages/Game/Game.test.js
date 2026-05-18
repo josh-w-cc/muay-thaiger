@@ -55,14 +55,19 @@ describe('Game', () => {
     globalThis.window = originalWindow;
   });
 
+  it('loader returns null', async () => {
+    const {loader} = await import('./index.js');
+    expect(loader()).toBeNull();
+  });
+
   it('renders the character select screen first', async () => {
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
     renderGame({Game});
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
   });
 
   it('connects to the websocket when the game loads', async () => {
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     renderGame({Game});
 
@@ -79,7 +84,7 @@ describe('Game', () => {
       value: new URL('https://example.test/game'),
     });
     globalThis.window = secureWindow;
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     renderGame({Game});
 
@@ -90,7 +95,7 @@ describe('Game', () => {
 
   it('renders each game screen from header controls', async () => {
     const user = userEvent.setup();
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     renderGame({Game});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
@@ -117,7 +122,7 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     renderGame({Game});
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
@@ -134,7 +139,7 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     renderGame({Game});
     socket.onmessage({data: '{'});
@@ -145,7 +150,7 @@ describe('Game', () => {
 
   it('renders and recovers from the fallback screen', async () => {
     const user = userEvent.setup();
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     renderGame({Game});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
@@ -158,14 +163,14 @@ describe('Game', () => {
   });
 
   it('renders a game screen from the URL', async () => {
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
     renderGame({Game, initialPath: '/fight'});
     expect(screen.getByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
   });
 
   it('routes to root when navigating to character select from a game screen', async () => {
     const user = userEvent.setup();
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     renderGame({Game, initialPath: '/hub'});
     await user.click(screen.getByRole('button', {name: 'Go Character Select'}));
@@ -177,7 +182,7 @@ describe('Game', () => {
     globalThis.WebSocket = vi.fn(function () {
       return {close, send: vi.fn()};
     });
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     const {unmount} = renderGame({Game});
     unmount();
