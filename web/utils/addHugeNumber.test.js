@@ -1,6 +1,5 @@
 import addHugeNumber from './addHugeNumber.js';
 
-
 describe('addHugeNumber', () => {
   it('adds a number to an integer string', () => {
     expect(addHugeNumber('123', 7)).toBe('130');
@@ -22,9 +21,15 @@ describe('addHugeNumber', () => {
     expect(addHugeNumber('+00099', '+00001')).toBe('100');
   });
 
-  it('returns the original value for invalid values', () => {
+  it('returns non-string values as-is', () => {
     expect(addHugeNumber(100, 1)).toBe(100);
+  });
+
+  it('returns the original value for negative addends', () => {
     expect(addHugeNumber('100', -1)).toBe('100');
+  });
+
+  it('returns the original value for non-numeric addends', () => {
     expect(addHugeNumber('100', 'not-a-number')).toBe('100');
   });
 });

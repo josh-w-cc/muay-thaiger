@@ -17,10 +17,10 @@ function addIntegerStrings(left, right) {
   let sum = '';
   const maxLength = Math.max(left.length, right.length);
 
-  for(let index = 0; index < maxLength; index += 1) {
-    const leftDigit = toDigit(left, left.length - 1 - index);
-    const rightDigit = toDigit(right, right.length - 1 - index);
-    const nextDigit = leftDigit + rightDigit + carry;
+  for(let digitPosition = 0; digitPosition < maxLength; digitPosition += 1) {
+    const addendValue = toDigit(right, right.length - 1 - digitPosition);
+    const baseValue = toDigit(left, left.length - 1 - digitPosition);
+    const nextDigit = baseValue + addendValue + carry;
 
     sum = `${nextDigit % 10}${sum}`;
     carry = Math.floor(nextDigit / 10);
