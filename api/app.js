@@ -4,7 +4,6 @@ import Fastify from 'fastify';
 import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
 import actionsRoutes from './routes/actions.js';
-import characterActionsRoutes from './routes/character-actions.js';
 import charactersRoutes from './routes/characters.js';
 import connectRoutes from './routes/connect.js';
 import healthRoutes from './routes/health.js';
@@ -18,7 +17,6 @@ export default async function build(opts = {}) {
   await app.register(dbPlugin);
   await app.register(websocket);
   await app.register(actionsRoutes, {prefix: '/api'});
-  await app.register(characterActionsRoutes, {prefix: '/ws'});
   await app.register(charactersRoutes, {prefix: '/api'});
   await app.register(healthRoutes);
   await app.register(connectRoutes, {prefix: '/ws'});

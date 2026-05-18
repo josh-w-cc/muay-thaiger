@@ -1,17 +1,20 @@
 import {randomUUID} from 'node:crypto';
 import charactersModel from '../data/models/characters.js';
+import characterActionsModel from '../data/models/character-actions.js';
 import playersModel from '../data/models/players.js';
+import {onMessage as onCharacterActionsMessage} from './character-actions.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
 
 export default async function connectRoutes(app) {
+  const characterActions = characterActionsModel(app.db);
   const characters = charactersModel(app.db);
   const players = playersModel(app.db);
-  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, characters, players));
+  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, characterActions, characters, players));
 }
 
-export function onConnect(socket, characters, players) {
-  socket.on('message', (raw) => onMessage(raw, socket, characters, players));
+export function onConnect(socket, characterActions, characters, players) {
+  socket.on('message', (raw) => onMessage(raw, socket, characterActions, characters, players));
   setImmediate(() => {
     if(socket.readyState !== socket.OPEN) {
       return;
@@ -20,11 +23,15 @@ export function onConnect(socket, characters, players) {
   });
 }
 
-export async function onMessage(raw, socket, characters, players) {
+export async function onMessage(raw, socket, characterActions, characters, players) {
   const message = parseMessage(raw);
-  if(!canHandleAuthMessage({message, socket})) {
-    return;
+  if(canHandleAuthMessage({message, socket})) {
+    return onAuthMessage(message, socket, characters, players);
   }
+  return onCharacterActionsMessage(raw, socket, characterActions, characters);
+}
+
+async function onAuthMessage(message, socket, characters, players) {
   const player = await getPlayer({characters, players}, message.token, message.race);
   if(!player) {
     if(message.token !== 'new') {
