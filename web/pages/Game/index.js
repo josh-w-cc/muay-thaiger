@@ -12,6 +12,9 @@ import './Game.css';
 import '../../orig/src/index.css';
 
 export function loader({params}) {
+  if(shouldRedirectToHub(params?.screen)) {
+    return redirect('/hub');
+  }
   if(shouldRedirectToCharacterSelect(params?.screen)) {
     return redirect('/');
   }
@@ -73,6 +76,10 @@ function renderScreen(screen, setScreen) {
 function shouldRedirectToCharacterSelect(screen) {
   const hasToken = getPlayerToken();
   return screen && screen !== 'character-select' && !hasToken;
+}
+
+function shouldRedirectToHub(screen) {
+  return !screen && !!getPlayerToken();
 }
 
 function getPlayerToken() {
