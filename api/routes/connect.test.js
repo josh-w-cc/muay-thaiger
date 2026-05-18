@@ -98,8 +98,8 @@ describe('WebSocket /ws/connect', () => {
   it('creates a player and character, then sends the player token on auth new', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
-    const createCharacter = createCallTracker();
     const createPlayer = createCallTracker();
+    const createCharacter = createCallTracker();
     const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
     const characters = {create: async (...args) => {
       createCharacter(...args);
@@ -122,8 +122,8 @@ describe('WebSocket /ws/connect', () => {
   it('rejects auth/new without a race', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
-    const createCharacter = createCallTracker();
     const createPlayer = createCallTracker();
+    const createCharacter = createCallTracker();
     const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
     const characters = {create: async (...args) => {
       createCharacter(...args);
@@ -144,8 +144,8 @@ describe('WebSocket /ws/connect', () => {
   it('rejects auth/new with an invalid race value', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
-    const createCharacter = createCallTracker();
     const createPlayer = createCallTracker();
+    const createCharacter = createCallTracker();
     const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
     const characters = {create: async (...args) => {
       createCharacter(...args);
