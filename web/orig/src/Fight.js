@@ -6,6 +6,9 @@ export const FIGHT_IN_PROGRESS = 1;
 export const FIGHT_LOST = 2;
 export const FIGHT_WON = 3;
 
+const PLAYER_INDEX = 0;
+const ENEMY_INDEX = 1;
+
 
 // Fight rules
 //
@@ -40,13 +43,13 @@ const useFightStore = create((set, get) => ({
     }
 
     if(state === FIGHT_WON) {
-      fighters[0].stats.win(bet);
+      fighters[PLAYER_INDEX].stats.win(bet);
     }
     else {
-      fighters[0].stats.spend(bet);
+      fighters[PLAYER_INDEX].stats.spend(bet);
     }
 
-    fighters[0].stats.train('skill', 1);
+    fighters[PLAYER_INDEX].stats.train('skill', 1);
     set(getInitialState());
   },
   forGold(fighter, risk) {
@@ -82,22 +85,22 @@ const useFightStore = create((set, get) => ({
     const nextFighters = fighters.map((fighter) => ({...fighter}));
     const nextMessages = [...messages];
     let nextState = get().state;
-    const aPerTick = nextFighters[0].stats.apm / 60000;
-    const bPerTick = nextFighters[1].stats.apm / 60000;
-    nextFighters[0].currentAPM += aPerTick * amount;
-    nextFighters[1].currentAPM += bPerTick * amount;
-    while(nextFighters[0].currentAPM > 1 || nextFighters[1].currentAPM > 1) {
-      if(nextFighters[0].currentAPM > 1) {
-        const result = attackFighter({attackerIndex: 0, fighters: nextFighters, state: nextState});
+    const aPerTick = nextFighters[PLAYER_INDEX].stats.apm / 60000;
+    const bPerTick = nextFighters[ENEMY_INDEX].stats.apm / 60000;
+    nextFighters[PLAYER_INDEX].currentAPM += aPerTick * amount;
+    nextFighters[ENEMY_INDEX].currentAPM += bPerTick * amount;
+    while(nextFighters[PLAYER_INDEX].currentAPM > 1 || nextFighters[ENEMY_INDEX].currentAPM > 1) {
+      if(nextFighters[PLAYER_INDEX].currentAPM > 1) {
+        const result = attackFighter({attackerIndex: PLAYER_INDEX, fighters: nextFighters, state: nextState});
         nextState = result.state;
         nextMessages.push(result.message);
-        nextFighters[0].currentAPM -= 1;
+        nextFighters[PLAYER_INDEX].currentAPM -= 1;
       }
-      if(nextFighters[1].currentAPM > 1) {
-        const result = attackFighter({attackerIndex: 1, fighters: nextFighters, state: nextState});
+      if(nextFighters[ENEMY_INDEX].currentAPM > 1) {
+        const result = attackFighter({attackerIndex: ENEMY_INDEX, fighters: nextFighters, state: nextState});
         nextState = result.state;
         nextMessages.push(result.message);
-        nextFighters[1].currentAPM -= 1;
+        nextFighters[ENEMY_INDEX].currentAPM -= 1;
       }
     }
     set({
@@ -120,9 +123,9 @@ export function resetFightStore() {
 
 
 function attackFighter({attackerIndex, fighters, state}) {
-  if(attackerIndex === 0) {
-    const you = fighters[0];
-    const them = fighters[1];
+  if(attackerIndex === PLAYER_INDEX) {
+    const you = fighters[PLAYER_INDEX];
+    const them = fighters[ENEMY_INDEX];
     if(you.stats.attack * Math.random() > them.stats.defense * Math.random()) {
       const damage = you.stats.power * (Math.random() + 0.5);
       them.currentHealth -= damage;
@@ -134,8 +137,8 @@ function attackFighter({attackerIndex, fighters, state}) {
     return {message: 'You missed :(', state};
   }
 
-  const you = fighters[1];
-  const them = fighters[0];
+  const you = fighters[ENEMY_INDEX];
+  const them = fighters[PLAYER_INDEX];
   if(you.stats.attack * Math.random() > them.stats.defense * Math.random()) {
     const damage = you.stats.power * (Math.random() + 0.5);
     them.currentHealth -= damage;
