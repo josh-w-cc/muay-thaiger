@@ -42,19 +42,19 @@ describe('Train', () => {
     vi.clearAllMocks();
   });
 
-  it('shows only idle controls for skills', () => {
+  it('shows only skill-name controls for skills', () => {
     const {container} = render(<Train />);
 
-    expect(screen.getByRole('button', {name: 'Idle'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: '฿egging'})).toBeInTheDocument();
     expect(container.querySelector('br')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Once'})).not.toBeInTheDocument();
   });
 
-  it('starts idling for a skill when idle is clicked', async () => {
+  it('starts idling for a skill when the skill button is clicked', async () => {
     const user = userEvent.setup();
     render(<Train />);
 
-    await user.click(screen.getByRole('button', {name: 'Idle'}));
+    await user.click(screen.getByRole('button', {name: '฿egging'}));
 
     expect(idle).toHaveBeenCalledTimes(1);
     expect(idle).toHaveBeenCalledWith('train-beg', expect.any(Function));

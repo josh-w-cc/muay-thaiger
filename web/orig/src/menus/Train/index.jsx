@@ -27,7 +27,7 @@ function Train() {
         className={fighter.idling?.key === `train-${s}` ? css.idleActive : ''}
         onClick={() => fighter.idle(`train-${s}`, () => Skills[s].action(fighter))}
       >
-        Idle
+        {Skills[s].name}
       </Button>
     </div>)}
   </>);
