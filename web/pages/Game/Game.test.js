@@ -16,7 +16,7 @@ vi.mock('../../orig/src/menus/Fight', () => ({
   },
 }));
 
-vi.mock('../../orig/src/menus/Hub.jsx', () => ({
+vi.mock('../../orig/src/menus/Hub.js', () => ({
   default: function MockHub({setScreen}) {
     return (
       <>
