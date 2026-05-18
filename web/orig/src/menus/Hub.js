@@ -18,7 +18,7 @@ function Hub() {
           <dd className={css.value}>{formatHugeNumber(fighter.agility)}</dd>
         </div>
         <div className={css.stat}>
-          <dt className={css.label}>Speeed</dt>
+          <dt className={css.label}>Speed</dt>
           <dd className={css.value}>{formatHugeNumber(fighter.speed)}</dd>
         </div>
         <div className={css.stat}>

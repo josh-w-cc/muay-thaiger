@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react';
+import {render, screen, within} from '@testing-library/react';
 
 import Hub from './Hub.js';
 
@@ -38,7 +38,9 @@ describe('Hub', () => {
     expect(container.querySelector('dl')).toBeInTheDocument();
     expect(container.querySelectorAll('dl > div')).toHaveLength(17);
     expect(container.querySelector('br')).not.toBeInTheDocument();
-    expect(screen.getByText('Stanima')).toBeInTheDocument();
-    expect(screen.getAllByText('21')).toHaveLength(2);
+    const staminaRow = screen.getByText('Stanima').closest('div');
+
+    expect(staminaRow).toBeInTheDocument();
+    expect(within(staminaRow).getByText('21')).toBeInTheDocument();
   });
 });
