@@ -68,6 +68,21 @@ describe('Game', () => {
     expect(loader({params: {screen: 'character-select'}})).toBeNull();
   });
 
+  it('loader redirects to hub from index when token exists', async () => {
+    const {loader} = await import('./index.js');
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
+
+    const response = loader({params: {}});
+
+    expect(response.headers.get('Location')).toBe('/hub');
+    expect(response.status).toBe(302);
+  });
+
+  it('loader returns null from index when token is missing', async () => {
+    const {loader} = await import('./index.js');
+    expect(loader({params: {}})).toBeNull();
+  });
+
   it('loader returns null for token-protected screens when token exists', async () => {
     const {loader} = await import('./index.js');
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
