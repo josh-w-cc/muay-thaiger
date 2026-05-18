@@ -1,6 +1,7 @@
 import React from 'react';
 
 import formatHugeNumber from "@/utils/formatHugeNumber.js";
+import {fetchJSON} from '@/utils/fetchAPI.js';
 import useFighterStore from '../../Fighter.js';
 import Button from '../../components/Button.jsx';
 import BaseStats from './BaseStats.js';
@@ -10,12 +11,29 @@ import css from './CharacterSelect.module.css';
 
 function CharacterSelect({onExit}) {
   const fighter = useFighterStore();
+  const [raceStatics, setRaceStatics] = React.useState(() => getBaseRaceStatics());
+
+  React.useEffect(() => {
+    let isMounted = true;
+    fetchJSON('race')
+      .then((races) => {
+        if(!isMounted || !Array.isArray(races) || races.length === 0) {
+          return;
+        }
+        setRaceStatics(races);
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (<>
     <h1>Choose your fighter:</h1>
-    {Object.entries(BaseStats).map(([raceID, raceStats]) =>
-      <Character key={raceID} name={raceStats.name} image={raceStats.image} stats={raceStats.stats} onSelect={() => {
-        fighter.select(raceID);
+    {raceStatics.map((raceStatic) =>
+      <Character key={raceStatic.id} name={raceStatic.name} image={getRaceImage(raceStatic.id)} stats={raceStatic.stats} onSelect={() => {
+        fighter.select(`${raceStatic.id}`);
         onExit();
       }} />)
     }
@@ -40,4 +58,16 @@ function Character({name, image, stats, onSelect}) {
       </div>
     </div>
   </div>);
+}
+
+function getBaseRaceStatics() {
+  return Object.values(BaseStats).map((raceStatic) => ({
+    id: raceStatic.id,
+    name: raceStatic.name,
+    stats: raceStatic.stats,
+  }));
+}
+
+function getRaceImage(raceID) {
+  return BaseStats[`${raceID}`]?.image;
 }
