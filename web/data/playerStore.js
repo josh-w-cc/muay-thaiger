@@ -6,8 +6,8 @@ export const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
 
 const usePlayerStore = create((set, get) => ({
   ...getInitialState(),
-  onFighterSelect: generateOnFighterSelectFn({get, set}),
-  onSocketMessage: generateOnSocketMessageFn({get, set}),
+  onFighterSelect: generateFighterSelectFn({get, set}),
+  onSocketMessage: generateSocketMessageFn({get, set}),
 }));
 
 export default usePlayerStore;
@@ -35,7 +35,7 @@ function clearPlayerToken() {
   localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
 }
 
-function generateOnFighterSelectFn({get, set}) {
+function generateFighterSelectFn({get, set}) {
   return ({race, setScreen, socket}) => {
     set({hasSelectedFighter: true, selectedRace: race});
     respondToAuth({get, set, socket});
@@ -43,7 +43,7 @@ function generateOnFighterSelectFn({get, set}) {
   };
 }
 
-function generateOnSocketMessageFn({get, set}) {
+function generateSocketMessageFn({get, set}) {
   return ({message, setScreen, socket}) => {
     const messageType = message?.type;
     if(messageType === 'auth-invalid-token') {
