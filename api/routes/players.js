@@ -7,18 +7,28 @@ import playersModel from '../data/models/players.js';
 export default async function playersRoutes(app) {
   const players = playersModel(app.db);
 
-  app.get('/players', async () => players.list());
+  app.get('/players', async () => {
+    const allPlayers = await players.list();
+    return allPlayers.map(stripPrivatePlayerFields);
+  });
 
   app.get('/players/:id', async (req, reply) => {
     const player = await players.find(Number(req.params.id));
     if(!player) {
       return reply.code(404).send({error: 'Not found'});
     }
-    return player;
+    return stripPrivatePlayerFields(player);
   });
 
   app.post('/players', async (req, reply) => {
     const player = await players.create(req.body);
     return reply.code(201).send(player);
   });
+}
+
+function stripPrivatePlayerFields(player) {
+  const publicPlayer = {...player};
+  delete publicPlayer.email;
+  delete publicPlayer.password;
+  return publicPlayer;
 }

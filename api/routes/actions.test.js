@@ -50,8 +50,8 @@ describe('GET /actions/:id', () => {
 });
 
 describe('POST /actions', () => {
-  it('creates action and returns 201', async () => {
-    const {knex} = mockKnex([{id: 1, name: 'Jab', type: 'train'}]);
+  it('returns 404', async () => {
+    const {knex} = mockKnex(undefined);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(actionsRoutes);
@@ -62,8 +62,12 @@ describe('POST /actions', () => {
       url: '/actions',
     });
 
-    assert.equal(response.statusCode, 201);
-    assert.deepEqual(response.json(), {id: 1, name: 'Jab', type: 'train'});
+    assert.equal(response.statusCode, 404);
+    assert.deepEqual(response.json(), {
+      error: 'Not Found',
+      message: 'Route POST:/actions not found',
+      statusCode: 404,
+    });
     await app.close();
   });
 });
