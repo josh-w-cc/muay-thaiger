@@ -15,7 +15,7 @@ export async function createAndSend({characterActions, fighters}, message, socke
 }
 
 function normalizeMessage(message) {
-  if(!message || message.cmd !== 'create') {
+  if(!message || message.cmd !== 'idle') {
     return null;
   }
   const actionId = Number(message.action_id);

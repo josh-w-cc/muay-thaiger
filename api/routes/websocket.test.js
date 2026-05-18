@@ -43,7 +43,7 @@ describe('WebSocket /ws/connect', () => {
     await app.close();
   });
 
-  it('creates a character action and sends it back from /ws/connect on a valid create message', async () => {
+  it('creates a character action and sends it back from /ws/connect on a valid idle message', async () => {
     const created = {id: 1, action_id: 2, character_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const currentCharacter = {id: 3, player_id: 8, retired: false};
     const player = {id: 8, token: 'player-token'};
@@ -58,7 +58,7 @@ describe('WebSocket /ws/connect', () => {
     await readMessage(socket);
     socket.send(JSON.stringify({cmd: 'auth', token: 'player-token'}));
     await readMessage(socket);
-    socket.send(JSON.stringify({action_id: 2, cmd: 'create'}));
+    socket.send(JSON.stringify({action_id: 2, cmd: 'idle'}));
     const message = await readMessage(socket);
 
     assert.deepEqual(message, {characterAction: created, type: 'character_action'});
@@ -217,14 +217,14 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});
   });
 
-  it('does not respond to create messages when the player has no current fighter', async () => {
+  it('does not respond to idle messages when the player has no current fighter', async () => {
     const send = createCallTracker();
     const create = createCallTracker();
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
     const characterActions = {create};
     const fighters = {findCurrentByPlayerID: async () => null};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'create'}), socket, {characterActions, fighters});
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {characterActions, fighters});
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
