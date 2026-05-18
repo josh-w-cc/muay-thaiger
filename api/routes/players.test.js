@@ -51,13 +51,13 @@ describe('GET /players/:id', () => {
 
 describe('POST /players', () => {
   it('returns 404 because player creation endpoint is disabled', async () => {
+    const {knex} = mockKnex(undefined);
     const app = Fastify();
-    app.decorate('db', {});
+    app.decorate('db', knex);
     await app.register(playersRoutes);
 
     const response = await app.inject({
       method: 'POST',
-      payload: {display_name: 'New Player', email: null, password: null},
       url: '/players',
     });
 
