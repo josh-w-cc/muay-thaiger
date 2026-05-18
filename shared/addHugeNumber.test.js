@@ -3,7 +3,6 @@ import {describe, it} from 'node:test';
 
 import addHugeNumber from './addHugeNumber.js';
 
-
 describe('addHugeNumber', () => {
   it('adds a number to an integer string', () => {
     strictEqual(addHugeNumber('123', 7), '130');
