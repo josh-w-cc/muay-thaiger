@@ -11,7 +11,6 @@ import Train from '../../orig/src/menus/Train';
 import useAuthSocket from './useAuthSocket.js';
 import './Game.css';
 import '../../orig/src/index.css';
-const CHARACTER_SELECT_SCREEN = 'character-select';
 
 export default function Game() {
   const races = useLoaderData() ?? [];
@@ -73,36 +72,8 @@ export async function gameScreenLoader() {
   return null;
 }
 
-export async function loader({params, request} = {}) {
-  const screen = resolveScreen({params, request});
-  if(isGameScreen(screen)) {
-    return gameScreenLoader();
-  }
-  return characterSelectLoader();
-}
-
-function getScreenFromRequest(request) {
-  if(!request?.url) {
-    return null;
-  }
-  const {pathname} = new URL(request.url);
-  const screen = pathname.slice(1);
-  if(!screen) {
-    return null;
-  }
-  return screen;
-}
-
-function isGameScreen(screen) {
-  return !!screen && screen !== CHARACTER_SELECT_SCREEN;
-}
-
 function hasPlayerToken() {
   return !!loadPlayerToken();
-}
-
-function resolveScreen({params, request}) {
-  return params?.screen ?? getScreenFromRequest(request);
 }
 
 async function loadRaces() {

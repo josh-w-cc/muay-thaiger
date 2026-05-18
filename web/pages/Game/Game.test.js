@@ -80,10 +80,10 @@ describe('Game', () => {
   });
 
   it('loader redirects to hub from index when token exists', async () => {
-    const {loader} = await import('./index.js');
+    const {characterSelectLoader} = await import('./index.js');
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
 
-    const response = await loader({params: {}});
+    const response = await characterSelectLoader();
 
     expect(response.headers.get('Location')).toBe('/hub');
     expect(response.status).toBe(302);
@@ -92,45 +92,45 @@ describe('Game', () => {
   it('loader fetches races for character select', async () => {
     const races = [{id: 1, name: 'Tiger', stats: {}}];
     fetchJSONMock.mockResolvedValue(races);
-    const {loader} = await import('./index.js');
+    const {characterSelectLoader} = await import('./index.js');
 
-    expect(await loader({params: {}})).toEqual(races);
+    expect(await characterSelectLoader()).toEqual(races);
     expect(fetchJSONMock).toHaveBeenCalledWith('race');
   });
 
   it('loader returns null for token-protected screens when token exists', async () => {
-    const {loader} = await import('./index.js');
+    const {gameScreenLoader} = await import('./index.js');
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
 
-    expect(await loader({params: {screen: 'hub'}})).toBeNull();
+    expect(await gameScreenLoader()).toBeNull();
   });
 
   it('loader redirects to character select for token-protected screens when token is missing', async () => {
-    const {loader} = await import('./index.js');
+    const {gameScreenLoader} = await import('./index.js');
 
-    const response = await loader({params: {screen: 'hub'}});
+    const response = await gameScreenLoader();
 
     expect(response.headers.get('Location')).toBe('/');
     expect(response.status).toBe(302);
   });
 
   it('loader redirects to character select when localStorage is unavailable', async () => {
-    const {loader} = await import('./index.js');
+    const {gameScreenLoader} = await import('./index.js');
     setLocalStorage(undefined);
 
-    const response = await loader({params: {screen: 'hub'}});
+    const response = await gameScreenLoader();
 
     expect(response.headers.get('Location')).toBe('/');
     expect(response.status).toBe(302);
   });
 
   it('loader returns an empty list when races request fails', async () => {
-    const {loader} = await import('./index.js');
+    const {characterSelectLoader} = await import('./index.js');
     const error = new Error('network failure');
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
     fetchJSONMock.mockRejectedValue(error);
 
-    expect(await loader({params: {}})).toEqual([]);
+    expect(await characterSelectLoader()).toEqual([]);
     expect(fetchJSONMock).toHaveBeenCalledWith('race');
     expect(consoleError).toHaveBeenCalledWith('Failed to load races', error);
     consoleError.mockRestore();
@@ -417,9 +417,9 @@ function renderGame({gameModule, initialPath = '/'}) {
     FallbackScreen,
     FightScreen,
     GameLayout,
+    characterSelectLoader,
     gameScreenLoader,
     HubScreen,
-    loader,
     ShopScreen,
     TrainScreen,
   } = gameModule;
@@ -427,7 +427,7 @@ function renderGame({gameModule, initialPath = '/'}) {
     [
       {
         children: [
-          {index: true, element: <Game />, loader},
+          {index: true, element: <Game />, loader: characterSelectLoader},
           {
             children: [
               {element: <FightScreen />, path: 'fight'},
