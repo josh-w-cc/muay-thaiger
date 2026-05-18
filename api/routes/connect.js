@@ -46,6 +46,9 @@ function parseMessage(raw) {
 }
 
 function getRace(message) {
+  if(!message.race) {
+    return DEFAULT_RACE_ID;
+  }
   const parsedRace = Number.parseInt(message.race, 10);
   if(!Number.isInteger(parsedRace) || parsedRace <= 0) {
     return DEFAULT_RACE_ID;

@@ -43,7 +43,7 @@ describe('WebSocket /ws/connect', () => {
 
     assert.equal(message.type, 'auth');
     assert.equal(message.token, 'generated-token');
-    assert.equal(calls.some((call) => call[0] === 'table' && call[1] === 'characters'), true);
+    assert.ok(calls.some((call) => call[0] === 'table' && call[1] === 'characters'));
     assert.deepEqual(
       calls.find((call) => call[0] === 'insert' && call[1].display_name === 'Player-12345678 Jr')?.[1],
       {display_name: 'Player-12345678 Jr', player_id: 1, race: 2},
