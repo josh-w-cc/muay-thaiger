@@ -1,4 +1,6 @@
 .message {
+  font-size: 1.25rem;
+  margin-top: var(--space-xl);
   & strong {
     color: orange;
   }
