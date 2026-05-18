@@ -1,5 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {MemoryRouter, Route, Routes} from 'react-router';
 
 const originalWebSocket = globalThis.WebSocket;
 const originalWindow = globalThis.window;
@@ -22,6 +23,7 @@ vi.mock('../../orig/src/menus/Hub.jsx', () => ({
       <>
         <h2>Hub Screen</h2>
         <button onClick={() => setScreen('broken')}>Break Screen</button>
+        <button onClick={() => setScreen('character-select')}>Go Character Select</button>
       </>
     );
   },
@@ -54,15 +56,15 @@ describe('Game', () => {
   });
 
   it('renders the character select screen first', async () => {
-    const {default: Game} = await import('./index.js');
-    render(<Game />);
+    const {default: Game} = await import('./Game.js');
+    renderGame({Game});
     expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
   });
 
   it('connects to the websocket when the game loads', async () => {
     const {default: Game} = await import('./index.js');
 
-    render(<Game />);
+    renderGame({Game});
 
     const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
 
@@ -79,7 +81,7 @@ describe('Game', () => {
     globalThis.window = secureWindow;
     const {default: Game} = await import('./index.js');
 
-    render(<Game />);
+    renderGame({Game});
 
     const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
 
@@ -88,9 +90,9 @@ describe('Game', () => {
 
   it('renders each game screen from header controls', async () => {
     const user = userEvent.setup();
-    const {default: Game} = await import('./index.js');
+    const {default: Game} = await import('./Game.js');
 
-    render(<Game />);
+    renderGame({Game});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
@@ -117,7 +119,7 @@ describe('Game', () => {
     globalThis.WebSocket.OPEN = 1;
     const {default: Game} = await import('./index.js');
 
-    render(<Game />);
+    renderGame({Game});
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
@@ -126,9 +128,9 @@ describe('Game', () => {
 
   it('renders and recovers from the fallback screen', async () => {
     const user = userEvent.setup();
-    const {default: Game} = await import('./index.js');
+    const {default: Game} = await import('./Game.js');
 
-    render(<Game />);
+    renderGame({Game});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
     await user.click(screen.getByRole('button', {name: 'Break Screen'}));
 
@@ -138,6 +140,21 @@ describe('Game', () => {
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
 
+  it('renders a game screen from the URL', async () => {
+    const {default: Game} = await import('./Game.js');
+    renderGame({Game, initialPath: '/fight'});
+    expect(screen.getByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
+  });
+
+  it('routes to root when navigating to character select from a game screen', async () => {
+    const user = userEvent.setup();
+    const {default: Game} = await import('./Game.js');
+
+    renderGame({Game, initialPath: '/hub'});
+    await user.click(screen.getByRole('button', {name: 'Go Character Select'}));
+    expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
+  });
+
   it('closes the websocket when the game unmounts', async () => {
     const close = vi.fn();
     globalThis.WebSocket = vi.fn(function () {
@@ -145,9 +162,19 @@ describe('Game', () => {
     });
     const {default: Game} = await import('./index.js');
 
-    const {unmount} = render(<Game />);
+    const {unmount} = renderGame({Game});
     unmount();
 
     expect(close).toHaveBeenCalledTimes(1);
   });
 });
+
+function renderGame({Game, initialPath = '/'}) {
+  return render(
+    <MemoryRouter initialEntries={[initialPath]}>
+      <Routes>
+        <Route element={<Game />} path="/:screen?" />
+      </Routes>
+    </MemoryRouter>,
+  );
+}

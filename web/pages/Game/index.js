@@ -1,14 +1,6 @@
 import React from 'react';
 
-import CharacterSelect from '../../orig/src/menus/CharacterSelect';
-import Fight from '../../orig/src/menus/Fight';
-import Header from './Header.js';
-import Hub from '../../orig/src/menus/Hub.jsx';
-import Shop from '../../orig/src/menus/Shop';
-import Train from '../../orig/src/menus/Train';
-import useAuthSocket from './useAuthSocket.js';
-
-import './Game.css';
+import GameApp from './Game.js';
 import '../../orig/src/index.css';
 
 export function loader() {
@@ -16,41 +8,5 @@ export function loader() {
 }
 
 export default function Game() {
-  const [screen, setScreen] = React.useState('character-select');
-  const onExit = useAuthSocket(setScreen);
-
-  if(screen === 'character-select') {
-    return <CharacterSelect onExit={onExit} />;
-  }
-
-  return (
-    <>
-      <Header setScreen={setScreen} />
-      {renderScreen(screen, setScreen)}
-    </>
-  );
-}
-
-function getFallback(setScreen) {
-  return (
-    <>
-      <h1>You broke it!?</h1>
-      <button onClick={() => setScreen('hub')}>We have to go back</button>
-    </>
-  );
-}
-
-function renderScreen(screen, setScreen) {
-  switch(screen) {
-    case 'hub':
-      return <Hub setScreen={setScreen} />;
-    case 'fight':
-      return <Fight />;
-    case 'shop':
-      return <Shop />;
-    case 'train':
-      return <Train />;
-    default:
-      return getFallback(setScreen);
-  }
+  return <GameApp />;
 }
