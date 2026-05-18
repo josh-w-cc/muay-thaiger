@@ -3,7 +3,7 @@ import React from 'react';
 import useInventoryStore from '@/data/inventoryStore.js';
 import Button from '../../components/Button.jsx';
 import useFighterStore from '../../Fighter.js';
-import formatHugeNumber from '../../formatHugeNumber.js';
+import formatHugeNumber from "@/utils/formatHugeNumber.js";
 import Items from './Items.js';
 
 
