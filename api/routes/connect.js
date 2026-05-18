@@ -3,7 +3,6 @@ import charactersModel from '../data/models/characters.js';
 import playersModel from '../data/models/players.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
-const DEFAULT_RACE_ID = 1;
 
 export default async function connectRoutes(app) {
   const characters = charactersModel(app.db);
@@ -26,14 +25,18 @@ export async function onMessage(raw, socket, characters, players) {
   if(!message || message.type !== 'auth' || message.token !== 'new') {
     return;
   }
-  if(socket.readyState !== socket.OPEN) {
+  const race = getRace(message);
+  if(!canCreatePlayer({race, socket})) {
     return;
   }
   const token = randomUUID();
-  const race = getRace(message);
   const player = await players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
   await createCharacter({characters, player, race});
   socket.send(JSON.stringify({token: player.token, type: 'auth'}));
+}
+
+function canCreatePlayer({race, socket}) {
+  return race !== null && socket.readyState === socket.OPEN;
 }
 
 function parseMessage(raw) {
@@ -46,30 +49,16 @@ function parseMessage(raw) {
 }
 
 function getRace(message) {
-  if(!message.race) {
-    return DEFAULT_RACE_ID;
+  if(!Object.hasOwn(message, 'race')) {
+    return null;
   }
   const parsedRace = Number.parseInt(message.race, 10);
   if(!Number.isInteger(parsedRace) || parsedRace <= 0) {
-    return DEFAULT_RACE_ID;
+    return null;
   }
   return parsedRace;
 }
 
 async function createCharacter({characters, player, race}) {
-  const character = {display_name: `${player.display_name} Jr`, player_id: player.id, race};
-  const createForRace = (raceID) => characters.create({...character, race: raceID});
-  try {
-    await createForRace(race);
-  }
-  catch(error) {
-    if(race === DEFAULT_RACE_ID || !isForeignKeyViolation(error)) {
-      throw error;
-    }
-    await createForRace(DEFAULT_RACE_ID);
-  }
-}
-
-function isForeignKeyViolation(error) {
-  return error?.code === '23503';
+  return characters.create({display_name: `${player.display_name} Jr`, player_id: player.id, race});
 }

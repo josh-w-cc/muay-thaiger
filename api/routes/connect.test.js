@@ -119,46 +119,48 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {token: 'player-uuid-token', type: 'auth'});
   });
 
-  it('uses the default race when auth/new has no race', async () => {
+  it('rejects auth/new without a race', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
     const createCharacter = createCallTracker();
+    const createPlayer = createCallTracker();
     const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
     const characters = {create: async (...args) => {
       createCharacter(...args);
       return {id: 1};
     }};
-    const players = {create: async () => player};
+    const players = {create: async (...args) => {
+      createPlayer(...args);
+      return player;
+    }};
 
     await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, characters, players);
 
-    assert.deepEqual(createCharacter.calls[0][0], {display_name: 'Player-12345678 Jr', player_id: 1, race: 1});
+    assert.equal(createPlayer.calls.length, 0);
+    assert.equal(createCharacter.calls.length, 0);
+    assert.equal(send.calls.length, 0);
   });
 
-  it('falls back to the default race when the selected race does not exist', async () => {
+  it('rejects auth/new with an invalid race value', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
+    const createCharacter = createCallTracker();
+    const createPlayer = createCallTracker();
     const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
-    const players = {create: async () => player};
-    const characterCalls = [];
-    const characters = {
-      create: async (payload) => {
-        characterCalls.push(payload);
-        if(payload.race === 99) {
-          const error = new Error('foreign key violation');
-          error.code = '23503';
-          throw error;
-        }
-        return {id: 1};
-      },
-    };
+    const characters = {create: async (...args) => {
+      createCharacter(...args);
+      return {id: 1};
+    }};
+    const players = {create: async (...args) => {
+      createPlayer(...args);
+      return player;
+    }};
 
-    await onMessage(JSON.stringify({race: '99', token: 'new', type: 'auth'}), socket, characters, players);
+    await onMessage(JSON.stringify({race: 'invalid', token: 'new', type: 'auth'}), socket, characters, players);
 
-    assert.equal(characterCalls.length, 2);
-    assert.deepEqual(characterCalls[0], {display_name: 'Player-12345678 Jr', player_id: 1, race: 99});
-    assert.deepEqual(characterCalls[1], {display_name: 'Player-12345678 Jr', player_id: 1, race: 1});
-    assert.equal(send.calls.length, 1);
+    assert.equal(createPlayer.calls.length, 0);
+    assert.equal(createCharacter.calls.length, 0);
+    assert.equal(send.calls.length, 0);
   });
 });
 
