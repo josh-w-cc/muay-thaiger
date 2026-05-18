@@ -1,4 +1,4 @@
-import usePlayerStore, {loadPlayerToken, resetPlayerStore, setPlayerToken} from './playerStore.js';
+import usePlayerStore, {loadPlayerToken, resetPlayerStore, setPlayerToken} from './player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 
 

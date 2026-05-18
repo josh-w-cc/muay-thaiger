@@ -2,7 +2,7 @@ import {act, render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {createMemoryRouter, RouterProvider} from 'react-router';
 
-import {resetPlayerStore, setPlayerToken} from '@/data/playerStore.js';
+import {resetPlayerStore, setPlayerToken} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
 
 

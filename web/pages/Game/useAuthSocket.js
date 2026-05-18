@@ -1,4 +1,4 @@
-import usePlayerStore from '@/data/playerStore.js';
+import usePlayerStore from '@/data/player.js';
 import useConnectSocket from './useConnectSocket.js';
 
 
