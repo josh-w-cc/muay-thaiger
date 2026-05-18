@@ -4,7 +4,7 @@ import playersModel from '../data/models/players.js';
 /**
  * @param {import('fastify').FastifyInstance} app
  */
-export default async function playerID(app) {
+export default async function playerIDMiddleware(app) {
   const players = playersModel(app.db);
   app.decorateRequest('playerId', null);
   app.addHook('onRequest', async (req) => {

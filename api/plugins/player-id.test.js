@@ -6,7 +6,7 @@ import {mockKnex} from '../data/utils/mock-knex.js';
 import playerID from './player-id.js';
 
 
-describe('playerID', () => {
+describe('playerIDMiddleware', () => {
   it('sets req.playerId from a bearer token', async () => {
     const {knex} = mockKnex({id: 42});
     const app = Fastify();
