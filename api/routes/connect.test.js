@@ -101,8 +101,14 @@ describe('WebSocket /ws/connect', () => {
     const createCharacter = createCallTracker();
     const createPlayer = createCallTracker();
     const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
-    const characters = {create: async (...args) => (createCharacter(...args), {id: 1})};
-    const players = {create: async (...args) => (createPlayer(...args), player)};
+    const characters = {create: async (...args) => {
+      createCharacter(...args);
+      return {id: 1};
+    }};
+    const players = {create: async (...args) => {
+      createPlayer(...args);
+      return player;
+    }};
 
     await onMessage(JSON.stringify({race: '2', token: 'new', type: 'auth'}), socket, characters, players);
 
@@ -118,7 +124,10 @@ describe('WebSocket /ws/connect', () => {
     const socket = {OPEN: 1, readyState: 1, send};
     const createCharacter = createCallTracker();
     const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
-    const characters = {create: async (...args) => (createCharacter(...args), {id: 1})};
+    const characters = {create: async (...args) => {
+      createCharacter(...args);
+      return {id: 1};
+    }};
     const players = {create: async () => player};
 
     await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, characters, players);

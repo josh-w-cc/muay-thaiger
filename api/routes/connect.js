@@ -58,14 +58,15 @@ function getRace(message) {
 
 async function createCharacter({characters, player, race}) {
   const character = {display_name: `${player.display_name} Jr`, player_id: player.id, race};
+  const createForRace = (raceID) => characters.create({...character, race: raceID});
   try {
-    await characters.create(character);
+    await createForRace(race);
   }
   catch(error) {
     if(race === DEFAULT_RACE_ID || !isForeignKeyViolation(error)) {
       throw error;
     }
-    await characters.create({...character, race: DEFAULT_RACE_ID});
+    await createForRace(DEFAULT_RACE_ID);
   }
 }
 
