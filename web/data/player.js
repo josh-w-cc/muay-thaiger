@@ -38,6 +38,7 @@ function generateOnFighterSelectFn({get, set}) {
     routeToHubIfAuthorized({get, setScreen});
   };
 }
+
 function generateOnSocketMessageFn({get, set}) {
   return ({message, setScreen, socket}) => {
     const messageType = message?.type;
@@ -60,6 +61,7 @@ function getAuthResponse({token, selectedRace}) {
   }
   return {cmd: 'auth', race: selectedRace, token: 'new'};
 }
+
 function getInitialState() {
   return {
     hasReceivedAuthRequest: false,
