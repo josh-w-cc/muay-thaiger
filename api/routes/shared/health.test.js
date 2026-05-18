@@ -1,7 +1,7 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert/strict';
 import Fastify from 'fastify';
-import healthRoutes from '../routes/health.js';
+import healthRoutes from './health.js';
 
 describe('GET /health', () => {
   it('returns status ok', async () => {

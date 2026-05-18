@@ -5,9 +5,9 @@ import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
 import actionsRoutes from './routes/actions.js';
 import charactersRoutes from './routes/characters.js';
-import healthRoutes from './routes/health.js';
+import healthRoutes from './routes/shared/health.js';
 import playersRoutes from './routes/players.js';
-import raceRoutes from './routes/race.js';
+import raceRoutes from './routes/shared/race.js';
 import websocketRoutes from './routes/websocket.js';
 
 

@@ -1,4 +1,4 @@
-import staticsModel from '../data/models/statics.js';
+import staticsModel from '../../data/models/statics.js';
 
 
 export default async function raceRoutes(app) {
