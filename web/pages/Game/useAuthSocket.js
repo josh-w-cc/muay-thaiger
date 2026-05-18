@@ -7,22 +7,32 @@ export default function useAuthSocket(setScreen) {
   const hasReceivedAuthRequest = React.useRef(false);
   const hasRespondedToAuth = React.useRef(false);
   const hasSelectedFighter = React.useRef(false);
+  const selectedRace = React.useRef(null);
   const socketRef = React.useRef(null);
-  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socketRef};
+  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, setScreen, socketRef};
 
   React.useEffect(() => connectSocket(refs), []);
 
-  return () => {
+  return (race) => {
+    selectedRace.current = race;
     hasSelectedFighter.current = true;
     respondToAuth({...refs, socket: socketRef.current});
     routeToHubIfAuthorized({hasSelectedFighter, setScreen});
   };
 }
 
-function connectSocket({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socketRef}) {
+function connectSocket({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, setScreen, socketRef}) {
   const socket = new WebSocket(createWebSocketURL());
   socketRef.current = socket;
-  socket.onmessage = (event) => onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socket});
+  socket.onmessage = (event) => onMessage({
+    event,
+    hasReceivedAuthRequest,
+    hasRespondedToAuth,
+    hasSelectedFighter,
+    selectedRace,
+    setScreen,
+    socket,
+  });
   return () => socket.close();
 }
 
@@ -41,12 +51,12 @@ function getMessage(event) {
   }
 }
 
-function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socket}) {
+function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, setScreen, socket}) {
   const message = getMessage(event);
   if(isAuthInvalidTokenMessage(message)) {
     clearPlayerToken();
     hasRespondedToAuth.current = false;
-    respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});
+    respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, socket});
     return;
   }
   if(!isAuthMessage(message)) {
@@ -57,16 +67,16 @@ function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
     routeToHubIfAuthorized({hasSelectedFighter, setScreen});
   }
   hasReceivedAuthRequest.current = true;
-  respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});
+  respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, socket});
 }
 
-function respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket, socketRef}) {
+function respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, socket, socketRef}) {
   const activeSocket = socket || socketRef?.current;
   if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket: activeSocket})) {
     return;
   }
   hasRespondedToAuth.current = true;
-  activeSocket.send(JSON.stringify({token: getPlayerToken() || 'new', type: 'auth'}));
+  activeSocket.send(JSON.stringify(getAuthResponse(selectedRace.current)));
 }
 
 function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
@@ -99,6 +109,14 @@ function isAuthInvalidTokenMessage(message) {
 
 function isAuthMessage(message) {
   return message?.type === 'auth';
+}
+
+function getAuthResponse(selectedRace) {
+  const token = getPlayerToken();
+  if(token) {
+    return {token, type: 'auth'};
+  }
+  return {race: selectedRace, token: 'new', type: 'auth'};
 }
 
 function routeToHubIfAuthorized({hasSelectedFighter, setScreen}) {

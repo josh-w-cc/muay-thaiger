@@ -33,7 +33,7 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    socket.send(JSON.stringify({token: 'new', type: 'auth'}));
+    socket.send(JSON.stringify({race: 2, token: 'new', type: 'auth'}));
     const message = await readMessage(socket);
 
     assert.equal(message.type, 'auth');
@@ -52,7 +52,7 @@ describe('WebSocket /ws/connect', () => {
       send,
     };
 
-    onConnect(socket, null);
+    onConnect(socket, null, null);
     await waitForImmediate();
 
     assert.equal(send.calls.length, 0);
@@ -62,7 +62,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage('{', socket, null);
+    await onMessage('{', socket, null, null);
 
     assert.equal(send.calls.length, 0);
   });
@@ -71,8 +71,8 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage(JSON.stringify({type: 'auth'}), socket, null);
-    await onMessage(JSON.stringify({token: 'new', type: 'noop'}), socket, null);
+    await onMessage(JSON.stringify({type: 'auth'}), socket, null, null);
+    await onMessage(JSON.stringify({token: 'new', type: 'noop'}), socket, null, null);
 
     assert.equal(send.calls.length, 0);
   });
@@ -90,7 +90,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 0, send};
 
-    await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, null);
+    await onMessage(JSON.stringify({race: 1, token: 'new', type: 'auth'}), socket, null, null);
 
     assert.equal(send.calls.length, 0);
   });
@@ -98,13 +98,44 @@ describe('WebSocket /ws/connect', () => {
   it('creates a player and sends the player token on auth new', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
-    const player = {id: 1, token: 'player-uuid-token'};
+    const characters = {create: async () => null};
+    const player = {display_name: 'Player-abcdefgh', id: 1, token: 'player-uuid-token'};
     const players = {create: async () => player};
 
-    await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, players);
+    await onMessage(JSON.stringify({race: 2, token: 'new', type: 'auth'}), socket, characters, players);
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 1, token: 'player-uuid-token', type: 'auth'});
+  });
+
+  it('creates a character with the chosen race when creating a player on auth new', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const characterCreateCalls = [];
+    const characters = {
+      create: async (input) => {
+        characterCreateCalls.push(input);
+        return input;
+      },
+    };
+    const player = {display_name: 'Player-abcdefgh', id: 1, token: 'player-uuid-token'};
+    const players = {create: async () => player};
+
+    await onMessage(JSON.stringify({race: '2', token: 'new', type: 'auth'}), socket, characters, players);
+
+    assert.equal(characterCreateCalls.length, 1);
+    assert.deepEqual(characterCreateCalls[0], {display_name: 'Player-abcdefgh', player_id: 1, race: 2});
+  });
+
+  it('does not create a player when auth new race is invalid', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const characters = {create: async () => null};
+    const players = {create: async () => ({id: 1, token: 'player-uuid-token'})};
+
+    await onMessage(JSON.stringify({race: 'not-a-race', token: 'new', type: 'auth'}), socket, characters, players);
+
+    assert.equal(send.calls.length, 0);
   });
 
   it('translates an existing player token to player id on auth', async () => {
@@ -120,7 +151,7 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({token: 'known-token', type: 'auth'}), socket, players);
+    await onMessage(JSON.stringify({token: 'known-token', type: 'auth'}), socket, null, players);
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 5, token: 'known-token', type: 'auth'});
@@ -131,7 +162,7 @@ describe('WebSocket /ws/connect', () => {
     const socket = {OPEN: 1, readyState: 1, send};
     const players = {create: async () => null, findByToken: async () => null};
 
-    await onMessage(JSON.stringify({token: 'unknown-token', type: 'auth'}), socket, players);
+    await onMessage(JSON.stringify({token: 'unknown-token', type: 'auth'}), socket, null, players);
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});

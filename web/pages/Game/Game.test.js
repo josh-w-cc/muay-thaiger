@@ -12,7 +12,7 @@ let fetchJSONMock;
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
-    return <button onClick={onExit}>Character Select</button>;
+    return <button onClick={() => onExit('1')}>Character Select</button>;
   },
 }));
 
@@ -224,7 +224,7 @@ describe('Game', () => {
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
-    expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
+    expect(send).toHaveBeenCalledWith(JSON.stringify({race: '1', token: 'new', type: 'auth'}));
   });
 
   it('responds with auth/local token after auth when fighter is selected', async () => {
@@ -280,7 +280,7 @@ describe('Game', () => {
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
     expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({token: 'existing-token', type: 'auth'}));
-    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({token: 'new', type: 'auth'}));
+    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({race: '1', token: 'new', type: 'auth'}));
   });
 
   it('ignores invalid websocket auth messages', async () => {

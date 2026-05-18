@@ -1,15 +1,17 @@
 import {randomUUID} from 'node:crypto';
+import charactersModel from '../data/models/characters.js';
 import playersModel from '../data/models/players.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
 
 export default async function connectRoutes(app) {
+  const characters = charactersModel(app.db);
   const players = playersModel(app.db);
-  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, players));
+  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, characters, players));
 }
 
-export function onConnect(socket, players) {
-  socket.on('message', (raw) => onMessage(raw, socket, players));
+export function onConnect(socket, characters, players) {
+  socket.on('message', (raw) => onMessage(raw, socket, characters, players));
   setImmediate(() => {
     if(socket.readyState !== socket.OPEN) {
       return;
@@ -18,14 +20,16 @@ export function onConnect(socket, players) {
   });
 }
 
-export async function onMessage(raw, socket, players) {
+export async function onMessage(raw, socket, characters, players) {
   const message = parseMessage(raw);
   if(!canHandleAuthMessage({message, socket})) {
     return;
   }
-  const player = await getPlayer(message.token, players);
+  const player = await getPlayer({characters, players}, message.token, message.race);
   if(!player) {
-    socket.send(JSON.stringify({type: 'auth-invalid-token'}));
+    if(message.token !== 'new') {
+      socket.send(JSON.stringify({type: 'auth-invalid-token'}));
+    }
     return;
   }
   socket.send(JSON.stringify({player_id: player.id, token: player.token, type: 'auth'}));
@@ -49,9 +53,9 @@ function canHandleAuthMessage({message, socket}) {
   );
 }
 
-async function getPlayer(token, players) {
+async function getPlayer({characters, players}, token, race) {
   if(token === 'new') {
-    return createPlayer(players);
+    return createPlayer({characters, players}, race);
   }
   if(typeof token !== 'string') {
     return null;
@@ -59,7 +63,13 @@ async function getPlayer(token, players) {
   return players.findByToken(token);
 }
 
-async function createPlayer(players) {
+async function createPlayer({characters, players}, race) {
+  const raceID = Number(race);
+  if(!Number.isInteger(raceID) || raceID < 1) {
+    return null;
+  }
   const token = randomUUID();
-  return players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
+  const player = await players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
+  await characters.create({display_name: player.display_name, player_id: player.id, race: raceID});
+  return player;
 }
