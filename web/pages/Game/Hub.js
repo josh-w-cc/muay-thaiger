@@ -1,7 +1,7 @@
 import React from 'react';
 
-import formatHugeNumber from "@/utils/formatHugeNumber.js";
-import useFighterStore from '../Fighter.js';
+import formatHugeNumber from '@/utils/formatHugeNumber.js';
+import useFighterStore from '@/orig/src/Fighter.js';
 
 import css from './Hub.module.css';
 

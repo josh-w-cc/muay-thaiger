@@ -22,7 +22,7 @@ vi.mock('../../orig/src/menus/Fight', () => ({
   },
 }));
 
-vi.mock('../../orig/src/menus/Hub.js', () => ({
+vi.mock('./Hub.js', () => ({
   default: function MockHub({setScreen}) {
     return (
       <>
