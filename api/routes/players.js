@@ -27,6 +27,8 @@ export default async function playersRoutes(app) {
 }
 
 function stripPrivatePlayerFields(player) {
-  const {email, password, ...publicPlayer} = player;
+  const publicPlayer = {...player};
+  delete publicPlayer.email;
+  delete publicPlayer.password;
   return publicPlayer;
 }
