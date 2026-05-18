@@ -12,12 +12,14 @@ const usePlayerStore = create((set, get) => ({
   },
 }));
 export default usePlayerStore;
+
 export const loadPlayerToken = () => usePlayerStore.getState().loadToken();
 export const resetPlayerStore = () => {
   clearStoredPlayerToken();
   usePlayerStore.setState(getInitialState());
 };
 export const setPlayerToken = (token) => usePlayerStore.getState().setToken(token);
+
 function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
   return Boolean(
     !hasRespondedToAuth
@@ -27,6 +29,7 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
     && socket.readyState === WebSocket.OPEN,
   );
 }
+
 function generateOnFighterSelectFn({get, set}) {
   return ({race, setScreen, socket}) => {
     set({hasSelectedFighter: true, selectedRace: race});
@@ -49,6 +52,7 @@ function generateOnSocketMessageFn({get, set}) {
     onAuth({get, message, set, setScreen, socket});
   };
 }
+
 function getAuthResponse({token, selectedRace}) {
   if(token) {
     return {cmd: 'auth', token};
@@ -64,6 +68,7 @@ function getInitialState() {
     token: getStoredPlayerToken(),
   };
 }
+
 function loadPlayerTokenIntoState(set) {
   const token = getStoredPlayerToken();
   set({token});

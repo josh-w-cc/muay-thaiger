@@ -12,6 +12,7 @@ import useAuthSocket from './useAuthSocket.js';
 import './Game.css';
 import '../../orig/src/index.css';
 const CHARACTER_SELECT_SCREEN = 'character-select';
+
 export async function loader({params}) {
   const screen = params?.screen;
   const preLoadResponse = getPreLoadResponse(screen);
@@ -20,6 +21,7 @@ export async function loader({params}) {
   }
   return loadRaceStatics();
 }
+
 function getPreLoadResponse(screen) {
   const token = loadPlayerToken();
   if(shouldRedirectToHub({screen, token})) {
@@ -33,6 +35,7 @@ function getPreLoadResponse(screen) {
   }
   return undefined;
 }
+
 async function loadRaceStatics() {
   try {
     return await fetchJSON('race');
@@ -42,6 +45,8 @@ async function loadRaceStatics() {
     return [];
   }
 }
+
+
 export default function Game() {
   const raceStatics = useLoaderData() ?? [];
   const navigate = useNavigate();
@@ -58,6 +63,7 @@ export default function Game() {
     </>
   );
 }
+
 function generateSetScreenFn(navigate) {
   return (screen) => {
     if(screen === CHARACTER_SELECT_SCREEN) {
@@ -67,6 +73,7 @@ function generateSetScreenFn(navigate) {
     navigate(`/${screen}`);
   };
 }
+
 function getFallback(setScreen) {
   return (
     <>
@@ -75,6 +82,7 @@ function getFallback(setScreen) {
     </>
   );
 }
+
 function renderScreen(screen, setScreen) {
   switch(screen) {
     case 'hub':
