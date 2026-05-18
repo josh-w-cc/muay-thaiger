@@ -39,8 +39,8 @@ describe('WebSocket /ws/connect', () => {
   it('does not send auth request on connect when socket is not open', async () => {
     const send = createCallTracker();
     const socket = {
-      on: createCallTracker(),
       OPEN: 1,
+      on: createCallTracker(),
       readyState: 0,
       send,
     };
