@@ -6,6 +6,7 @@ import {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
+const originalLocalStorage = globalThis.localStorage;
 const originalWindow = globalThis.window;
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
@@ -54,14 +55,41 @@ describe('Game', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    setLocalStorage(originalLocalStorage);
     globalThis.WebSocket = originalWebSocket;
     globalThis.window = originalWindow;
-    localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
+    if(globalThis.localStorage) {
+      localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
+    }
   });
 
-  it('loader returns null', async () => {
+  it('loader returns null for character select', async () => {
     const {loader} = await import('./index.js');
-    expect(loader()).toBeNull();
+    expect(loader({params: {screen: 'character-select'}})).toBeNull();
+  });
+
+  it('loader returns null for token-protected screens when token exists', async () => {
+    const {loader} = await import('./index.js');
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
+    expect(loader({params: {screen: 'hub'}})).toBeNull();
+  });
+
+  it('loader redirects to character select for token-protected screens when token is missing', async () => {
+    const {loader} = await import('./index.js');
+    const response = loader({params: {screen: 'hub'}});
+
+    expect(response.headers.get('Location')).toBe('/');
+    expect(response.status).toBe(302);
+  });
+
+  it('loader redirects to character select when localStorage is unavailable', async () => {
+    const {loader} = await import('./index.js');
+    setLocalStorage(undefined);
+
+    const response = loader({params: {screen: 'hub'}});
+
+    expect(response.headers.get('Location')).toBe('/');
+    expect(response.status).toBe(302);
   });
 
   it('renders the character select screen first', async () => {
@@ -217,4 +245,11 @@ function renderGame({Game, initialPath = '/'}) {
       </Routes>
     </MemoryRouter>,
   );
+}
+
+function setLocalStorage(value) {
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value,
+  });
 }
