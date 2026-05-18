@@ -10,6 +10,7 @@ export async function authenticate({characters, players}, message, socket) {
     }
     return;
   }
+  socket.player = player;
   socket.send(JSON.stringify({player_id: player.id, token: player.token, type: 'auth'}));
 }
 
