@@ -3,7 +3,7 @@ import React from 'react';
 import formatHugeNumber from "@/utils/formatHugeNumber.js";
 import useFighterStore from '../../Fighter.js';
 
-import css from './Train.module.css';
+import css from './TrainStat.module.css';
 
 function TrainStat({name, stat}) {
   const fighter = useFighterStore();

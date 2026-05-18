@@ -4,7 +4,7 @@ import Fastify from 'fastify';
 import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
 import actionsRoutes from './routes/actions.js';
-import charactersRoutes from './routes/characters.js';
+import fightersRoutes from './routes/fighters.js';
 import healthRoutes from './routes/health.js';
 import playersRoutes from './routes/players.js';
 import raceRoutes from './routes/race.js';
@@ -17,7 +17,7 @@ export default async function build(opts = {}) {
   await app.register(dbPlugin);
   await app.register(websocket);
   await app.register(actionsRoutes, {prefix: '/api'});
-  await app.register(charactersRoutes, {prefix: '/api'});
+  await app.register(fightersRoutes, {prefix: '/api'});
   await app.register(healthRoutes);
   await app.register(websocketRoutes, {prefix: '/ws'});
   await app.register(playersRoutes, {prefix: '/api'});
