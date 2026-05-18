@@ -10,7 +10,7 @@ describe('BaseStats', () => {
   it('uses race statics as the source of truth', () => {
     const raceStatics = [...SEED_STATICS]
       .filter(({type}) => type === 'race')
-      .sort((left, right) => right.id - left.id);
+      .sort((firstRace, secondRace) => secondRace.id - firstRace.id);
 
     expect(Object.keys(BaseStats)).toEqual(raceStatics.map(({name}) => name.replaceAll(' ', '')));
     expect(BaseStats.Tiger.name).toBe('Tiger');
