@@ -30,7 +30,7 @@ function Character({name, image, stats, onSelect}) {
     <div className={css.inner}>
       <img src={image} className={css.avatar} />
       <div className={css.stats}>
-        Speeed: {formatHugeNumber(stats.speed)}<br/>
+        Speed: {formatHugeNumber(stats.speed)}<br/>
         Strength: {formatHugeNumber(stats.strength)}<br/>
         Vitality: {formatHugeNumber(stats.vitality)}<br/>
         Anima: {formatHugeNumber(stats.anima)}<br/>
