@@ -6,6 +6,7 @@ import {withFoundItem} from './route-handlers.js';
 
 describe('withFoundItem', () => {
   it('returns not found when model does not return an item', async () => {
+    let handlerCalls = 0;
     const reply = {
       code: (statusCode) => ({
         send: (body) => ({body, statusCode}),
@@ -18,9 +19,13 @@ describe('withFoundItem', () => {
       find: async () => undefined,
     };
 
-    const result = await withFoundItem(model, () => 'should-not-be-called')(req, reply);
+    const result = await withFoundItem(model, () => {
+      handlerCalls += 1;
+      return 'should-not-be-called';
+    })(req, reply);
 
     assert.deepEqual(result, {body: {error: 'Not found'}, statusCode: 404});
+    assert.equal(handlerCalls, 0);
   });
 
   it('returns the handler result when model finds an item', async () => {
