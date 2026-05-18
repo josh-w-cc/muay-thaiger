@@ -6,29 +6,8 @@ export const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
 
 const usePlayerStore = create((set, get) => ({
   ...getInitialState(),
-  onFighterSelect({race, setScreen, socket}) {
-    set({hasSelectedFighter: true, selectedRace: race});
-    respondToAuth({get, set, socket});
-    routeToHubIfAuthorized({get, setScreen});
-  },
-  onSocketMessage({message, setScreen, socket}) {
-    const messageType = message?.type;
-    if(messageType === 'auth-invalid-token') {
-      clearPlayerToken();
-      set({hasRespondedToAuth: false});
-      respondToAuth({get, set, socket});
-      return;
-    }
-    if(messageType !== 'auth') {
-      return;
-    }
-    if(message.token) {
-      localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, message.token);
-      routeToHubIfAuthorized({get, setScreen});
-    }
-    set({hasReceivedAuthRequest: true});
-    respondToAuth({get, set, socket});
-  },
+  onFighterSelect: generateOnFighterSelectFn({get, set}),
+  onSocketMessage: generateOnSocketMessageFn({get, set}),
 }));
 
 export default usePlayerStore;
@@ -56,6 +35,30 @@ function clearPlayerToken() {
   localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
 }
 
+function generateOnFighterSelectFn({get, set}) {
+  return ({race, setScreen, socket}) => {
+    set({hasSelectedFighter: true, selectedRace: race});
+    respondToAuth({get, set, socket});
+    routeToHubIfAuthorized({get, setScreen});
+  };
+}
+
+function generateOnSocketMessageFn({get, set}) {
+  return ({message, setScreen, socket}) => {
+    const messageType = message?.type;
+    if(messageType === 'auth-invalid-token') {
+      clearPlayerToken();
+      set({hasRespondedToAuth: false});
+      respondToAuth({get, set, socket});
+      return;
+    }
+    if(messageType !== 'auth') {
+      return;
+    }
+    onAuth({get, message, set, setScreen, socket});
+  };
+}
+
 function getAuthResponse(selectedRace) {
   const token = getPlayerToken();
   return token ? {cmd: 'auth', token} : {cmd: 'auth', race: selectedRace, token: 'new'};
@@ -75,6 +78,15 @@ function getPlayerToken() {
     return null;
   }
   return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
+}
+
+function onAuth({get, message, set, setScreen, socket}) {
+  if(message.token) {
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, message.token);
+    routeToHubIfAuthorized({get, setScreen});
+  }
+  set({hasReceivedAuthRequest: true});
+  respondToAuth({get, set, socket});
 }
 
 function respondToAuth({get, set, socket}) {

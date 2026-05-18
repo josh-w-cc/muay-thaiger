@@ -1,5 +1,4 @@
 import {redirect, useLoaderData, useNavigate, useParams} from 'react-router';
-import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerStore.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
@@ -7,7 +6,7 @@ import Header from './Header.js';
 import Hub from './Hub.js';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
-import useAuthSocket from './useAuthSocket.js';
+import useAuthSocket, {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
 import './Game.css';
 import '../../orig/src/index.css';
 const CHARACTER_SELECT_SCREEN = 'character-select';
