@@ -17,9 +17,11 @@ describe('router', () => {
     vi.clearAllMocks();
   });
 
-  it('uses an optional screen segment route for game pages', async () => {
+  it('uses index and screen routes for game pages', async () => {
     const {default: routes} = await import('./router.js');
-    const gameRoute = routes[0].children.find((route) => route.lazy);
-    expect(gameRoute.path).toBe('/:screen?');
+    const indexRoute = routes[0].children.find((route) => route.index === true);
+    const screenRoute = routes[0].children.find((route) => route.path === ':screen');
+    expect(indexRoute).toBeDefined();
+    expect(screenRoute).toBeDefined();
   });
 });
