@@ -22,7 +22,7 @@ describe('POST /api/test/reseed', () => {
     assert.equal(calls[1][1], 'players');
     assert.equal(calls[2][0], 'insert');
     assert.equal(calls[3][0], 'table');
-    assert.equal(calls[3][1], 'entities');
+    assert.equal(calls[3][1], 'statics');
     assert.equal(calls[4][0], 'insert');
     assert.equal(calls[5][0], 'table');
     assert.equal(calls[5][1], 'characters');

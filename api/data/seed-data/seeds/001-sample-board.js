@@ -10,7 +10,7 @@ export const SEED_PLAYERS = [
   {display_name: 'TigerJab', id: 4, token: 'seed-token-tigerjab'},
 ];
 
-export const SEED_ENTITIES = [
+export const SEED_STATICS = [
   {
     id: 1,
     name: 'Tiger',
@@ -27,7 +27,7 @@ export const SEED_ENTITIES = [
 
 export async function seed(knex) {
   await insertPlayers(knex);
-  await insertEntities(knex);
+  await insertStatics(knex);
   await insertCharacters(knex);
   await resetSequences(knex);
 }
@@ -46,9 +46,9 @@ async function insertCharacters(knex) {
     .ignore();
 }
 
-async function insertEntities(knex) {
-  await knex('entities')
-    .insert(SEED_ENTITIES)
+async function insertStatics(knex) {
+  await knex('statics')
+    .insert(SEED_STATICS)
     .onConflict('id')
     .ignore();
 }
@@ -63,7 +63,7 @@ async function resetSequences(knex) {
     ['players'],
   );
   await knex.raw(
-    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "entities"), 0) + 1, false)`,
-    ['entities'],
+    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "statics"), 0) + 1, false)`,
+    ['statics'],
   );
 }
