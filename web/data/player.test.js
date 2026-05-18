@@ -1,4 +1,4 @@
-import usePlayerStore, {loadPlayerToken, PLAYER_TOKEN_STORAGE_KEY, resetPlayerStore, setPlayerToken} from './playerStore.js';
+import usePlayerStore, {loadPlayerToken, PLAYER_TOKEN_STORAGE_KEY, resetPlayerStore, setPlayerToken} from './player.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -66,7 +66,6 @@ describe('usePlayerStore', () => {
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
   });
-
   it('clears invalid token and retries auth with a new token', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};

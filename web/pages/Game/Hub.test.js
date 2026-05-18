@@ -42,5 +42,14 @@ describe('Hub', () => {
 
     expect(staminaRow).toBeInTheDocument();
     expect(within(staminaRow).getByText('21')).toBeInTheDocument();
+    expect(screen.getByRole('heading', {name: 'Events:'})).toBeInTheDocument();
+    expect(screen.getByRole('list')).toBeInTheDocument();
+    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getByText('Temple Sparring Night')).toBeInTheDocument();
+    expect(screen.getByText('Lumpinee Showcase')).toBeInTheDocument();
+    expect(screen.getByText('Tiger Knee Clinic')).toBeInTheDocument();
+    expect(screen.getByText('Reward: +120 XP')).toBeInTheDocument();
+    expect(screen.getByText('Reward: ฿350')).toBeInTheDocument();
+    expect(screen.getByText('Reward: +2 Skill')).toBeInTheDocument();
   });
 });
