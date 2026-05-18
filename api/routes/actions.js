@@ -17,8 +17,4 @@ export default async function actionsRoutes(app) {
     return action;
   });
 
-  app.post('/actions', async (req, reply) => {
-    const action = await actions.create(req.body);
-    return reply.code(201).send(action);
-  });
 }
