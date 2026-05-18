@@ -10,6 +10,18 @@ export const SEED_PLAYERS = [
   {display_name: 'TigerJab', id: 4, token: 'seed-token-tigerjab'},
 ];
 
+export const SEED_ACTIONS = [
+  {id: 1, name: '฿egging', type: 'train'},
+  {id: 2, name: 'Walking', type: 'train'},
+  {id: 3, name: 'Shadow Boxing', type: 'train'},
+  {id: 4, name: 'Breathwork', type: 'train'},
+  {id: 5, name: 'Yoga', type: 'train'},
+  {id: 6, name: 'Calisthenics', type: 'train'},
+  {id: 7, name: 'La฿oring', type: 'train'},
+  {id: 8, name: 'Running', type: 'train'},
+  {id: 9, name: 'Gymnastics', type: 'train'},
+];
+
 export const SEED_STATICS = [
   {
     id: 1,
@@ -26,10 +38,18 @@ export const SEED_STATICS = [
 ];
 
 export async function seed(knex) {
+  await insertActions(knex);
   await insertPlayers(knex);
   await insertStatics(knex);
   await insertCharacters(knex);
   await resetSequences(knex);
+}
+
+async function insertActions(knex) {
+  await knex('actions')
+    .insert(SEED_ACTIONS)
+    .onConflict('id')
+    .ignore();
 }
 
 async function insertPlayers(knex) {
@@ -54,6 +74,10 @@ async function insertStatics(knex) {
 }
 
 async function resetSequences(knex) {
+  await knex.raw(
+    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "actions"), 0) + 1, false)`,
+    ['actions'],
+  );
   await knex.raw(
     `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "characters"), 0) + 1, false)`,
     ['characters'],
