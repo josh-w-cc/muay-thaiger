@@ -62,12 +62,11 @@ describe('usePlayerStore', () => {
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
     expect(setScreen).not.toHaveBeenCalled();
   });
+
+  function setLocalStorage(value) {
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      value,
+    });
+  }
 });
-
-
-function setLocalStorage(value) {
-  Object.defineProperty(globalThis, 'localStorage', {
-    configurable: true,
-    value,
-  });
-}
