@@ -34,7 +34,7 @@ export async function onMessage(raw, socket, models) {
     case 'create':
       return onCharacterActionsMessage(raw, socket, models);
     default:
-      socket.send(JSON.stringify({type: 'invalid-cmd'}));
+      socket.send(JSON.stringify({error: 'invalid-cmd', type: 'error'}));
   }
 }
 

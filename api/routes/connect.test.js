@@ -96,14 +96,14 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(send.calls.length, 0);
   });
 
-  it('sends invalid-cmd for unrecognized commands', async () => {
+  it('sends error invalid-cmd for unrecognized commands', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
     await onMessage(JSON.stringify({cmd: 'noop', token: 'new'}), socket, {});
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'invalid-cmd'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {error: 'invalid-cmd', type: 'error'});
   });
 
   it('ignores auth messages with non-string token values', async () => {
