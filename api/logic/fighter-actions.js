@@ -1,4 +1,4 @@
-export async function createAndSend({characterActions, fighters}, message, socket) {
+export async function createAndSend({fighterActions, fighters}, message, socket) {
   const normalizedMessage = normalizeMessage(message);
   if(!normalizedMessage || !socket.player || socket.readyState !== socket.OPEN) {
     return;
@@ -7,11 +7,11 @@ export async function createAndSend({characterActions, fighters}, message, socke
   if(!currentFighter) {
     return;
   }
-  const characterAction = await characterActions.create({
+  const fighterAction = await fighterActions.create({
     action_id: normalizedMessage.action_id,
     character_id: currentFighter.id,
   });
-  socket.send(JSON.stringify({characterAction, type: 'character_action'}));
+  socket.send(JSON.stringify({fighterAction, type: 'fighter_action'}));
 }
 
 function normalizeMessage(message) {
