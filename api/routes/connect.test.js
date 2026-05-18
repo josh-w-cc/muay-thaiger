@@ -248,6 +248,22 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(socket.playerID, undefined);
   });
 
+  it('sends auth-failed error when auth command handling throws', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const players = {
+      create: async () => null,
+      findByToken: async () => {
+        throw new Error('database down');
+      },
+    };
+
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players});
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {error: 'auth-failed', type: 'error'});
+  });
+
   it('does not respond to create messages when the player has no current character', async () => {
     const send = createCallTracker();
     const create = createCallTracker();

@@ -21,7 +21,6 @@ export default async function connectRoutes(app) {
     models,
     (error) => app.log.error(error, 'sync-player-state failed'),
   );
-
   app.addHook('onClose', () => {
     scheduler.stop();
   });
@@ -63,14 +62,18 @@ async function onAuthCmd(message, socket, models) {
   if(typeof message.token !== 'string') {
     return;
   }
+  const player = await tryAuthenticate(models, message, socket);
+  if(player) {
+    socket.playerID = player.id;
+  }
+}
+
+async function tryAuthenticate(models, message, socket) {
   try {
-    const player = await authenticate(models, message, socket);
-    if(player) {
-      socket.playerID = player.id;
-    }
+    return await authenticate(models, message, socket);
   }
   catch(error) {
-    models.log?.error(error, 'auth command failed');
+    return onAuthenticateError(error, socket, models);
   }
 }
 
@@ -81,12 +84,17 @@ function createPlayerStateSyncScheduler(activeSockets, models, onError) {
     () => syncCharacterState(activeSockets, models),
     onError,
   );
-  const syncJob = new SimpleIntervalJob(
-    {minutes: PLAYER_SYNC_INTERVAL_MINUTES},
-    task,
-  );
+  const syncJob = new SimpleIntervalJob({minutes: PLAYER_SYNC_INTERVAL_MINUTES}, task);
   scheduler.addSimpleIntervalJob(syncJob);
   return scheduler;
+}
+
+function onAuthenticateError(error, socket, {log}) {
+  log?.error(error, 'auth command failed');
+  if(socket.readyState === socket.OPEN) {
+    socket.send(JSON.stringify({error: 'auth-failed', type: 'error'}));
+  }
+  return null;
 }
 
 function parseMessage(raw) {
