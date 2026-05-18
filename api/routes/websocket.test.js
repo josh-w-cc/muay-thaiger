@@ -48,7 +48,8 @@ describe('WebSocket /ws/connect', () => {
   it('creates a character action and sends it back from /ws/connect on a valid create message', async () => {
     const created = {id: 1, action_id: 2, character_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const currentCharacter = {id: 3, player_id: 8, retired: false};
-    const {knex} = mockKnexMulti([currentCharacter, [created]]);
+    const player = {id: 8, token: 'player-token'};
+    const {knex} = mockKnexMulti([player, currentCharacter, [created]]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(websocket);
@@ -57,7 +58,9 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    socket.send(JSON.stringify({action_id: 2, cmd: 'create', player_id: 8}));
+    socket.send(JSON.stringify({cmd: 'auth', token: 'player-token'}));
+    await readMessage(socket);
+    socket.send(JSON.stringify({action_id: 2, cmd: 'create'}));
     const message = await readMessage(socket);
 
     assert.deepEqual(message, {characterAction: created, type: 'character_action'});
@@ -269,11 +272,11 @@ describe('WebSocket /ws/connect', () => {
   it('does not respond to create messages when the player has no current character', async () => {
     const send = createCallTracker();
     const create = createCallTracker();
-    const socket = {OPEN: 1, readyState: 1, send};
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
     const characterActions = {create};
     const characters = {findCurrentByPlayerID: async () => null};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'create', player_id: 1}), socket, {characterActions, characters});
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'create'}), socket, {characterActions, characters});
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
