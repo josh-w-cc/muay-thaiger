@@ -7,7 +7,6 @@ import actionsRoutes from './routes/actions.js';
 import characterActionsRoutes from './routes/character-actions.js';
 import charactersRoutes from './routes/characters.js';
 import connectRoutes from './routes/connect.js';
-import eventsRoutes from './routes/events.js';
 import healthRoutes from './routes/health.js';
 import playersRoutes from './routes/players.js';
 import raceRoutes from './routes/race.js';
@@ -21,7 +20,6 @@ export default async function build(opts = {}) {
   await app.register(actionsRoutes, {prefix: '/api'});
   await app.register(characterActionsRoutes, {prefix: '/ws'});
   await app.register(charactersRoutes, {prefix: '/api'});
-  await app.register(eventsRoutes, {prefix: '/api'});
   await app.register(healthRoutes);
   await app.register(connectRoutes, {prefix: '/ws'});
   await app.register(playersRoutes, {prefix: '/api'});

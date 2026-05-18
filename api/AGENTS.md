@@ -24,8 +24,6 @@ HTTP endpoints below are registered under the `/api` prefix (except `/health`). 
 |------------|--------|------|---------|
 | `health.js` | GET | `/health` | Healthcheck (no `/api` prefix) |
 | `character-actions.js` | WS | `/ws/character-actions` | Create a character action via websocket |
-| `events.js` | GET | `/api/events` | List all events |
-| `events.js` | GET | `/api/events/:id` | Get a single event |
 | `test-reseed.js` | POST | `/api/test/reseed` | Truncate and reseed DB for tests (non-production only) |
 
 ## Testing
