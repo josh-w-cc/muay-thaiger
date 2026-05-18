@@ -1,11 +1,12 @@
-import {SEED_CHARACTERS, SEED_PLAYERS, SEED_STATICS} from '../data/seed-data/seeds/001-sample-board.js';
+import {SEED_ACTIONS, SEED_CHARACTERS, SEED_PLAYERS, SEED_STATICS} from '../data/seed-data/seeds/001-sample-board.js';
 
 /**
  * @param {import('fastify').FastifyInstance} app
  */
 export default async function testReseedRoutes(app) {
   app.post('/test/reseed', async (req, reply) => {
-    await app.db.raw('TRUNCATE players, statics, characters RESTART IDENTITY CASCADE');
+    await app.db.raw('TRUNCATE actions, players, statics, characters RESTART IDENTITY CASCADE');
+    await app.db('actions').insert(SEED_ACTIONS);
     await app.db('players').insert(SEED_PLAYERS);
     await app.db('statics').insert(SEED_STATICS);
     await app.db('characters').insert(SEED_CHARACTERS);
