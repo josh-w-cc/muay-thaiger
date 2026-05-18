@@ -27,7 +27,7 @@ describe('usePlayerStore', () => {
     });
   }
 
-  it('responds with auth/new after auth when fighter is selected', () => {
+  it('sends auth/new after fighter selection when auth request is received', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
     const setScreen = vi.fn();
