@@ -30,9 +30,9 @@ function createWebSocketURL() {
   return url.toString();
 }
 
-function getMessageType(event) {
+function getMessage(event) {
   try {
-    return JSON.parse(event.data).type;
+    return JSON.parse(event.data);
   }
   catch{
     return null;
@@ -40,8 +40,12 @@ function getMessageType(event) {
 }
 
 function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
-  if(getMessageType(event) !== 'auth') {
+  const message = getMessage(event);
+  if(message?.type !== 'auth') {
     return;
+  }
+  if(message.token) {
+    localStorage.setItem('token', message.token);
   }
   hasReceivedAuthRequest.current = true;
   respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});

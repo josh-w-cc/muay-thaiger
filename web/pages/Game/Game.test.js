@@ -53,6 +53,7 @@ describe('Game', () => {
     vi.clearAllMocks();
     globalThis.WebSocket = originalWebSocket;
     globalThis.window = originalWindow;
+    localStorage.removeItem('token');
   });
 
   it('loader returns null', async () => {
@@ -129,6 +130,20 @@ describe('Game', () => {
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
+  });
+
+  it('stores the auth token in localStorage when server responds with a token', async () => {
+    const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game} = await import('./index.js');
+
+    renderGame({Game});
+    socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
+
+    expect(localStorage.getItem('token')).toBe('new');
   });
 
   it('ignores invalid websocket auth messages', async () => {
