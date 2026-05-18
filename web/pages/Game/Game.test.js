@@ -289,6 +289,27 @@ describe('Game', () => {
     expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({race: '1', token: 'new', type: 'auth'}));
   });
 
+  it('retries auth with new token when localStorage is unavailable', async () => {
+    const user = userEvent.setup();
+    const send = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game, loader} = await import('./index.js');
+
+    setLocalStorage(undefined);
+    renderGame({Game, loader});
+    await screen.findByRole('button', {name: 'Character Select'});
+    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
+
+    expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({race: '1', token: 'new', type: 'auth'}));
+    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({race: '1', token: 'new', type: 'auth'}));
+  });
+
   it('ignores invalid websocket auth messages', async () => {
     const user = userEvent.setup();
     const send = vi.fn();
@@ -302,6 +323,24 @@ describe('Game', () => {
     renderGame({Game, loader});
     await screen.findByRole('button', {name: 'Character Select'});
     socket.onmessage({data: '{'});
+    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('ignores websocket messages that are not auth messages', async () => {
+    const user = userEvent.setup();
+    const send = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game, loader} = await import('./index.js');
+
+    renderGame({Game, loader});
+    await screen.findByRole('button', {name: 'Character Select'});
+    socket.onmessage({data: JSON.stringify({type: 'noop'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
     expect(send).not.toHaveBeenCalled();
