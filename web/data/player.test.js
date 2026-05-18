@@ -1,4 +1,4 @@
-import usePlayerStore, {loadPlayerToken, PLAYER_TOKEN_STORAGE_KEY, resetPlayerStore, setPlayerToken} from './playerStore.js';
+import usePlayerStore, {loadPlayerToken, PLAYER_TOKEN_STORAGE_KEY, resetPlayerStore, setPlayerToken} from './player.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
