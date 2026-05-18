@@ -1,29 +1,31 @@
 export default function formatHugeNumber(value) {
-  if(typeof value === 'number' && Number.isFinite(value)) {
+  if(isPositiveIntegerNumber(value)) {
     return formatNumber(value);
   }
 
-  if(typeof value === 'string' && /^[-+]?\d+$/.test(value)) {
+  if(isPositiveIntegerString(value)) {
     return formatIntegerString(value);
   }
 
   return value;
 }
 
-function formatIntegerString(value) {
-  const isNegative = value.startsWith('-');
-  const digits = value.replace(/^[-+]/, '').replace(/^0+/, '') || '0';
-
-  if(digits.length <= 5) {
-    return `${getNegativeSign(isNegative, digits)}${digits}`;
-  }
-
-  const sign = isNegative ? '-' : '';
-  return `${sign}${digits[0]}.${digits.slice(1, 3).padEnd(2, '0')}e+${digits.length - 1}`;
+function isPositiveIntegerNumber(value) {
+  return typeof value === 'number' && Number.isInteger(value) && value > 0;
 }
 
-function getNegativeSign(isNegative, digits) {
-  return isNegative && digits !== '0' ? '-' : '';
+function isPositiveIntegerString(value) {
+  return typeof value === 'string' && /^\+?\d+$/.test(value);
+}
+
+function formatIntegerString(value) {
+  const digits = value.replace(/^\+/, '').replace(/^0+/, '') || '0';
+
+  if(digits.length <= 5) {
+    return digits;
+  }
+
+  return `${digits[0]}.${digits.slice(1, 3).padEnd(2, '0')}e+${digits.length - 1}`;
 }
 
 function formatNumber(value) {
