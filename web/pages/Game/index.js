@@ -1,4 +1,6 @@
 import {redirect, useLoaderData, useNavigate, useParams} from 'react-router';
+
+import {loadPlayerToken} from '@/data/playerStore.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
@@ -6,7 +8,7 @@ import Header from './Header.js';
 import Hub from './Hub.js';
 import Shop from '../../orig/src/menus/Shop';
 import Train from '../../orig/src/menus/Train';
-import useAuthSocket, {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
+import useAuthSocket from './useAuthSocket.js';
 import './Game.css';
 import '../../orig/src/index.css';
 const CHARACTER_SELECT_SCREEN = 'character-select';
@@ -19,10 +21,11 @@ export async function loader({params}) {
   return loadRaceStatics();
 }
 function getPreLoadResponse(screen) {
-  if(shouldRedirectToHub(screen)) {
+  const token = loadPlayerToken();
+  if(shouldRedirectToHub({screen, token})) {
     return redirect('/hub');
   }
-  if(shouldRedirectToCharacterSelect(screen)) {
+  if(shouldRedirectToCharacterSelect({screen, token})) {
     return redirect('/');
   }
   if((screen ?? CHARACTER_SELECT_SCREEN) !== CHARACTER_SELECT_SCREEN) {
@@ -86,15 +89,11 @@ function renderScreen(screen, setScreen) {
       return getFallback(setScreen);
   }
 }
-function shouldRedirectToCharacterSelect(screen) {
-  return screen && screen !== CHARACTER_SELECT_SCREEN && !getPlayerToken();
+
+function shouldRedirectToCharacterSelect({screen, token}) {
+  return screen && screen !== CHARACTER_SELECT_SCREEN && !token;
 }
-function shouldRedirectToHub(screen) {
-  return !screen && !!getPlayerToken();
-}
-function getPlayerToken() {
-  if(typeof localStorage === 'undefined') {
-    return null;
-  }
-  return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
+
+function shouldRedirectToHub({screen, token}) {
+  return !screen && !!token;
 }

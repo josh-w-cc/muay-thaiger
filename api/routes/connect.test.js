@@ -87,13 +87,14 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(send.calls.length, 0);
   });
 
-  it('ignores auth commands with missing token', async () => {
+  it('responds with token invalid message for auth commands with missing token', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
     await onMessage(JSON.stringify({cmd: 'auth'}), socket, {});
 
-    assert.equal(send.calls.length, 0);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});
   });
 
   it('sends error invalid-cmd for unrecognized commands', async () => {
@@ -106,13 +107,14 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {error: 'invalid-cmd', type: 'error'});
   });
 
-  it('ignores auth messages with non-string token values', async () => {
+  it('responds with token invalid message for auth messages with non-string token values', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
     await onMessage(JSON.stringify({cmd: 'auth', token: 123}), socket, {});
 
-    assert.equal(send.calls.length, 0);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});
   });
 
   it('does not send auth confirmation when websocket is not open', async () => {
