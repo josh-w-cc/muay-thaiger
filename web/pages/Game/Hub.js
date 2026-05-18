@@ -23,7 +23,7 @@ const STAT_FIELDS = [
   {key: 'power', label: 'Power'},
 ];
 
-function Hub() {
+export default function Hub() {
   const fighter = useFighterStore();
 
   return (
@@ -54,5 +54,3 @@ function Stat({label, value}) {
     </div>
   );
 }
-
-export default Hub;
