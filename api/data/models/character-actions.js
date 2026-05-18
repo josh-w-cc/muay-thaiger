@@ -1,3 +1,4 @@
+import charactersModel from './characters.js';
 import {
   generateCreateFn,
   generateFindFn,
@@ -6,20 +7,18 @@ import {
 
 
 export default function characterActions(db) {
+  const characters = charactersModel(db);
   return {
     create: generateCreateFn(db, 'character_actions'),
     find: generateFindFn(db, 'character_actions'),
-    list: generateListCharacterActionsFn(db),
+    list: generateListCharacterActionsFn(db, characters),
     remove: generateRemoveFn(db, 'character_actions'),
   };
 }
 
-function generateListCharacterActionsFn(db) {
+function generateListCharacterActionsFn(db, characters) {
   return async (playerID) => {
-    const currentCharacter = await db('characters')
-      .where({player_id: playerID, retired: false})
-      .orderBy('created_at', 'desc')
-      .first();
+    const currentCharacter = await characters.findCurrentByPlayerID(playerID);
     if(!currentCharacter) {
       return [];
     }

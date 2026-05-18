@@ -17,23 +17,35 @@ export function onConnect(socket, characterActions, characters) {
 
 export async function onMessage(raw, socket, characterActions, characters) {
   const message = parseMessage(raw);
-  if(!isValidMessage(message) || socket.readyState !== socket.OPEN) {
+  const normalizedMessage = normalizeMessage(message);
+  if(!normalizedMessage || socket.readyState !== socket.OPEN) {
     return;
   }
-  const currentCharacter = await characters.findCurrentByPlayerID(Number(message.player_id));
+  const currentCharacter = await characters.findCurrentByPlayerID(normalizedMessage.player_id);
   if(!currentCharacter) {
     return;
   }
   const characterAction = await characterActions.create({
-    action_id: message.action_id,
+    action_id: normalizedMessage.action_id,
     character_id: currentCharacter.id,
   });
   socket.send(JSON.stringify({characterAction, type: 'character_action'}));
 }
 
-function isValidMessage(message) {
-  return message && message.type === 'create'
-    && Number.isInteger(Number(message.action_id)) && Number.isInteger(Number(message.player_id));
+function normalizeMessage(message) {
+  if(!message || message.type !== 'create') {
+    return null;
+  }
+  const actionID = Number(message.action_id);
+  const playerID = Number(message.player_id);
+  if(!Number.isInteger(actionID) || !Number.isInteger(playerID)) {
+    return null;
+  }
+  return {
+    action_id: actionID,
+    player_id: playerID,
+    type: message.type,
+  };
 }
 
 function parseMessage(raw) {
