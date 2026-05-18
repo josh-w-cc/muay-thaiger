@@ -2,7 +2,7 @@ import React from 'react';
 
 import useFighterStore from '../../Fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '../../Fight.js';
-import formatHugeNumber from "@/utils/formatHugeNumber.js";
+import formatHugeNumber from '@/utils/formatHugeNumber.js';
 
 import Button from '../../components/Button.jsx';
 

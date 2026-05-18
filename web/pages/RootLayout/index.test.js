@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 
 vi.mock('react-router', () => ({
-  Outlet: () => <div data-testid='outlet' />,
+  Outlet: () => <div data-testid="outlet" />,
 }));
 
 describe('RootLayout', () => {
