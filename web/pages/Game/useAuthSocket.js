@@ -10,14 +10,12 @@ export default function useAuthSocket(setScreen) {
   const hasRespondedToAuth = React.useRef(false);
   const hasSelectedFighter = React.useRef(false);
   const selectedRace = React.useRef(null);
-  const setScreenRef = React.useRef(setScreen);
-  setScreenRef.current = setScreen;
-  const onMessage = React.useCallback(({message, socket}) => onAuthMessage({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, message, selectedRace, setScreen: setScreenRef.current, socket}), []);
-  const socketRef = useConnectSocket(onMessage);
+  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, setScreen};
+  const socketRef = useConnectSocket(({message, socket}) => onAuthMessage({...refs, message, socket}));
   return (race) => {
     selectedRace.current = race;
     hasSelectedFighter.current = true;
-    respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, socket: socketRef.current});
+    respondToAuth({...refs, socket: socketRef.current});
     routeToHubIfAuthorized({hasSelectedFighter, setScreen});
   };
 }

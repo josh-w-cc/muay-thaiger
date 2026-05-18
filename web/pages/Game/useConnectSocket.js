@@ -2,17 +2,21 @@ import React from 'react';
 
 
 export default function useConnectSocket(onMessage) {
+  const onMessageRef = React.useRef(onMessage);
   const socketRef = React.useRef(null);
 
-  React.useEffect(() => connectSocket({onMessage, socketRef}), [onMessage]);
+  React.useEffect(() => {
+    onMessageRef.current = onMessage;
+  }, [onMessage]);
+  React.useEffect(() => connectSocket({onMessageRef, socketRef}), []);
 
   return socketRef;
 }
 
-function connectSocket({onMessage, socketRef}) {
+function connectSocket({onMessageRef, socketRef}) {
   const socket = new WebSocket(createWebSocketURL());
   socketRef.current = socket;
-  socket.onmessage = (event) => onSocketMessage({event, onMessage, socket});
+  socket.onmessage = (event) => onSocketMessage({event, onMessageRef, socket});
   return () => socket.close();
 }
 
@@ -22,12 +26,12 @@ function createWebSocketURL() {
   return url.toString();
 }
 
-function onSocketMessage({event, onMessage, socket}) {
+function onSocketMessage({event, onMessageRef, socket}) {
   const message = parseMessage(event);
   if(!message) {
     return;
   }
-  onMessage({message, socket});
+  onMessageRef.current({message, socket});
 }
 
 function parseMessage(event) {
