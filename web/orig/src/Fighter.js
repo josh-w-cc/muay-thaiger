@@ -1,10 +1,10 @@
 import {create} from 'zustand';
 
-import BaseStats from './menus/CharacterSelect/BaseStats.js';
+import BaseStats, {RACE_STATICS} from './menus/CharacterSelect/BaseStats.js';
 import {TickerState} from '../../pages/Game/Ticker.js';
 
 
-const initialRace = Object.keys(BaseStats).pop();
+const initialRace = `${RACE_STATICS[0].id}`;
 
 const useFighterStore = create((set, get) => ({
   ...getInitialState(),

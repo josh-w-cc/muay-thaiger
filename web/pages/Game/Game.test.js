@@ -2,6 +2,9 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter, Route, Routes} from 'react-router';
 
+import {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
+
+
 const originalWebSocket = globalThis.WebSocket;
 const originalWindow = globalThis.window;
 
@@ -53,7 +56,7 @@ describe('Game', () => {
     vi.clearAllMocks();
     globalThis.WebSocket = originalWebSocket;
     globalThis.window = originalWindow;
-    localStorage.removeItem('token');
+    localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
   });
 
   it('loader returns null', async () => {
@@ -143,7 +146,7 @@ describe('Game', () => {
     renderGame({Game});
     socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
 
-    expect(localStorage.getItem('token')).toBe('new');
+    expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new');
   });
 
   it('ignores invalid websocket auth messages', async () => {

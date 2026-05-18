@@ -13,9 +13,9 @@ function CharacterSelect({onExit}) {
 
   return (<>
     <h1>Choose your fighter:</h1>
-    {Object.keys(BaseStats).map(c =>
-      <Character key={c} name={BaseStats[c].name} image={BaseStats[c].image} stats={BaseStats[c].stats} onSelect={() => {
-        fighter.select(c);
+    {Object.entries(BaseStats).map(([raceID, raceStats]) =>
+      <Character key={raceID} name={raceStats.name} image={raceStats.image} stats={raceStats.stats} onSelect={() => {
+        fighter.select(raceID);
         onExit();
       }} />)
     }
@@ -31,7 +31,7 @@ function Character({name, image, stats, onSelect}) {
       <img src={image} className={css.avatar} />
       <div className={css.stats}>
         Speeed: {formatHugeNumber(stats.speed)}<br/>
-        Strength: {formatHugeNumber(stats.innateStrength)}<br/>
+        Strength: {formatHugeNumber(stats.strength)}<br/>
         Vitality: {formatHugeNumber(stats.vitality)}<br/>
         Anima: {formatHugeNumber(stats.anima)}<br/>
         Durability: {formatHugeNumber(stats.durability)}<br/>
