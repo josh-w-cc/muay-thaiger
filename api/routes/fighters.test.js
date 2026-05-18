@@ -3,17 +3,17 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 
 import {mockKnex} from '../data/utils/mock-knex.js';
-import charactersRoutes from '../routes/characters.js';
+import fightersRoutes from '../routes/fighters.js';
 
 
-describe('GET /characters', () => {
-  it('returns list of characters', async () => {
+describe('GET /fighters', () => {
+  it('returns list of fighters', async () => {
     const {knex} = mockKnex([{display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1}]);
     const app = Fastify();
     app.decorate('db', knex);
-    await app.register(charactersRoutes);
+    await app.register(fightersRoutes);
 
-    const response = await app.inject({method: 'GET', url: '/characters'});
+    const response = await app.inject({method: 'GET', url: '/fighters'});
 
     assert.equal(response.statusCode, 200);
     assert.deepEqual(response.json(), [{display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1}]);
@@ -21,14 +21,14 @@ describe('GET /characters', () => {
   });
 });
 
-describe('GET /characters/:id', () => {
-  it('returns character when found', async () => {
+describe('GET /fighters/:id', () => {
+  it('returns fighter when found', async () => {
     const {knex} = mockKnex({display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1});
     const app = Fastify();
     app.decorate('db', knex);
-    await app.register(charactersRoutes);
+    await app.register(fightersRoutes);
 
-    const response = await app.inject({method: 'GET', url: '/characters/1'});
+    const response = await app.inject({method: 'GET', url: '/fighters/1'});
 
     assert.equal(response.statusCode, 200);
     assert.deepEqual(response.json(), {display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1});
@@ -39,9 +39,9 @@ describe('GET /characters/:id', () => {
     const {knex} = mockKnex(undefined);
     const app = Fastify();
     app.decorate('db', knex);
-    await app.register(charactersRoutes);
+    await app.register(fightersRoutes);
 
-    const response = await app.inject({method: 'GET', url: '/characters/999'});
+    const response = await app.inject({method: 'GET', url: '/fighters/999'});
 
     assert.equal(response.statusCode, 404);
     assert.deepEqual(response.json(), {error: 'Not found'});
@@ -49,17 +49,17 @@ describe('GET /characters/:id', () => {
   });
 });
 
-describe('POST /characters', () => {
+describe('POST /fighters', () => {
   it('returns 404', async () => {
     const {knex} = mockKnex(undefined);
     const app = Fastify();
     app.decorate('db', knex);
-    await app.register(charactersRoutes);
+    await app.register(fightersRoutes);
 
     const response = await app.inject({
       method: 'POST',
       payload: {display_name: 'NewChar', player_id: 1, race: 1},
-      url: '/characters',
+      url: '/fighters',
     });
 
     assert.equal(response.statusCode, 404);
