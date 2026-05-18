@@ -64,4 +64,20 @@ describe('POST /players', () => {
     assert.equal(response.statusCode, 404);
     await app.close();
   });
+
+  it('returns 404 even with player payload', async () => {
+    const {knex} = mockKnex(undefined);
+    const app = Fastify();
+    app.decorate('db', knex);
+    await app.register(playersRoutes);
+
+    const response = await app.inject({
+      method: 'POST',
+      payload: {display_name: 'New Player', email: null, password: null},
+      url: '/players',
+    });
+
+    assert.equal(response.statusCode, 404);
+    await app.close();
+  });
 });
