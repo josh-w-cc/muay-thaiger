@@ -1,7 +1,7 @@
 import readSQL from '../utils/read-sql.js';
 
 export async function up(knex) {
-  const sql = await readSQL(import.meta.url, '../tables/fighter-actions.sql');
+  const sql = await readSQL(import.meta.url, '../tables/fighter_actions.sql');
   await knex.raw(sql);
 }
 
