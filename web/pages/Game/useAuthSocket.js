@@ -1,6 +1,7 @@
 import React from 'react';
+import {getPlayerToken, PLAYER_TOKEN_STORAGE_KEY} from './playerToken.js';
 
-export const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
+export {PLAYER_TOKEN_STORAGE_KEY} from './playerToken.js';
 
 
 export default function useAuthSocket(setScreen) {
@@ -88,13 +89,6 @@ function getAuthRequest(race) {
     return {race, token: 'new', type: 'auth'};
   }
   return {token: 'new', type: 'auth'};
-}
-
-function getPlayerToken() {
-  if(typeof localStorage === 'undefined') {
-    return null;
-  }
-  return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
 }
 
 function routeToHubIfAuthorized({hasSelectedFighter, setScreen}) {
