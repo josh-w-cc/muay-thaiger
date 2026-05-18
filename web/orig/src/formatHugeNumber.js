@@ -12,6 +12,7 @@ export default function formatHugeNumber(value) {
 
 const DECIMAL_END_INDEX = 3;
 const DECIMAL_START_INDEX = 1;
+const MAX_UNFORMATTED_DIGITS = 5;
 const SIGNIFICANT_DECIMAL_DIGITS = 2;
 
 
@@ -20,7 +21,7 @@ function formatIntegerString(value) {
   const unsignedDigits = value.replace(/^[-+]/, '');
   const trimmedDigits = unsignedDigits.replace(/^0+/, '') || '0';
 
-  if(trimmedDigits.length <= 5) {
+  if(trimmedDigits.length <= MAX_UNFORMATTED_DIGITS) {
     const sign = isNegative && trimmedDigits !== '0' ? '-' : '';
 
     return `${sign}${trimmedDigits}`;
