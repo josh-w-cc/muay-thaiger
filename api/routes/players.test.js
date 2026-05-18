@@ -14,9 +14,12 @@ describe('GET /players', () => {
     await app.register(playersRoutes);
 
     const response = await app.inject({method: 'GET', url: '/players'});
+    const [player] = response.json();
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), [{display_name: 'Test', id: 1}]);
+    assert.deepEqual([player], [{display_name: 'Test', id: 1}]);
+    assert.equal('email' in player, false);
+    assert.equal('password' in player, false);
     await app.close();
   });
 });
@@ -29,9 +32,12 @@ describe('GET /players/:id', () => {
     await app.register(playersRoutes);
 
     const response = await app.inject({method: 'GET', url: '/players/1'});
+    const player = response.json();
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), {display_name: 'Test', id: 1});
+    assert.deepEqual(player, {display_name: 'Test', id: 1});
+    assert.equal('email' in player, false);
+    assert.equal('password' in player, false);
     await app.close();
   });
 
