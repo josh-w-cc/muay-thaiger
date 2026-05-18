@@ -17,9 +17,19 @@ describe('router', () => {
     vi.clearAllMocks();
   });
 
-  it('uses an optional screen segment route for game pages', async () => {
+  it('uses explicit game routes for each screen', async () => {
     const {default: routes} = await import('./router.js');
-    const gameRoute = routes[0].children.find((route) => route.lazy);
-    expect(gameRoute.path).toBe('/:screen?');
+    const children = routes[0].children;
+    const indexRoute = children.find((route) => route.index);
+    const gameLayoutRoute = children.find((route) => route.children);
+
+    expect(indexRoute.index).toBe(true);
+    expect(gameLayoutRoute.children.map(({path}) => path)).toEqual([
+      'fight',
+      'hub',
+      'shop',
+      'train',
+      '*',
+    ]);
   });
 });
