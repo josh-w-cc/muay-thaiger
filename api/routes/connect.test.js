@@ -117,14 +117,15 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 5, token: 'known-token', type: 'auth'});
   });
 
-  it('does not respond when auth token does not match a player', async () => {
+  it('responds with token invalid message when auth token does not match a player', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
     const players = {create: async () => null, findByToken: async () => null};
 
     await onMessage(JSON.stringify({token: 'unknown-token', type: 'auth'}), socket, players);
 
-    assert.equal(send.calls.length, 0);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});
   });
 });
 

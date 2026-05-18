@@ -261,6 +261,28 @@ describe('Game', () => {
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new');
   });
 
+  it('clears invalid auth token and retries auth with new token', async () => {
+    const user = userEvent.setup();
+    const send = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game, loader} = await import('./index.js');
+
+    renderGame({Game, loader});
+    await screen.findByRole('button', {name: 'Character Select'});
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
+    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
+
+    expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
+    expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({token: 'existing-token', type: 'auth'}));
+    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({token: 'new', type: 'auth'}));
+  });
+
   it('ignores invalid websocket auth messages', async () => {
     const user = userEvent.setup();
     const send = vi.fn();

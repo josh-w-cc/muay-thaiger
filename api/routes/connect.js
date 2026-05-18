@@ -26,8 +26,12 @@ export async function onMessage(raw, socket, players) {
   if(socket.readyState !== socket.OPEN) {
     return;
   }
+  if(typeof message.token !== 'string') {
+    return;
+  }
   const player = await getPlayer(message.token, players);
   if(!player) {
+    socket.send(JSON.stringify({type: 'auth-invalid-token'}));
     return;
   }
   socket.send(JSON.stringify({player_id: player.id, token: player.token, type: 'auth'}));

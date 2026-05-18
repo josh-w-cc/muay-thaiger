@@ -43,6 +43,12 @@ function getMessage(event) {
 
 function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socket}) {
   const message = getMessage(event);
+  if(message?.type === 'auth-invalid-token') {
+    clearPlayerToken();
+    hasRespondedToAuth.current = false;
+    respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});
+    return;
+  }
   if(message?.type !== 'auth') {
     return;
   }
@@ -78,6 +84,13 @@ function getPlayerToken() {
     return null;
   }
   return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
+}
+
+function clearPlayerToken() {
+  if(typeof localStorage === 'undefined') {
+    return;
+  }
+  localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
 }
 
 function routeToHubIfAuthorized({hasSelectedFighter, setScreen}) {
