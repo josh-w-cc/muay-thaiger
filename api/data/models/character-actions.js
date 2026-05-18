@@ -7,23 +7,23 @@ import {
 
 
 export default function characterActions(db) {
-  const characters = fightersModel(db);
+  const fighters = fightersModel(db);
   return {
     create: generateCreateFn(db, 'character_actions'),
     find: generateFindFn(db, 'character_actions'),
-    list: generateListCharacterActionsFn(db, characters),
+    list: generateListCharacterActionsFn(db, fighters),
     remove: generateRemoveFn(db, 'character_actions'),
   };
 }
 
-function generateListCharacterActionsFn(db, characters) {
+function generateListCharacterActionsFn(db, fighters) {
   return async (playerId) => {
-    const currentCharacter = await characters.findCurrentByPlayerID(playerId);
-    if(!currentCharacter) {
+    const currentFighter = await fighters.findCurrentByPlayerID(playerId);
+    if(!currentFighter) {
       return [];
     }
     return db('character_actions')
-      .where({character_id: currentCharacter.id})
+      .where({character_id: currentFighter.id})
       .orderBy('created_at');
   };
 }

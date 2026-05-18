@@ -9,9 +9,9 @@ describe('createAndSend', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, player: {id: 8}, readyState: 1, send};
     const characterActions = {create: async () => created};
-    const characters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false})};
+    const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false})};
 
-    await createAndSend({characterActions, characters}, {action_id: 2, cmd: 'create'}, socket);
+    await createAndSend({characterActions, fighters}, {action_id: 2, cmd: 'create'}, socket);
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {characterAction: created, type: 'character_action'});
@@ -58,9 +58,9 @@ describe('createAndSend', () => {
     const create = createCallTracker();
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
     const characterActions = {create};
-    const characters = {findCurrentByPlayerID: async () => null};
+    const fighters = {findCurrentByPlayerID: async () => null};
 
-    await createAndSend({characterActions, characters}, {action_id: 1, cmd: 'create'}, socket);
+    await createAndSend({characterActions, fighters}, {action_id: 1, cmd: 'create'}, socket);
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
