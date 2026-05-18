@@ -1,4 +1,4 @@
-export function withFoundItem(model, handler) {
+export function withFoundItem(model, handler = identity) {
   return async (req, reply) => {
     const item = await model.find(Number(req.params.id));
     if(!item) {
@@ -6,4 +6,8 @@ export function withFoundItem(model, handler) {
     }
     return handler(item);
   };
+}
+
+function identity(value) {
+  return value;
 }

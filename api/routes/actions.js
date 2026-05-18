@@ -10,5 +10,5 @@ export default async function actionsRoutes(app) {
 
   app.get('/actions', async () => actions.list());
 
-  app.get('/actions/:id', withFoundItem(actions, (action) => action));
+  app.get('/actions/:id', withFoundItem(actions));
 }

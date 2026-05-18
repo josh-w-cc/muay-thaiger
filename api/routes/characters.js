@@ -10,5 +10,5 @@ export default async function charactersRoutes(app) {
 
   app.get('/characters', async () => characters.list());
 
-  app.get('/characters/:id', withFoundItem(characters, (character) => character));
+  app.get('/characters/:id', withFoundItem(characters));
 }
