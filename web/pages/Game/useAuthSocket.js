@@ -7,15 +7,15 @@ export default function useAuthSocket(setScreen) {
   const hasReceivedAuthRequest = React.useRef(false);
   const hasRespondedToAuth = React.useRef(false);
   const hasSelectedFighter = React.useRef(false);
-  const selectedRace = React.useRef(null);
+  const selectedRaceID = React.useRef(null);
   const socketRef = React.useRef(null);
-  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, socketRef};
+  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRaceID, socketRef};
 
   React.useEffect(() => connectSocket(refs), []);
 
   return (race) => {
     hasSelectedFighter.current = true;
-    selectedRace.current = race;
+    selectedRaceID.current = race;
     respondToAuth({...refs, socket: socketRef.current});
     setScreen('hub');
   };
@@ -55,13 +55,13 @@ function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
   respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});
 }
 
-function respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, socket, socketRef}) {
+function respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRaceID, socket, socketRef}) {
   const activeSocket = socket || socketRef?.current;
   if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket: activeSocket})) {
     return;
   }
   hasRespondedToAuth.current = true;
-  activeSocket.send(JSON.stringify(getAuthRequest(selectedRace.current)));
+  activeSocket.send(JSON.stringify(getAuthRequest(selectedRaceID.current)));
 }
 
 function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
@@ -75,9 +75,8 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
 }
 
 function getAuthRequest(race) {
-  return {
-    ...(race ? {race} : {}),
-    token: 'new',
-    type: 'auth',
-  };
+  if(race) {
+    return {race, token: 'new', type: 'auth'};
+  }
+  return {token: 'new', type: 'auth'};
 }

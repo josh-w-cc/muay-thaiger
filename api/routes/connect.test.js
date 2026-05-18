@@ -136,7 +136,9 @@ describe('WebSocket /ws/connect', () => {
       create: async (payload) => {
         characterCalls.push(payload);
         if(payload.race === 99) {
-          throw {code: '23503'};
+          const error = new Error('foreign key violation');
+          error.code = '23503';
+          throw error;
         }
         return {id: 1};
       },
