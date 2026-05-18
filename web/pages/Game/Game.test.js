@@ -138,7 +138,7 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game} = await import('./Game.js');
+    const {default: Game} = await import('./index.js');
 
     renderGame({Game});
     socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
