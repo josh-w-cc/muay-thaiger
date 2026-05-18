@@ -6,8 +6,8 @@ import Tiger from './assets/Tiger.png';
 
 let selectMock;
 
-vi.mock('../../Fighter.js', () => ({
-  default: () => ({select: (...args) => selectMock(...args)}),
+vi.mock('@/actions/selectFighter.js', () => ({
+  default: (...args) => selectMock(...args),
 }));
 
 describe('CharacterSelect', () => {
