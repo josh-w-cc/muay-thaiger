@@ -68,7 +68,7 @@ function respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedF
     return;
   }
   hasRespondedToAuth.current = true;
-  activeSocket.send(JSON.stringify(getAuthRequest(selectedRaceID?.current)));
+  activeSocket.send(JSON.stringify(getAuthRequest(selectedRaceID.current)));
 }
 
 function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
