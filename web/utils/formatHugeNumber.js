@@ -1,13 +1,21 @@
 export default function formatHugeNumber(value) {
-  if(typeof value === 'number' && Number.isInteger(value) && value > 0) {
+  if(isPositiveIntegerNumber(value)) {
     return formatNumber(value);
   }
 
-  if(typeof value === 'string' && /^\+?\d+$/.test(value)) {
+  if(isPositiveIntegerString(value)) {
     return formatIntegerString(value);
   }
 
   return value;
+}
+
+function isPositiveIntegerNumber(value) {
+  return typeof value === 'number' && Number.isInteger(value) && value > 0;
+}
+
+function isPositiveIntegerString(value) {
+  return typeof value === 'string' && /^\+?\d+$/.test(value);
 }
 
 function formatIntegerString(value) {
