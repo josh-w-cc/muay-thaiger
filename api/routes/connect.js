@@ -3,6 +3,7 @@ import charactersModel from '../data/models/characters.js';
 import playersModel from '../data/models/players.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
+const DEFAULT_RACE_ID = 1;
 
 export default async function connectRoutes(app) {
   const characters = charactersModel(app.db);
@@ -45,9 +46,9 @@ function parseMessage(raw) {
 }
 
 function getRace(message) {
-  const race = Number.parseInt(message.race, 10);
-  if(!Number.isInteger(race) || race < 1) {
-    return 1;
+  const parsedRace = Number.parseInt(message.race, 10);
+  if(!Number.isInteger(parsedRace) || parsedRace < DEFAULT_RACE_ID) {
+    return DEFAULT_RACE_ID;
   }
-  return race;
+  return parsedRace;
 }
