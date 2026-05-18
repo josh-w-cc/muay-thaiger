@@ -1,5 +1,6 @@
 import React from 'react';
 
+import formatHugeNumber from '../formatHugeNumber.js';
 import useFighterStore from '../Fighter.js';
 
 function Hub() {
@@ -8,23 +9,23 @@ function Hub() {
   return (<>
     <h1>HUB</h1>
     <h3>Stats:</h3>
-    Agility: {fighter.agility}<br/>
-    Speeed: {fighter.speed}<br/>
-    Strength: {fighter.strength}<br/>
-    Innate Strength: {fighter.innateStrength}<br/>
-    Vitality: {fighter.vitality}<br/>
-    Anima: {fighter.anima}<br/>
-    Durability: {fighter.durability}<br/>
-    Reach: {fighter.reach}<br/>
-    Constitution: {fighter.constitution}<br/>
-    Skill: {fighter.skill}<br/>
-    Stanima: {fighter.stamina}<br/>
-    ฿: {fighter.gold / 100}<br/>
-    APM: {fighter.apm}<br/>
-    Attack: {fighter.attack}<br/>
-    Defense: {fighter.defense}<br/>
-    Health: {fighter.health}<br/>
-    Power: {fighter.power}<br/>
+    Agility: {formatHugeNumber(fighter.agility)}<br/>
+    Speeed: {formatHugeNumber(fighter.speed)}<br/>
+    Strength: {formatHugeNumber(fighter.strength)}<br/>
+    Innate Strength: {formatHugeNumber(fighter.innateStrength)}<br/>
+    Vitality: {formatHugeNumber(fighter.vitality)}<br/>
+    Anima: {formatHugeNumber(fighter.anima)}<br/>
+    Durability: {formatHugeNumber(fighter.durability)}<br/>
+    Reach: {formatHugeNumber(fighter.reach)}<br/>
+    Constitution: {formatHugeNumber(fighter.constitution)}<br/>
+    Skill: {formatHugeNumber(fighter.skill)}<br/>
+    Stanima: {formatHugeNumber(fighter.stamina)}<br/>
+    ฿: {formatHugeNumber(fighter.gold / 100)}<br/>
+    APM: {formatHugeNumber(fighter.apm)}<br/>
+    Attack: {formatHugeNumber(fighter.attack)}<br/>
+    Defense: {formatHugeNumber(fighter.defense)}<br/>
+    Health: {formatHugeNumber(fighter.health)}<br/>
+    Power: {formatHugeNumber(fighter.power)}<br/>
   </>);
 }
 

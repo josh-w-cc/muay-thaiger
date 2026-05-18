@@ -2,6 +2,7 @@ import React from 'react';
 
 import useFighterStore from '../../Fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '../../Fight.js';
+import formatHugeNumber from '../../formatHugeNumber.js';
 
 import Button from '../../components/Button.jsx';
 
@@ -35,16 +36,16 @@ function FightMenu() {
     const [you, them] = fight.fighters;
     content = (<>
       <h3>Enemy Stats:</h3>
-      APM: {them.stats.apm}<br/>
-      Attack: {them.stats.attack}<br/>
-      Defense: {them.stats.defense}<br/>
-      Health: {them.stats.health}<br/>
-      Power: {them.stats.power}<br/>
-      Stamina: {them.stats.stamina}<br/>
-      Health: {them.currentHealth}<br/>
+      APM: {formatHugeNumber(them.stats.apm)}<br/>
+      Attack: {formatHugeNumber(them.stats.attack)}<br/>
+      Defense: {formatHugeNumber(them.stats.defense)}<br/>
+      Health: {formatHugeNumber(them.stats.health)}<br/>
+      Power: {formatHugeNumber(them.stats.power)}<br/>
+      Stamina: {formatHugeNumber(them.stats.stamina)}<br/>
+      Health: {formatHugeNumber(them.currentHealth)}<br/>
       <Button onClick={() => setAnnouncer(fight.attack(0))}>Attack!</Button>
       <h3>Stats:</h3>
-      Health: {you.currentHealth}
+      Health: {formatHugeNumber(you.currentHealth)}
       <h3>MSG</h3>
     </>);
   }
