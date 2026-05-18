@@ -1,9 +1,9 @@
 export async function createAndSend({characterActions, characters}, message, socket) {
   const normalizedMessage = normalizeMessage(message);
-  if(!normalizedMessage || socket.readyState !== socket.OPEN) {
+  if(!normalizedMessage || !socket.player || socket.readyState !== socket.OPEN) {
     return;
   }
-  const currentCharacter = await characters.findCurrentByPlayerID(normalizedMessage.player_id);
+  const currentCharacter = await characters.findCurrentByPlayerID(socket.player.id);
   if(!currentCharacter) {
     return;
   }
@@ -19,13 +19,11 @@ function normalizeMessage(message) {
     return null;
   }
   const actionId = Number(message.action_id);
-  const playerId = Number(message.player_id);
-  if(!Number.isInteger(actionId) || !Number.isInteger(playerId)) {
+  if(!Number.isInteger(actionId)) {
     return null;
   }
   return {
     action_id: actionId,
     cmd: message.cmd,
-    player_id: playerId,
   };
 }
