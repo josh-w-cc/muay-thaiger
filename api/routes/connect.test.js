@@ -90,7 +90,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
     const player = {id: 1, token: 'player-uuid-token'};
-    const players = {create: async () => player, findByToken: async () => null};
+    const players = {create: async () => player};
 
     await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, players);
 
@@ -103,7 +103,12 @@ describe('WebSocket /ws/connect', () => {
     const socket = {OPEN: 1, readyState: 1, send};
     const players = {
       create: async () => null,
-      findByToken: async (token) => token === 'known-token' ? {id: 5, token} : null,
+      findByToken: async (token) => {
+        if(token !== 'known-token') {
+          return null;
+        }
+        return {id: 5, token};
+      },
     };
 
     await onMessage(JSON.stringify({token: 'known-token', type: 'auth'}), socket, players);
