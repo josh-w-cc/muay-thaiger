@@ -32,7 +32,7 @@ export async function onMessage(raw, socket, characterActions, characters, playe
     case 'create':
       return onCharacterActionsMessage(raw, socket, characterActions, characters);
     default:
-      socket.send(JSON.stringify({type: 'invalid-cmd'}));
+      socket.send(JSON.stringify({error: 'invalid-cmd', type: 'error'}));
   }
 }
 
