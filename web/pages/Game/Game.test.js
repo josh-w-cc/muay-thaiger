@@ -4,6 +4,7 @@ import {MemoryRouter, Route, Routes} from 'react-router';
 
 const originalWebSocket = globalThis.WebSocket;
 const originalWindow = globalThis.window;
+const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
@@ -53,7 +54,7 @@ describe('Game', () => {
     vi.clearAllMocks();
     globalThis.WebSocket = originalWebSocket;
     globalThis.window = originalWindow;
-    localStorage.removeItem('token');
+    localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
   });
 
   it('loader returns null', async () => {
@@ -143,7 +144,7 @@ describe('Game', () => {
     renderGame({Game});
     socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
 
-    expect(localStorage.getItem('token')).toBe('new');
+    expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new');
   });
 
   it('ignores invalid websocket auth messages', async () => {

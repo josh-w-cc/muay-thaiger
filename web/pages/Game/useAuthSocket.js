@@ -1,6 +1,9 @@
 import React from 'react';
 
 
+const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
+
+
 export default function useAuthSocket(setScreen) {
   const hasReceivedAuthRequest = React.useRef(false);
   const hasRespondedToAuth = React.useRef(false);
@@ -45,7 +48,7 @@ function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
     return;
   }
   if(message.token) {
-    localStorage.setItem('token', message.token);
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, message.token);
   }
   hasReceivedAuthRequest.current = true;
   respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});
