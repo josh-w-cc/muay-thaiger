@@ -73,12 +73,14 @@ describe('SKILL_DEFINITIONS', () => {
   });
 
   it('checks skill requirements at each threshold', () => {
-    equal(SKILL_DEFINITIONS.beg.requires({}), true);
-    equal(SKILL_DEFINITIONS.walk.requires({}), true);
+    equal(SKILL_DEFINITIONS.begging.requires({}), true);
+    equal(SKILL_DEFINITIONS.walking.requires({}), true);
 
-    equal(SKILL_DEFINITIONS.shadowbox.requires({stamina: 50}), false);
-    equal(SKILL_DEFINITIONS.shadowbox.requires({stamina: 51}), true);
+    equal(SKILL_DEFINITIONS.shadowBoxing.requires({stamina: 0}), false);
+    equal(SKILL_DEFINITIONS.shadowBoxing.requires({stamina: 50}), false);
+    equal(SKILL_DEFINITIONS.shadowBoxing.requires({stamina: 51}), true);
 
+    equal(SKILL_DEFINITIONS.breathwork.requires({stamina: 0}), false);
     equal(SKILL_DEFINITIONS.breathwork.requires({stamina: 50}), false);
     equal(SKILL_DEFINITIONS.breathwork.requires({stamina: 51}), true);
 
@@ -88,12 +90,15 @@ describe('SKILL_DEFINITIONS', () => {
     equal(SKILL_DEFINITIONS.calisthenics.requires({constitution: 101, stamina: 1001, strength: 100}), false);
     equal(SKILL_DEFINITIONS.calisthenics.requires({constitution: 101, stamina: 1001, strength: 101}), true);
 
-    equal(SKILL_DEFINITIONS.labor.requires({constitution: 1001, stamina: 1001, strength: 1000}), false);
-    equal(SKILL_DEFINITIONS.labor.requires({constitution: 1001, stamina: 1001, strength: 1001}), true);
+    equal(SKILL_DEFINITIONS.laboring.requires({constitution: 1001, stamina: 1001, strength: 1000}), false);
+    equal(SKILL_DEFINITIONS.laboring.requires({constitution: 1001, stamina: 1001, strength: 1001}), true);
 
-    equal(SKILL_DEFINITIONS.run.requires({constitution: 101, stamina: 10000}), false);
-    equal(SKILL_DEFINITIONS.run.requires({constitution: 101, stamina: 10001}), true);
+    equal(SKILL_DEFINITIONS.running.requires({constitution: 101, stamina: 10000}), false);
+    equal(SKILL_DEFINITIONS.running.requires({constitution: 101, stamina: 10001}), true);
 
+    equal(SKILL_DEFINITIONS.gymnastics.requires({agility: 1000, constitution: 1001, stamina: 10001, strength: 1001}), false);
+    equal(SKILL_DEFINITIONS.gymnastics.requires({agility: 1001, constitution: 1000, stamina: 10001, strength: 1001}), false);
+    equal(SKILL_DEFINITIONS.gymnastics.requires({agility: 1001, constitution: 1001, stamina: 10000, strength: 1001}), false);
     equal(SKILL_DEFINITIONS.gymnastics.requires({agility: 1001, constitution: 1001, stamina: 10001, strength: 1000}), false);
     equal(SKILL_DEFINITIONS.gymnastics.requires({agility: 1001, constitution: 1001, stamina: 10001, strength: 1001}), true);
   });
