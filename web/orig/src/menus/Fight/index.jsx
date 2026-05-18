@@ -1,8 +1,7 @@
 import React from 'react';
-import {observer} from 'mobx-react';
 
 import useFighterStore from '../../Fighter.js';
-import Fight, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '../../Fight.js';
+import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '../../Fight.js';
 import formatHugeNumber from '../../formatHugeNumber.js';
 
 import Button from '../../components/Button.jsx';
@@ -11,7 +10,7 @@ import ZerothFight, {needsZerothFight} from './ZerothFight.jsx';
 
 
 function FightMenu() {
-  const fight = React.useContext(Fight);
+  const fight = useFightStore();
   const fighter = useFighterStore();
   const [announcer, setAnnouncer] = React.useState('');
   const [risk, setRisk] = React.useState(1);
@@ -64,4 +63,4 @@ function FightMenu() {
   </>);
 }
 
-export default observer(FightMenu);
+export default FightMenu;
