@@ -1,13 +1,8 @@
 import {create} from 'zustand';
 import {clearStoredPlayerToken, getStoredPlayerToken, setStoredPlayerToken} from './playerTokenStorage.js';
 
-export {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 const usePlayerStore = create((set, get) => ({
   ...getInitialState(),
-  clearToken: () => {
-    clearStoredPlayerToken();
-    set({token: null});
-  },
   loadToken: () => loadPlayerTokenIntoState(set),
   onFighterSelect: generateOnFighterSelectFn({get, set}),
   onSocketMessage: generateOnSocketMessageFn({get, set}),
@@ -17,7 +12,8 @@ const usePlayerStore = create((set, get) => ({
   },
 }));
 export default usePlayerStore;
-export const clearPlayerToken = () => usePlayerStore.getState().clearToken();
+
+
 export const loadPlayerToken = () => usePlayerStore.getState().loadToken();
 export const resetPlayerStore = () => {
   clearStoredPlayerToken();
@@ -33,7 +29,9 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
     && socket.readyState === WebSocket.OPEN,
   );
 }
+
 const isReadyToAuth = ({hasSelectedFighter, token}) => hasSelectedFighter || !!token;
+
 function generateOnFighterSelectFn({get, set}) {
   return ({race, setScreen, socket}) => {
     set({hasSelectedFighter: true, selectedRace: race});
@@ -41,12 +39,13 @@ function generateOnFighterSelectFn({get, set}) {
     routeToHubIfAuthorized({get, setScreen});
   };
 }
+
 function generateOnSocketMessageFn({get, set}) {
   return ({message, setScreen, socket}) => {
     const messageType = message?.type;
     if(messageType === 'auth-invalid-token') {
-      clearPlayerToken();
-      set({hasRespondedToAuth: false});
+      clearStoredPlayerToken();
+      set({hasRespondedToAuth: false, token: null});
       respondToAuth({get, set, socket});
       return;
     }
@@ -56,12 +55,14 @@ function generateOnSocketMessageFn({get, set}) {
     onAuth({get, message, set, setScreen, socket});
   };
 }
+
 function getAuthResponse({token, selectedRace}) {
   if(token) {
     return {cmd: 'auth', token};
   }
   return {cmd: 'auth', race: selectedRace, token: 'new'};
 }
+
 function getInitialState() {
   return {
     hasReceivedAuthRequest: false,
@@ -71,11 +72,13 @@ function getInitialState() {
     token: getStoredPlayerToken(),
   };
 }
+
 function loadPlayerTokenIntoState(set) {
   const token = getStoredPlayerToken();
   set({token});
   return token;
 }
+
 function onAuth({get, message, set, setScreen, socket}) {
   if(message.token) {
     get().setToken(message.token);
@@ -84,6 +87,7 @@ function onAuth({get, message, set, setScreen, socket}) {
   set({hasReceivedAuthRequest: true});
   respondToAuth({get, set, socket});
 }
+
 function respondToAuth({get, set, socket}) {
   const {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, token} = get();
   if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket, token})) {
@@ -92,6 +96,7 @@ function respondToAuth({get, set, socket}) {
   set({hasRespondedToAuth: true});
   socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
 }
+
 function routeToHubIfAuthorized({get, setScreen}) {
   const {token} = get();
   if(!token) {

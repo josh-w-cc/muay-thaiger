@@ -1,4 +1,5 @@
-import usePlayerStore, {loadPlayerToken, PLAYER_TOKEN_STORAGE_KEY, resetPlayerStore, setPlayerToken} from './player.js';
+import usePlayerStore, {loadPlayerToken, resetPlayerStore, setPlayerToken} from './player.js';
+import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -48,6 +49,7 @@ describe('usePlayerStore', () => {
 
     expect(setScreen).toHaveBeenCalledWith('hub');
   });
+
   it('sends auth/new after fighter selection when auth request is received', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
