@@ -9,7 +9,6 @@ import Train from '../../orig/src/menus/Train';
 
 import './Game.css';
 
-
 export default function Game() {
   const navigate = useNavigate();
   const {screen = 'character-select'} = useParams();
