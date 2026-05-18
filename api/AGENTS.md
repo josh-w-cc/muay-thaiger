@@ -62,4 +62,4 @@ HTTP endpoints below are registered under the `/api` prefix (except `/health`). 
 
 ## CI
 
-Add a GitHub Actions workflow at `.github/workflows/api.yml` to run lint and tests with 95% coverage thresholds on PRs touching `api/`.
+GitHub Actions (`.github/workflows/api.yml`) runs lint and tests with 95% coverage thresholds on PRs touching `api/`.

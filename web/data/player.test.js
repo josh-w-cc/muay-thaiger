@@ -1,5 +1,13 @@
-import usePlayerStore, {loadPlayerToken, resetPlayerStore, setPlayerToken} from './player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
+
+const {routerNavigate} = vi.hoisted(() => ({
+  routerNavigate: vi.fn(),
+}));
+vi.mock('@/router.js', () => ({
+  default: {navigate: routerNavigate},
+}));
+
+import usePlayerStore, {loadPlayerToken, resetPlayerStore, setPlayerToken} from './player.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -31,26 +39,24 @@ describe('usePlayerStore', () => {
   it('sends auth/new after fighter selection when auth request is received', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
-    const setScreen = vi.fn();
 
     usePlayerStore.setState({hasReceivedAuthRequest: true});
-    usePlayerStore.getState().onFighterSelect({race: '1', setScreen, socket});
+    usePlayerStore.getState().onFighterSelect({race: '1', socket});
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
-    expect(setScreen).not.toHaveBeenCalled();
+    expect(routerNavigate).not.toHaveBeenCalled();
   });
 
   it('stores auth token and routes to hub when fighter is already selected', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
-    const setScreen = vi.fn();
 
     usePlayerStore.setState({hasSelectedFighter: true, selectedRace: '1'});
-    usePlayerStore.getState().onSocketMessage({message: {token: 'new-token', type: 'auth'}, setScreen, socket});
+    usePlayerStore.getState().onSocketMessage({message: {token: 'new-token', type: 'auth'}, socket});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new-token');
     expect(usePlayerStore.getState().token).toBe('new-token');
-    expect(setScreen).toHaveBeenCalledWith('hub');
+    expect(routerNavigate).toHaveBeenCalledWith('/hub');
   });
 
   it('loads auth token into the player store', () => {
@@ -63,7 +69,6 @@ describe('usePlayerStore', () => {
   it('clears invalid token and retries auth with a new token', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
-    const setScreen = vi.fn();
     setPlayerToken('existing-token');
 
     usePlayerStore.setState({
@@ -72,11 +77,11 @@ describe('usePlayerStore', () => {
       hasSelectedFighter: true,
       selectedRace: '1',
     });
-    usePlayerStore.getState().onSocketMessage({message: {type: 'auth-invalid-token'}, setScreen, socket});
+    usePlayerStore.getState().onSocketMessage({message: {type: 'auth-invalid-token'}, socket});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
     expect(usePlayerStore.getState().token).toBeNull();
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
-    expect(setScreen).not.toHaveBeenCalled();
+    expect(routerNavigate).not.toHaveBeenCalled();
   });
 });

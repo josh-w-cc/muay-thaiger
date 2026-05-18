@@ -1,4 +1,5 @@
 import {create} from 'zustand';
+import router from '@/router.js';
 import {clearStoredPlayerToken, getStoredPlayerToken, setStoredPlayerToken} from './playerTokenStorage.js';
 
 const usePlayerStore = create((set, get) => ({
@@ -32,15 +33,15 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
 }
 
 function generateOnFighterSelectFn({get, set}) {
-  return ({race, setScreen, socket}) => {
+  return ({race, socket}) => {
     set({hasSelectedFighter: true, selectedRace: race});
     respondToAuth({get, set, socket});
-    routeToHubIfAuthorized({get, setScreen});
+    routeToHubIfAuthorized({get});
   };
 }
 
 function generateOnSocketMessageFn({get, set}) {
-  return ({message, setScreen, socket}) => {
+  return ({message, socket}) => {
     const messageType = message?.type;
     if(messageType === 'auth-invalid-token') {
       clearStoredPlayerToken();
@@ -51,7 +52,7 @@ function generateOnSocketMessageFn({get, set}) {
     if(messageType !== 'auth') {
       return;
     }
-    onAuth({get, message, set, setScreen, socket});
+    onAuth({get, message, set, socket});
   };
 }
 
@@ -78,10 +79,10 @@ function loadPlayerTokenIntoState(set) {
   return token;
 }
 
-function onAuth({get, message, set, setScreen, socket}) {
+function onAuth({get, message, set, socket}) {
   if(message.token) {
     get().setToken(message.token);
-    routeToHubIfAuthorized({get, setScreen});
+    routeToHubIfAuthorized({get});
   }
   set({hasReceivedAuthRequest: true});
   respondToAuth({get, set, socket});
@@ -96,10 +97,10 @@ function respondToAuth({get, set, socket}) {
   socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
 }
 
-function routeToHubIfAuthorized({get, setScreen}) {
+function routeToHubIfAuthorized({get}) {
   const {hasSelectedFighter, token} = get();
   if(!hasSelectedFighter || !token) {
     return;
   }
-  setScreen('hub');
+  router.navigate('/hub');
 }

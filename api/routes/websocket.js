@@ -1,8 +1,8 @@
 import fightersModel from '../data/models/fighters.js';
-import characterActionsModel from '../data/models/character-actions.js';
+import characterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import {authenticate} from '../logic/auth.js';
-import {createAndSend} from '../logic/character-actions.js';
+import {createAndSend} from '../logic/fighter-actions.js';
 
 export default async function websocketRoutes(app) {
   const models = {
@@ -42,7 +42,7 @@ function parseMessage(raw) {
   try {
     return JSON.parse(raw);
   }
-  catch{
+  catch {
     return null;
   }
 }
