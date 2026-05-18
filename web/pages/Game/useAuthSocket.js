@@ -7,13 +7,15 @@ export default function useAuthSocket(setScreen) {
   const hasReceivedAuthRequest = React.useRef(false);
   const hasRespondedToAuth = React.useRef(false);
   const hasSelectedFighter = React.useRef(false);
+  const selectedRace = React.useRef(null);
   const socketRef = React.useRef(null);
-  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socketRef};
+  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, socketRef};
 
   React.useEffect(() => connectSocket(refs), []);
 
-  return () => {
+  return (race) => {
     hasSelectedFighter.current = true;
+    selectedRace.current = race;
     respondToAuth({...refs, socket: socketRef.current});
     setScreen('hub');
   };
@@ -53,13 +55,13 @@ function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
   respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});
 }
 
-function respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket, socketRef}) {
+function respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, socket, socketRef}) {
   const activeSocket = socket || socketRef?.current;
   if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket: activeSocket})) {
     return;
   }
   hasRespondedToAuth.current = true;
-  activeSocket.send(JSON.stringify({token: 'new', type: 'auth'}));
+  activeSocket.send(JSON.stringify(getAuthRequest(selectedRace.current)));
 }
 
 function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
@@ -70,4 +72,10 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
     && socket
     && socket.readyState === WebSocket.OPEN,
   );
+}
+
+function getAuthRequest(race) {
+  return race
+    ? {race, token: 'new', type: 'auth'}
+    : {token: 'new', type: 'auth'};
 }

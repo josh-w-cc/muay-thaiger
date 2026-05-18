@@ -45,7 +45,7 @@ describe('CharacterSelect', () => {
     await user.click(within(raceCard).getByRole('button', {name: 'CHOOSE'}));
 
     expect(selectMock).toHaveBeenCalledWith(`${raceID}`);
-    expect(onExit).toHaveBeenCalledTimes(1);
+    expect(onExit).toHaveBeenCalledWith(`${raceID}`);
   });
 
   it('keeps fallback statics when the API responds with an empty array', async () => {

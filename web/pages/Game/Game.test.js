@@ -11,7 +11,7 @@ const originalWindow = globalThis.window;
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
-    return <button onClick={onExit}>Character Select</button>;
+    return <button onClick={() => onExit('2')}>Character Select</button>;
   },
 }));
 
@@ -160,7 +160,8 @@ describe('Game', () => {
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
-    expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(send.mock.calls[0][0])).toEqual({race: '2', token: 'new', type: 'auth'});
   });
 
   it('stores the auth token in localStorage when server responds with a token', async () => {

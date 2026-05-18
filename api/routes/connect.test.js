@@ -4,7 +4,7 @@ import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
 import connectRoutes, {onConnect, onMessage} from '../routes/connect.js';
-import {mockKnex} from '../data/utils/mock-knex.js';
+import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
 describe('WebSocket /ws/connect', () => {
   it('sends an auth request when the websocket connects', async () => {
@@ -24,7 +24,12 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('sends auth confirmation with player token after receiving an auth new response', async () => {
-    const {knex} = mockKnex([{display_name: 'Player-12345678', id: 1, token: 'generated-token'}]);
+    const {calls, knex} = mockKnexMulti(
+      [
+        [{display_name: 'Player-12345678', id: 1, token: 'generated-token'}],
+        [{display_name: 'Player-12345678 Jr', id: 1, player_id: 1, race: 2}],
+      ],
+    );
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(websocket);
@@ -33,11 +38,16 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    socket.send(JSON.stringify({token: 'new', type: 'auth'}));
+    socket.send(JSON.stringify({race: '2', token: 'new', type: 'auth'}));
     const message = await readMessage(socket);
 
     assert.equal(message.type, 'auth');
     assert.equal(message.token, 'generated-token');
+    assert.equal(calls.some((call) => call[0] === 'table' && call[1] === 'characters'), true);
+    assert.deepEqual(
+      calls.find((call) => call[0] === 'insert' && call[1].display_name === 'Player-12345678 Jr')?.[1],
+      {display_name: 'Player-12345678 Jr', player_id: 1, race: 2},
+    );
     socket.terminate();
     await app.close();
   });
@@ -51,7 +61,7 @@ describe('WebSocket /ws/connect', () => {
       send,
     };
 
-    onConnect(socket, null);
+    onConnect(socket, null, null);
     await waitForImmediate();
 
     assert.equal(send.calls.length, 0);
@@ -61,7 +71,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage('{', socket, null);
+    await onMessage('{', socket, null, null);
 
     assert.equal(send.calls.length, 0);
   });
@@ -70,8 +80,8 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage(JSON.stringify({type: 'auth'}), socket, null);
-    await onMessage(JSON.stringify({token: 'new', type: 'noop'}), socket, null);
+    await onMessage(JSON.stringify({type: 'auth'}), socket, null, null);
+    await onMessage(JSON.stringify({token: 'new', type: 'noop'}), socket, null, null);
 
     assert.equal(send.calls.length, 0);
   });
@@ -80,21 +90,40 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 0, send};
 
-    await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, null);
+    await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, null, null);
 
     assert.equal(send.calls.length, 0);
   });
 
-  it('creates a player and sends the player token on auth new', async () => {
+  it('creates a player and character, then sends the player token on auth new', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
-    const player = {id: 1, token: 'player-uuid-token'};
-    const players = {create: async () => player};
+    const createCharacter = createCallTracker();
+    const createPlayer = createCallTracker();
+    const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
+    const characters = {create: async (...args) => (createCharacter(...args), {id: 1})};
+    const players = {create: async (...args) => (createPlayer(...args), player)};
 
-    await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, players);
+    await onMessage(JSON.stringify({race: '2', token: 'new', type: 'auth'}), socket, characters, players);
 
+    assert.equal(createPlayer.calls.length, 1);
+    assert.equal(createCharacter.calls.length, 1);
+    assert.deepEqual(createCharacter.calls[0][0], {display_name: 'Player-12345678 Jr', player_id: 1, race: 2});
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {token: 'player-uuid-token', type: 'auth'});
+  });
+
+  it('uses the default race when auth/new has no race', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const createCharacter = createCallTracker();
+    const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
+    const characters = {create: async (...args) => (createCharacter(...args), {id: 1})};
+    const players = {create: async () => player};
+
+    await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, characters, players);
+
+    assert.deepEqual(createCharacter.calls[0][0], {display_name: 'Player-12345678 Jr', player_id: 1, race: 1});
   });
 });
 
