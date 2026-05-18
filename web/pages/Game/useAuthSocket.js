@@ -75,7 +75,9 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
 }
 
 function getAuthRequest(race) {
-  return race
-    ? {race, token: 'new', type: 'auth'}
-    : {token: 'new', type: 'auth'};
+  return {
+    ...(race ? {race} : {}),
+    token: 'new',
+    type: 'auth',
+  };
 }

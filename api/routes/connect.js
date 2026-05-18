@@ -32,7 +32,7 @@ export async function onMessage(raw, socket, characters, players) {
   const token = randomUUID();
   const race = getRace(message);
   const player = await players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
-  await characters.create({display_name: `${player.display_name} Jr`, player_id: player.id, race});
+  await createCharacter({characters, player, race});
   socket.send(JSON.stringify({token: player.token, type: 'auth'}));
 }
 
@@ -51,4 +51,21 @@ function getRace(message) {
     return DEFAULT_RACE_ID;
   }
   return parsedRace;
+}
+
+async function createCharacter({characters, player, race}) {
+  const character = {display_name: `${player.display_name} Jr`, player_id: player.id, race};
+  try {
+    await characters.create(character);
+  }
+  catch(error) {
+    if(race === DEFAULT_RACE_ID || !isForeignKeyViolation(error)) {
+      throw error;
+    }
+    await characters.create({...character, race: DEFAULT_RACE_ID});
+  }
+}
+
+function isForeignKeyViolation(error) {
+  return error?.code === '23503';
 }

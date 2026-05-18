@@ -125,6 +125,30 @@ describe('WebSocket /ws/connect', () => {
 
     assert.deepEqual(createCharacter.calls[0][0], {display_name: 'Player-12345678 Jr', player_id: 1, race: 1});
   });
+
+  it('falls back to the default race when the selected race does not exist', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const player = {display_name: 'Player-12345678', id: 1, token: 'player-uuid-token'};
+    const players = {create: async () => player};
+    const characterCalls = [];
+    const characters = {
+      create: async (payload) => {
+        characterCalls.push(payload);
+        if(payload.race === 99) {
+          throw {code: '23503'};
+        }
+        return {id: 1};
+      },
+    };
+
+    await onMessage(JSON.stringify({race: '99', token: 'new', type: 'auth'}), socket, characters, players);
+
+    assert.equal(characterCalls.length, 2);
+    assert.deepEqual(characterCalls[0], {display_name: 'Player-12345678 Jr', player_id: 1, race: 99});
+    assert.deepEqual(characterCalls[1], {display_name: 'Player-12345678 Jr', player_id: 1, race: 1});
+    assert.equal(send.calls.length, 1);
+  });
 });
 
 async function readMessage(socket) {
