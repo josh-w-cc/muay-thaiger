@@ -41,6 +41,14 @@ export default function Hub() {
           <Stat key={key} label={label} value={formatHugeNumber(getStatValue({fighter, key}))} />
         ))}
       </dl>
+      <Events />
+    </>
+  );
+}
+
+function Events() {
+  return (
+    <>
       <h3>Events:</h3>
       <ul className={css.events}>
         {EVENTS.map(({name, reward}) => (
