@@ -89,11 +89,11 @@ export function generateTickFn({get, set}) {
 
 function runFightCycles({fighters, messages, state}) {
   while(fighters[0].currentAPM > 1 || fighters[1].currentAPM > 1) {
-    [0, 1].filter((i) => fighters[i].currentAPM > 1).forEach((i) => {
-      const result = attackFighter({fighters, state, who: i});
+    [0, 1].filter((fighterIndex) => fighters[fighterIndex].currentAPM > 1).forEach((fighterIndex) => {
+      const result = attackFighter({fighters, state, who: fighterIndex});
       state = result.state;
       messages.push(result.message);
-      fighters[i].currentAPM -= 1;
+      fighters[fighterIndex].currentAPM -= 1;
     });
   }
   return state;
