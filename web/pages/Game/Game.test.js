@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react';
+import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter, Route, Routes} from 'react-router';
 
@@ -68,6 +68,21 @@ describe('Game', () => {
     expect(loader({params: {screen: 'character-select'}})).toBeNull();
   });
 
+  it('loader redirects to hub from index when token exists', async () => {
+    const {loader} = await import('./index.js');
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
+
+    const response = loader({params: {}});
+
+    expect(response.headers.get('Location')).toBe('/hub');
+    expect(response.status).toBe(302);
+  });
+
+  it('loader returns null from index when token is missing', async () => {
+    const {loader} = await import('./index.js');
+    expect(loader({params: {}})).toBeNull();
+  });
+
   it('loader returns null for token-protected screens when token exists', async () => {
     const {loader} = await import('./index.js');
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
@@ -127,12 +142,20 @@ describe('Game', () => {
 
   it('renders each game screen from header controls', async () => {
     const user = userEvent.setup();
+    const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
     const {default: Game} = await import('./index.js');
 
     renderGame({Game});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    act(() => {
+      socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
+    });
 
-    expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
+    expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
     await user.click(screen.getByRole('button', {name: /fight/i}));
     expect(screen.getByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
 
@@ -144,6 +167,25 @@ describe('Game', () => {
 
     await user.click(screen.getByRole('button', {name: /train/i}));
     expect(screen.getByRole('heading', {name: 'Train Screen'})).toBeInTheDocument();
+  });
+
+  it('waits for the auth token before routing to hub after fighter select', async () => {
+    const user = userEvent.setup();
+    const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game} = await import('./index.js');
+
+    renderGame({Game});
+    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+
+    expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
+    act(() => {
+      socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
+    });
+    expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
 
   it('responds with auth/new after auth when fighter is selected', async () => {
@@ -197,10 +239,19 @@ describe('Game', () => {
 
   it('renders and recovers from the fallback screen', async () => {
     const user = userEvent.setup();
+    const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
     const {default: Game} = await import('./index.js');
 
     renderGame({Game});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    act(() => {
+      socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
+    });
+    await screen.findByRole('heading', {name: 'Hub Screen'});
     await user.click(screen.getByRole('button', {name: 'Break Screen'}));
 
     expect(screen.getByRole('heading', {name: 'You broke it!?'})).toBeInTheDocument();
