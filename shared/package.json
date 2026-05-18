@@ -2,8 +2,28 @@
   "name": "shared",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "test": "node --test"
+    "lint": "eslint --config config/eslint.config.js --fix .",
+    "lint:ci": "eslint --config config/eslint.config.js .",
+    "test": "node --test",
+    "test:coverage": "c8 node --test"
   },
-  "type": "module"
+  "devDependencies": {
+    "@eslint/js": "^10",
+    "@stylistic/eslint-plugin": "^5",
+    "c8": "^11",
+    "eslint": "^10",
+    "globals": "^17"
+  },
+  "c8": {
+    "branches": 95,
+    "check-coverage": true,
+    "exclude": [
+      "**/*.test.js"
+    ],
+    "functions": 95,
+    "lines": 95,
+    "statements": 95
+  }
 }
