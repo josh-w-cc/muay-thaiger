@@ -7,14 +7,14 @@
     "#api/*.js": "./*.js"
   },
   "scripts": {
-    "dev": "node --watch index.js",
+    "dev": "node --watch app.js",
     "lint": "eslint --config config/eslint.config.js --fix .",
     "lint:ci": "eslint --config config/eslint.config.js .",
     "migrate": "knex migrate:latest --knexfile data/knexfile.js",
     "migrate:make": "knex migrate:make --knexfile data/knexfile.js",
     "migrate:rollback": "knex migrate:rollback --knexfile data/knexfile.js",
     "migrate:seed": "knex seed:run --knexfile data/knexfile.js",
-    "start": "node index.js",
+    "start": "node app.js",
     "test": "node --test",
     "test:coverage": "c8 node --test"
   },

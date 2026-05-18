@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: api/Dockerfile
-    command: ["sh", "-c", "npm install && npm run migrate && npm run migrate:seed && node --watch-path=. index.js"]
+    command: ["sh", "-c", "npm install && npm run migrate && npm run migrate:seed && node --watch-path=. app.js"]
     depends_on:
       postgres:
         condition: service_healthy

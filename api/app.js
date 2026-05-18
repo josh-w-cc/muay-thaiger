@@ -1,3 +1,5 @@
+import {fileURLToPath} from 'node:url';
+
 import websocket from '@fastify/websocket';
 import Fastify from 'fastify';
 
@@ -30,4 +32,22 @@ export default async function build(opts = {}) {
   await app.register(serveSPA);
 
   return app;
+}
+
+if(isMainModule()) {
+  await start();
+}
+
+async function start() {
+  const app = await build({logger: true});
+  const port = Number(process.env.PORT ?? 3000);
+
+  app.listen({port, host: '0.0.0.0'}).catch((err) => {
+    app.log.error(err);
+    process.exit(1);
+  });
+}
+
+function isMainModule() {
+  return process.argv[1] === fileURLToPath(import.meta.url);
 }
