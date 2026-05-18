@@ -27,7 +27,7 @@ function onMessage(raw, socket) {
     return;
   }
   socket.send(JSON.stringify({
-    type: 'auth',
     token: 'new',
+    type: 'auth',
   }));
 }

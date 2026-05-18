@@ -123,7 +123,7 @@ describe('Game', () => {
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
-    expect(send).toHaveBeenCalledWith(JSON.stringify({type: 'auth', token: 'new'}));
+    expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
   });
 
   it('renders and recovers from the fallback screen', async () => {
