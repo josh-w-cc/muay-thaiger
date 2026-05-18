@@ -16,9 +16,4 @@ export default async function playersRoutes(app) {
     }
     return player;
   });
-
-  app.post('/players', async (req, reply) => {
-    const player = await players.create(req.body);
-    return reply.code(201).send(player);
-  });
 }

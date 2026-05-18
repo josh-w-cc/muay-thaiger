@@ -50,8 +50,8 @@ describe('GET /players/:id', () => {
 });
 
 describe('POST /players', () => {
-  it('creates player and returns 201', async () => {
-    const {knex} = mockKnex([{display_name: 'New Player', email: null, id: 1, password: null}]);
+  it('returns 404 because player creation endpoint is disabled', async () => {
+    const {knex} = mockKnex(undefined);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(playersRoutes);
@@ -62,8 +62,7 @@ describe('POST /players', () => {
       url: '/players',
     });
 
-    assert.equal(response.statusCode, 201);
-    assert.deepEqual(response.json(), {display_name: 'New Player', email: null, id: 1, password: null});
+    assert.equal(response.statusCode, 404);
     await app.close();
   });
 });
