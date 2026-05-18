@@ -7,7 +7,7 @@ import {createAndSend} from '../logic/fighter-actions.js';
 export default async function websocketRoutes(app) {
   const models = {
     characterActions: characterActionsModel(app.db),
-    characters: fightersModel(app.db),
+    fighters: fightersModel(app.db),
     players: playersModel(app.db),
   };
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models));

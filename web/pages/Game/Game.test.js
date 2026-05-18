@@ -1,6 +1,6 @@
 import {act, render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {createMemoryRouter, RouterProvider} from 'react-router';
+import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router';
 
 import {resetPlayerStore, setPlayerToken} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
@@ -27,12 +27,14 @@ vi.mock('../../orig/src/menus/Fight', () => ({
 }));
 
 vi.mock('./Hub.js', () => ({
-  default: function MockHub({setScreen}) {
+  default: function MockHub() {
+    const navigate = useNavigate();
+
     return (
       <>
         <h2>Hub Screen</h2>
-        <button onClick={() => setScreen('broken')}>Break Screen</button>
-        <button onClick={() => setScreen('character-select')}>Go Character Select</button>
+        <button onClick={() => navigate('/broken')}>Break Screen</button>
+        <button onClick={() => navigate('/')}>Go Character Select</button>
       </>
     );
   },
