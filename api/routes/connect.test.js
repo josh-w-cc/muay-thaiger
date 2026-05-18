@@ -3,7 +3,7 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
-import connectRoutes, {onConnect, onMessage} from '../routes/connect.js';
+import connectRoutes, {onConnect, onMessage, syncCharacterState} from '../routes/connect.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
 describe('WebSocket /ws/connect', () => {
@@ -64,6 +64,7 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('does not send auth request on connect when socket is not open', async () => {
+    const activeSockets = new Set();
     const send = createCallTracker();
     const socket = {
       OPEN: 1,
@@ -72,9 +73,10 @@ describe('WebSocket /ws/connect', () => {
       send,
     };
 
-    onConnect(socket, {});
+    onConnect(socket, activeSockets, {});
     await waitForImmediate();
 
+    assert.equal(activeSockets.has(socket), true);
     assert.equal(send.calls.length, 0);
   });
 
@@ -184,6 +186,7 @@ describe('WebSocket /ws/connect', () => {
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 5, token: 'known-token', type: 'auth'});
+    assert.equal(socket.playerID, 5);
   });
 
   it('responds with token invalid message when auth token does not match a player', async () => {
@@ -208,6 +211,51 @@ describe('WebSocket /ws/connect', () => {
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
+  });
+
+  it('sends character state for each authenticated active websocket', async () => {
+    const firstSend = createCallTracker();
+    const secondSend = createCallTracker();
+    const firstSocket = {OPEN: 1, playerID: 2, readyState: 1, send: firstSend};
+    const secondSocket = {OPEN: 1, playerID: 3, readyState: 1, send: secondSend};
+    const closedSocket = {OPEN: 1, playerID: 4, readyState: 0, send: createCallTracker()};
+    const missingPlayerSocket = {OPEN: 1, readyState: 1, send: createCallTracker()};
+    const activeSockets = new Set([firstSocket, secondSocket, closedSocket, missingPlayerSocket]);
+    const characterStatesByPlayerID = new Map([
+      [2, {id: 11, player_id: 2, retired: false}],
+      [3, {id: 12, player_id: 3, retired: false}],
+    ]);
+    const playersLookedUp = [];
+    const characters = {
+      findCurrentByPlayerID: async (playerID) => {
+        playersLookedUp.push(playerID);
+        return characterStatesByPlayerID.get(playerID) ?? null;
+      },
+    };
+
+    await syncCharacterState(activeSockets, {characters});
+
+    assert.deepEqual(playersLookedUp, [2, 3]);
+    assert.equal(firstSend.calls.length, 1);
+    assert.deepEqual(JSON.parse(firstSend.calls[0][0]), {
+      character: {id: 11, player_id: 2, retired: false},
+      type: 'character_state',
+    });
+    assert.equal(secondSend.calls.length, 1);
+    assert.deepEqual(JSON.parse(secondSend.calls[0][0]), {
+      character: {id: 12, player_id: 3, retired: false},
+      type: 'character_state',
+    });
+  });
+
+  it('does not send character state when no current character exists', async () => {
+    const send = createCallTracker();
+    const activeSockets = new Set([{OPEN: 1, playerID: 8, readyState: 1, send}]);
+    const characters = {findCurrentByPlayerID: async () => null};
+
+    await syncCharacterState(activeSockets, {characters});
+
+    assert.equal(send.calls.length, 0);
   });
 });
 

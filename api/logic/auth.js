@@ -8,9 +8,10 @@ export async function authenticate({characters, players}, message, socket) {
     if(message.token !== 'new') {
       socket.send(JSON.stringify({type: 'auth-invalid-token'}));
     }
-    return;
+    return null;
   }
   socket.send(JSON.stringify({player_id: player.id, token: player.token, type: 'auth'}));
+  return player;
 }
 
 async function getPlayer({characters, players}, token, race) {

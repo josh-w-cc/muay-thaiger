@@ -1,19 +1,30 @@
 import charactersModel from '../data/models/characters.js';
 import characterActionsModel from '../data/models/character-actions.js';
 import playersModel from '../data/models/players.js';
+import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
 import {authenticate} from '../logic/auth.js';
 import {createAndSend} from '../logic/character-actions.js';
 
+const PLAYER_SYNC_INTERVAL_MINUTES = 1;
+
 export default async function connectRoutes(app) {
+  const activeSockets = new Set();
   const models = {
     characterActions: characterActionsModel(app.db),
     characters: charactersModel(app.db),
     players: playersModel(app.db),
   };
-  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models));
+  const scheduler = createScheduler(activeSockets, models);
+
+  app.addHook('onClose', () => {
+    scheduler.stop();
+  });
+  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, activeSockets, models));
 }
 
-export function onConnect(socket, models) {
+export function onConnect(socket, activeSockets, models) {
+  activeSockets.add(socket);
+  socket.on('close', () => activeSockets.delete(socket));
   socket.on('message', (raw) => onMessage(raw, socket, models));
   setImmediate(() => {
     if(socket.readyState !== socket.OPEN) {
@@ -38,11 +49,42 @@ export async function onMessage(raw, socket, models) {
   }
 }
 
-function onAuthCmd(message, socket, models) {
+export async function syncCharacterState(activeSockets, {characters}) {
+  for(const socket of activeSockets) {
+    if(socket.readyState !== socket.OPEN || !Number.isInteger(socket.playerID)) {
+      continue;
+    }
+    const character = await characters.findCurrentByPlayerID(socket.playerID);
+    if(!character) {
+      continue;
+    }
+    socket.send(JSON.stringify({character, type: 'character_state'}));
+  }
+}
+
+async function onAuthCmd(message, socket, models) {
   if(typeof message.token !== 'string') {
     return;
   }
-  return authenticate(models, message, socket);
+  const player = await authenticate(models, message, socket);
+  if(player) {
+    socket.playerID = player.id;
+  }
+}
+
+function createScheduler(activeSockets, models) {
+  const scheduler = new ToadScheduler();
+  const task = new AsyncTask(
+    'sync-player-state',
+    () => syncCharacterState(activeSockets, models),
+    () => {},
+  );
+  const syncJob = new SimpleIntervalJob(
+    {minutes: PLAYER_SYNC_INTERVAL_MINUTES},
+    task,
+  );
+  scheduler.addSimpleIntervalJob(syncJob);
+  return scheduler;
 }
 
 function parseMessage(raw) {
