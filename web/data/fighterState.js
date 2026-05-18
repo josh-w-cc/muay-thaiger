@@ -1,7 +1,7 @@
-import BaseStats, {RACE_STATICS} from '@/orig/src/menus/CharacterSelect/BaseStats.js';
+import BaseStats, {RACES} from '@/orig/src/menus/CharacterSelect/BaseStats.js';
 
 
-const initialRace = `${RACE_STATICS[0].id}`;
+const initialRace = `${RACES[0].id}`;
 
 export function getInitialState() {
   return {
