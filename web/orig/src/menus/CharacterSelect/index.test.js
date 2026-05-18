@@ -1,5 +1,7 @@
 import {render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import SnowLeopard from './assets/SnowLeopard.png';
+import Tiger from './assets/Tiger.png';
 
 
 let selectMock;
@@ -41,18 +43,18 @@ describe('CharacterSelect', () => {
     expect(onExit).toHaveBeenCalledTimes(1);
   });
 
-  it('renders all race statics that are provided', async () => {
+  it('renders all race statics that are provided and maps images by race ID', async () => {
     const {default: CharacterSelect} = await import('./index.jsx');
     const raceStatics = [
-      {
-        id: 1,
-        name: 'Tiger',
-        stats: {anima: 1, durability: 1, reach: 1, speed: 1, strength: 1, vitality: 1},
-      },
       {
         id: 2,
         name: 'Snow Leopard Prime',
         stats: {anima: 8, durability: 7, reach: 6, speed: 9, strength: 5, vitality: 4},
+      },
+      {
+        id: 1,
+        name: 'Tiger',
+        stats: {anima: 1, durability: 1, reach: 1, speed: 1, strength: 1, vitality: 1},
       },
     ];
 
@@ -60,5 +62,11 @@ describe('CharacterSelect', () => {
 
     expect(screen.getByRole('heading', {name: 'Tiger'})).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: 'Snow Leopard Prime'})).toBeInTheDocument();
+
+    const tigerCard = screen.getByRole('heading', {name: 'Tiger'}).closest('div');
+    const snowLeopardCard = screen.getByRole('heading', {name: 'Snow Leopard Prime'}).closest('div');
+
+    expect(within(tigerCard).getByRole('img').getAttribute('src')).toContain(Tiger);
+    expect(within(snowLeopardCard).getByRole('img').getAttribute('src')).toContain(SnowLeopard);
   });
 });
