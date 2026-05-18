@@ -1,4 +1,4 @@
-import {SEED_ACTIONS, SEED_CHARACTERS, SEED_PLAYERS, SEED_STATICS} from '../data/seed-data/seeds/001-sample-board.js';
+import {SEED_ACTIONS, SEED_CHARACTERS, SEED_PLAYERS, SEED_STATICS} from '../data/seed-data/seeds/001-fighters.js';
 
 /**
  * @param {import('fastify').FastifyInstance} app
