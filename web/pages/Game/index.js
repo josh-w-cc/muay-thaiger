@@ -49,44 +49,34 @@ async function loadRaceStatics() {
 
 export default function Game() {
   const raceStatics = useLoaderData() ?? [];
-  const navigate = useNavigate();
   const {screen = CHARACTER_SELECT_SCREEN} = useParams();
-  const setScreen = generateSetScreenFn(navigate);
   const onCharacterSelectExit = useAuthSocket();
   if(screen === CHARACTER_SELECT_SCREEN) {
     return <CharacterSelect onExit={onCharacterSelectExit} raceStatics={raceStatics} />;
   }
   return (
     <>
-      <Header setScreen={setScreen} />
-      {renderScreen(screen, setScreen)}
+      <Header />
+      {renderScreen(screen)}
     </>
   );
 }
 
-function generateSetScreenFn(navigate) {
-  return (screen) => {
-    if(screen === CHARACTER_SELECT_SCREEN) {
-      navigate('/');
-      return;
-    }
-    navigate(`/${screen}`);
-  };
-}
+function Fallback() {
+  const navigate = useNavigate();
 
-function getFallback(setScreen) {
   return (
     <>
       <h1>You broke it!?</h1>
-      <button onClick={() => setScreen('hub')}>We have to go back</button>
+      <button onClick={() => navigate('/hub')}>We have to go back</button>
     </>
   );
 }
 
-function renderScreen(screen, setScreen) {
+function renderScreen(screen) {
   switch(screen) {
     case 'hub':
-      return <Hub setScreen={setScreen} />;
+      return <Hub />;
     case 'fight':
       return <Fight />;
     case 'shop':
@@ -94,7 +84,7 @@ function renderScreen(screen, setScreen) {
     case 'train':
       return <Train />;
     default:
-      return getFallback(setScreen);
+      return <Fallback />;
   }
 }
 
