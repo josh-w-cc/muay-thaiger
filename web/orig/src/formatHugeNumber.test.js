@@ -17,6 +17,8 @@ describe('formatHugeNumber', () => {
     expect(formatHugeNumber('100000')).toBe('1.00e+5');
     expect(formatHugeNumber('-100000')).toBe('-1.00e+5');
     expect(formatHugeNumber('12345678901234567890')).toBe('1.23e+19');
+    expect(formatHugeNumber('+00123')).toBe('123');
+    expect(formatHugeNumber('-00000')).toBe('0');
   });
 
   it('returns non-integer strings as-is', () => {

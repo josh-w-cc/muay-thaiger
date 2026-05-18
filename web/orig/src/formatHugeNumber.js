@@ -16,7 +16,7 @@ function formatIntegerString(value) {
   const trimmedDigits = digits.replace(/^0+/, '') || '0';
 
   if(trimmedDigits.length <= 5) {
-    return value;
+    return formatSignedDigits({isNegative, trimmedDigits});
   }
 
   const exponent = trimmedDigits.length - 1;
@@ -33,4 +33,14 @@ function formatNumber(value) {
   }
 
   return value;
+}
+
+function formatSignedDigits({isNegative, trimmedDigits}) {
+  if(trimmedDigits === '0') {
+    return '0';
+  }
+
+  const sign = isNegative ? '-' : '';
+
+  return `${sign}${trimmedDigits}`;
 }
