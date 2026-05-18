@@ -14,19 +14,20 @@ export default function addHugeNumber(value, addend) {
 
 function addIntegerStrings(left, right) {
   let carry = 0;
-  let leftIndex = left.length - 1;
-  let rightIndex = right.length - 1;
   let sum = '';
+  const maxLength = Math.max(left.length, right.length);
 
-  while(leftIndex >= 0 || rightIndex >= 0 || carry > 0) {
-    const leftDigit = leftIndex >= 0 ? Number(left[leftIndex]) : 0;
-    const rightDigit = rightIndex >= 0 ? Number(right[rightIndex]) : 0;
+  for(let index = 0; index < maxLength; index += 1) {
+    const leftDigit = toDigit(left, left.length - 1 - index);
+    const rightDigit = toDigit(right, right.length - 1 - index);
     const nextDigit = leftDigit + rightDigit + carry;
 
     sum = `${nextDigit % 10}${sum}`;
     carry = Math.floor(nextDigit / 10);
-    leftIndex -= 1;
-    rightIndex -= 1;
+  }
+
+  if(carry > 0) {
+    return `${carry}${sum}`;
   }
 
   return sum;
@@ -50,4 +51,12 @@ function normalizeAddend(value) {
 
 function normalizeIntegerString(value) {
   return value.replace(/^\+/, '').replace(/^0+/, '') || '0';
+}
+
+function toDigit(value, index) {
+  if(index < 0) {
+    return 0;
+  }
+
+  return Number(value[index]);
 }
