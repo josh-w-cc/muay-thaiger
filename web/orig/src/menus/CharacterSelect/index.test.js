@@ -63,10 +63,10 @@ describe('CharacterSelect', () => {
     expect(screen.getByRole('heading', {name: 'Tiger'})).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: 'Snow Leopard Prime'})).toBeInTheDocument();
 
-    const tigerCard = screen.getByRole('heading', {name: 'Tiger'}).closest('div');
-    const snowLeopardCard = screen.getByRole('heading', {name: 'Snow Leopard Prime'}).closest('div');
+    const tigerContainer = screen.getByRole('heading', {name: 'Tiger'}).closest('div');
+    const snowLeopardContainer = screen.getByRole('heading', {name: 'Snow Leopard Prime'}).closest('div');
 
-    expect(within(tigerCard).getByRole('img').getAttribute('src')).toContain(Tiger);
-    expect(within(snowLeopardCard).getByRole('img').getAttribute('src')).toContain(SnowLeopard);
+    expect(within(tigerContainer).getByRole('img')).toHaveAttribute('src', expect.stringContaining(Tiger));
+    expect(within(snowLeopardContainer).getByRole('img')).toHaveAttribute('src', expect.stringContaining(SnowLeopard));
   });
 });
