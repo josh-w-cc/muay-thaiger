@@ -16,11 +16,7 @@ function formatIntegerString(value) {
   const trimmedDigits = digitsWithLeadingZeros.replace(/^0+/, '') || '0';
 
   if(trimmedDigits.length <= 5) {
-    if(trimmedDigits === '0') {
-      return '0';
-    }
-
-    const sign = isNegative ? '-' : '';
+    const sign = isNegative && trimmedDigits !== '0' ? '-' : '';
 
     return `${sign}${trimmedDigits}`;
   }
