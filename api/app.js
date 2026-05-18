@@ -3,6 +3,7 @@ import Fastify from 'fastify';
 
 import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
+import syncPlayerState from './plugins/sync-player-state.js';
 import actionsRoutes from './routes/actions.js';
 import characterActionsRoutes from './routes/character-actions.js';
 import charactersRoutes from './routes/characters.js';
@@ -24,6 +25,7 @@ export default async function build(opts = {}) {
   await app.register(connectRoutes, {prefix: '/ws'});
   await app.register(playersRoutes, {prefix: '/api'});
   await app.register(raceRoutes, {prefix: '/api'});
+  await app.register(syncPlayerState);
 
   if(process.env.NODE_ENV !== 'production') {
     const {default: testReseed} = await import('./routes/test-reseed.js');
