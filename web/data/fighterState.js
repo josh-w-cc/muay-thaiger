@@ -25,10 +25,7 @@ export function mergeState(state, updates) {
     ...updates,
   };
 
-  return {
-    ...nextState,
-    ...getCombatState(nextState),
-  };
+  return {...nextState, ...getCombatState(nextState)};
 }
 
 export function tickTrain({delta, get, idling, set}) {
@@ -67,11 +64,13 @@ function getCombatState({agility, constitution, durability, reach, skill, stamin
 }
 
 export function getSelectionState(id) {
-  const {anima, durability, reach, speed, strength: innateStrength, vitality} = BaseStats[id].stats;
-  const nextState = {agility: 0, anima, constitution: 0, durability, innateStrength, race: id, reach, skill: 0, speed, stamina: 0, strength: 0, vitality};
-
+  const nextState = {race: id, ...getBaseSelectionState(BaseStats[id].stats)};
   return {
     ...nextState,
     ...getCombatState(nextState),
   };
+}
+
+function getBaseSelectionState({anima, durability, reach, speed, strength: innateStrength, vitality}) {
+  return {agility: 0, anima, constitution: 0, durability, innateStrength, reach, skill: 0, speed, stamina: 0, strength: 0, vitality};
 }
