@@ -11,7 +11,7 @@ import css from './CharacterSelect.module.css';
 
 function CharacterSelect({onExit}) {
   const fighter = useFighterStore();
-  const [raceStatics, setRaceStatics] = React.useState(getBaseRaceStatics());
+  const [raceStatics, setRaceStatics] = React.useState(() => getBaseRaceStatics());
 
   React.useEffect(() => {
     let isMounted = true;
