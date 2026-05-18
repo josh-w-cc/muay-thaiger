@@ -79,18 +79,18 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
   );
 }
 
-function getPlayerToken() {
-  if(typeof localStorage === 'undefined') {
-    return null;
-  }
-  return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
-}
-
 function clearPlayerToken() {
   if(typeof localStorage === 'undefined') {
     return;
   }
   localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
+}
+
+function getPlayerToken() {
+  if(typeof localStorage === 'undefined') {
+    return null;
+  }
+  return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
 }
 
 function isAuthInvalidTokenMessage(message) {
