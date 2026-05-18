@@ -1,9 +1,9 @@
 export default function formatHugeNumber(value) {
-  if(typeof value === 'number' && Number.isFinite(value)) {
+  if(typeof value === 'number' && Number.isInteger(value) && value > 0) {
     return formatNumber(value);
   }
 
-  if(typeof value === 'string' && /^[-+]?\d+$/.test(value)) {
+  if(typeof value === 'string' && /^\+?\d+$/.test(value)) {
     return formatIntegerString(value);
   }
 
@@ -11,19 +11,13 @@ export default function formatHugeNumber(value) {
 }
 
 function formatIntegerString(value) {
-  const isNegative = value.startsWith('-');
-  const digits = value.replace(/^[-+]/, '').replace(/^0+/, '') || '0';
+  const digits = value.replace(/^\+/, '').replace(/^0+/, '') || '0';
 
   if(digits.length <= 5) {
-    return `${getNegativeSign(isNegative, digits)}${digits}`;
+    return digits;
   }
 
-  const sign = isNegative ? '-' : '';
-  return `${sign}${digits[0]}.${digits.slice(1, 3).padEnd(2, '0')}e+${digits.length - 1}`;
-}
-
-function getNegativeSign(isNegative, digits) {
-  return isNegative && digits !== '0' ? '-' : '';
+  return `${digits[0]}.${digits.slice(1, 3).padEnd(2, '0')}e+${digits.length - 1}`;
 }
 
 function formatNumber(value) {
