@@ -7,7 +7,10 @@ export default [
       },
     },
     rules: {
-      quotes: ['error', 'single'],
+      'no-restricted-syntax': ['error', {
+        selector: 'ImportDeclaration[source.raw=/^".*"$/]',
+        message: 'Use single quotes for import source strings.',
+      }],
     },
   },
 ];
