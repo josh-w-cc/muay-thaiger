@@ -12,21 +12,18 @@ export default function formatHugeNumber(value) {
 
 function formatIntegerString(value) {
   const isNegative = value.startsWith('-');
-  const digitsWithLeadingZeros = value.replace(/^[-+]/, '');
-  const trimmedDigits = digitsWithLeadingZeros.replace(/^0+/, '') || '0';
+  const digits = value.replace(/^[-+]/, '').replace(/^0+/, '') || '0';
 
-  if(trimmedDigits.length <= 5) {
-    const sign = isNegative && trimmedDigits !== '0' ? '-' : '';
-
-    return `${sign}${trimmedDigits}`;
+  if(digits.length <= 5) {
+    return `${getNegativeSign(isNegative, digits)}${digits}`;
   }
 
-  const exponent = trimmedDigits.length - 1;
-  const whole = trimmedDigits[0];
-  const decimal = trimmedDigits.slice(1, 3).padEnd(2, '0');
   const sign = isNegative ? '-' : '';
+  return `${sign}${digits[0]}.${digits.slice(1, 3).padEnd(2, '0')}e+${digits.length - 1}`;
+}
 
-  return `${sign}${whole}.${decimal}e+${exponent}`;
+function getNegativeSign(isNegative, digits) {
+  return isNegative && digits !== '0' ? '-' : '';
 }
 
 function formatNumber(value) {
