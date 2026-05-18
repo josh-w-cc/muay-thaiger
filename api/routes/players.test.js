@@ -8,7 +8,7 @@ import playersRoutes from '../routes/players.js';
 
 describe('GET /players', () => {
   it('returns list of players', async () => {
-    const {knex} = mockKnex([{display_name: 'Test', id: 1}]);
+    const {knex} = mockKnex([{display_name: 'Test', email: 'test@example.com', id: 1, password: 'secret'}]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(playersRoutes);
@@ -23,7 +23,7 @@ describe('GET /players', () => {
 
 describe('GET /players/:id', () => {
   it('returns player when found', async () => {
-    const {knex} = mockKnex({display_name: 'Test', id: 1});
+    const {knex} = mockKnex({display_name: 'Test', email: 'test@example.com', id: 1, password: 'secret'});
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(playersRoutes);
