@@ -4,7 +4,7 @@ import useFighterStore from '@/data/fighter.js';
 
 import Button from '../../components/Button';
 import Skills from './Skills.js';
-import TrainStat from './TrainStat.jsx';
+import TrainStat from './TrainStat.js';
 
 import css from './Train.module.css';
 

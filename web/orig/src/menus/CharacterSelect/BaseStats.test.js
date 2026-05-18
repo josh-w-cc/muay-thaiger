@@ -1,11 +1,11 @@
-import BaseStats, {RACE_STATICS} from './BaseStats.js';
+import BaseStats, {RACES} from './BaseStats.js';
 
 
 describe('BaseStats', () => {
   it('maps race statics into character select data', () => {
-    expect(Object.keys(BaseStats)).toEqual(RACE_STATICS.map((item) => `${item.id}`));
+    expect(Object.keys(BaseStats)).toEqual(RACES.map((item) => `${item.id}`));
 
-    for(const race of RACE_STATICS) {
+    for(const race of RACES) {
       const raceKey = `${race.id}`;
       expect(BaseStats[raceKey].id).toBe(race.id);
       expect(BaseStats[raceKey].name).toBe(race.name);
