@@ -22,14 +22,14 @@ export function onConnect(socket, characters, players) {
 
 export async function onMessage(raw, socket, characters, players) {
   const message = parseMessage(raw);
-  if(!message || message.type !== 'auth') {
-    return;
-  }
-  if(socket.readyState !== socket.OPEN) {
+  if(!canHandleAuthMessage({message, socket})) {
     return;
   }
   const player = await getPlayer({characters, players}, message.token, message.race);
   if(!player) {
+    if(message.token !== 'new') {
+      socket.send(JSON.stringify({type: 'auth-invalid-token'}));
+    }
     return;
   }
   socket.send(JSON.stringify({player_id: player.id, token: player.token, type: 'auth'}));
@@ -42,6 +42,15 @@ function parseMessage(raw) {
   catch{
     return null;
   }
+}
+
+function canHandleAuthMessage({message, socket}) {
+  return Boolean(
+    message
+    && message.type === 'auth'
+    && socket.readyState === socket.OPEN
+    && typeof message.token === 'string',
+  );
 }
 
 async function getPlayer({characters, players}, token, race) {
