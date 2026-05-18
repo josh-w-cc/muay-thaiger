@@ -1,4 +1,4 @@
-import useInventoryStore, {COST_MULTIPLIER, resetInventoryStore} from './inventoryStore.js';
+import useInventoryStore, {COST_MULTIPLIER, resetInventoryStore} from './inventory.js';
 
 
 const AFFORDABLE_GOLD = 600;
