@@ -12,8 +12,8 @@ export default function formatHugeNumber(value) {
 
 function formatIntegerString(value) {
   const isNegative = value.startsWith('-');
-  const digitsWithLeadingZeros = value.replace(/^[-+]/, '');
-  const trimmedDigits = digitsWithLeadingZeros.replace(/^0+/, '') || '0';
+  const unsignedDigits = value.replace(/^[-+]/, '');
+  const trimmedDigits = unsignedDigits.replace(/^0+/, '') || '0';
 
   if(trimmedDigits.length <= 5) {
     const sign = isNegative && trimmedDigits !== '0' ? '-' : '';

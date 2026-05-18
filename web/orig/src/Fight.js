@@ -120,7 +120,7 @@ export function resetFightStore() {
 
 
 function attackFighter({fighters, state, who}) {
-  if(!who) {
+  if(who === 0) {
     const you = fighters[0];
     const them = fighters[1];
     if(you.stats.attack * Math.random() > them.stats.defense * Math.random()) {
