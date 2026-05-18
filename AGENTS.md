@@ -17,7 +17,7 @@ User action → React event handler → action (`web/actions/`) → `fetchAPI()`
 
 - **Read path:** React Router `loader` calls `fetchAPI` → API assembles a view (e.g., `logic/board.js`) → populates Zustand store → component renders via `useLoaderData()`.
 - **Write path:** Action updates Zustand store **optimistically** (before the API responds) so the UI feels instant, then `await`s the API call.
-- **Transport guideline:** Use websocket endpoints for player actions and REST endpoints for public reads.
+- **Transport guideline:** Use WebSocket endpoints for player actions and REST endpoints for public reads.
 - **Model injection:** Logic functions receive data models as a destructured first parameter — see `api/AGENTS.md` for the pattern.
 
 ## Repo structure
