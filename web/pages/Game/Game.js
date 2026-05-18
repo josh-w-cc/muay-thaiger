@@ -10,7 +10,6 @@ import useAuthSocket from './useAuthSocket.js';
 
 import './Game.css';
 
-
 export default function Game() {
   const navigate = useNavigate();
   const {screen = 'character-select'} = useParams();

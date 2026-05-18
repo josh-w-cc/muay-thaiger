@@ -1,5 +1,3 @@
-import React from 'react';
-
 import GameApp from './Game.js';
 import '../../orig/src/index.css';
 

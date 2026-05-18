@@ -62,7 +62,7 @@ describe('Game', () => {
   });
 
   it('connects to the websocket when the game loads', async () => {
-    const {default: Game} = await import('./index.js');
+    const {default: Game} = await import('./Game.js');
 
     renderGame({Game});
 
@@ -79,7 +79,7 @@ describe('Game', () => {
       value: new URL('https://example.test/game'),
     });
     globalThis.window = secureWindow;
-    const {default: Game} = await import('./index.js');
+    const {default: Game} = await import('./Game.js');
 
     renderGame({Game});
 
@@ -117,7 +117,7 @@ describe('Game', () => {
       return socket;
     });
     globalThis.WebSocket.OPEN = 1;
-    const {default: Game} = await import('./index.js');
+    const {default: Game} = await import('./Game.js');
 
     renderGame({Game});
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
@@ -160,7 +160,7 @@ describe('Game', () => {
     globalThis.WebSocket = vi.fn(function () {
       return {close, send: vi.fn()};
     });
-    const {default: Game} = await import('./index.js');
+    const {default: Game} = await import('./Game.js');
 
     const {unmount} = renderGame({Game});
     unmount();
