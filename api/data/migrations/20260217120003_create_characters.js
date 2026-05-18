@@ -7,5 +7,5 @@ export async function up(knex) {
 }
 
 export async function down(knex) {
-  await knex.raw('DROP TABLE IF EXISTS characters CASCADE');
+  await knex.raw('DROP TABLE IF EXISTS fighters CASCADE');
 }

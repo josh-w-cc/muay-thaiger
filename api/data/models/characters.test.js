@@ -12,7 +12,7 @@ describe('characters.findCurrentByPlayerID', () => {
 
     await characters.findCurrentByPlayerID(3);
 
-    assert.deepEqual(calls[0], ['table', 'characters']);
+    assert.deepEqual(calls[0], ['table', 'fighters']);
     assert.deepEqual(calls[1], ['where', {player_id: 3, retired: false}]);
     assert.deepEqual(calls[2], ['orderBy', 'created_at', 'desc']);
     assert.deepEqual(calls[3], ['first']);

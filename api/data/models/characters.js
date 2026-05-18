@@ -9,17 +9,17 @@ import {
 
 export default function characters(db) {
   return {
-    create: generateCreateFn(db, 'characters'),
-    find: generateFindFn(db, 'characters'),
+    create: generateCreateFn(db, 'fighters'),
+    find: generateFindFn(db, 'fighters'),
     findCurrentByPlayerID: generateFindCurrentByPlayerIDFn(db),
-    list: generateListFn(db, 'characters', 'display_name'),
-    remove: generateRemoveFn(db, 'characters'),
-    update: generateUpdateFn(db, 'characters'),
+    list: generateListFn(db, 'fighters', 'display_name'),
+    remove: generateRemoveFn(db, 'fighters'),
+    update: generateUpdateFn(db, 'fighters'),
   };
 }
 
 function generateFindCurrentByPlayerIDFn(db) {
-  return (playerId) => db('characters')
+  return (playerId) => db('fighters')
     .where({player_id: playerId, retired: false})
     .orderBy('created_at', 'desc')
     .first();
