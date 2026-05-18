@@ -1,42 +1,29 @@
 import React from 'react';
+
+import useConnectSocket from './useConnectSocket.js';
+
+
 export const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
+
 export default function useAuthSocket(setScreen) {
   const hasReceivedAuthRequest = React.useRef(false);
   const hasRespondedToAuth = React.useRef(false);
   const hasSelectedFighter = React.useRef(false);
   const selectedRace = React.useRef(null);
-  const socketRef = React.useRef(null);
-  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, setScreen, socketRef};
-  React.useEffect(() => connectSocket(refs), []);
+  const setScreenRef = React.useRef(setScreen);
+  setScreenRef.current = setScreen;
+  const onMessage = React.useCallback(({message, socket}) => onAuthMessage({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, message, selectedRace, setScreen: setScreenRef.current, socket}), []);
+  const socketRef = useConnectSocket(onMessage);
   return (race) => {
     selectedRace.current = race;
     hasSelectedFighter.current = true;
-    respondToAuth({...refs, socket: socketRef.current});
+    respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, socket: socketRef.current});
     routeToHubIfAuthorized({hasSelectedFighter, setScreen});
   };
 }
-function connectSocket({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, setScreen, socketRef}) {
-  const socket = new WebSocket(createWebSocketURL());
-  socketRef.current = socket;
-  socket.onmessage = (event) => onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, setScreen, socket});
-  return () => socket.close();
-}
-function createWebSocketURL() {
-  const url = new URL('/ws/connect', window.location.href);
-  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-  return url.toString();
-}
-function getMessage(event) {
-  try {
-    return JSON.parse(event.data);
-  }
-  catch{
-    return null;
-  }
-}
-function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, setScreen, socket}) {
-  const message = getMessage(event);
-  const messageType = message ? message.type : null;
+
+function onAuthMessage({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, message, selectedRace, setScreen, socket}) {
+  const messageType = message.type;
   if(messageType === 'auth-invalid-token') {
     clearPlayerToken();
     hasRespondedToAuth.current = false;
