@@ -3,7 +3,7 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
-import connectRoutes, {onConnect, onMessage} from '../routes/connect.js';
+import websocketRoutes, {onConnect, onMessage} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
 describe('WebSocket /ws/connect', () => {
@@ -12,7 +12,7 @@ describe('WebSocket /ws/connect', () => {
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(websocket);
-    await app.register(connectRoutes, {prefix: '/ws'});
+    await app.register(websocketRoutes, {prefix: '/ws'});
     await app.ready();
 
     const socket = await app.injectWS('/ws/connect');
@@ -28,7 +28,7 @@ describe('WebSocket /ws/connect', () => {
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(websocket);
-    await app.register(connectRoutes, {prefix: '/ws'});
+    await app.register(websocketRoutes, {prefix: '/ws'});
     await app.ready();
 
     const socket = await app.injectWS('/ws/connect');
@@ -50,7 +50,7 @@ describe('WebSocket /ws/connect', () => {
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(websocket);
-    await app.register(connectRoutes, {prefix: '/ws'});
+    await app.register(websocketRoutes, {prefix: '/ws'});
     await app.ready();
 
     const socket = await app.injectWS('/ws/connect');
