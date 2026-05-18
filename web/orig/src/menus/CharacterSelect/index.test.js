@@ -40,6 +40,7 @@ describe('CharacterSelect', () => {
     await user.click(within(raceCard).getByRole('button', {name: 'CHOOSE'}));
 
     expect(selectMock).toHaveBeenCalledWith(`${raceID}`);
+    expect(onExit).toHaveBeenCalledWith(`${raceID}`);
     expect(onExit).toHaveBeenCalledTimes(1);
   });
 

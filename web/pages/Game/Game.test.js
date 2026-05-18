@@ -12,7 +12,7 @@ let fetchJSONMock;
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
-    return <button onClick={onExit}>Character Select</button>;
+    return <button onClick={() => onExit('1')}>Character Select</button>;
   },
 }));
 
@@ -224,7 +224,7 @@ describe('Game', () => {
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
-    expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
+    expect(send).toHaveBeenCalledWith(JSON.stringify({race: '1', token: 'new', type: 'auth'}));
   });
 
   it('responds with auth/local token after auth when fighter is selected', async () => {
