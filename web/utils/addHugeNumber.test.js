@@ -1,4 +1,4 @@
-import addHugeNumber from './addHugeNumber.js';
+import addHugeNumber from '../../shared/addHugeNumber.js';
 
 describe('addHugeNumber', () => {
   it('adds a number to an integer string', () => {

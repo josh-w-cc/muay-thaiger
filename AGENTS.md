@@ -21,6 +21,7 @@ User action → React event handler → action (`web/actions/`) → `fetchAPI()`
 ## Repo structure
 
 - `api/` — Fastify backend API. Layered: `routes/` → `logic/` → `data/`. App factory in `app.js`.
+- `shared/` — Root Node.js library for code reused by multiple subprojects.
 - `web/` — Vite + React Router SPA. All data flows through the API; state in Zustand stores (`data/`). Design tokens in `globals.css`.
 - `playwright/` — End-to-end smoke tests (Page Object Model).
 
