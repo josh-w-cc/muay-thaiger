@@ -8,21 +8,21 @@ export default function useAuthSocket(setScreen) {
   const hasRespondedToAuth = React.useRef(false);
   const hasSelectedFighter = React.useRef(false);
   const socketRef = React.useRef(null);
-  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socketRef};
+  const refs = {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socketRef};
 
   React.useEffect(() => connectSocket(refs), []);
 
   return () => {
     hasSelectedFighter.current = true;
     respondToAuth({...refs, socket: socketRef.current});
-    setScreen('hub');
+    routeToHubIfAuthorized({hasSelectedFighter, setScreen});
   };
 }
 
-function connectSocket({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socketRef}) {
+function connectSocket({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socketRef}) {
   const socket = new WebSocket(createWebSocketURL());
   socketRef.current = socket;
-  socket.onmessage = (event) => onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});
+  socket.onmessage = (event) => onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socket});
   return () => socket.close();
 }
 
@@ -41,13 +41,14 @@ function getMessage(event) {
   }
 }
 
-function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
+function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socket}) {
   const message = getMessage(event);
   if(message?.type !== 'auth') {
     return;
   }
   if(message.token) {
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, message.token);
+    routeToHubIfAuthorized({hasSelectedFighter, setScreen});
   }
   hasReceivedAuthRequest.current = true;
   respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});
@@ -70,4 +71,18 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
     && socket
     && socket.readyState === WebSocket.OPEN,
   );
+}
+
+function getPlayerToken() {
+  if(typeof localStorage === 'undefined') {
+    return null;
+  }
+  return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
+}
+
+function routeToHubIfAuthorized({hasSelectedFighter, setScreen}) {
+  if(!hasSelectedFighter.current || !getPlayerToken()) {
+    return;
+  }
+  setScreen('hub');
 }
