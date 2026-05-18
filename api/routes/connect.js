@@ -4,6 +4,7 @@ import playersModel from '../data/models/players.js';
 import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
 import {authenticate} from '../logic/auth.js';
 import {createAndSend} from '../logic/character-actions.js';
+import {syncCharacterState} from '../logic/player-state-sync.js';
 
 const PLAYER_SYNC_INTERVAL_MINUTES = 1;
 
@@ -12,6 +13,7 @@ export default async function connectRoutes(app) {
   const models = {
     characterActions: characterActionsModel(app.db),
     characters: charactersModel(app.db),
+    log: app.log,
     players: playersModel(app.db),
   };
   const scheduler = createPlayerStateSyncScheduler(
@@ -61,9 +63,14 @@ async function onAuthCmd(message, socket, models) {
   if(typeof message.token !== 'string') {
     return;
   }
-  const player = await authenticate(models, message, socket);
-  if(player) {
-    socket.playerID = player.id;
+  try {
+    const player = await authenticate(models, message, socket);
+    if(player) {
+      socket.playerID = player.id;
+    }
+  }
+  catch(error) {
+    models.log?.error(error, 'auth command failed');
   }
 }
 
@@ -80,19 +87,6 @@ function createPlayerStateSyncScheduler(activeSockets, models, onError) {
   );
   scheduler.addSimpleIntervalJob(syncJob);
   return scheduler;
-}
-
-export async function syncCharacterState(activeSockets, {characters}) {
-  for(const socket of activeSockets) {
-    if(socket.readyState !== socket.OPEN || !Number.isInteger(socket.playerID)) {
-      continue;
-    }
-    const character = await characters.findCurrentByPlayerID(socket.playerID);
-    if(!character) {
-      continue;
-    }
-    socket.send(JSON.stringify({character, type: 'character_state'}));
-  }
 }
 
 function parseMessage(raw) {

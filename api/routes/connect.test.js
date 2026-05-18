@@ -3,7 +3,8 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
-import connectRoutes, {onConnect, onMessage, syncCharacterState} from '../routes/connect.js';
+import {syncCharacterState} from '../logic/player-state-sync.js';
+import connectRoutes, {onConnect, onMessage} from '../routes/connect.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
 describe('WebSocket /ws/connect', () => {
@@ -219,8 +220,8 @@ describe('WebSocket /ws/connect', () => {
     const firstSocket = {OPEN: 1, playerID: 2, readyState: 1, send: firstSend};
     const secondSocket = {OPEN: 1, playerID: 3, readyState: 1, send: secondSend};
     const closedSocket = {OPEN: 1, playerID: 4, readyState: 0, send: createCallTracker()};
-    const missingPlayerSocket = {OPEN: 1, readyState: 1, send: createCallTracker()};
-    const activeSockets = new Set([firstSocket, secondSocket, closedSocket, missingPlayerSocket]);
+    const unauthenticatedSocket = {OPEN: 1, readyState: 1, send: createCallTracker()};
+    const activeSockets = new Set([firstSocket, secondSocket, closedSocket, unauthenticatedSocket]);
     const characterStatesByPlayerID = new Map([
       [2, {id: 11, player_id: 2, retired: false}],
       [3, {id: 12, player_id: 3, retired: false}],
