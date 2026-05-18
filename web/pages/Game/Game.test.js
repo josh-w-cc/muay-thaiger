@@ -10,6 +10,9 @@ const originalWebSocket = globalThis.WebSocket;
 const originalLocalStorage = globalThis.localStorage;
 const originalWindow = globalThis.window;
 let fetchJSONMock;
+const {routerNavigate} = vi.hoisted(() => ({
+  routerNavigate: vi.fn(),
+}));
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
@@ -49,6 +52,9 @@ vi.mock('../../orig/src/menus/Train', () => ({
 
 vi.mock('@/utils/fetchAPI.js', () => ({
   fetchJSON: (...args) => fetchJSONMock(...args),
+}));
+vi.mock('@/router.js', () => ({
+  default: {navigate: (...args) => routerNavigate(...args)},
 }));
 
 describe('Game', () => {
@@ -408,6 +414,7 @@ function renderGame({Game, initialPath = '/', loader}) {
     [{element: <Game />, loader, path: '/:screen?'}],
     {initialEntries: [initialPath]},
   );
+  routerNavigate.mockImplementation((screenPath) => router.navigate(screenPath));
 
   return render(
     <RouterProvider fallbackElement={<div>Loading...</div>} router={router} />,
