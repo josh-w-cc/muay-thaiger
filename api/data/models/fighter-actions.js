@@ -23,7 +23,7 @@ function generateListFighterActionsFn(db, fighters) {
       return [];
     }
     return db('fighter_actions')
-      .where({character_id: currentFighter.id})
+      .where({fighter_id: currentFighter.id})
       .orderBy('created_at');
   };
 }

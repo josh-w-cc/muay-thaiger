@@ -9,7 +9,7 @@ export async function createAndSend({fighterActions, fighters}, message, socket)
   }
   const fighterAction = await fighterActions.create({
     action_id: normalizedMessage.action_id,
-    character_id: currentFighter.id,
+    fighter_id: currentFighter.id,
   });
   socket.send(JSON.stringify({fighterAction, type: 'fighter_action'}));
 }

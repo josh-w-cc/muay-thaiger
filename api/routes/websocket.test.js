@@ -44,7 +44,7 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('creates a fighter action and sends it back from /ws/connect on a valid idle message', async () => {
-    const created = {id: 1, action_id: 2, character_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
+    const created = {id: 1, action_id: 2, fighter_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const currentFighter = {id: 3, player_id: 8, retired: false};
     const player = {id: 8, token: 'player-token'};
     const {knex} = mockKnexMulti([player, currentFighter, [created]]);
