@@ -20,6 +20,13 @@ describe('usePlayerStore', () => {
     }
   });
 
+  function setLocalStorage(value) {
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      value,
+    });
+  }
+
   it('responds with auth/new after auth when fighter is selected', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
@@ -62,11 +69,4 @@ describe('usePlayerStore', () => {
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
     expect(setScreen).not.toHaveBeenCalled();
   });
-
-  function setLocalStorage(value) {
-    Object.defineProperty(globalThis, 'localStorage', {
-      configurable: true,
-      value,
-    });
-  }
 });
