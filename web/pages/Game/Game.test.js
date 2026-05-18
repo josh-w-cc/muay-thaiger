@@ -87,12 +87,12 @@ describe('Game', () => {
     expect(response.status).toBe(302);
   });
 
-  it('loader fetches race statics for character select', async () => {
-    const raceStatics = [{id: 1, name: 'Tiger', stats: {}}];
-    fetchJSONMock.mockResolvedValue(raceStatics);
+  it('loader fetches races for character select', async () => {
+    const races = [{id: 1, name: 'Tiger', stats: {}}];
+    fetchJSONMock.mockResolvedValue(races);
     const {loader} = await import('./index.js');
 
-    expect(await loader({params: {}})).toEqual(raceStatics);
+    expect(await loader({params: {}})).toEqual(races);
     expect(fetchJSONMock).toHaveBeenCalledWith('race');
   });
 
@@ -122,7 +122,7 @@ describe('Game', () => {
     expect(response.status).toBe(302);
   });
 
-  it('loader returns an empty list when race statics request fails', async () => {
+  it('loader returns an empty list when races request fails', async () => {
     const {loader} = await import('./index.js');
     const error = new Error('network failure');
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -130,7 +130,7 @@ describe('Game', () => {
 
     expect(await loader({params: {}})).toEqual([]);
     expect(fetchJSONMock).toHaveBeenCalledWith('race');
-    expect(consoleError).toHaveBeenCalledWith('Failed to load race statics', error);
+    expect(consoleError).toHaveBeenCalledWith('Failed to load races', error);
     consoleError.mockRestore();
   });
 

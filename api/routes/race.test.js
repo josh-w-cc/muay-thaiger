@@ -7,7 +7,7 @@ import raceRoutes from '../routes/race.js';
 
 
 describe('GET /race', () => {
-  it('returns list of race statics', async () => {
+  it('returns list of races', async () => {
     const races = [
       {id: 2, name: 'Snow Leopard', stats: {}},
       {id: 1, name: 'Tiger', stats: {}},
