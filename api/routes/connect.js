@@ -30,19 +30,12 @@ export async function onMessage(raw, socket, models) {
   }
   switch(message.cmd) {
     case 'auth':
-      return onAuthCmd(message, socket, models);
+      return authenticate(models, message, socket);
     case 'create':
       return createAndSend(models, message, socket);
     default:
       socket.send(JSON.stringify({error: 'invalid-cmd', type: 'error'}));
   }
-}
-
-function onAuthCmd(message, socket, models) {
-  if(typeof message.token !== 'string') {
-    return;
-  }
-  return authenticate(models, message, socket);
 }
 
 function parseMessage(raw) {
