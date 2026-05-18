@@ -1,5 +1,5 @@
 import formatHugeNumber from '@/utils/formatHugeNumber.js';
-import useFighterStore from '@/orig/src/Fighter.js';
+import useFighterStore from '@/data/fighter.js';
 
 import css from './Hub.module.css';
 

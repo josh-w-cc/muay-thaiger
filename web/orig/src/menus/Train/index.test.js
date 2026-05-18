@@ -23,7 +23,7 @@ const {action, fighter, idle} = vi.hoisted(() => {
   };
 });
 
-vi.mock('../../Fighter.js', () => ({
+vi.mock('@/data/fighter.js', () => ({
   default: () => fighter,
 }));
 

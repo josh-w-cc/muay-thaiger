@@ -1,7 +1,7 @@
 import React from 'react';
 
-import formatHugeNumber from "@/utils/formatHugeNumber.js";
-import useFighterStore from '../../Fighter.js';
+import useFighterStore from '@/data/fighter.js';
+import formatHugeNumber from '@/utils/formatHugeNumber.js';
 
 import css from './TrainStat.module.css';
 
