@@ -22,7 +22,7 @@ export default [
       '@stylistic/generator-star-spacing': ['error', {after: false, before: true}],
       '@stylistic/keyword-spacing': ['error', {
         overrides: {
-          catch: {after: false},
+          catch: {after: true},
           for: {after: false},
           if: {after: false},
           switch: {after: false},
