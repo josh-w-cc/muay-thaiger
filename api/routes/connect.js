@@ -20,7 +20,7 @@ function onMessage(raw, socket) {
   try {
     message = JSON.parse(raw);
   }
-  catch {
+  catch{
     return;
   }
   if(message.type !== 'new') {
