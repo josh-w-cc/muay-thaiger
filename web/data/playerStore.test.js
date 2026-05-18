@@ -59,6 +59,14 @@ describe('usePlayerStore', () => {
     expect(usePlayerStore.getState().token).toBe('existing-token');
   });
 
+  it('clears stored token when resetting the player store', () => {
+    setPlayerToken('existing-token');
+
+    resetPlayerStore();
+
+    expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
+  });
+
   it('clears invalid token and retries auth with a new token', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
