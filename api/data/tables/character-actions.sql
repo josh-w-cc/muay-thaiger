@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS character_actions (
   action_id BIGINT NOT NULL REFERENCES actions(id) ON DELETE CASCADE,
   character_id BIGINT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  last_touched_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  touched_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(character_id, action_id)
 );
