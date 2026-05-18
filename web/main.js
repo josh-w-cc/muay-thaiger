@@ -6,4 +6,6 @@ import router from './router.js';
 import './globals.css';
 
 
-createRoot(document.getElementById('root')).render(<RouterProvider router={router} />);
+createRoot(document.getElementById('root')).render(
+  <RouterProvider fallbackElement={<div>Loading...</div>} router={router} />,
+);
