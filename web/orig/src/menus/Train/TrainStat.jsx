@@ -14,7 +14,6 @@ function TrainStat({name, stat}) {
 
   return (<>
     {name}: {formatHugeNumber(fighter[stat])}
-    <Button onClick={() => fighter.train(stat)}>Train</Button>
     <Button
       className={idleActive ? css.idleActive : ''}
       onClick={() => fighter.idle(`train-${stat}`, () => fighter.train(stat))}
