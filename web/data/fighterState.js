@@ -16,7 +16,7 @@ export function isFightIdling(idling) {
 }
 
 export function isTrainIdling(idling) {
-  return idling.key.substring(0, 5).toLowerCase() === 'train';
+  return idling?.key?.substring(0, 5).toLowerCase() === 'train';
 }
 
 export function mergeState(state, updates) {
