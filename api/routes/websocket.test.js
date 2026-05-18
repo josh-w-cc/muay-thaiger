@@ -43,11 +43,11 @@ describe('WebSocket /ws/connect', () => {
     await app.close();
   });
 
-  it('creates a character action and sends it back from /ws/connect on a valid idle message', async () => {
+  it('creates a fighter action and sends it back from /ws/connect on a valid idle message', async () => {
     const created = {id: 1, action_id: 2, character_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
-    const currentCharacter = {id: 3, player_id: 8, retired: false};
+    const currentFighter = {id: 3, player_id: 8, retired: false};
     const player = {id: 8, token: 'player-token'};
-    const {knex} = mockKnexMulti([player, currentCharacter, [created]]);
+    const {knex} = mockKnexMulti([player, currentFighter, [created]]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(websocket);
@@ -61,7 +61,7 @@ describe('WebSocket /ws/connect', () => {
     socket.send(JSON.stringify({action_id: 2, cmd: 'idle'}));
     const message = await readMessage(socket);
 
-    assert.deepEqual(message, {characterAction: created, type: 'character_action'});
+    assert.deepEqual(message, {fighterAction: created, type: 'fighter_action'});
     socket.terminate();
     await app.close();
   });
@@ -221,10 +221,10 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const create = createCallTracker();
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
-    const characterActions = {create};
+    const fighterActions = {create};
     const fighters = {findCurrentByPlayerID: async () => null};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {characterActions, fighters});
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {fighterActions, fighters});
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);

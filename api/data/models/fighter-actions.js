@@ -6,17 +6,17 @@ import {
 } from '../utils/crud.js';
 
 
-export default function characterActions(db) {
+export default function fighterActions(db) {
   const fighters = fightersModel(db);
   return {
     create: generateCreateFn(db, 'fighter_actions'),
     find: generateFindFn(db, 'fighter_actions'),
-    list: generateListCharacterActionsFn(db, fighters),
+    list: generateListFighterActionsFn(db, fighters),
     remove: generateRemoveFn(db, 'fighter_actions'),
   };
 }
 
-function generateListCharacterActionsFn(db, fighters) {
+function generateListFighterActionsFn(db, fighters) {
   return async (playerId) => {
     const currentFighter = await fighters.findCurrentByPlayerID(playerId);
     if(!currentFighter) {

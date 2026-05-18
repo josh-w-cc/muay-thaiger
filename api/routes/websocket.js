@@ -1,12 +1,12 @@
 import fightersModel from '../data/models/fighters.js';
-import characterActionsModel from '../data/models/fighter-actions.js';
+import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import {authenticate} from '../logic/auth.js';
 import {createAndSend} from '../logic/fighter-actions.js';
 
 export default async function websocketRoutes(app) {
   const models = {
-    characterActions: characterActionsModel(app.db),
+    fighterActions: fighterActionsModel(app.db),
     fighters: fightersModel(app.db),
     players: playersModel(app.db),
   };
