@@ -16,7 +16,7 @@ export const SEED_PLAYERS = [
 export {SKILL_IDS};
 export const SEED_ACTIONS = SKILL_SEED_ACTIONS;
 
-export const SEED_STATICS = [
+export const SEED_RACES = [
   {
     id: 1,
     name: 'Tiger',
@@ -32,7 +32,7 @@ export const SEED_STATICS = [
 export async function seed(knex) {
   await insertActions(knex);
   await insertPlayers(knex);
-  await insertStatics(knex);
+  await insertRaces(knex);
   await insertCharacters(knex);
   await resetSequences(knex);
 }
@@ -58,9 +58,9 @@ async function insertCharacters(knex) {
     .ignore();
 }
 
-async function insertStatics(knex) {
+async function insertRaces(knex) {
   await knex('races')
-    .insert(SEED_STATICS)
+    .insert(SEED_RACES)
     .onConflict('id')
     .ignore();
 }
