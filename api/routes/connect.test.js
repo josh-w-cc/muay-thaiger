@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
+import {ToadScheduler} from 'toad-scheduler';
 
 import {syncCharacterState} from '../logic/player-state-sync.js';
 import connectRoutes, {onConnect, onMessage} from '../routes/connect.js';
@@ -62,6 +63,51 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(message, {characterAction: created, type: 'character_action'});
     socket.terminate();
     await app.close();
+  });
+
+  it('stops scheduler on app close', async () => {
+    const {knex} = mockKnex(undefined);
+    const app = Fastify();
+    app.decorate('db', knex);
+    await app.register(websocket);
+    const originalStop = ToadScheduler.prototype.stop;
+    const stop = createCallTracker();
+    ToadScheduler.prototype.stop = function (...args) {
+      stop(...args);
+      return originalStop.apply(this, args);
+    };
+    await app.register(connectRoutes, {prefix: '/ws'});
+    await app.ready();
+
+    try {
+      await app.close();
+      assert.equal(stop.calls.length, 1);
+    }
+    finally {
+      ToadScheduler.prototype.stop = originalStop;
+    }
+  });
+
+  it('tracks and removes active sockets during websocket lifecycle', async () => {
+    const activeSockets = new Set();
+    const eventHandlers = new Map();
+    const socket = {
+      OPEN: 1,
+      on: (eventName, callback) => {
+        eventHandlers.set(eventName, callback);
+      },
+      readyState: 1,
+      send: createCallTracker(),
+    };
+
+    onConnect(socket, activeSockets, {});
+
+    assert.equal(activeSockets.has(socket), true);
+    eventHandlers.get('close')();
+    assert.equal(activeSockets.has(socket), false);
+    activeSockets.add(socket);
+    eventHandlers.get('error')();
+    assert.equal(activeSockets.has(socket), false);
   });
 
   it('does not send auth request on connect when socket is not open', async () => {
@@ -199,6 +245,7 @@ describe('WebSocket /ws/connect', () => {
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});
+    assert.equal(socket.playerID, undefined);
   });
 
   it('does not respond to create messages when the player has no current character', async () => {
