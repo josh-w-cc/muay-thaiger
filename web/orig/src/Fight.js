@@ -26,7 +26,7 @@ const useFightStore = create((set, get) => ({
     }
 
     const nextFighters = fighters.map((fighter) => ({...fighter}));
-    const result = attackFighter({fighters: nextFighters, state: get().state, who});
+    const result = attackFighter({attackerIndex: who, fighters: nextFighters, state: get().state});
     set({
       fighters: nextFighters,
       state: result.state,
@@ -88,13 +88,13 @@ const useFightStore = create((set, get) => ({
     nextFighters[1].currentAPM += bPerTick * amount;
     while(nextFighters[0].currentAPM > 1 || nextFighters[1].currentAPM > 1) {
       if(nextFighters[0].currentAPM > 1) {
-        const result = attackFighter({fighters: nextFighters, state: nextState, who: 0});
+        const result = attackFighter({attackerIndex: 0, fighters: nextFighters, state: nextState});
         nextState = result.state;
         nextMessages.push(result.message);
         nextFighters[0].currentAPM -= 1;
       }
       if(nextFighters[1].currentAPM > 1) {
-        const result = attackFighter({fighters: nextFighters, state: nextState, who: 1});
+        const result = attackFighter({attackerIndex: 1, fighters: nextFighters, state: nextState});
         nextState = result.state;
         nextMessages.push(result.message);
         nextFighters[1].currentAPM -= 1;
@@ -119,8 +119,8 @@ export function resetFightStore() {
 }
 
 
-function attackFighter({fighters, state, who}) {
-  if(who === 0) {
+function attackFighter({attackerIndex, fighters, state}) {
+  if(attackerIndex === 0) {
     const you = fighters[0];
     const them = fighters[1];
     if(you.stats.attack * Math.random() > them.stats.defense * Math.random()) {
@@ -144,7 +144,7 @@ function attackFighter({fighters, state, who}) {
     }
     return {message: `He hit you for ${damage}. (What a jerk)`, state};
   }
-  return {message: 'Je missed :D', state};
+  return {message: 'He missed :D', state};
 }
 
 function getInitialState() {
