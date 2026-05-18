@@ -1,4 +1,4 @@
-import BaseStats, {RACE_STATICS} from './baseStats.js';
+import BaseStats, {RACES} from './baseStats.js';
 
 import useFighterStore, {resetFighterStore} from './fighter.js';
 
@@ -11,7 +11,7 @@ describe('useFighterStore', () => {
 
   it('initializes with the default race and derived combat stats', () => {
     const fighter = useFighterStore.getState();
-    const initialRace = `${RACE_STATICS[0].id}`;
+    const initialRace = `${RACES[0].id}`;
 
     expect(fighter.race).toBe(initialRace);
     expect(fighter.anima).toBe(BaseStats[initialRace].stats.anima);

@@ -6,7 +6,7 @@ const RACE_IMAGES = {
   2: SnowLeopard,
 };
 
-export const RACE_STATICS = [
+export const RACES = [
   {
     id: 1,
     name: 'Tiger',
@@ -20,7 +20,7 @@ export const RACE_STATICS = [
 ];
 
 const BaseStats = Object.fromEntries(
-  RACE_STATICS
+  RACES
     .map((item) => [`${item.id}`, {
       id: item.id,
       image: RACE_IMAGES[item.id],
