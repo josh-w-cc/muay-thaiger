@@ -46,7 +46,6 @@ async function loadRaceStatics() {
   }
 }
 
-
 export default function Game() {
   const raceStatics = useLoaderData() ?? [];
   const navigate = useNavigate();
