@@ -20,13 +20,7 @@ export function onConnect(socket, players) {
 
 export async function onMessage(raw, socket, players) {
   const message = parseMessage(raw);
-  if(!message || message.type !== 'auth') {
-    return;
-  }
-  if(socket.readyState !== socket.OPEN) {
-    return;
-  }
-  if(typeof message.token !== 'string') {
+  if(!canHandleAuthMessage({message, socket})) {
     return;
   }
   const player = await getPlayer(message.token, players);
@@ -44,6 +38,15 @@ function parseMessage(raw) {
   catch{
     return null;
   }
+}
+
+function canHandleAuthMessage({message, socket}) {
+  return Boolean(
+    message
+    && message.type === 'auth'
+    && socket.readyState === socket.OPEN
+    && typeof message.token === 'string',
+  );
 }
 
 async function getPlayer(token, players) {

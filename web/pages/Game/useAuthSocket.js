@@ -43,13 +43,13 @@ function getMessage(event) {
 
 function onMessage({event, hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, setScreen, socket}) {
   const message = getMessage(event);
-  if(message?.type === 'auth-invalid-token') {
+  if(isAuthInvalidTokenMessage(message)) {
     clearPlayerToken();
     hasRespondedToAuth.current = false;
     respondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket});
     return;
   }
-  if(message?.type !== 'auth') {
+  if(!isAuthMessage(message)) {
     return;
   }
   if(message.token) {
@@ -91,6 +91,14 @@ function clearPlayerToken() {
     return;
   }
   localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
+}
+
+function isAuthInvalidTokenMessage(message) {
+  return message?.type === 'auth-invalid-token';
+}
+
+function isAuthMessage(message) {
+  return message?.type === 'auth';
 }
 
 function routeToHubIfAuthorized({hasSelectedFighter, setScreen}) {
