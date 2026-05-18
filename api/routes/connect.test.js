@@ -37,6 +37,7 @@ describe('WebSocket /ws/connect', () => {
     const message = await readMessage(socket);
 
     assert.equal(message.type, 'auth');
+    assert.equal(message.player_id, 1);
     assert.equal(message.token, 'generated-token');
     socket.terminate();
     await app.close();
@@ -66,7 +67,7 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(send.calls.length, 0);
   });
 
-  it('ignores websocket messages that are not auth/new', async () => {
+  it('ignores websocket messages that are not valid auth messages', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
@@ -89,12 +90,36 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
     const player = {id: 1, token: 'player-uuid-token'};
-    const players = {create: async () => player};
+    const players = {create: async () => player, findByToken: async () => null};
 
     await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, players);
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {token: 'player-uuid-token', type: 'auth'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 1, token: 'player-uuid-token', type: 'auth'});
+  });
+
+  it('translates an existing player token to player id on auth', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const players = {
+      create: async () => null,
+      findByToken: async (token) => token === 'known-token' ? {id: 5, token} : null,
+    };
+
+    await onMessage(JSON.stringify({token: 'known-token', type: 'auth'}), socket, players);
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 5, token: 'known-token', type: 'auth'});
+  });
+
+  it('does not respond when auth token does not match a player', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const players = {create: async () => null, findByToken: async () => null};
+
+    await onMessage(JSON.stringify({token: 'unknown-token', type: 'auth'}), socket, players);
+
+    assert.equal(send.calls.length, 0);
   });
 });
 

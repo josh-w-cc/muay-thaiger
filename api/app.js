@@ -2,7 +2,6 @@ import websocket from '@fastify/websocket';
 import Fastify from 'fastify';
 
 import dbPlugin from './data/db.js';
-import playerID from './plugins/player-id.js';
 import serveSPA from './plugins/serve-spa.js';
 import actionsRoutes from './routes/actions.js';
 import characterActionsRoutes from './routes/character-actions.js';
@@ -17,7 +16,6 @@ export default async function build(opts = {}) {
   const app = Fastify(opts);
 
   await app.register(dbPlugin);
-  await playerID(app);
   await app.register(websocket);
   await app.register(actionsRoutes, {prefix: '/api'});
   await app.register(characterActionsRoutes, {prefix: '/ws'});

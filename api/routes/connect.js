@@ -20,15 +20,17 @@ export function onConnect(socket, players) {
 
 export async function onMessage(raw, socket, players) {
   const message = parseMessage(raw);
-  if(!message || message.type !== 'auth' || message.token !== 'new') {
+  if(!message || message.type !== 'auth') {
     return;
   }
   if(socket.readyState !== socket.OPEN) {
     return;
   }
-  const token = randomUUID();
-  const player = await players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
-  socket.send(JSON.stringify({token: player.token, type: 'auth'}));
+  const player = await getPlayer(message.token, players);
+  if(!player) {
+    return;
+  }
+  socket.send(JSON.stringify({player_id: player.id, token: player.token, type: 'auth'}));
 }
 
 function parseMessage(raw) {
@@ -38,4 +40,19 @@ function parseMessage(raw) {
   catch{
     return null;
   }
+}
+
+async function getPlayer(token, players) {
+  if(token === 'new') {
+    return createPlayer(players);
+  }
+  if(typeof token !== 'string') {
+    return null;
+  }
+  return players.findByToken(token);
+}
+
+async function createPlayer(players) {
+  const token = randomUUID();
+  return players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
 }
