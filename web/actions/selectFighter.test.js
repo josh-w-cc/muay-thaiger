@@ -1,5 +1,5 @@
+import BaseStats from '@/data/baseStats.js';
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
-import BaseStats from '@/orig/src/menus/CharacterSelect/BaseStats.js';
 
 import selectFighter from './selectFighter.js';
 
