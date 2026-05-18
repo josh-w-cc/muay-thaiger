@@ -56,6 +56,7 @@ export default [
           while: {after: false},
         },
       }],
+      '@stylistic/jsx-quotes': ['error', 'prefer-single'],
       '@stylistic/max-len': ['error', {code: 155}],
       '@stylistic/no-multiple-empty-lines': ['error', {max: 2, maxBOF: 0, maxEOF: 1}],
       '@stylistic/max-statements-per-line': ['error', {max: 1}],
