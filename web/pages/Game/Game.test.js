@@ -109,7 +109,7 @@ describe('Game', () => {
     expect(screen.getByRole('heading', {name: 'Train Screen'})).toBeInTheDocument();
   });
 
-  it('responds with new after auth when fighter is selected', async () => {
+  it('responds with auth/new after auth when fighter is selected', async () => {
     const user = userEvent.setup();
     const send = vi.fn();
     const socket = {close: vi.fn(), readyState: 1, send};
@@ -123,7 +123,7 @@ describe('Game', () => {
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Character Select'}));
 
-    expect(send).toHaveBeenCalledWith(JSON.stringify({type: 'new'}));
+    expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
   });
 
   it('renders and recovers from the fallback screen', async () => {

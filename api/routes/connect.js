@@ -1,6 +1,3 @@
-import {randomUUID} from 'node:crypto';
-
-
 export default async function connectRoutes(app) {
   app.get('/connect', {websocket: true}, onConnect);
 }
@@ -23,14 +20,14 @@ function onMessage(raw, socket) {
   catch{
     return;
   }
-  if(message.type !== 'new') {
+  if(message.type !== 'auth' || message.token !== 'new') {
     return;
   }
   if(socket.readyState !== socket.OPEN) {
     return;
   }
   socket.send(JSON.stringify({
-    token: randomUUID(),
-    type: 'token',
+    token: 'new',
+    type: 'auth',
   }));
 }

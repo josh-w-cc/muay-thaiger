@@ -20,7 +20,7 @@ describe('WebSocket /ws/connect', () => {
     await app.close();
   });
 
-  it('sends a token after receiving a new auth response', async () => {
+  it('sends auth confirmation after receiving an auth new response', async () => {
     const app = Fastify();
     await app.register(websocket);
     await app.register(connectRoutes, {prefix: '/ws'});
@@ -28,11 +28,10 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    socket.send(JSON.stringify({type: 'new'}));
+    socket.send(JSON.stringify({token: 'new', type: 'auth'}));
     const message = await readMessage(socket);
 
-    assert.equal(message.type, 'token');
-    assert.match(message.token, /^[0-9a-f-]{36}$/i);
+    assert.deepEqual(message, {token: 'new', type: 'auth'});
     socket.terminate();
     await app.close();
   });
