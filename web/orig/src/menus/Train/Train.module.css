@@ -19,19 +19,3 @@
   padding-left: var(--space-md);
   text-align: left;
 }
-
-.stat {
-  align-items: baseline;
-  display: grid;
-  gap: var(--space-md);
-  grid-template-columns: 1fr auto;
-}
-
-.label {
-  color: var(--color-fg);
-  font-weight: 600;
-}
-
-.value {
-  color: var(--color-gold);
-}
