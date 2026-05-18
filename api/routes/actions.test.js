@@ -8,7 +8,7 @@ import actionsRoutes from '../routes/actions.js';
 
 describe('GET /actions', () => {
   it('returns list of actions', async () => {
-    const {knex} = mockKnex([{id: 1, name: 'Jab'}]);
+    const {knex} = mockKnex([{id: 1, name: 'Jab', type: 'strike'}]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(actionsRoutes);
@@ -16,14 +16,14 @@ describe('GET /actions', () => {
     const response = await app.inject({method: 'GET', url: '/actions'});
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), [{id: 1, name: 'Jab'}]);
+    assert.deepEqual(response.json(), [{id: 1, name: 'Jab', type: 'strike'}]);
     await app.close();
   });
 });
 
 describe('GET /actions/:id', () => {
   it('returns action when found', async () => {
-    const {knex} = mockKnex({id: 1, name: 'Jab'});
+    const {knex} = mockKnex({id: 1, name: 'Jab', type: 'strike'});
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(actionsRoutes);
@@ -31,7 +31,7 @@ describe('GET /actions/:id', () => {
     const response = await app.inject({method: 'GET', url: '/actions/1'});
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), {id: 1, name: 'Jab'});
+    assert.deepEqual(response.json(), {id: 1, name: 'Jab', type: 'strike'});
     await app.close();
   });
 
@@ -51,19 +51,19 @@ describe('GET /actions/:id', () => {
 
 describe('POST /actions', () => {
   it('creates action and returns 201', async () => {
-    const {knex} = mockKnex([{id: 1, name: 'Jab'}]);
+    const {knex} = mockKnex([{id: 1, name: 'Jab', type: 'strike'}]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(actionsRoutes);
 
     const response = await app.inject({
       method: 'POST',
-      payload: {name: 'Jab'},
+      payload: {name: 'Jab', type: 'strike'},
       url: '/actions',
     });
 
     assert.equal(response.statusCode, 201);
-    assert.deepEqual(response.json(), {id: 1, name: 'Jab'});
+    assert.deepEqual(response.json(), {id: 1, name: 'Jab', type: 'strike'});
     await app.close();
   });
 });

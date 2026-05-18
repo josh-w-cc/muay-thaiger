@@ -8,4 +8,5 @@ export async function up(knex) {
 
 export async function down(knex) {
   await knex.raw('DROP TABLE IF EXISTS actions CASCADE');
+  await knex.raw('DROP TYPE IF EXISTS action_type');
 }
