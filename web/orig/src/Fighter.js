@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 
-import BaseStats from './menus/CharacterSelect/BaseStats.jsx';
+import BaseStats from './menus/CharacterSelect/BaseStats.js';
 import {TickerState} from '../../pages/Game/Ticker.js';
 
 
