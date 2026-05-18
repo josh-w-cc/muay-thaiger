@@ -43,9 +43,10 @@ describe('Train', () => {
   });
 
   it('shows only idle controls for skills', () => {
-    render(<Train />);
+    const {container} = render(<Train />);
 
     expect(screen.getByRole('button', {name: 'Idle'})).toBeInTheDocument();
+    expect(container.querySelector('br')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Once'})).not.toBeInTheDocument();
   });
 
