@@ -1,7 +1,6 @@
 import React from 'react';
 
-
-const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
+export const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
 
 
 export default function useAuthSocket(setScreen) {

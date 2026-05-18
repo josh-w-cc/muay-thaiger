@@ -2,9 +2,11 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter, Route, Routes} from 'react-router';
 
+import {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
+
+
 const originalWebSocket = globalThis.WebSocket;
 const originalWindow = globalThis.window;
-const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
