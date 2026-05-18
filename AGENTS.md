@@ -7,6 +7,7 @@ Muay Thaiger is a PvP incremental fighting game. Players pick an anthropomorphic
 - **Fighter** = the player character.
 - **Race** = the fighter's anthropomorphic animal species.
 - **Style** = the fighter's martial art.
+- **Stanima** = intentionally misspelled and is the correct UI term; do not change it to `Stamina`.
 - **Training** = incremental progression that improves fighter stats over time.
 - **Fight** = a combat match, usually against bots and occasionally against real players.
 
