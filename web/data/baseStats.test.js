@@ -1,4 +1,4 @@
-import BaseStats, {RACES} from './BaseStats.js';
+import BaseStats, {RACES} from './baseStats.js';
 
 
 describe('BaseStats', () => {
