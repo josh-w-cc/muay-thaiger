@@ -1,5 +1,6 @@
-import {useNavigate, useParams} from 'react-router';
+import {useLoaderData, useNavigate, useParams} from 'react-router';
 
+import {fetchJSON} from '@/utils/fetchAPI.js';
 import CharacterSelect from '../../orig/src/menus/CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
 import Header from './Header.js';
@@ -11,18 +12,22 @@ import useAuthSocket from './useAuthSocket.js';
 import './Game.css';
 import '../../orig/src/index.css';
 
-export function loader() {
-  return null;
+export async function loader({params}) {
+  if(getScreen(params) !== 'character-select') {
+    return null;
+  }
+  return fetchJSON('race');
 }
 
 export default function Game() {
+  const raceStatics = useRaceStatics();
   const navigate = useNavigate();
   const {screen = 'character-select'} = useParams();
   const setScreen = generateSetScreenFn(navigate);
   const onCharacterSelectExit = useAuthSocket(setScreen);
 
   if(screen === 'character-select') {
-    return <CharacterSelect onExit={onCharacterSelectExit} />;
+    return <CharacterSelect onExit={onCharacterSelectExit} raceStatics={raceStatics} />;
   }
 
   return (
@@ -31,6 +36,19 @@ export default function Game() {
       {renderScreen(screen, setScreen)}
     </>
   );
+}
+
+function getScreen(params = {}) {
+  return params.screen ?? 'character-select';
+}
+
+function useRaceStatics() {
+  try {
+    return useLoaderData() ?? [];
+  }
+  catch{
+    return [];
+  }
 }
 
 function generateSetScreenFn(navigate) {

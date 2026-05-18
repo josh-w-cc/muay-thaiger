@@ -7,10 +7,16 @@ import {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
 
 const originalWebSocket = globalThis.WebSocket;
 const originalWindow = globalThis.window;
+let fetchJSONMock;
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
-  default: function MockCharacterSelect({onExit}) {
-    return <button onClick={onExit}>Character Select</button>;
+  default: function MockCharacterSelect({onExit, raceStatics = []}) {
+    return (
+      <button onClick={onExit}>
+        Character Select
+        {raceStatics.length}
+      </button>
+    );
   },
 }));
 
@@ -44,8 +50,13 @@ vi.mock('../../orig/src/menus/Train', () => ({
   },
 }));
 
+vi.mock('@/utils/fetchAPI.js', () => ({
+  fetchJSON: (...args) => fetchJSONMock(...args),
+}));
+
 describe('Game', () => {
   beforeEach(() => {
+    fetchJSONMock = vi.fn().mockResolvedValue([]);
     globalThis.WebSocket = vi.fn(function () {
       return {close: vi.fn(), readyState: 1, send: vi.fn()};
     });
@@ -59,15 +70,25 @@ describe('Game', () => {
     localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
   });
 
-  it('loader returns null', async () => {
+  it('loader returns null for non-character-select screens', async () => {
     const {loader} = await import('./index.js');
-    expect(loader()).toBeNull();
+    expect(await loader({params: {screen: 'hub'}})).toBeNull();
+    expect(fetchJSONMock).not.toHaveBeenCalled();
+  });
+
+  it('loader fetches race statics for character select', async () => {
+    const raceStatics = [{id: 1, name: 'Tiger', stats: {}}];
+    fetchJSONMock.mockResolvedValue(raceStatics);
+    const {loader} = await import('./index.js');
+
+    expect(await loader({params: {}})).toEqual(raceStatics);
+    expect(fetchJSONMock).toHaveBeenCalledWith('race');
   });
 
   it('renders the character select screen first', async () => {
     const {default: Game} = await import('./index.js');
     renderGame({Game});
-    expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Character Select0'})).toBeInTheDocument();
   });
 
   it('connects to the websocket when the game loads', async () => {
@@ -102,7 +123,7 @@ describe('Game', () => {
     const {default: Game} = await import('./index.js');
 
     renderGame({Game});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Character Select0'}));
 
     expect(screen.getByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
     await user.click(screen.getByRole('button', {name: /fight/i}));
@@ -130,7 +151,7 @@ describe('Game', () => {
 
     renderGame({Game});
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Character Select0'}));
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
   });
@@ -161,7 +182,7 @@ describe('Game', () => {
 
     renderGame({Game});
     socket.onmessage({data: '{'});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Character Select0'}));
 
     expect(send).not.toHaveBeenCalled();
   });
@@ -171,7 +192,7 @@ describe('Game', () => {
     const {default: Game} = await import('./index.js');
 
     renderGame({Game});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Character Select0'}));
     await user.click(screen.getByRole('button', {name: 'Break Screen'}));
 
     expect(screen.getByRole('heading', {name: 'You broke it!?'})).toBeInTheDocument();
@@ -192,7 +213,7 @@ describe('Game', () => {
 
     renderGame({Game, initialPath: '/hub'});
     await user.click(screen.getByRole('button', {name: 'Go Character Select'}));
-    expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Character Select0'})).toBeInTheDocument();
   });
 
   it('closes the websocket when the game unmounts', async () => {
