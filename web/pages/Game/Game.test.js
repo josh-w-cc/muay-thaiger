@@ -53,7 +53,7 @@ describe('Game', () => {
     vi.clearAllMocks();
     globalThis.WebSocket = originalWebSocket;
     globalThis.window = originalWindow;
-    localStorage.clear();
+    localStorage.removeItem('token');
   });
 
   it('renders the character select screen first', async () => {
