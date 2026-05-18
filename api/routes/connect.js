@@ -5,14 +5,16 @@ import {authenticate} from '../logic/auth.js';
 import {onMessage as onCharacterActionsMessage} from './character-actions.js';
 
 export default async function connectRoutes(app) {
-  const characterActions = characterActionsModel(app.db);
-  const characters = charactersModel(app.db);
-  const players = playersModel(app.db);
-  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, characterActions, characters, players));
+  const models = {
+    characterActions: characterActionsModel(app.db),
+    characters: charactersModel(app.db),
+    players: playersModel(app.db),
+  };
+  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models));
 }
 
-export function onConnect(socket, characterActions, characters, players) {
-  socket.on('message', (raw) => onMessage(raw, socket, characterActions, characters, players));
+export function onConnect(socket, models) {
+  socket.on('message', (raw) => onMessage(raw, socket, models));
   setImmediate(() => {
     if(socket.readyState !== socket.OPEN) {
       return;
@@ -21,26 +23,26 @@ export function onConnect(socket, characterActions, characters, players) {
   });
 }
 
-export async function onMessage(raw, socket, characterActions, characters, players) {
+export async function onMessage(raw, socket, models) {
   const message = parseMessage(raw);
   if(!message || socket.readyState !== socket.OPEN) {
     return;
   }
   switch(message.cmd) {
     case 'auth':
-      return onAuthCmd(message, socket, characters, players);
+      return onAuthCmd(message, socket, models);
     case 'create':
-      return onCharacterActionsMessage(raw, socket, characterActions, characters);
+      return onCharacterActionsMessage(raw, socket, models);
     default:
       socket.send(JSON.stringify({error: 'invalid-cmd', type: 'error'}));
   }
 }
 
-function onAuthCmd(message, socket, characters, players) {
+function onAuthCmd(message, socket, models) {
   if(typeof message.token !== 'string') {
     return;
   }
-  return authenticate({characters, players}, message, socket);
+  return authenticate(models, message, socket);
 }
 
 function parseMessage(raw) {

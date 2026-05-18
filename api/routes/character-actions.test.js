@@ -31,7 +31,7 @@ describe('WebSocket /ws/character-actions', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage('{invalid', socket, null);
+    await onMessage('{invalid', socket, {});
 
     assert.equal(send.calls.length, 0);
   });
@@ -40,7 +40,7 @@ describe('WebSocket /ws/character-actions', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'noop', player_id: 1}), socket, null, null);
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'noop', player_id: 1}), socket, {});
 
     assert.equal(send.calls.length, 0);
   });
@@ -49,7 +49,7 @@ describe('WebSocket /ws/character-actions', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage(JSON.stringify({cmd: 'create', player_id: 1}), socket, null, null);
+    await onMessage(JSON.stringify({cmd: 'create', player_id: 1}), socket, {});
 
     assert.equal(send.calls.length, 0);
   });
@@ -58,7 +58,7 @@ describe('WebSocket /ws/character-actions', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'create'}), socket, null, null);
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'create'}), socket, {});
 
     assert.equal(send.calls.length, 0);
   });
@@ -67,7 +67,7 @@ describe('WebSocket /ws/character-actions', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 0, send};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'create', player_id: 1}), socket, null, null);
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'create', player_id: 1}), socket, {});
 
     assert.equal(send.calls.length, 0);
   });
@@ -79,7 +79,7 @@ describe('WebSocket /ws/character-actions', () => {
     const characterActions = {create};
     const characters = {findCurrentByPlayerID: async () => null};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'create', player_id: 1}), socket, characterActions, characters);
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'create', player_id: 1}), socket, {characterActions, characters});
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
@@ -91,7 +91,7 @@ describe('WebSocket /ws/character-actions', () => {
     const characterActions = {};
     const characters = {};
 
-    onConnect(socket, characterActions, characters);
+    onConnect(socket, {characterActions, characters});
 
     assert.equal(on.calls.length, 1);
     assert.equal(on.calls[0][0], 'message');
