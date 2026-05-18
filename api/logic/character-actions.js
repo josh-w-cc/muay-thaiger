@@ -1,24 +1,4 @@
-import fightersModel from '../data/models/fighters.js';
-import characterActionsModel from '../data/models/character-actions.js';
-
-
-/**
- * @param {import('fastify').FastifyInstance} app
- */
-export default async function characterActionsRoutes(app) {
-  const models = {
-    characterActions: characterActionsModel(app.db),
-    characters: fightersModel(app.db),
-  };
-  app.get('/character-actions', {websocket: true}, (socket) => onConnect(socket, models));
-}
-
-export function onConnect(socket, models) {
-  socket.on('message', (raw) => onMessage(raw, socket, models));
-}
-
-export async function onMessage(raw, socket, {characterActions, characters}) {
-  const message = parseMessage(raw);
+export async function createAndSend({characterActions, characters}, message, socket) {
   const normalizedMessage = normalizeMessage(message);
   if(!normalizedMessage || socket.readyState !== socket.OPEN) {
     return;
@@ -48,13 +28,4 @@ function normalizeMessage(message) {
     cmd: message.cmd,
     player_id: playerId,
   };
-}
-
-function parseMessage(raw) {
-  try {
-    return JSON.parse(raw);
-  }
-  catch{
-    return null;
-  }
 }

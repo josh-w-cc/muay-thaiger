@@ -2,7 +2,7 @@ import fightersModel from '../data/models/fighters.js';
 import characterActionsModel from '../data/models/character-actions.js';
 import playersModel from '../data/models/players.js';
 import {authenticate} from '../logic/auth.js';
-import {onMessage as onCharacterActionsMessage} from './character-actions.js';
+import {createAndSend} from '../logic/character-actions.js';
 
 export default async function connectRoutes(app) {
   const models = {
@@ -32,7 +32,7 @@ export async function onMessage(raw, socket, models) {
     case 'auth':
       return onAuthCmd(message, socket, models);
     case 'create':
-      return onCharacterActionsMessage(raw, socket, models);
+      return createAndSend(models, message, socket);
     default:
       socket.send(JSON.stringify({error: 'invalid-cmd', type: 'error'}));
   }
