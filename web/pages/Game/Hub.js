@@ -5,7 +5,7 @@ import css from './Hub.module.css';
 
 const STAT_FIELDS = [
   {key: 'agility', label: 'Agility'},
-  {key: 'speed', label: 'Speeed'},
+  {key: 'speed', label: 'Speed'},
   {key: 'strength', label: 'Strength'},
   {key: 'innateStrength', label: 'Innate Strength'},
   {key: 'vitality', label: 'Vitality'},
