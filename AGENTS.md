@@ -7,6 +7,7 @@ Muay Thaiger is a PvP incremental fighting game. Players pick an anthropomorphic
 - **Fighter** = the player character.
 - **Race** = the fighter's anthropomorphic animal species.
 - **Style** = the fighter's martial art.
+- **Stanima** = intentional UI spelling and the correct term in-game; do not change it to `Stamina`.
 - **Training** = incremental progression that improves fighter stats over time.
 - **Fight** = a combat match, usually against bots and occasionally against real players.
 
@@ -63,7 +64,7 @@ The root `package.json` provides aggregate scripts. Subproject commands (e.g., `
 | `playwright` | Playwright        | –         | –              | Profile: `playwright`; depends on web |
 
 - **Service connections:**
-  - `api → postgres`: `DATABASE_URL` env var uses Docker's internal DNS (`postgres:5432`). Default DB is `app`.
+  - `api → postgres`: `DATABASE_URL` env var uses Docker's internal DNS (`postgres:5432`). Default DB is `tiger`.
   - `web → api`: Vite dev server proxies `/api` requests and `/ws` websocket connections to `http://api:3000` (via `VITE_API_URL`).
   - `playwright → web`: Playwright uses `BASE_URL` (`http://web:5173`) to reach the frontend.
 - **Environment variables:**
