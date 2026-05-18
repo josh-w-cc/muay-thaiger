@@ -24,15 +24,16 @@ export const resetPlayerStore = () => {
   usePlayerStore.setState(getInitialState());
 };
 export const setPlayerToken = (token) => usePlayerStore.getState().setToken(token);
-function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
+function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket, token}) {
   return Boolean(
     !hasRespondedToAuth
     && hasReceivedAuthRequest
-    && hasSelectedFighter
+    && isReadyToAuth({hasSelectedFighter, token})
     && socket
     && socket.readyState === WebSocket.OPEN,
   );
 }
+const isReadyToAuth = ({hasSelectedFighter, token}) => hasSelectedFighter || !!token;
 function generateOnFighterSelectFn({get, set}) {
   return ({race, setScreen, socket}) => {
     set({hasSelectedFighter: true, selectedRace: race});
@@ -85,15 +86,15 @@ function onAuth({get, message, set, setScreen, socket}) {
 }
 function respondToAuth({get, set, socket}) {
   const {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, token} = get();
-  if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket})) {
+  if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket, token})) {
     return;
   }
   set({hasRespondedToAuth: true});
   socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
 }
 function routeToHubIfAuthorized({get, setScreen}) {
-  const {hasSelectedFighter, token} = get();
-  if(!hasSelectedFighter || !token) {
+  const {token} = get();
+  if(!token) {
     return;
   }
   setScreen('hub');

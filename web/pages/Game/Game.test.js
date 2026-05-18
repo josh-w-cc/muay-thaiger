@@ -216,6 +216,32 @@ describe('Game', () => {
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
 
+  it('sends stored token and redirects to hub on initial connect without fighter selection', async () => {
+    const send = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game, loader} = await import('./index.js');
+
+    renderGame({Game, loader});
+    await screen.findByRole('button', {name: 'Character Select'});
+    setPlayerToken('stored-token');
+    act(() => {
+      socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    });
+
+    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'stored-token'}));
+
+    act(() => {
+      socket.onmessage({data: JSON.stringify({player_id: 1, token: 'stored-token', type: 'auth'})});
+    });
+
+    expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
+  });
+
+
   it('responds with auth/new after auth when fighter is selected', async () => {
     const user = userEvent.setup();
     const send = vi.fn();

@@ -27,6 +27,29 @@ describe('usePlayerStore', () => {
     });
   }
 
+  it('sends auth with stored token without fighter selection when auth request is received', () => {
+    const send = vi.fn();
+    const socket = {readyState: 1, send};
+    const setScreen = vi.fn();
+    setPlayerToken('stored-token');
+
+    usePlayerStore.getState().onSocketMessage({message: {type: 'auth'}, setScreen, socket});
+
+    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'stored-token'}));
+    expect(setScreen).not.toHaveBeenCalled();
+  });
+
+  it('routes to hub when auth response includes token without fighter selection', () => {
+    const send = vi.fn();
+    const socket = {readyState: 1, send};
+    const setScreen = vi.fn();
+
+    usePlayerStore.getState().onSocketMessage({message: {token: 'server-token', type: 'auth'}, setScreen, socket});
+
+    expect(setScreen).toHaveBeenCalledWith('hub');
+  });
+
+
   it('sends auth/new after fighter selection when auth request is received', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
