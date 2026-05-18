@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {createAndSend} from './character-actions.js';
+import {createAndSend} from './fighter-actions.js';
 
 describe('createAndSend', () => {
   it('creates a character action for the player current character and sends it back on a valid message', async () => {
