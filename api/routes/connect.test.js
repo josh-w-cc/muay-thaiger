@@ -72,6 +72,7 @@ describe('WebSocket /ws/connect', () => {
     const socket = {OPEN: 1, readyState: 1, send};
 
     await onMessage(JSON.stringify({type: 'auth'}), socket, null);
+    await onMessage(JSON.stringify({token: 123, type: 'auth'}), socket, null);
     await onMessage(JSON.stringify({token: 'new', type: 'noop'}), socket, null);
 
     assert.equal(send.calls.length, 0);
