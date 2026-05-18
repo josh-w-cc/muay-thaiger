@@ -6,16 +6,18 @@ import characterActionsModel from '../data/models/character-actions.js';
  * @param {import('fastify').FastifyInstance} app
  */
 export default async function characterActionsRoutes(app) {
-  const characterActions = characterActionsModel(app.db);
-  const characters = charactersModel(app.db);
-  app.get('/character-actions', {websocket: true}, (socket) => onConnect(socket, characterActions, characters));
+  const models = {
+    characterActions: characterActionsModel(app.db),
+    characters: charactersModel(app.db),
+  };
+  app.get('/character-actions', {websocket: true}, (socket) => onConnect(socket, models));
 }
 
-export function onConnect(socket, characterActions, characters) {
-  socket.on('message', (raw) => onMessage(raw, socket, characterActions, characters));
+export function onConnect(socket, models) {
+  socket.on('message', (raw) => onMessage(raw, socket, models));
 }
 
-export async function onMessage(raw, socket, characterActions, characters) {
+export async function onMessage(raw, socket, {characterActions, characters}) {
   const message = parseMessage(raw);
   const normalizedMessage = normalizeMessage(message);
   if(!normalizedMessage || socket.readyState !== socket.OPEN) {
@@ -33,7 +35,7 @@ export async function onMessage(raw, socket, characterActions, characters) {
 }
 
 function normalizeMessage(message) {
-  if(!message || message.type !== 'create') {
+  if(!message || message.cmd !== 'create') {
     return null;
   }
   const actionId = Number(message.action_id);
@@ -43,8 +45,8 @@ function normalizeMessage(message) {
   }
   return {
     action_id: actionId,
+    cmd: message.cmd,
     player_id: playerId,
-    type: message.type,
   };
 }
 

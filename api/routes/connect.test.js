@@ -33,7 +33,7 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    socket.send(JSON.stringify({race: 2, token: 'new', type: 'auth'}));
+    socket.send(JSON.stringify({cmd: 'auth', race: 2, token: 'new'}));
     const message = await readMessage(socket);
 
     assert.equal(message.type, 'auth');
@@ -55,7 +55,7 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    socket.send(JSON.stringify({action_id: 2, player_id: 8, type: 'create'}));
+    socket.send(JSON.stringify({action_id: 2, cmd: 'create', player_id: 8}));
     const message = await readMessage(socket);
 
     assert.deepEqual(message, {characterAction: created, type: 'character_action'});
@@ -72,7 +72,7 @@ describe('WebSocket /ws/connect', () => {
       send,
     };
 
-    onConnect(socket, null, null, null);
+    onConnect(socket, {});
     await waitForImmediate();
 
     assert.equal(send.calls.length, 0);
@@ -82,26 +82,35 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage('{', socket, null, null, null);
+    await onMessage('{', socket, {});
 
     assert.equal(send.calls.length, 0);
   });
 
-  it('ignores websocket messages that are not valid auth messages', async () => {
+  it('ignores auth commands with missing token', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage(JSON.stringify({type: 'auth'}), socket, null, null, null);
-    await onMessage(JSON.stringify({token: 'new', type: 'noop'}), socket, null, null, null);
+    await onMessage(JSON.stringify({cmd: 'auth'}), socket, {});
 
     assert.equal(send.calls.length, 0);
+  });
+
+  it('sends error invalid-cmd for unrecognized commands', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+
+    await onMessage(JSON.stringify({cmd: 'noop', token: 'new'}), socket, {});
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {error: 'invalid-cmd', type: 'error'});
   });
 
   it('ignores auth messages with non-string token values', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage(JSON.stringify({token: 123, type: 'auth'}), socket, null, null, null);
+    await onMessage(JSON.stringify({cmd: 'auth', token: 123}), socket, {});
 
     assert.equal(send.calls.length, 0);
   });
@@ -110,7 +119,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 0, send};
 
-    await onMessage(JSON.stringify({race: 1, token: 'new', type: 'auth'}), socket, null, null, null);
+    await onMessage(JSON.stringify({cmd: 'auth', race: 1, token: 'new'}), socket, {});
 
     assert.equal(send.calls.length, 0);
   });
@@ -122,7 +131,7 @@ describe('WebSocket /ws/connect', () => {
     const player = {display_name: 'Player-abcdefgh', id: 1, token: 'player-uuid-token'};
     const players = {create: async () => player};
 
-    await onMessage(JSON.stringify({race: 2, token: 'new', type: 'auth'}), socket, null, characters, players);
+    await onMessage(JSON.stringify({cmd: 'auth', race: 2, token: 'new'}), socket, {characters, players});
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 1, token: 'player-uuid-token', type: 'auth'});
@@ -141,7 +150,7 @@ describe('WebSocket /ws/connect', () => {
     const player = {display_name: 'Player-abcdefgh', id: 1, token: 'player-uuid-token'};
     const players = {create: async () => player};
 
-    await onMessage(JSON.stringify({race: '2', token: 'new', type: 'auth'}), socket, null, characters, players);
+    await onMessage(JSON.stringify({cmd: 'auth', race: '2', token: 'new'}), socket, {characters, players});
 
     assert.equal(characterCreateCalls.length, 1);
     assert.deepEqual(characterCreateCalls[0], {display_name: 'Player-abcdefgh', player_id: 1, race: 2});
@@ -153,7 +162,7 @@ describe('WebSocket /ws/connect', () => {
     const characters = {create: async () => null};
     const players = {create: async () => ({id: 1, token: 'player-uuid-token'})};
 
-    await onMessage(JSON.stringify({race: 'not-a-race', token: 'new', type: 'auth'}), socket, null, characters, players);
+    await onMessage(JSON.stringify({cmd: 'auth', race: 'not-a-race', token: 'new'}), socket, {characters, players});
 
     assert.equal(send.calls.length, 0);
   });
@@ -171,7 +180,7 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({token: 'known-token', type: 'auth'}), socket, null, null, players);
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players});
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 5, token: 'known-token', type: 'auth'});
@@ -182,7 +191,7 @@ describe('WebSocket /ws/connect', () => {
     const socket = {OPEN: 1, readyState: 1, send};
     const players = {create: async () => null, findByToken: async () => null};
 
-    await onMessage(JSON.stringify({token: 'unknown-token', type: 'auth'}), socket, null, null, players);
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'unknown-token'}), socket, {players});
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});
@@ -195,7 +204,7 @@ describe('WebSocket /ws/connect', () => {
     const characterActions = {create};
     const characters = {findCurrentByPlayerID: async () => null};
 
-    await onMessage(JSON.stringify({action_id: 1, player_id: 1, type: 'create'}), socket, characterActions, characters, null);
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'create', player_id: 1}), socket, {characterActions, characters});
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
