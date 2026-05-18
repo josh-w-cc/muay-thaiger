@@ -44,8 +44,9 @@ vi.mock('../../orig/src/menus/Train', () => ({
 describe('Game', () => {
   beforeEach(() => {
     globalThis.WebSocket = vi.fn(function () {
-      return {close: vi.fn(), send: vi.fn()};
+      return {close: vi.fn(), readyState: 1, send: vi.fn()};
     });
+    globalThis.WebSocket.OPEN = 1;
   });
 
   afterEach(() => {
@@ -61,7 +62,7 @@ describe('Game', () => {
   });
 
   it('connects to the websocket when the game loads', async () => {
-    const {default: Game} = await import('./index.js');
+    const {default: Game} = await import('./Game.js');
 
     renderGame({Game});
 
@@ -78,7 +79,7 @@ describe('Game', () => {
       value: new URL('https://example.test/game'),
     });
     globalThis.window = secureWindow;
-    const {default: Game} = await import('./index.js');
+    const {default: Game} = await import('./Game.js');
 
     renderGame({Game});
 
@@ -106,6 +107,40 @@ describe('Game', () => {
 
     await user.click(screen.getByRole('button', {name: /train/i}));
     expect(screen.getByRole('heading', {name: 'Train Screen'})).toBeInTheDocument();
+  });
+
+  it('responds with auth/new after auth when fighter is selected', async () => {
+    const user = userEvent.setup();
+    const send = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game} = await import('./Game.js');
+
+    renderGame({Game});
+    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+
+    expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
+  });
+
+  it('ignores invalid websocket auth messages', async () => {
+    const user = userEvent.setup();
+    const send = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game} = await import('./Game.js');
+
+    renderGame({Game});
+    socket.onmessage({data: '{'});
+    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+
+    expect(send).not.toHaveBeenCalled();
   });
 
   it('renders and recovers from the fallback screen', async () => {
@@ -142,7 +177,7 @@ describe('Game', () => {
     globalThis.WebSocket = vi.fn(function () {
       return {close, send: vi.fn()};
     });
-    const {default: Game} = await import('./index.js');
+    const {default: Game} = await import('./Game.js');
 
     const {unmount} = renderGame({Game});
     unmount();
