@@ -9,8 +9,8 @@ import raceRoutes from '../routes/race.js';
 describe('GET /race', () => {
   it('returns list of race statics', async () => {
     const races = [
-      {id: 2, name: 'Snow Leopard', stats: {}, type: 'race'},
-      {id: 1, name: 'Tiger', stats: {}, type: 'race'},
+      {id: 2, name: 'Snow Leopard', stats: {}},
+      {id: 1, name: 'Tiger', stats: {}},
     ];
     const {calls, knex} = mockKnex(races);
     const app = Fastify();
@@ -21,8 +21,7 @@ describe('GET /race', () => {
 
     assert.equal(response.statusCode, 200);
     assert.deepEqual(response.json(), races);
-    assert.equal(calls.some((call) => call[0] === 'table' && call[1] === 'statics'), true);
-    assert.equal(calls.some((call) => call[0] === 'where' && call[1]?.type === 'race'), true);
+    assert.equal(calls.some((call) => call[0] === 'table' && call[1] === 'races'), true);
     assert.equal(calls.some((call) => call[0] === 'orderBy' && call[1] === 'name'), true);
     await app.close();
   });
