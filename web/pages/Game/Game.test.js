@@ -126,6 +126,23 @@ describe('Game', () => {
     expect(send).toHaveBeenCalledWith(JSON.stringify({token: 'new', type: 'auth'}));
   });
 
+  it('ignores invalid websocket auth messages', async () => {
+    const user = userEvent.setup();
+    const send = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    const {default: Game} = await import('./Game.js');
+
+    renderGame({Game});
+    socket.onmessage({data: '{'});
+    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it('renders and recovers from the fallback screen', async () => {
     const user = userEvent.setup();
     const {default: Game} = await import('./Game.js');

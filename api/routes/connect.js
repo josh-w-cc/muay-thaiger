@@ -2,7 +2,7 @@ export default async function connectRoutes(app) {
   app.get('/connect', {websocket: true}, onConnect);
 }
 
-function onConnect(socket) {
+export function onConnect(socket) {
   socket.on('message', (raw) => onMessage(raw, socket));
   setImmediate(() => {
     if(socket.readyState !== socket.OPEN) {
@@ -12,7 +12,7 @@ function onConnect(socket) {
   });
 }
 
-function onMessage(raw, socket) {
+export function onMessage(raw, socket) {
   let message;
   try {
     message = JSON.parse(raw);
