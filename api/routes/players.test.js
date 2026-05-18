@@ -8,30 +8,36 @@ import playersRoutes from '../routes/players.js';
 
 describe('GET /players', () => {
   it('returns list of players', async () => {
-    const {knex} = mockKnex([{display_name: 'Test', id: 1}]);
+    const {knex} = mockKnex([{display_name: 'Test', email: 'test@example.com', id: 1, password: 'secret'}]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(playersRoutes);
 
     const response = await app.inject({method: 'GET', url: '/players'});
+    const [player] = response.json();
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), [{display_name: 'Test', id: 1}]);
+    assert.deepEqual([player], [{display_name: 'Test', id: 1}]);
+    assert.equal('email' in player, false);
+    assert.equal('password' in player, false);
     await app.close();
   });
 });
 
 describe('GET /players/:id', () => {
   it('returns player when found', async () => {
-    const {knex} = mockKnex({display_name: 'Test', id: 1});
+    const {knex} = mockKnex({display_name: 'Test', email: 'test@example.com', id: 1, password: 'secret'});
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(playersRoutes);
 
     const response = await app.inject({method: 'GET', url: '/players/1'});
+    const player = response.json();
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), {display_name: 'Test', id: 1});
+    assert.deepEqual(player, {display_name: 'Test', id: 1});
+    assert.equal('email' in player, false);
+    assert.equal('password' in player, false);
     await app.close();
   });
 

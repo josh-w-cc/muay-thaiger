@@ -4,10 +4,13 @@ import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
 import connectRoutes, {onConnect, onMessage} from '../routes/connect.js';
+import {mockKnex} from '../data/utils/mock-knex.js';
 
 describe('WebSocket /ws/connect', () => {
   it('sends an auth request when the websocket connects', async () => {
+    const {knex} = mockKnex(undefined);
     const app = Fastify();
+    app.decorate('db', knex);
     await app.register(websocket);
     await app.register(connectRoutes, {prefix: '/ws'});
     await app.ready();
@@ -20,8 +23,10 @@ describe('WebSocket /ws/connect', () => {
     await app.close();
   });
 
-  it('sends auth confirmation after receiving an auth new response', async () => {
+  it('sends auth confirmation with player token after receiving an auth new response', async () => {
+    const {knex} = mockKnex([{display_name: 'Player-12345678', id: 1, token: 'generated-token'}]);
     const app = Fastify();
+    app.decorate('db', knex);
     await app.register(websocket);
     await app.register(connectRoutes, {prefix: '/ws'});
     await app.ready();
@@ -31,7 +36,8 @@ describe('WebSocket /ws/connect', () => {
     socket.send(JSON.stringify({token: 'new', type: 'auth'}));
     const message = await readMessage(socket);
 
-    assert.deepEqual(message, {token: 'new', type: 'auth'});
+    assert.equal(message.type, 'auth');
+    assert.equal(message.token, 'generated-token');
     socket.terminate();
     await app.close();
   });
@@ -45,38 +51,50 @@ describe('WebSocket /ws/connect', () => {
       send,
     };
 
-    onConnect(socket);
+    onConnect(socket, null);
     await waitForImmediate();
 
     assert.equal(send.calls.length, 0);
   });
 
-  it('ignores invalid JSON auth messages', () => {
+  it('ignores invalid JSON auth messages', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    onMessage('{', socket);
+    await onMessage('{', socket, null);
 
     assert.equal(send.calls.length, 0);
   });
 
-  it('ignores websocket messages that are not auth/new', () => {
+  it('ignores websocket messages that are not auth/new', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    onMessage(JSON.stringify({type: 'auth'}), socket);
-    onMessage(JSON.stringify({token: 'new', type: 'noop'}), socket);
+    await onMessage(JSON.stringify({type: 'auth'}), socket, null);
+    await onMessage(JSON.stringify({token: 'new', type: 'noop'}), socket, null);
 
     assert.equal(send.calls.length, 0);
   });
 
-  it('does not send auth confirmation when websocket is not open', () => {
+  it('does not send auth confirmation when websocket is not open', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 0, send};
 
-    onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket);
+    await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, null);
 
     assert.equal(send.calls.length, 0);
+  });
+
+  it('creates a player and sends the player token on auth new', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const player = {id: 1, token: 'player-uuid-token'};
+    const players = {create: async () => player};
+
+    await onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket, players);
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {token: 'player-uuid-token', type: 'auth'});
   });
 });
 
