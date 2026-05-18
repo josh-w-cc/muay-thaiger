@@ -6,6 +6,7 @@ import {PLAYER_TOKEN_STORAGE_KEY} from './useAuthSocket.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
+const originalLocalStorage = globalThis.localStorage;
 const originalWindow = globalThis.window;
 
 vi.mock('../../orig/src/menus/CharacterSelect', () => ({
@@ -54,9 +55,12 @@ describe('Game', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    setLocalStorage(originalLocalStorage);
     globalThis.WebSocket = originalWebSocket;
     globalThis.window = originalWindow;
-    localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
+    if(globalThis.localStorage) {
+      localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
+    }
   });
 
   it('loader returns null for character select', async () => {
@@ -72,6 +76,16 @@ describe('Game', () => {
 
   it('loader redirects to character select for token-protected screens when token is missing', async () => {
     const {loader} = await import('./index.js');
+    const response = loader({params: {screen: 'hub'}});
+
+    expect(response.headers.get('Location')).toBe('/');
+    expect(response.status).toBe(302);
+  });
+
+  it('loader redirects to character select when localStorage is unavailable', async () => {
+    const {loader} = await import('./index.js');
+    setLocalStorage(undefined);
+
     const response = loader({params: {screen: 'hub'}});
 
     expect(response.headers.get('Location')).toBe('/');
@@ -231,4 +245,11 @@ function renderGame({Game, initialPath = '/'}) {
       </Routes>
     </MemoryRouter>,
   );
+}
+
+function setLocalStorage(value) {
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value,
+  });
 }
