@@ -1,5 +1,6 @@
 import React from 'react';
 
+import formatHugeNumber from '../../formatHugeNumber.js';
 import useFighterStore from '../../Fighter.js';
 import Button from '../../components/Button.jsx';
 import BaseStats from './BaseStats.jsx';
@@ -29,12 +30,12 @@ function Character({name, image, stats, onSelect}) {
     <div className={css.inner}>
       <img src={image} className={css.avatar} />
       <div className={css.stats}>
-        Speed: {stats.speed}<br/>
-        Strength: {stats.strength}<br/>
-        Vitality: {stats.vitality}<br/>
-        Anima: {stats.anima}<br/>
-        Durability: {stats.durability}<br/>
-        Reach: {stats.reach}<br/>
+        Speed: {formatHugeNumber(stats.speed)}<br/>
+        Strength: {formatHugeNumber(stats.strength)}<br/>
+        Vitality: {formatHugeNumber(stats.vitality)}<br/>
+        Anima: {formatHugeNumber(stats.anima)}<br/>
+        Durability: {formatHugeNumber(stats.durability)}<br/>
+        Reach: {formatHugeNumber(stats.reach)}<br/>
         <Button onClick={onSelect} style={{fontWeight: 'bold', fontSize: 'larger'}}>CHOOSE</Button>
       </div>
     </div>
