@@ -12,11 +12,17 @@ export default function formatHugeNumber(value) {
 
 function formatIntegerString(value) {
   const isNegative = value.startsWith('-');
-  const digits = value.replace(/^[-+]/, '');
-  const trimmedDigits = digits.replace(/^0+/, '') || '0';
+  const digitsWithLeadingZeros = value.replace(/^[-+]/, '');
+  const trimmedDigits = digitsWithLeadingZeros.replace(/^0+/, '') || '0';
 
   if(trimmedDigits.length <= 5) {
-    return formatSignedDigits(isNegative, trimmedDigits);
+    if(trimmedDigits === '0') {
+      return '0';
+    }
+
+    const sign = isNegative ? '-' : '';
+
+    return `${sign}${trimmedDigits}`;
   }
 
   const exponent = trimmedDigits.length - 1;
@@ -33,14 +39,4 @@ function formatNumber(value) {
   }
 
   return value;
-}
-
-function formatSignedDigits(isNegative, trimmedDigits) {
-  if(trimmedDigits === '0') {
-    return '0';
-  }
-
-  const sign = isNegative ? '-' : '';
-
-  return `${sign}${trimmedDigits}`;
 }
