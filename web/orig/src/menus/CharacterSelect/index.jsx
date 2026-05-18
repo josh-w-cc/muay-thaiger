@@ -8,7 +8,7 @@ import BaseStats from './BaseStats.js';
 import css from './CharacterSelect.module.css';
 
 
-function CharacterSelect({onExit, raceStatics}) {
+function CharacterSelect({onExit, raceStatics = []}) {
   const fighter = useFighterStore();
 
   return (<>

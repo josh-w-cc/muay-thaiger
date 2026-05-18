@@ -12,21 +12,30 @@ import useAuthSocket from './useAuthSocket.js';
 import './Game.css';
 import '../../orig/src/index.css';
 
+const CHARACTER_SELECT_SCREEN = 'character-select';
+
 export async function loader({params}) {
-  if(getScreen(params) !== 'character-select') {
+  const screen = params?.screen ?? CHARACTER_SELECT_SCREEN;
+  if(screen !== CHARACTER_SELECT_SCREEN) {
     return null;
   }
-  return fetchJSON('race');
+  try {
+    return await fetchJSON('race');
+  }
+  catch(error) {
+    console.error('Failed to load race statics', error);
+    return [];
+  }
 }
 
 export default function Game() {
-  const raceStatics = useRaceStatics();
+  const raceStatics = useLoaderData() ?? [];
   const navigate = useNavigate();
-  const {screen = 'character-select'} = useParams();
+  const {screen = CHARACTER_SELECT_SCREEN} = useParams();
   const setScreen = generateSetScreenFn(navigate);
   const onCharacterSelectExit = useAuthSocket(setScreen);
 
-  if(screen === 'character-select') {
+  if(screen === CHARACTER_SELECT_SCREEN) {
     return <CharacterSelect onExit={onCharacterSelectExit} raceStatics={raceStatics} />;
   }
 
@@ -38,22 +47,9 @@ export default function Game() {
   );
 }
 
-function getScreen(params = {}) {
-  return params.screen ?? 'character-select';
-}
-
-function useRaceStatics() {
-  try {
-    return useLoaderData() ?? [];
-  }
-  catch{
-    return [];
-  }
-}
-
 function generateSetScreenFn(navigate) {
   return (screen) => {
-    if(screen === 'character-select') {
+    if(screen === CHARACTER_SELECT_SCREEN) {
       navigate('/');
       return;
     }
