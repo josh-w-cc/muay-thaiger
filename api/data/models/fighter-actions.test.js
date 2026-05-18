@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import characterActionsModel from './character-actions.js';
+import characterActionsModel from './fighter-actions.js';
 import {mockKnexMulti} from '../utils/mock-knex.js';
 
 
