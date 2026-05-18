@@ -4,7 +4,7 @@
 
 Layered structure: `routes/` → `logic/` → `data/`. For simple CRUD with no business rules, routes call data modules directly — do not create a logic module just to pass through. Create `logic/` and `data/` directories as needed when adding business logic and data access beyond the starter scaffolding.
 
-- **Routes** are async Fastify plugins registered via `app.register()` in `index.js`. They handle HTTP and delegate to logic or data modules.
+- **Routes** are async Fastify plugins registered via `app.register()` in `app.js`. `index.js` only boots the server. Routes handle HTTP and delegate to logic or data modules.
   - **Validation:** Use Fastify JSON schema validation by passing a `schema` object as a route option. Schemas are co-located in companion files (e.g., `schemas.js`).
   - **Responses:** Return objects/arrays directly — no wrapper envelope. Use `reply.code(201)` for POST creation. Use `reply.code(204).send()` for successful DELETE. Use `reply.code(404).send({error: 'Not found'})` for missing resources.
   - **URL conventions:** Route URLs use kebab-case. CRUD resource collections use plural nouns; singleton or action endpoints use singular.
@@ -62,4 +62,4 @@ HTTP endpoints below are registered under the `/api` prefix (except `/health`). 
 
 ## CI
 
-Add a GitHub Actions workflow at `.github/workflows/api.yml` to run lint and tests with 95% coverage thresholds on PRs touching `api/`.
+GitHub Actions workflow `.github/workflows/api.yml` runs lint and tests with 95% coverage thresholds on PRs touching `api/`.
