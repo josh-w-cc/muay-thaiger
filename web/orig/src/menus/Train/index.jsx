@@ -2,7 +2,7 @@ import React from 'react';
 
 import Button from '../../components/Button';
 import useFighterStore from '../../Fighter.js';
-import Skills from './Skills.jsx';
+import Skills from './Skills.js';
 import TrainStat from './TrainStat.jsx';
 
 import css from './Train.module.css';

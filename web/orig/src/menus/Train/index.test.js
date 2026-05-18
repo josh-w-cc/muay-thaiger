@@ -27,7 +27,7 @@ vi.mock('../../Fighter.js', () => ({
   default: () => fighter,
 }));
 
-vi.mock('./Skills.jsx', () => ({
+vi.mock('./Skills.js', () => ({
   default: {
     beg: {
       action,
