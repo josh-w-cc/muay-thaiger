@@ -4,23 +4,23 @@ import {clearStoredPlayerToken, getStoredPlayerToken, setStoredPlayerToken} from
 export {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 const usePlayerStore = create((set, get) => ({
   ...getInitialState(),
-  clearPlayerToken: () => {
+  clearToken: () => {
     clearStoredPlayerToken();
     set({token: null});
   },
-  loadPlayerToken: () => loadPlayerTokenIntoState(set),
+  loadToken: () => loadPlayerTokenIntoState(set),
   onFighterSelect: generateOnFighterSelectFn({get, set}),
   onSocketMessage: generateOnSocketMessageFn({get, set}),
-  setPlayerToken: (token) => {
+  setToken: (token) => {
     setStoredPlayerToken(token);
     set({token});
   },
 }));
 export default usePlayerStore;
-export const clearPlayerToken = () => usePlayerStore.getState().clearPlayerToken();
-export const loadPlayerToken = () => usePlayerStore.getState().loadPlayerToken();
+export const clearPlayerToken = () => usePlayerStore.getState().clearToken();
+export const loadPlayerToken = () => usePlayerStore.getState().loadToken();
 export const resetPlayerStore = () => usePlayerStore.setState(getInitialState());
-export const setPlayerToken = (token) => usePlayerStore.getState().setPlayerToken(token);
+export const setPlayerToken = (token) => usePlayerStore.getState().setToken(token);
 function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
   return Boolean(
     !hasRespondedToAuth
@@ -52,7 +52,12 @@ function generateOnSocketMessageFn({get, set}) {
     onAuth({get, message, set, setScreen, socket});
   };
 }
-const getAuthResponse = ({selectedRace, token}) => token ? {cmd: 'auth', token} : {cmd: 'auth', race: selectedRace, token: 'new'};
+function getAuthResponse({selectedRace, token}) {
+  if(token) {
+    return {cmd: 'auth', token};
+  }
+  return {cmd: 'auth', race: selectedRace, token: 'new'};
+}
 function getInitialState() {
   return {
     hasReceivedAuthRequest: false,
@@ -69,7 +74,8 @@ function loadPlayerTokenIntoState(set) {
 }
 function onAuth({get, message, set, setScreen, socket}) {
   if(message.token) {
-    setPlayerToken(message.token);
+    setStoredPlayerToken(message.token);
+    set({token: message.token});
     routeToHubIfAuthorized({get, setScreen});
   }
   set({hasReceivedAuthRequest: true});
