@@ -64,7 +64,9 @@ function getCombatState({agility, constitution, durability, reach, skill, stamin
 }
 
 export function getSelectionState(id) {
-  const nextState = {race: id, ...getBaseSelectionState(BaseStats[id].stats)};
+  const baseSelectionState = getBaseSelectionState(BaseStats[id].stats);
+  const nextState = {race: id, ...baseSelectionState};
+
   return {
     ...nextState,
     ...getCombatState(nextState),
@@ -72,5 +74,17 @@ export function getSelectionState(id) {
 }
 
 function getBaseSelectionState({anima, durability, reach, speed, strength: innateStrength, vitality}) {
-  return {agility: 0, anima, constitution: 0, durability, innateStrength, reach, skill: 0, speed, stamina: 0, strength: 0, vitality};
+  return {
+    agility: 0,
+    anima,
+    constitution: 0,
+    durability,
+    innateStrength,
+    reach,
+    skill: 0,
+    speed,
+    stamina: 0,
+    strength: 0,
+    vitality,
+  };
 }
