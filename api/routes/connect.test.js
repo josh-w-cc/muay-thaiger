@@ -3,7 +3,7 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
-import connectRoutes, {onConnect, onMessage} from '../routes/connect.js';
+import connectRoutes, {onConnect, onMessage, syncPlayerState} from '../routes/connect.js';
 import {mockKnex} from '../data/utils/mock-knex.js';
 
 describe('WebSocket /ws/connect', () => {
@@ -45,6 +45,7 @@ describe('WebSocket /ws/connect', () => {
 
   it('does not send auth request on connect when socket is not open', async () => {
     const send = createCallTracker();
+    const sockets = new Set();
     const socket = {
       OPEN: 1,
       on: createCallTracker(),
@@ -52,10 +53,27 @@ describe('WebSocket /ws/connect', () => {
       send,
     };
 
-    onConnect(socket, null, null);
+    onConnect(socket, null, null, sockets);
     await waitForImmediate();
 
+    assert.equal(sockets.has(socket), true);
     assert.equal(send.calls.length, 0);
+  });
+
+  it('removes the socket from active sockets when it closes', () => {
+    const sockets = new Set();
+    const socket = {
+      OPEN: 1,
+      on: createCallTracker(),
+      readyState: 0,
+      send: createCallTracker(),
+    };
+
+    onConnect(socket, null, null, sockets);
+    const closeCall = socket.on.calls.find(([eventName]) => eventName === 'close');
+    closeCall[1]();
+
+    assert.equal(sockets.has(socket), false);
   });
 
   it('ignores invalid JSON auth messages', async () => {
@@ -96,6 +114,7 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({race: 2, token: 'new', type: 'auth'}), socket, characters, players);
 
     assert.equal(send.calls.length, 1);
+    assert.equal(socket.playerID, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 1, token: 'player-uuid-token', type: 'auth'});
   });
 
@@ -145,7 +164,30 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({token: 'known-token', type: 'auth'}), socket, null, players);
 
     assert.equal(send.calls.length, 1);
+    assert.equal(socket.playerID, 5);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 5, token: 'known-token', type: 'auth'});
+  });
+
+  it('syncs current player character state to active websocket connections', async () => {
+    const send = createCallTracker();
+    const sockets = new Set([
+      {OPEN: 1, playerID: 2, readyState: 1, send},
+      {OPEN: 1, playerID: 3, readyState: 0, send: createCallTracker()},
+      {OPEN: 1, readyState: 1, send: createCallTracker()},
+    ]);
+    const characters = {
+      findCurrentByPlayer: async (playerID) => {
+        if(playerID !== 2) {
+          return null;
+        }
+        return {id: 9, player_id: 2, race: 1};
+      },
+    };
+
+    await syncPlayerState(characters, sockets);
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {character: {id: 9, player_id: 2, race: 1}, type: 'character_state'});
   });
 
   it('does not respond when auth token does not match a player', async () => {
