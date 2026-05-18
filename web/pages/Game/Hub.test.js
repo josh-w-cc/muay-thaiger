@@ -48,5 +48,8 @@ describe('Hub', () => {
     expect(screen.getByText('Temple Sparring Night')).toBeInTheDocument();
     expect(screen.getByText('Lumpinee Showcase')).toBeInTheDocument();
     expect(screen.getByText('Tiger Knee Clinic')).toBeInTheDocument();
+    expect(screen.getByText('Reward: +120 XP')).toBeInTheDocument();
+    expect(screen.getByText('Reward: ฿350')).toBeInTheDocument();
+    expect(screen.getByText('Reward: +2 Skill')).toBeInTheDocument();
   });
 });
