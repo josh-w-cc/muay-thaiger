@@ -1,6 +1,6 @@
 import {render, waitFor} from '@testing-library/react';
 
-import useConnectSocket from './useConnectSocket.js';
+import useConnectSocket, {connectSocketOnAppLoad} from './useConnectSocket.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -70,6 +70,23 @@ describe('useConnectSocket', () => {
 
     expect(onMessage).toHaveBeenCalledTimes(1);
     expect(onMessage).toHaveBeenCalledWith({message: {type: 'auth'}, socket});
+  });
+
+  it('forwards queued messages after app-load connect', async () => {
+    const onMessage = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+
+    connectSocketOnAppLoad();
+    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    render(<TestHarness onMessage={onMessage} />);
+
+    await waitFor(() => {
+      expect(onMessage).toHaveBeenCalledWith({message: {type: 'auth'}, socket});
+    });
   });
 
   it('closes the websocket when unmounted', async () => {
