@@ -71,6 +71,13 @@ function renderScreen(screen, setScreen) {
 }
 
 function shouldRedirectToCharacterSelect(screen) {
-  const hasToken = Boolean(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY));
+  const hasToken = getPlayerToken();
   return screen && screen !== 'character-select' && !hasToken;
+}
+
+function getPlayerToken() {
+  if(typeof localStorage === 'undefined') {
+    return null;
+  }
+  return localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY);
 }
