@@ -37,9 +37,9 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('does not send auth request on connect when socket is not open', async () => {
-    const send = generateMockCallTrackerFn();
+    const send = generateCallTrackerFn();
     const socket = {
-      on: generateMockCallTrackerFn(),
+      on: generateCallTrackerFn(),
       OPEN: 1,
       readyState: 0,
       send,
@@ -52,7 +52,7 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('ignores invalid JSON auth messages', () => {
-    const send = generateMockCallTrackerFn();
+    const send = generateCallTrackerFn();
     const socket = {OPEN: 1, readyState: 1, send};
 
     onMessage('{', socket);
@@ -61,7 +61,7 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('ignores websocket messages that are not auth/new', () => {
-    const send = generateMockCallTrackerFn();
+    const send = generateCallTrackerFn();
     const socket = {OPEN: 1, readyState: 1, send};
 
     onMessage(JSON.stringify({type: 'auth'}), socket);
@@ -71,7 +71,7 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('does not send auth confirmation when websocket is not open', () => {
-    const send = generateMockCallTrackerFn();
+    const send = generateCallTrackerFn();
     const socket = {OPEN: 1, readyState: 0, send};
 
     onMessage(JSON.stringify({token: 'new', type: 'auth'}), socket);
@@ -87,7 +87,7 @@ async function readMessage(socket) {
   });
 }
 
-function generateMockCallTrackerFn() {
+function generateCallTrackerFn() {
   const fn = (...args) => {
     fn.calls.push(args);
   };
