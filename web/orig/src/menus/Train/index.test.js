@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Train from './index.jsx';
+import Train from './index.js';
 
 
 const {action, fighter, idle} = vi.hoisted(() => {
