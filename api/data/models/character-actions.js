@@ -17,8 +17,8 @@ export default function characterActions(db) {
 }
 
 function generateListCharacterActionsFn(db, characters) {
-  return async (playerID) => {
-    const currentCharacter = await characters.findCurrentByPlayerID(playerID);
+  return async (playerId) => {
+    const currentCharacter = await characters.findCurrentByPlayerID(playerId);
     if(!currentCharacter) {
       return [];
     }

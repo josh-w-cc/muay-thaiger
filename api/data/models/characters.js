@@ -19,8 +19,8 @@ export default function characters(db) {
 }
 
 function generateFindCurrentByPlayerIDFn(db) {
-  return (playerID) => db('characters')
-    .where({player_id: playerID, retired: false})
+  return (playerId) => db('characters')
+    .where({player_id: playerId, retired: false})
     .orderBy('created_at', 'desc')
     .first();
 }

@@ -36,14 +36,14 @@ function normalizeMessage(message) {
   if(!message || message.type !== 'create') {
     return null;
   }
-  const actionID = Number(message.action_id);
-  const playerID = Number(message.player_id);
-  if(!Number.isInteger(actionID) || !Number.isInteger(playerID)) {
+  const actionId = Number(message.action_id);
+  const playerId = Number(message.player_id);
+  if(!Number.isInteger(actionId) || !Number.isInteger(playerId)) {
     return null;
   }
   return {
-    action_id: actionID,
-    player_id: playerID,
+    action_id: actionId,
+    player_id: playerId,
     type: message.type,
   };
 }
