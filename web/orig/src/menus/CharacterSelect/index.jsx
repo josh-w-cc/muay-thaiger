@@ -14,13 +14,13 @@ const RACE_IMAGES_BY_ID = {
   2: SnowLeopard,
 };
 
-function CharacterSelect({onExit, raceStatics = []}) {
+function CharacterSelect({onExit, races = []}) {
   return (<>
     <h1>Choose your fighter:</h1>
-    {raceStatics.map((raceStatic) =>
-      <Character key={raceStatic.id} name={raceStatic.name} image={getRaceImage(raceStatic.id)} stats={raceStatic.stats} onSelect={() => {
-        selectFighter(`${raceStatic.id}`);
-        onExit(`${raceStatic.id}`);
+    {races.map((race) =>
+      <Character key={race.id} name={race.name} image={getRaceImage(race.id)} stats={race.stats} onSelect={() => {
+        selectFighter(`${race.id}`);
+        onExit(`${race.id}`);
       }} />)
     }
   </>);

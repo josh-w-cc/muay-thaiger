@@ -19,11 +19,11 @@ describe('CharacterSelect', () => {
     vi.clearAllMocks();
   });
 
-  it('renders race statics and selects the chosen race', async () => {
+  it('renders races and selects the chosen race', async () => {
     const user = userEvent.setup();
     const onExit = vi.fn();
     const raceID = 2;
-    const raceStatics = [
+    const races = [
       {
         id: raceID,
         name: 'Snow Leopard Prime',
@@ -32,7 +32,7 @@ describe('CharacterSelect', () => {
     ];
     const {default: CharacterSelect} = await import('./index.jsx');
 
-    render(<CharacterSelect onExit={onExit} raceStatics={raceStatics} />);
+    render(<CharacterSelect onExit={onExit} races={races} />);
 
     const raceHeading = screen.getByRole('heading', {name: 'Snow Leopard Prime'});
     const raceCard = raceHeading.closest('div');
@@ -44,9 +44,9 @@ describe('CharacterSelect', () => {
     expect(onExit).toHaveBeenCalledTimes(1);
   });
 
-  it('renders all race statics that are provided and maps images by race ID', async () => {
+  it('renders all races that are provided and maps images by race ID', async () => {
     const {default: CharacterSelect} = await import('./index.jsx');
-    const raceStatics = [
+    const races = [
       {
         id: 2,
         name: 'Snow Leopard Prime',
@@ -59,7 +59,7 @@ describe('CharacterSelect', () => {
       },
     ];
 
-    render(<CharacterSelect onExit={vi.fn()} raceStatics={raceStatics} />);
+    render(<CharacterSelect onExit={vi.fn()} races={races} />);
 
     expect(screen.getByRole('heading', {name: 'Tiger'})).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: 'Snow Leopard Prime'})).toBeInTheDocument();

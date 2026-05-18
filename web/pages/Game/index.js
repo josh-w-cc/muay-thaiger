@@ -19,7 +19,7 @@ export async function loader({params}) {
   if(preLoadResponse !== undefined) {
     return preLoadResponse;
   }
-  return loadRaceStatics();
+  return loadRaces();
 }
 
 function getPreLoadResponse(screen) {
@@ -36,23 +36,23 @@ function getPreLoadResponse(screen) {
   return undefined;
 }
 
-async function loadRaceStatics() {
+async function loadRaces() {
   try {
     return await fetchJSON('race');
   }
   catch(error) {
-    console.error('Failed to load race statics', error);
+    console.error('Failed to load races', error);
     return [];
   }
 }
 
 
 export default function Game() {
-  const raceStatics = useLoaderData() ?? [];
+  const races = useLoaderData() ?? [];
   const {screen = CHARACTER_SELECT_SCREEN} = useParams();
   const onCharacterSelectExit = useAuthSocket();
   if(screen === CHARACTER_SELECT_SCREEN) {
-    return <CharacterSelect onExit={onCharacterSelectExit} raceStatics={raceStatics} />;
+    return <CharacterSelect onExit={onCharacterSelectExit} races={races} />;
   }
   return (
     <>
