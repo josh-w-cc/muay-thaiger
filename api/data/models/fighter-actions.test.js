@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import characterActionsModel from './character-actions.js';
+import characterActionsModel from './fighter-actions.js';
 import {mockKnexMulti} from '../utils/mock-knex.js';
 
 
@@ -19,7 +19,7 @@ describe('characterActions.list', () => {
     assert.deepEqual(calls[1], ['where', {player_id: 3, retired: false}]);
     assert.deepEqual(calls[2], ['orderBy', 'created_at', 'desc']);
     assert.deepEqual(calls[3], ['first']);
-    assert.deepEqual(calls[4], ['table', 'character_actions']);
+    assert.deepEqual(calls[4], ['table', 'fighter_actions']);
     assert.deepEqual(calls[5], ['where', {character_id: 7}]);
     assert.deepEqual(calls[6], ['orderBy', 'created_at']);
   });
