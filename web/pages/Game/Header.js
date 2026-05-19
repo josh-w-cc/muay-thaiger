@@ -1,6 +1,6 @@
 import {useNavigate} from 'react-router';
 
-import Button from '../../orig/src/components/Button';
+import Button from '@/components/Button.js';
 import FightButton from '../../orig/src/assets/FightButton.png';
 import HubButton from '../../orig/src/assets/HubButton.png';
 import ShopButton from '../../orig/src/assets/ShopButton.png';

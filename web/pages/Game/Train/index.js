@@ -1,4 +1,4 @@
-import Button from '@/orig/src/components/Button.jsx';
+import Button from '@/components/Button.js';
 import useFighterStore from '@/data/fighter.js';
 
 import Skills from './Skills.js';

@@ -1,6 +1,6 @@
 import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import selectFighter from '@/actions/selectFighter.js';
-import Button from '../../../orig/src/components/Button.jsx';
+import Button from '@/components/Button.js';
 import SnowLeopard from './assets/SnowLeopard.png';
 import Tiger from './assets/Tiger.png';
 

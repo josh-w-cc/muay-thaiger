@@ -3,8 +3,7 @@ import React from 'react';
 import useFighterStore from '@/data/fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '@/data/fight.js';
 import formatHugeNumber from "@/utils/formatHugeNumber.js";
-
-import Button from '../../components/Button.jsx';
+import Button from '@/components/Button.js';
 
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
 
