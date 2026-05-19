@@ -2,7 +2,7 @@ import {Outlet, redirect, useLoaderData, useNavigate} from 'react-router';
 
 import {loadPlayerToken} from '@/data/player.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
-import CharacterSelect from '../../orig/src/menus/CharacterSelect';
+import CharacterSelect from './CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
 import Header from './Header.js';
 import Hub from './Hub.js';
