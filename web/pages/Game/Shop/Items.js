@@ -2,14 +2,22 @@ const Items = {
   food: {
     name: 'Food',
     cost: 1,
-    tick: () => {},
-    train: () => {},
+    tick: (delta) => {
+      void delta;
+    },
+    train: (fighter) => {
+      void fighter;
+    },
   },
   biz: {
     name: 'Dry Cleaners',
     cost: 1000000,
-    tick: () => {},
-    train: () => {},
+    tick: (delta) => {
+      void delta;
+    },
+    train: (fighter) => {
+      void fighter;
+    },
   },
 };
 

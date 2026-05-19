@@ -14,7 +14,12 @@ function Shop() {
       <h1>SHOP</h1>
       {Object.keys(Items).map((itemKey) => (
         <div key={itemKey}>
-          {renderItem({buy, fighter, item: Items[itemKey]})}
+          {Items[itemKey].name}
+          {' '}
+          {formatHugeNumber(Items[itemKey].cost)}
+          ฿
+          <Button onClick={() => buy(fighter, Items[itemKey])}>Buy</Button>
+          <br />
         </div>
       ))}
     </>
@@ -22,17 +27,3 @@ function Shop() {
 }
 
 export default Shop;
-
-
-function renderItem({buy, fighter, item}) {
-  return (
-    <>
-      {item.name}
-      {' '}
-      {formatHugeNumber(item.cost)}
-      ฿
-      <Button onClick={() => buy(fighter, item)}>Buy</Button>
-      <br />
-    </>
-  );
-}
