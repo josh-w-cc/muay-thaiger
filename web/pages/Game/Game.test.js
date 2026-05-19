@@ -14,7 +14,7 @@ const {routerNavigate} = vi.hoisted(() => ({
   routerNavigate: vi.fn(),
 }));
 
-vi.mock('../../orig/src/menus/CharacterSelect', () => ({
+vi.mock('./CharacterSelect', () => ({
   default: function MockCharacterSelect({onExit}) {
     return <button onClick={() => onExit('1')}>Character Select</button>;
   },

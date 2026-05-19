@@ -1,5 +1,5 @@
-import SnowLeopard from '@/orig/src/menus/CharacterSelect/assets/SnowLeopard.png';
-import Tiger from '@/orig/src/menus/CharacterSelect/assets/Tiger.png';
+import SnowLeopard from '@/pages/Game/CharacterSelect/assets/SnowLeopard.png';
+import Tiger from '@/pages/Game/CharacterSelect/assets/Tiger.png';
 
 const RACE_IMAGES = {
   1: Tiger,
