@@ -46,7 +46,7 @@ vi.mock('../../orig/src/menus/Shop', () => ({
   },
 }));
 
-vi.mock('../../orig/src/menus/Train', () => ({
+vi.mock('./Train', () => ({
   default: function MockTrain() {
     return <h2>Train Screen</h2>;
   },

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import useFighterStore from '@/data/fighter.js';
 import formatHugeNumber from '@/utils/formatHugeNumber.js';
 
