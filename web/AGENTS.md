@@ -4,8 +4,8 @@
 
 The web app is a Vite-built SPA using React Router for client-side routing. It has no direct database access — all data flows through the Fastify API.
 
-- **`pages/`** — Route components with React Router loaders. Each page exports a default component and a `loader` function. Loaders fetch data from `/api/...` (relative URLs) before the route renders. Components access loader data via `useLoaderData()`.
-- **`router.js`** — Route configuration using `createBrowserRouter`. Routes use `lazy()` via a `lazyPage(importFn)` helper that maps each page module's `{default, loader}` to `{Component, loader}` for code-splitting.
+- **`pages/`** — Route modules with React Router components and loaders. A page may export a default component and can also export named route components/loaders used by `router.js`. Loaders fetch data from `/api/...` (relative URLs) before the route renders. Components access loader data via `useLoaderData()`.
+- **`router.js`** — Route configuration using `createBrowserRouter`. Routes use `lazy()` via a `lazyPage(importFn, {component, loader})` helper that maps the requested page-module exports to `{Component, loader}` for code-splitting.
 - **`actions/`** — Client-side mutation helpers. These call the Fastify API via `fetchAPI()` from `utils/fetchAPI.js`. After mutations, actions update Zustand stores directly so the UI reflects changes without re-running loaders. Each action file should have only a default export and be named after the action (e.g., `moveTask.js`).
 - **`components/`** — Shared components live here.
 - **`data/`** — Zustand stores.  Actions update stores optimistically before awaiting API calls.
