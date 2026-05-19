@@ -1,7 +1,7 @@
 import {SKILL_IDS, SKILL_SEED_ACTIONS} from 'shared/skills.js';
 
 
-export const SEED_CHARACTERS = [
+export const SEED_FIGHTERS = [
   {display_name: 'RamrodRit Jr', gold: '0', id: 1, player_id: 1, race: 1},
   {display_name: 'SaklekSilva Jr', gold: '0', id: 2, player_id: 2, race: 2},
 ];
@@ -33,7 +33,7 @@ export async function seed(knex) {
   await insertActions(knex);
   await insertPlayers(knex);
   await insertRaces(knex);
-  await insertCharacters(knex);
+  await insertFighters(knex);
   await resetSequences(knex);
 }
 
@@ -51,9 +51,9 @@ async function insertPlayers(knex) {
     .ignore();
 }
 
-async function insertCharacters(knex) {
+async function insertFighters(knex) {
   await knex('fighters')
-    .insert(SEED_CHARACTERS)
+    .insert(SEED_FIGHTERS)
     .onConflict('id')
     .ignore();
 }
