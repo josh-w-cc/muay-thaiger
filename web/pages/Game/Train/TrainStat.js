@@ -3,7 +3,7 @@ import formatHugeNumber from '@/utils/formatHugeNumber.js';
 
 import css from './TrainStat.module.css';
 
-function TrainStat({name, stat}) {
+export default function TrainStat({name, stat}) {
   const fighter = useFighterStore();
 
   return (
@@ -13,4 +13,3 @@ function TrainStat({name, stat}) {
     </div>
   );
 }
-export default TrainStat;
