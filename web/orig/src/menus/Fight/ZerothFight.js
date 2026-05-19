@@ -20,7 +20,7 @@ function ZerothFight() {
   fighter.spend(fighter.gold);
   setEvent(<div className={css.message}>He takes your ฿ and pushes you down.  He runs off.  {fighter.stamina ?
     <span>You catch him, but you lack the <strong>strength</strong> to get your ฿ back.</span> :
-    <span>You need more <strong>stamina</strong> to catch him.</span>}
+    <span>You need more <strong>stanima</strong> to catch him.</span>}
   </div>);
 }
 

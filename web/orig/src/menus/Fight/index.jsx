@@ -6,7 +6,7 @@ import formatHugeNumber from "@/utils/formatHugeNumber.js";
 
 import Button from '../../components/Button.jsx';
 
-import ZerothFight, {needsZerothFight} from './ZerothFight.jsx';
+import ZerothFight, {needsZerothFight} from './ZerothFight.js';
 
 
 function FightMenu() {
