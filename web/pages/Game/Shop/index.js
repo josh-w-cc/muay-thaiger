@@ -12,7 +12,11 @@ function Shop() {
   return (
     <>
       <h1>SHOP</h1>
-      {Object.keys(Items).map((itemKey) => renderItem({buy, fighter, item: Items[itemKey], itemKey}))}
+      {Object.keys(Items).map((itemKey) => (
+        <div key={itemKey}>
+          {renderItem({buy, fighter, item: Items[itemKey]})}
+        </div>
+      ))}
     </>
   );
 }
@@ -20,15 +24,15 @@ function Shop() {
 export default Shop;
 
 
-function renderItem({buy, fighter, item, itemKey}) {
+function renderItem({buy, fighter, item}) {
   return (
-    <div key={itemKey}>
+    <>
       {item.name}
       {' '}
       {formatHugeNumber(item.cost)}
       ฿
       <Button onClick={() => buy(fighter, item)}>Buy</Button>
       <br />
-    </div>
+    </>
   );
 }
