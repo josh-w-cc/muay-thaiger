@@ -3,7 +3,7 @@ const Items = {
     name: 'Food',
     cost: 1,
   },
-  dryCleaners: {
+  biz: {
     name: 'Dry Cleaners',
     cost: 1000000,
   },
