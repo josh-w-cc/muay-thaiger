@@ -38,7 +38,7 @@ function Character({image, name, onSelect, stats}) {
   return (
     <div className={css.outer}>
       <h3>{name}</h3>
-      <CharacterBody image={image} onSelect={onSelect} stats={stats} />
+      <CharacterBody image={image} name={name} onSelect={onSelect} stats={stats} />
     </div>
   );
 }
@@ -47,10 +47,10 @@ function getRaceImage(raceID) {
   return RACE_IMAGES_BY_ID[raceID];
 }
 
-function CharacterBody({image, onSelect, stats}) {
+function CharacterBody({image, name, onSelect, stats}) {
   return (
     <div className={css.inner}>
-      <img src={image} className={css.avatar} />
+      <img alt={name} src={image} className={css.avatar} />
       <div className={css.stats}>
         {renderStats(stats)}
         <Button onClick={onSelect} style={{fontWeight: 'bold', fontSize: 'larger'}}>CHOOSE</Button>
