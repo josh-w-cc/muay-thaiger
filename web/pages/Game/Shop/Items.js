@@ -3,9 +3,7 @@ const Items = {
     name: 'Food',
     cost: 1,
     tick: () => {},
-    train: () => {
-      console.log('yummy');
-    },
+    train: () => {},
   },
   biz: {
     name: 'Dry Cleaners',
