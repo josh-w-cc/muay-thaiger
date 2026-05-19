@@ -30,7 +30,7 @@ describe('CharacterSelect', () => {
         stats: {anima: 8, durability: 7, reach: 6, speed: 9, strength: 5, vitality: 4},
       },
     ];
-    const {default: CharacterSelect} = await import('./index.jsx');
+    const {default: CharacterSelect} = await import('./index.js');
 
     render(<CharacterSelect onExit={onExit} races={races} />);
 
@@ -45,7 +45,7 @@ describe('CharacterSelect', () => {
   });
 
   it('renders all races that are provided and maps images by race ID', async () => {
-    const {default: CharacterSelect} = await import('./index.jsx');
+    const {default: CharacterSelect} = await import('./index.js');
     const races = [
       {
         id: 2,
