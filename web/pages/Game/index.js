@@ -6,7 +6,7 @@ import CharacterSelect from './CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
 import Header from './Header.js';
 import Hub from './Hub.js';
-import Shop from '../../orig/src/menus/Shop';
+import Shop from './Shop';
 import Train from './Train';
 import useAuthSocket from './useAuthSocket.js';
 import './Game.css';

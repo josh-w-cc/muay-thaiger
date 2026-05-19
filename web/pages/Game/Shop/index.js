@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Button from '@/components/Button.js';
 import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import useFighterStore from '@/data/fighter.js';
@@ -13,13 +11,13 @@ function Shop() {
 
   return (<>
     <h1>SHOP</h1>
-    {Object.keys(Items).map(i => <>
+    {Object.keys(Items).map(i => <div key={i}>
       {Items[i].name}
       {' '}
       {formatHugeNumber(Items[i].cost)}฿
       <Button onClick={() => buy(fighter, Items[i])}>Buy</Button>
       <br />
-    </>)}
+    </div>)}
   </>);
 }
 
