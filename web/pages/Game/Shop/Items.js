@@ -3,14 +3,14 @@ const Items = {
     name: 'Food',
     cost: 1,
     tick: () => {},
-    train: (fighter) => {
+    train: () => {
       console.log('yummy');
     },
   },
   biz: {
     name: 'Dry Cleaners',
     cost: 1000000,
-    tick: (delta) => {},
+    tick: () => {},
     train: () => {},
   },
 };
