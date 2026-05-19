@@ -1,4 +1,4 @@
-import {Outlet, redirect, useLoaderData, useNavigate} from 'react-router';
+import {Outlet, redirect, useLoaderData, useNavigate} from 'react-router-dom';
 
 import {loadPlayerToken} from '@/data/player.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';

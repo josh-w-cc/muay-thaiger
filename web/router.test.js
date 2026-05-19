@@ -1,6 +1,6 @@
 const createBrowserRouter = vi.fn((routes) => routes);
 
-vi.mock('react-router', () => ({
+vi.mock('react-router-dom', () => ({
   createBrowserRouter,
 }));
 
