@@ -40,13 +40,21 @@ export async function onMessage(raw, socket, models) {
   if(!message || socket.readyState !== socket.OPEN) {
     return;
   }
-  switch(message.cmd) {
-    case 'auth':
-      return authenticateAndSendPlayerState(models, message, socket);
-    case 'idle':
-      return registerFighterAction(models, message, socket);
-    default:
-      socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
+  try {
+    switch(message.cmd) {
+      case 'auth':
+        return await authenticateAndSendPlayerState(models, message, socket);
+      case 'idle':
+        return await registerFighterAction(models, message, socket);
+      default:
+        socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
+    }
+  }
+  catch {
+    if(!isSocketOpen(socket)) {
+      return;
+    }
+    socket.send(JSON.stringify({cmd: 'error', error: 'internal-error'}));
   }
 }
 
