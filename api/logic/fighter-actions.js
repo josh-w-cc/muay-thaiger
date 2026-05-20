@@ -1,3 +1,11 @@
+import {SKILL_DEFINITIONS, SKILL_IDS} from 'shared/skills.js';
+
+const SKILLS_BY_ACTION_ID = Object.freeze(
+  Object.fromEntries(
+    Object.entries(SKILL_IDS).map(([key, id]) => [id, SKILL_DEFINITIONS[key]]),
+  ),
+);
+
 export async function registerFighterAction({fighterActions, fighters}, message, socket) {
   const normalizedMessage = normalizeMessage(message);
   if(!normalizedMessage || !socket.player || socket.readyState !== socket.OPEN) {
@@ -5,6 +13,9 @@ export async function registerFighterAction({fighterActions, fighters}, message,
   }
   const currentFighter = await fighters.findCurrentByPlayerID(socket.player.id);
   if(!currentFighter) {
+    return;
+  }
+  if(!isValidAction(currentFighter, normalizedMessage.action_id)) {
     return;
   }
   const fighterAction = await fighterActions.create({
@@ -28,4 +39,12 @@ function normalizeMessage(message) {
   return {
     action_id: actionId,
   };
+}
+
+function isValidAction(fighter, actionID) {
+  const skill = SKILLS_BY_ACTION_ID[actionID];
+  if(!skill) {
+    return false;
+  }
+  return skill.requires(fighter.stats || {});
 }
