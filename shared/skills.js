@@ -47,7 +47,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('constitution');
     },
     name: 'Yoga',
-    requires: (fighter) => fighter.stamina > 100 && fighter.constitution > 1,
+    requires: (fighter) => fighter.stamina > 100,
   },
   calisthenics: {
     action: (fighter) => {
