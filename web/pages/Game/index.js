@@ -3,7 +3,7 @@ import {Outlet, redirect, useLoaderData, useNavigate} from 'react-router-dom';
 import {loadPlayerToken} from '@/data/player.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import CharacterSelect from './CharacterSelect';
-import Fight from '../../orig/src/menus/Fight';
+import Fight from './Fight';
 import Header from './Header.js';
 import Hub from './Hub.js';
 import Shop from './Shop';
