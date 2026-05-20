@@ -4,7 +4,7 @@ import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
-import {authenticateAndSendPlayerState} from '../logic/player-state.js';
+import {authenticateAndSendPlayerState, sendPlayerState} from '../logic/player-state.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
 import {applyTraining} from '../logic/training.js';
 
@@ -64,7 +64,7 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
       continue;
     }
     const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
-    socket.send(JSON.stringify({actions, cmd: 'player_state', fighter: updatedFighter}));
+    sendPlayerState(actions, updatedFighter, socket);
   }
 }
 
