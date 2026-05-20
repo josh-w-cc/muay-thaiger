@@ -113,6 +113,13 @@ describe('player websocket helpers', () => {
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'new-token'}));
   });
 
+  it('stores auth player id when provided in auth message', () => {
+    const socket = connectSocketOnAppLoad();
+    socket.onmessage({data: JSON.stringify({cmd: 'auth', player_id: 77})});
+
+    expect(usePlayerStore.getState().playerID).toBe(77);
+  });
+
   it('overwrites client player and fighter state when player_state is received', () => {
     usePlayerStore.getState().selectFighter('99');
     usePlayerStore.getState().setPlayerID(999);
@@ -163,6 +170,33 @@ describe('player websocket helpers', () => {
     createFighterActionCmd(2);
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
+  });
+
+  it('does not send idle command for invalid fighter actions', () => {
+    const socket = connectSocketOnAppLoad();
+    const send = vi.fn();
+    socket.send = send;
+
+    createFighterActionCmd('2');
+
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('reuses the existing websocket connection', () => {
+    const firstSocket = connectSocketOnAppLoad();
+    const secondSocket = connectSocketOnAppLoad();
+
+    expect(secondSocket).toBe(firstSocket);
+    expect(globalThis.WebSocket).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores player_state messages without fighter data', () => {
+    const initialFighterID = useFighterStore.getState().id;
+    const socket = connectSocketOnAppLoad();
+    socket.onmessage({data: JSON.stringify({cmd: 'player_state'})});
+
+    expect(useFighterStore.getState().id).toBe(initialFighterID);
+    expect(routerNavigate).not.toHaveBeenCalled();
   });
 
   it('ignores invalid websocket messages and logs unknown commands', () => {
