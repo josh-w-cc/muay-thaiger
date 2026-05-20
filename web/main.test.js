@@ -7,7 +7,7 @@ vi.mock('react-dom/client', () => ({
   createRoot,
 }));
 
-vi.mock('react-router', () => ({
+vi.mock('react-router-dom', () => ({
   RouterProvider: () => <div>router</div>,
 }));
 

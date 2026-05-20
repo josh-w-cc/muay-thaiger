@@ -1,4 +1,4 @@
-import {useNavigate} from 'react-router';
+import {useNavigate} from 'react-router-dom';
 
 import Button from '@/components/Button.js';
 import FightButton from '../../orig/src/assets/FightButton.png';
