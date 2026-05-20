@@ -14,10 +14,13 @@ const STAT_FIELDS = [
   {name: 'Skill', stat: 'skill'},
   {name: 'Stanima', stat: 'stamina'},
 ];
+const CLINCH_ROUNDS_PROGRESS = 86;
+const FOOTWORK_LADDER_PROGRESS = 34;
+const PAD_WORK_PROGRESS = 61;
 const TRAINING_REGIMEN = [
-  {name: 'Footwork Ladder', progress: 34},
-  {name: 'Pad Work', progress: 61},
-  {name: 'Clinch Rounds', progress: 86},
+  {name: 'Footwork Ladder', progress: FOOTWORK_LADDER_PROGRESS},
+  {name: 'Pad Work', progress: PAD_WORK_PROGRESS},
+  {name: 'Clinch Rounds', progress: CLINCH_ROUNDS_PROGRESS},
 ];
 
 export default function Train() {
