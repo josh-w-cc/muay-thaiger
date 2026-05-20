@@ -62,7 +62,7 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
     if(!fighter) {
       continue;
     }
-    const actions = await fighterActions.list(socket.player.id);
+    const actions = await fighterActions.listByFighterID(fighter.id);
     socket.send(JSON.stringify({actions, cmd: 'player_state', fighter}));
   }
 }

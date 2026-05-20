@@ -288,7 +288,7 @@ describe('WebSocket /ws/connect', () => {
     const sendNoFighter = createCallTracker();
     const closedSocket = {OPEN: 1, player: {id: 3}, readyState: 0, send: createCallTracker()};
     const fighterActions = {
-      list: async () => [{action_id: 1, fighter_id: 9, id: 5}],
+      listByFighterID: async () => [{action_id: 1, fighter_id: 9, id: 5}],
     };
     const fighters = {
       findCurrentByPlayerID: async (id) => {
