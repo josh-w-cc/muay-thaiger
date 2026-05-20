@@ -63,7 +63,7 @@ describe('registerFighterAction', () => {
   it('does not respond when action_id does not map to a valid skill', async () => {
     const send = createCallTracker();
     const create = createCallTracker();
-    const socket = {OPEN: 1, readyState: 1, player: {id: 8}, send};
+    const socket = {OPEN: 1, player: {id: 8}, readyState: 1, send};
     const fighterActions = {create};
     const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {}})};
 
