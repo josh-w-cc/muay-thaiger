@@ -42,8 +42,8 @@ function isSocketReady(socket) {
   return socket.player && socket.readyState === socket.OPEN;
 }
 
-function isValidAction(fighter, actionID) {
-  const skill = SKILLS_BY_ACTION_ID[actionID];
+function isValidAction(fighter, actionId) {
+  const skill = SKILLS_BY_ACTION_ID[actionId];
   if(!skill) {
     return false;
   }
