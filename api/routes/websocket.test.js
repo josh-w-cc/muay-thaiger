@@ -6,6 +6,8 @@ import websocket from '@fastify/websocket';
 import websocketRoutes, {onConnect, onMessage, syncPlayerState} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
+const RACE_DEFAULT_STATS = {anima: 2, durability: 2, reach: 1, speed: 2, strength: 1, vitality: 1};
+
 describe('WebSocket /ws/connect', () => {
   it('sends an auth request when the websocket connects', async () => {
     const {knex} = mockKnex(undefined);
@@ -146,7 +148,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
     const fighters = {create: async () => null};
-    const races = {find: async () => ({id: 2, stats: {anima: 2, durability: 2, reach: 1, speed: 2, strength: 1, vitality: 1}})};
+    const races = {find: async () => ({id: 2, stats: RACE_DEFAULT_STATS})};
     const player = {display_name: 'Player-abcdefgh', id: 1, token: 'player-uuid-token'};
     const players = {create: async () => player};
 
@@ -166,7 +168,7 @@ describe('WebSocket /ws/connect', () => {
         return input;
       },
     };
-    const races = {find: async () => ({id: 2, stats: {anima: 2, durability: 2, reach: 1, speed: 2, strength: 1, vitality: 1}})};
+    const races = {find: async () => ({id: 2, stats: RACE_DEFAULT_STATS})};
     const player = {display_name: 'Player-abcdefgh', id: 1, token: 'player-uuid-token'};
     const players = {create: async () => player};
 
@@ -209,10 +211,17 @@ describe('WebSocket /ws/connect', () => {
     const socket = {OPEN: 1, readyState: 1, send};
     const fighters = {create: async () => null};
     const races = {find: async () => null};
-    const players = {create: async () => ({id: 1, token: 'player-uuid-token'})};
+    const createPlayer = createCallTracker();
+    const players = {
+      create: (...args) => {
+        createPlayer(...args);
+        return {id: 1, token: 'player-uuid-token'};
+      },
+    };
 
     await onMessage(JSON.stringify({cmd: 'auth', race: '3', token: 'new'}), socket, {fighters, players, races});
 
+    assert.equal(createPlayer.calls.length, 0);
     assert.equal(send.calls.length, 0);
   });
 

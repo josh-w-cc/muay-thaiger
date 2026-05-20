@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 
 const TOKEN_PREVIEW_LENGTH = 8;
-const TRAINING_DEFAULT_STATS = {
+const DEFAULT_TRAINING_STATS = {
   agility: 0,
   constitution: 0,
   skill: 0,
@@ -51,5 +51,5 @@ async function createPlayer({fighters, players, races}, race) {
 }
 
 function getDefaultStats({stats = {}}) {
-  return {...TRAINING_DEFAULT_STATS, ...stats};
+  return {...DEFAULT_TRAINING_STATS, ...stats};
 }
