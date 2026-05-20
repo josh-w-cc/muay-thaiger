@@ -1,9 +1,15 @@
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
+import {selectFighterCmd} from '@/data/websocket.js';
 import {getConnectedSocket} from '@/pages/Game/useConnectSocket.js';
 
 
 export default function selectFighter(id) {
   useFighterStore.getState().select(id);
-  usePlayerStore.getState().onFighterSelect({race: id, socket: getConnectedSocket()});
+  selectFighterCmd({
+    get: usePlayerStore.getState,
+    race: id,
+    set: usePlayerStore.setState,
+    socket: getConnectedSocket(),
+  });
 }
