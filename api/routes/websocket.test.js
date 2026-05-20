@@ -287,6 +287,9 @@ describe('WebSocket /ws/connect', () => {
     const sendOpen = createCallTracker();
     const sendNoFighter = createCallTracker();
     const closedSocket = {OPEN: 1, player: {id: 3}, readyState: 0, send: createCallTracker()};
+    const fighterActions = {
+      list: async () => [{action_id: 1, fighter_id: 9, id: 5}],
+    };
     const fighters = {
       findCurrentByPlayerID: async (id) => {
         if(id === 1) {
@@ -302,10 +305,11 @@ describe('WebSocket /ws/connect', () => {
       closedSocket,
     ]);
 
-    await syncPlayerState({fighters}, sockets);
+    await syncPlayerState({fighterActions, fighters}, sockets);
 
     assert.equal(sendOpen.calls.length, 1);
     assert.deepEqual(JSON.parse(sendOpen.calls[0][0]), {
+      actions: [{action_id: 1, fighter_id: 9, id: 5}],
       cmd: 'player_state',
       fighter: {id: 9, player_id: 1, retired: false},
     });

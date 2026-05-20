@@ -7,6 +7,7 @@ const useFighterStore = create((set, get) => ({
   ...getInitialState(),
   idle: generateIdleFn({get, set}),
   select: generateSelectFn(set),
+  setActions: (actions) => set((state) => mergeState(state, {actions})),
   spend: generateSpendFn(set),
   tick: generateTickFn({get, set}),
   train: generateTrainFn({get, set}),

@@ -49,7 +49,7 @@ export async function onMessage(raw, socket, models) {
   }
 }
 
-export async function syncPlayerState({fighters}, sockets) {
+export async function syncPlayerState({fighterActions, fighters}, sockets) {
   for(const socket of sockets) {
     if(!isSocketOpen(socket)) {
       sockets.delete(socket);
@@ -62,7 +62,8 @@ export async function syncPlayerState({fighters}, sockets) {
     if(!fighter) {
       continue;
     }
-    socket.send(JSON.stringify({cmd: 'player_state', fighter}));
+    const actions = await fighterActions.list(socket.player.id);
+    socket.send(JSON.stringify({actions, cmd: 'player_state', fighter}));
   }
 }
 
