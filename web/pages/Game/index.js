@@ -14,9 +14,9 @@ import '../../orig/src/index.css';
 
 export default function Game() {
   const races = useLoaderData() ?? [];
-  const onCharacterSelectExit = useAuthSocket();
+  useAuthSocket();
   return (
-    <CharacterSelect onExit={onCharacterSelectExit} races={races} />
+    <CharacterSelect races={races} />
   );
 }
 
