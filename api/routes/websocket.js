@@ -1,3 +1,5 @@
+import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
+
 import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
@@ -5,18 +7,25 @@ import {authenticate} from '../logic/auth.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
 
 export default async function websocketRoutes(app) {
+  const connections = new Set();
   const models = {
     fighterActions: fighterActionsModel(app.db),
     fighters: fightersModel(app.db),
     players: playersModel(app.db),
   };
-  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models));
+  const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
+  app.addHook('onClose', () => stateSyncScheduler.stop());
+  app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
 
-export function onConnect(socket, models) {
+export function onConnect(socket, models, connections = null) {
+  if(connections) {
+    connections.add(socket);
+    socket.on('close', () => connections.delete(socket));
+  }
   socket.on('message', (raw) => onMessage(raw, socket, models));
   setImmediate(() => {
-    if(socket.readyState !== socket.OPEN) {
+    if(!isSocketOpen(socket)) {
       return;
     }
     socket.send(JSON.stringify({type: 'auth'}));
@@ -36,6 +45,35 @@ export async function onMessage(raw, socket, models) {
     default:
       socket.send(JSON.stringify({error: 'invalid-cmd', type: 'error'}));
   }
+}
+
+export async function syncPlayerState({fighters}, sockets) {
+  for(const socket of sockets) {
+    if(!isSocketOpen(socket) || !socket.player) {
+      continue;
+    }
+    const fighter = await fighters.findCurrentByPlayerID(socket.player.id);
+    if(!fighter) {
+      continue;
+    }
+    socket.send(JSON.stringify({fighter, type: 'player_state'}));
+  }
+}
+
+function createPlayerStateSyncScheduler(models, connections, logger) {
+  const scheduler = new ToadScheduler();
+  const task = new AsyncTask(
+    'sync-player-state',
+    () => syncPlayerState(models, connections),
+    (error) => logger.error({err: error}, 'sync-player-state failed'),
+  );
+  const job = new SimpleIntervalJob({minutes: 1}, task);
+  scheduler.addSimpleIntervalJob(job);
+  return scheduler;
+}
+
+function isSocketOpen(socket) {
+  return socket.readyState === socket.OPEN;
 }
 
 function parseMessage(raw) {
