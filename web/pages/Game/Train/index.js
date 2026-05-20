@@ -1,5 +1,8 @@
+import {SKILL_IDS} from 'shared/skills.js';
+
 import Button from '@/components/Button.js';
 import useFighterStore from '@/data/fighter.js';
+import {createFighterActionCmd} from '@/data/websocket.js';
 
 import Skills from './Skills.js';
 import TrainStat from './TrainStat.js';
@@ -90,10 +93,15 @@ function SkillRow({fighter, skillKey}) {
       {skill.name}
       <Button
         className={fighter.idling?.key === `train-${skillKey}` ? css.idleActive : ''}
-        onClick={() => fighter.idle(`train-${skillKey}`, () => skill.action(fighter))}
+        onClick={() => onIdle({fighter, skill, skillKey})}
       >
         Idle
       </Button>
     </div>
   );
+}
+
+function onIdle({fighter, skill, skillKey}) {
+  fighter.idle(`train-${skillKey}`, () => skill.action(fighter));
+  createFighterActionCmd(SKILL_IDS[skillKey]);
 }

@@ -15,6 +15,13 @@ export function resetSocketState() {
   socket = null;
 }
 
+export function createFighterActionCmd(actionID) {
+  if(!Number.isInteger(actionID) || !isSocketReady()) {
+    return;
+  }
+  socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
+}
+
 export function selectFighterCmd() {
   respondToAuth();
   routeToHubIfAuthorized();
