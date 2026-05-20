@@ -6,6 +6,7 @@ import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
 import {authenticate} from '../logic/auth.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
+import {applyTraining} from '../logic/training.js';
 
 export default async function websocketRoutes(app) {
   const connections = new Set();
@@ -49,7 +50,7 @@ export async function onMessage(raw, socket, models) {
   }
 }
 
-export async function syncPlayerState({fighters}, sockets) {
+export async function syncPlayerState({fighterActions, fighters}, sockets) {
   for(const socket of sockets) {
     if(!isSocketOpen(socket)) {
       sockets.delete(socket);
@@ -62,7 +63,8 @@ export async function syncPlayerState({fighters}, sockets) {
     if(!fighter) {
       continue;
     }
-    socket.send(JSON.stringify({cmd: 'player_state', fighter}));
+    const updatedFighter = await applyTraining({fighterActions, fighters}, fighter);
+    socket.send(JSON.stringify({cmd: 'player_state', fighter: updatedFighter}));
   }
 }
 
