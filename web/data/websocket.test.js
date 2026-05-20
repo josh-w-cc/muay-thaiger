@@ -38,7 +38,7 @@ describe('player websocket helpers', () => {
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
-  it('does not set fighter selection state while responding with an existing token', () => {
+  it('sends stored token and routes to hub without fighter selection', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
     const state = {
@@ -103,26 +103,4 @@ describe('player websocket helpers', () => {
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'new-token'}));
   });
 
-  it('responds with auth token and routes to hub without fighter selection', () => {
-    const send = vi.fn();
-    const socket = {readyState: 1, send};
-    const state = {
-      hasReceivedAuthRequest: false,
-      hasRespondedToAuth: false,
-      hasSelectedFighter: false,
-      selectedRace: null,
-      token: 'existing-token',
-    };
-    state.setToken = vi.fn((token) => {
-      state.token = token;
-    });
-    const get = () => state;
-    const set = (updates) => Object.assign(state, updates);
-
-    generateOnSocketMessageFn({get, set})({message: {token: 'existing-token', type: 'auth'}, socket});
-
-    expect(state.setToken).toHaveBeenCalledWith('existing-token');
-    expect(routerNavigate).toHaveBeenCalledWith('/hub');
-    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'existing-token'}));
-  });
 });
