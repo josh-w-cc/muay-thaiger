@@ -25,6 +25,18 @@ export async function registerFighterAction({fighterActions, fighters}, message,
   }));
 }
 
+function isSocketReady(socket) {
+  return socket.player && socket.readyState === socket.OPEN;
+}
+
+function isValidAction(fighter, actionId) {
+  const skill = SKILLS_BY_ACTION_ID[actionId];
+  if(!skill) {
+    return false;
+  }
+  return skill.requires(fighter.stats || {});
+}
+
 function normalizeMessage(message) {
   if(!message) {
     return null;
@@ -36,16 +48,4 @@ function normalizeMessage(message) {
   return {
     action_id: actionId,
   };
-}
-
-function isSocketReady(socket) {
-  return socket.player && socket.readyState === socket.OPEN;
-}
-
-function isValidAction(fighter, actionId) {
-  const skill = SKILLS_BY_ACTION_ID[actionId];
-  if(!skill) {
-    return false;
-  }
-  return skill.requires(fighter.stats || {});
 }

@@ -7,7 +7,7 @@ describe('registerFighterAction', () => {
   it('creates a fighter action for the player current fighter and sends it back on a valid message', async () => {
     const created = {id: 1, action_id: 2, fighter_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const send = createCallTracker();
-    const socket = {OPEN: 1, player: {id: 8}, readyState: 1, send};
+    const socket = {OPEN: 1, readyState: 1, player: {id: 8}, send};
     const fighterActions = {create: async () => created};
     const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false})};
 
@@ -63,7 +63,7 @@ describe('registerFighterAction', () => {
   it('does not respond when action_id does not map to a valid skill', async () => {
     const send = createCallTracker();
     const create = createCallTracker();
-    const socket = {OPEN: 1, player: {id: 8}, readyState: 1, send};
+    const socket = {OPEN: 1, readyState: 1, player: {id: 8}, send};
     const fighterActions = {create};
     const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {}})};
 
