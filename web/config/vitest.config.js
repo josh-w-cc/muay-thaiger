@@ -26,7 +26,7 @@ export default defineConfig({
   test: {
     coverage: {
       all: false,
-      include: ['**/*.{js,jsx}'],
+      include: ['**/*.js'],
       exclude: [
         'config/**',
         'dist/**',
