@@ -300,6 +300,22 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth-invalid-token'});
   });
 
+  it('sends an internal error message when a command handler throws', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const players = {
+      create: async () => null,
+      findByToken: async () => {
+        throw new Error('database failure');
+      },
+    };
+
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players});
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'internal-error'});
+  });
+
   it('does not respond to idle messages when the player has no current fighter', async () => {
     const send = createCallTracker();
     const create = createCallTracker();
