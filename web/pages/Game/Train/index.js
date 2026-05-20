@@ -93,7 +93,7 @@ function SkillRow({fighter, skillKey}) {
       {skill.name}
       <Button
         className={fighter.idling?.key === `train-${skillKey}` ? css.idleActive : ''}
-        onClick={() => onIdle({fighter, skill, skillKey})}
+        onClick={() => startIdle({fighter, skill, skillKey})}
       >
         Idle
       </Button>
@@ -101,7 +101,7 @@ function SkillRow({fighter, skillKey}) {
   );
 }
 
-function onIdle({fighter, skill, skillKey}) {
+function startIdle({fighter, skill, skillKey}) {
   fighter.idle(`train-${skillKey}`, () => skill.action(fighter));
   createFighterActionCmd(SKILL_IDS[skillKey]);
 }
