@@ -12,8 +12,15 @@ export default function fighterActions(db) {
     create: generateCreateFn(db, 'fighter_actions'),
     find: generateFindFn(db, 'fighter_actions'),
     list: generateListFighterActionsFn(db, fighters),
+    listByFighterID: generateListByFighterIDFn(db),
     remove: generateRemoveFn(db, 'fighter_actions'),
   };
+}
+
+function generateListByFighterIDFn(db) {
+  return (fighterId) => db('fighter_actions')
+    .where({fighter_id: fighterId})
+    .orderBy('created_at');
 }
 
 function generateListFighterActionsFn(db, fighters) {
