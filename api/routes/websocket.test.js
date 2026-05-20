@@ -89,8 +89,8 @@ describe('WebSocket /ws/connect', () => {
     onConnect(socket, {}, connections);
     assert.equal(connections.has(socket), true);
 
-    const closeListener = socketOn.calls.find(([eventName]) => eventName === 'close')[1];
-    closeListener();
+    const closeHandler = socketOn.calls.find(([eventName]) => eventName === 'close')[1];
+    closeHandler();
     assert.equal(connections.has(socket), false);
   });
 

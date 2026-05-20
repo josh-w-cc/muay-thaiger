@@ -13,7 +13,7 @@ export default async function websocketRoutes(app) {
     fighters: fightersModel(app.db),
     players: playersModel(app.db),
   };
-  const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections);
+  const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
   app.addHook('onClose', () => stateSyncScheduler.stop());
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
@@ -60,12 +60,12 @@ export async function syncPlayerState({fighters}, sockets) {
   }
 }
 
-function createPlayerStateSyncScheduler(models, connections) {
+function createPlayerStateSyncScheduler(models, connections, logger) {
   const scheduler = new ToadScheduler();
   const task = new AsyncTask(
     'sync-player-state',
     () => syncPlayerState(models, connections),
-    () => null,
+    (error) => logger.error({err: error}, 'sync-player-state failed'),
   );
   const job = new SimpleIntervalJob({minutes: 1}, task);
   scheduler.addSimpleIntervalJob(job);
