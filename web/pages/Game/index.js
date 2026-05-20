@@ -9,7 +9,6 @@ import Hub from './Hub.js';
 import Shop from './Shop';
 import Train from './Train';
 import './Game.css';
-import '../../orig/src/index.css';
 
 export default function Game() {
   const races = useLoaderData() ?? [];
