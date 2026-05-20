@@ -15,13 +15,13 @@ const {routerNavigate} = vi.hoisted(() => ({
   routerNavigate: vi.fn(),
 }));
 
-vi.mock('./CharacterSelect', () => ({
-  default: function MockCharacterSelect() {
+vi.mock('./FighterSelect', () => ({
+  default: function MockFighterSelect() {
     return (
       <button
         onClick={() => usePlayerStore.getState().onFighterSelect({race: '1', socket: getConnectedSocket()})}
       >
-        Character Select
+        Fighter Select
       </button>
     );
   },
@@ -41,7 +41,7 @@ vi.mock('./Hub.js', () => ({
       <>
         <h2>Hub Screen</h2>
         <button onClick={() => navigate('/broken')}>Break Screen</button>
-        <button onClick={() => navigate('/')}>Go Character Select</button>
+        <button onClick={() => navigate('/')}>Go Fighter Select</button>
       </>
     );
   },
@@ -87,21 +87,21 @@ describe('Game', () => {
   });
 
   it('loader redirects to hub from index when token exists', async () => {
-    const {characterSelectLoader} = await import('./index.js');
+    const {fighterSelectLoader} = await import('./index.js');
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
 
-    const response = await characterSelectLoader();
+    const response = await fighterSelectLoader();
 
     expect(response.headers.get('Location')).toBe('/hub');
     expect(response.status).toBe(302);
   });
 
-  it('loader fetches races for character select', async () => {
+  it('loader fetches races for fighter select', async () => {
     const races = [{id: 1, name: 'Tiger', stats: {}}];
     fetchJSONMock.mockResolvedValue(races);
-    const {characterSelectLoader} = await import('./index.js');
+    const {fighterSelectLoader} = await import('./index.js');
 
-    expect(await characterSelectLoader()).toEqual(races);
+    expect(await fighterSelectLoader()).toEqual(races);
     expect(fetchJSONMock).toHaveBeenCalledWith('race');
   });
 
@@ -112,7 +112,7 @@ describe('Game', () => {
     expect(await gameScreenLoader()).toBeNull();
   });
 
-  it('loader redirects to character select for token-protected screens when token is missing', async () => {
+  it('loader redirects to fighter select for token-protected screens when token is missing', async () => {
     const {gameScreenLoader} = await import('./index.js');
 
     const response = await gameScreenLoader();
@@ -121,7 +121,7 @@ describe('Game', () => {
     expect(response.status).toBe(302);
   });
 
-  it('loader redirects to character select when localStorage is unavailable', async () => {
+  it('loader redirects to fighter select when localStorage is unavailable', async () => {
     const {gameScreenLoader} = await import('./index.js');
     setLocalStorage(undefined);
 
@@ -132,28 +132,28 @@ describe('Game', () => {
   });
 
   it('loader returns an empty list when races request fails', async () => {
-    const {characterSelectLoader} = await import('./index.js');
+    const {fighterSelectLoader} = await import('./index.js');
     const error = new Error('network failure');
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
     fetchJSONMock.mockRejectedValue(error);
 
-    expect(await characterSelectLoader()).toEqual([]);
+    expect(await fighterSelectLoader()).toEqual([]);
     expect(fetchJSONMock).toHaveBeenCalledWith('race');
     expect(consoleError).toHaveBeenCalledWith('Failed to load races', error);
     consoleError.mockRestore();
   });
 
-  it('renders the character select screen first', async () => {
+  it('renders the fighter select screen first', async () => {
     const gameModule = await import('./index.js');
     renderGame({gameModule});
-    expect(await screen.findByRole('button', {name: 'Character Select'})).toBeInTheDocument();
+    expect(await screen.findByRole('button', {name: 'Fighter Select'})).toBeInTheDocument();
   });
 
   it('connects to the websocket when the game loads', async () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
 
     await waitFor(() => {
       expect(globalThis.WebSocket).toHaveBeenCalled();
@@ -174,7 +174,7 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
 
     await waitFor(() => {
       expect(globalThis.WebSocket).toHaveBeenCalled();
@@ -194,13 +194,13 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await user.click(await screen.findByRole('button', {name: 'Character Select'}));
+    await user.click(await screen.findByRole('button', {name: 'Fighter Select'}));
     act(() => {
       socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
     });
 
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
-    await user.click(screen.getByRole('button', {name: /fight/i}));
+    await user.click(screen.getByRole('button', {name: /^fight$/i}));
     expect(await screen.findByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', {name: /hub/i}));
@@ -223,9 +223,9 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await user.click(await screen.findByRole('button', {name: 'Character Select'}));
+    await user.click(await screen.findByRole('button', {name: 'Fighter Select'}));
 
-    expect(screen.getByRole('button', {name: 'Character Select'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Fighter Select'})).toBeInTheDocument();
     act(() => {
       socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
     });
@@ -243,9 +243,9 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
   });
@@ -261,10 +261,10 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
     setPlayerToken('existing-token');
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'existing-token'}));
   });
@@ -278,7 +278,7 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
     socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new');
@@ -295,10 +295,10 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
     setPlayerToken('existing-token');
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
     socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
@@ -318,9 +318,9 @@ describe('Game', () => {
 
     setLocalStorage(undefined);
     renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
     socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
 
     expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
@@ -338,9 +338,9 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
     socket.onmessage({data: '{'});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
 
     expect(send).not.toHaveBeenCalled();
   });
@@ -356,9 +356,9 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
     socket.onmessage({data: JSON.stringify({type: 'noop'})});
-    await user.click(screen.getByRole('button', {name: 'Character Select'}));
+    await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
 
     expect(send).not.toHaveBeenCalled();
   });
@@ -373,7 +373,7 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
-    await user.click(await screen.findByRole('button', {name: 'Character Select'}));
+    await user.click(await screen.findByRole('button', {name: 'Fighter Select'}));
     act(() => {
       socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
     });
@@ -393,13 +393,13 @@ describe('Game', () => {
     expect(await screen.findByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
   });
 
-  it('stays on hub when navigating to character select from a game screen with token', async () => {
+  it('stays on hub when navigating to fighter select from a game screen with token', async () => {
     const user = userEvent.setup();
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
     const gameModule = await import('./index.js');
 
     renderGame({gameModule, initialPath: '/hub'});
-    await user.click(await screen.findByRole('button', {name: 'Go Character Select'}));
+    await user.click(await screen.findByRole('button', {name: 'Go Fighter Select'}));
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
 
@@ -411,7 +411,7 @@ describe('Game', () => {
     const gameModule = await import('./index.js');
 
     const {unmount} = renderGame({gameModule});
-    await screen.findByRole('button', {name: 'Character Select'});
+    await screen.findByRole('button', {name: 'Fighter Select'});
     unmount();
 
     expect(close).toHaveBeenCalledTimes(1);
@@ -424,7 +424,7 @@ function renderGame({gameModule, initialPath = '/'}) {
     FallbackScreen,
     FightScreen,
     GameLayout,
-    characterSelectLoader,
+    fighterSelectLoader,
     gameScreenLoader,
     HubScreen,
     ShopScreen,
@@ -434,7 +434,7 @@ function renderGame({gameModule, initialPath = '/'}) {
     [
       {
         children: [
-          {index: true, element: <Game />, loader: characterSelectLoader},
+          {index: true, element: <Game />, loader: fighterSelectLoader},
           {
             children: [
               {element: <FightScreen />, path: 'fight'},

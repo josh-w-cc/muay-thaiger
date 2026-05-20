@@ -2,7 +2,7 @@ import {Outlet, redirect, useLoaderData, useNavigate} from 'react-router-dom';
 
 import {loadPlayerToken} from '@/data/player.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
-import CharacterSelect from './CharacterSelect';
+import FighterSelect from './FighterSelect';
 import Fight from './Fight';
 import Header from './Header.js';
 import Hub from './Hub.js';
@@ -16,7 +16,7 @@ export default function Game() {
   const races = useLoaderData() ?? [];
   useAuthSocket();
   return (
-    <CharacterSelect races={races} />
+    <FighterSelect races={races} />
   );
 }
 
@@ -58,7 +58,7 @@ export function TrainScreen() {
   return <Train />;
 }
 
-export async function characterSelectLoader() {
+export async function fighterSelectLoader() {
   if(hasPlayerToken()) {
     return redirect('/hub');
   }

@@ -10,7 +10,7 @@ vi.mock('@/actions/selectFighter.js', () => ({
   default: (...args) => selectMock(...args),
 }));
 
-describe('CharacterSelect', () => {
+describe('FighterSelect', () => {
   beforeEach(() => {
     selectMock = vi.fn();
   });
@@ -29,9 +29,9 @@ describe('CharacterSelect', () => {
         stats: {anima: 8, durability: 7, reach: 6, speed: 9, strength: 5, vitality: 4},
       },
     ];
-    const {default: CharacterSelect} = await import('./index.js');
+    const {default: FighterSelect} = await import('./index.js');
 
-    render(<CharacterSelect races={races} />);
+    render(<FighterSelect races={races} />);
 
     const raceHeading = screen.getByRole('heading', {name: 'Snow Leopard Prime'});
     const raceCard = raceHeading.closest('div');
@@ -42,7 +42,7 @@ describe('CharacterSelect', () => {
   });
 
   it('renders all races that are provided and maps images by race ID', async () => {
-    const {default: CharacterSelect} = await import('./index.js');
+    const {default: FighterSelect} = await import('./index.js');
     const races = [
       {
         id: 2,
@@ -56,7 +56,7 @@ describe('CharacterSelect', () => {
       },
     ];
 
-    render(<CharacterSelect races={races} />);
+    render(<FighterSelect races={races} />);
 
     expect(screen.getByRole('heading', {name: 'Tiger'})).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: 'Snow Leopard Prime'})).toBeInTheDocument();
