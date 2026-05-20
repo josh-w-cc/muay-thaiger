@@ -7,12 +7,16 @@ import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} fr
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
 let socket = null;
+const onSocketCommand = {
+  'auth': onAuth,
+  'auth-invalid-token': onAuthInvalidToken,
+  'ok': () => {},
+  'player_state': onPlayerState,
+};
 
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
-  if(socket?.close) {
-    socket.close();
-  }
+  socket?.close?.();
   hasReceivedAuthRequest = false;
   hasRespondedToAuth = false;
   socket = null;
@@ -78,19 +82,9 @@ function onSocketMessage(event) {
   if(!message) {
     return;
   }
-  if(message.cmd === 'auth') {
-    onAuth(message);
-    return;
+  if(!runSocketCommand(message)) {
+    console.warn('Unknown websocket cmd:', message.cmd);
   }
-  if(message.cmd === 'auth-invalid-token') {
-    onAuthInvalidToken();
-    return;
-  }
-  if(message.cmd === 'player_state') {
-    onPlayerState(message);
-    return;
-  }
-  console.warn('Unknown websocket cmd:', message.cmd);
 }
 
 function respondToAuth() {
@@ -108,4 +102,13 @@ function routeToHubIfAuthorized() {
     return;
   }
   router.navigate('/hub');
+}
+
+function runSocketCommand(message) {
+  const onCommand = onSocketCommand[message.cmd];
+  if(!onCommand) {
+    return false;
+  }
+  onCommand(message);
+  return true;
 }
