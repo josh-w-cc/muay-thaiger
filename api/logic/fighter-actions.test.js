@@ -16,8 +16,7 @@ describe('registerFighterAction', () => {
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {
       cmd: 'ok',
-      fighterAction: created,
-      metadata: {responded_cmd: 'idle'},
+      metadata: {fighterAction: created, responded_cmd: 'idle'},
     });
   });
 

@@ -13,8 +13,7 @@ export async function registerFighterAction({fighterActions, fighters}, message,
   });
   socket.send(JSON.stringify({
     cmd: 'ok',
-    fighterAction,
-    metadata: {responded_cmd: 'idle'},
+    metadata: {fighterAction, responded_cmd: 'idle'},
   }));
 }
 

@@ -65,8 +65,7 @@ describe('WebSocket /ws/connect', () => {
 
     assert.deepEqual(message, {
       cmd: 'ok',
-      fighterAction: created,
-      metadata: {responded_cmd: 'idle'},
+      metadata: {fighterAction: created, responded_cmd: 'idle'},
     });
     socket.terminate();
     await app.close();
