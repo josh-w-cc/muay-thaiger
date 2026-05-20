@@ -4,7 +4,7 @@ import Button from '@/components/Button.js';
 import SnowLeopard from './assets/SnowLeopard.png';
 import Tiger from './assets/Tiger.png';
 
-import css from './CharacterSelect.module.css';
+import css from './FighterSelect.module.css';
 
 
 const RACE_IMAGES_BY_ID = {
@@ -12,12 +12,12 @@ const RACE_IMAGES_BY_ID = {
   2: SnowLeopard,
 };
 
-function CharacterSelect({races = []}) {
+function FighterSelect({races = []}) {
   return (
     <>
       <h1>Choose your fighter:</h1>
       {races.map((race) => (
-        <Character
+        <FighterCard
           key={race.id}
           name={race.name}
           image={getRaceImage(race.id)}
@@ -30,14 +30,14 @@ function CharacterSelect({races = []}) {
     </>
   );
 }
-export default CharacterSelect;
+export default FighterSelect;
 
 
-function Character({image, name, onSelect, stats}) {
+function FighterCard({image, name, onSelect, stats}) {
   return (
     <div className={css.outer}>
       <h3>{name}</h3>
-      <CharacterBody image={image} name={name} onSelect={onSelect} stats={stats} />
+      <FighterCardBody image={image} name={name} onSelect={onSelect} stats={stats} />
     </div>
   );
 }
@@ -46,7 +46,7 @@ function getRaceImage(raceID) {
   return RACE_IMAGES_BY_ID[raceID];
 }
 
-function CharacterBody({image, name, onSelect, stats}) {
+function FighterCardBody({image, name, onSelect, stats}) {
   return (
     <div className={css.inner}>
       <img alt={name} src={image} className={css.avatar} />

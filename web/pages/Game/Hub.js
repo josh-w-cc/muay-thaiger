@@ -24,9 +24,21 @@ const STAT_FIELDS = [
 ];
 
 const EVENTS = [
-  {name: 'Temple Sparring Night', reward: 'Reward: +120 XP'},
-  {name: 'Lumpinee Showcase', reward: 'Reward: ฿350'},
-  {name: 'Tiger Knee Clinic', reward: 'Reward: +2 Skill'},
+  {
+    detail: 'Unlocked Flying Knee Drill in Training.',
+    outcome: 'Unlocked',
+    title: 'Technique: Flying Knee Drill',
+  },
+  {
+    detail: 'Won against Iron Cobra in the Lumpinee Bracket.',
+    outcome: 'Tournament Win',
+    title: 'Lumpinee Rookie Cup',
+  },
+  {
+    detail: 'Clinched 3 rounds in sparring and gained +2 Skill.',
+    outcome: 'Skill Gain',
+    title: 'Camp Sparring Session',
+  },
 ];
 
 export default function Hub() {
@@ -51,14 +63,19 @@ function Events() {
     <>
       <h3>Events:</h3>
       <ul className={css.events}>
-        {EVENTS.map(({name, reward}) => (
-          <li className={css.event} key={name}>
-            <strong>{name}</strong>
-            <span>{reward}</span>
-          </li>
-        ))}
+        {EVENTS.map((event) => <Event event={event} key={event.title} />)}
       </ul>
     </>
+  );
+}
+
+function Event({event}) {
+  return (
+    <li className={css.event}>
+      <span className={css.outcome}>{event.outcome}</span>
+      <strong>{event.title}</strong>
+      <span>{event.detail}</span>
+    </li>
   );
 }
 
