@@ -22,11 +22,10 @@ export function generateOnSocketMessageFn({get, set}) {
   };
 }
 
-function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket, token}) {
+function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, socket}) {
   return Boolean(
     !hasRespondedToAuth
     && hasReceivedAuthRequest
-    && (hasSelectedFighter || token)
     && socket
     && socket.readyState === WebSocket.OPEN,
   );
@@ -35,6 +34,9 @@ function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelect
 function getAuthResponse({selectedRace, token}) {
   if(token) {
     return {cmd: 'auth', token};
+  }
+  if(!selectedRace) {
+    return null;
   }
   return {cmd: 'auth', race: selectedRace, token: 'new'};
 }
@@ -49,12 +51,16 @@ function onAuth({get, message, set, socket}) {
 }
 
 function respondToAuth({get, set, socket}) {
-  const {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, token} = get();
-  if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket, token})) {
+  const {hasReceivedAuthRequest, hasRespondedToAuth, selectedRace, token} = get();
+  if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, socket})) {
+    return;
+  }
+  const authResponse = getAuthResponse({selectedRace, token});
+  if(!authResponse) {
     return;
   }
   set({hasRespondedToAuth: true});
-  socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
+  socket.send(JSON.stringify(authResponse));
 }
 
 function routeToHubIfAuthorized({get}) {
