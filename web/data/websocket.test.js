@@ -13,8 +13,10 @@ import {connectSocketOnAppLoad, resetSocketState, selectFighterCmd} from './webs
 describe('player websocket helpers', () => {
   const originalWebSocket = globalThis.WebSocket;
   const originalLocation = globalThis.window.location;
+  let warnSpy;
 
   beforeEach(() => {
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     globalThis.WebSocket = vi.fn(function () {
       return {close: vi.fn(), readyState: 1, send: vi.fn()};
     });
@@ -31,13 +33,14 @@ describe('player websocket helpers', () => {
       configurable: true,
       value: originalLocation,
     });
+    warnSpy.mockRestore();
   });
 
   it('sends a new auth command after fighter selection when auth request is received', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
-    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth'})});
     usePlayerStore.getState().selectFighter('1');
     selectFighterCmd();
 
@@ -72,7 +75,7 @@ describe('player websocket helpers', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
-    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth'})});
 
     expect(usePlayerStore.getState().selectedRace).toBeNull();
     selectFighterCmd();
@@ -88,8 +91,8 @@ describe('player websocket helpers', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
-    socket.onmessage({data: JSON.stringify({type: 'auth'})});
-    socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth-invalid-token'})});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
     expect(usePlayerStore.getState().token).toBeNull();
@@ -101,21 +104,23 @@ describe('player websocket helpers', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
-    socket.onmessage({data: JSON.stringify({token: 'new-token', type: 'auth'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth', token: 'new-token'})});
 
     expect(usePlayerStore.getState().token).toBe('new-token');
     expect(routerNavigate).toHaveBeenCalledWith('/hub');
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'new-token'}));
   });
 
-  it('ignores invalid and non-auth websocket messages', () => {
+  it('ignores invalid websocket messages and logs unknown commands', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
 
     socket.onmessage({data: '{'});
-    socket.onmessage({data: JSON.stringify({type: 'noop'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'noop'})});
 
     expect(send).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith('Unknown websocket cmd:', 'noop');
   });
 });

@@ -19,8 +19,6 @@ export function selectFighterCmd() {
   respondToAuth();
   routeToHubIfAuthorized();
 }
-
-
 function connectSocket() {
   if(socket) {
     return socket;
@@ -50,17 +48,19 @@ function onSocketMessage(event) {
   if(!message) {
     return;
   }
-  const messageType = message.type;
-  if(messageType === 'auth-invalid-token') {
-    usePlayerStore.getState().clearToken();
-    hasRespondedToAuth = false;
-    respondToAuth();
-    return;
+  const cmd = message.cmd || message.type; // TODO: Remove `type` fallback after backend websocket payloads ship `cmd` for auth/auth-invalid-token.
+  switch(cmd) {
+    case 'auth':
+      onAuth(message);
+      return;
+    case 'auth-invalid-token':
+      usePlayerStore.getState().clearToken();
+      hasRespondedToAuth = false;
+      respondToAuth();
+      return;
+    default:
+      console.warn('Unknown websocket cmd:', cmd);
   }
-  if(messageType !== 'auth') {
-    return;
-  }
-  onAuth(message);
 }
 
 function parseMessage(event) {
