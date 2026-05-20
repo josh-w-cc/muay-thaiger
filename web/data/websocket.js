@@ -19,8 +19,6 @@ export function selectFighterCmd() {
   respondToAuth();
   routeToHubIfAuthorized();
 }
-
-
 function connectSocket() {
   if(socket) {
     return socket;
@@ -56,7 +54,9 @@ function onSocketMessage(event) {
       onAuth(message);
       return;
     case 'auth-invalid-token':
-      onAuthInvalidToken();
+      usePlayerStore.getState().clearToken();
+      hasRespondedToAuth = false;
+      respondToAuth();
       return;
     default:
       console.warn('Unknown websocket cmd:', cmd);
@@ -78,12 +78,6 @@ function respondToAuth() {
   }
   hasRespondedToAuth = true;
   socket.send(JSON.stringify(getAuthResponse()));
-}
-
-function onAuthInvalidToken() {
-  usePlayerStore.getState().clearToken();
-  hasRespondedToAuth = false;
-  respondToAuth();
 }
 
 function routeToHubIfAuthorized() {
