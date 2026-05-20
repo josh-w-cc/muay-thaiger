@@ -1,5 +1,9 @@
-const {routerNavigate} = vi.hoisted(() => ({
+const {reconnectingSocketCtor, routerNavigate} = vi.hoisted(() => ({
+  reconnectingSocketCtor: vi.fn(),
   routerNavigate: vi.fn(),
+}));
+vi.mock('reconnecting-websocket', () => ({
+  default: reconnectingSocketCtor,
 }));
 vi.mock('@/router.js', () => ({
   default: {navigate: routerNavigate},
@@ -18,10 +22,10 @@ describe('player websocket helpers', () => {
 
   beforeEach(() => {
     warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    globalThis.WebSocket = vi.fn(function () {
+    globalThis.WebSocket = {OPEN: 1};
+    reconnectingSocketCtor.mockImplementation(function () {
       return {close: vi.fn(), readyState: 1, send: vi.fn()};
     });
-    globalThis.WebSocket.OPEN = 1;
   });
 
   afterEach(() => {
@@ -52,7 +56,7 @@ describe('player websocket helpers', () => {
 
   it('connects to /ws/connect using the current host', () => {
     connectSocketOnAppLoad();
-    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+    const socketURL = new URL(reconnectingSocketCtor.mock.calls[0][0]);
 
     expect(socketURL.host).toBe(window.location.host);
     expect(socketURL.pathname).toBe('/ws/connect');
@@ -68,7 +72,7 @@ describe('player websocket helpers', () => {
     });
 
     connectSocketOnAppLoad();
-    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+    const socketURL = new URL(reconnectingSocketCtor.mock.calls[0][0]);
 
     expect(socketURL.protocol).toBe('wss:');
   });
@@ -188,7 +192,7 @@ describe('player websocket helpers', () => {
     const secondSocket = connectSocketOnAppLoad();
 
     expect(secondSocket).toBe(firstSocket);
-    expect(globalThis.WebSocket).toHaveBeenCalledTimes(1);
+    expect(reconnectingSocketCtor).toHaveBeenCalledTimes(1);
   });
 
   it('ignores player_state messages without fighter data', () => {

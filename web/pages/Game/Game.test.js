@@ -12,7 +12,8 @@ const originalWebSocket = globalThis.WebSocket;
 const originalLocalStorage = globalThis.localStorage;
 const originalWindow = globalThis.window;
 let fetchJSONMock;
-const {routerNavigate} = vi.hoisted(() => ({
+const {reconnectingSocketCtor, routerNavigate} = vi.hoisted(() => ({
+  reconnectingSocketCtor: vi.fn(),
   routerNavigate: vi.fn(),
 }));
 
@@ -63,6 +64,9 @@ vi.mock('./Train', () => ({
 vi.mock('@/utils/fetchAPI.js', () => ({
   fetchJSON: (...args) => fetchJSONMock(...args),
 }));
+vi.mock('reconnecting-websocket', () => ({
+  default: reconnectingSocketCtor,
+}));
 vi.mock('@/router.js', () => ({
   default: {navigate: (...args) => routerNavigate(...args)},
 }));
@@ -70,10 +74,10 @@ vi.mock('@/router.js', () => ({
 describe('Game', () => {
   beforeEach(() => {
     fetchJSONMock = vi.fn().mockResolvedValue([]);
-    globalThis.WebSocket = vi.fn(function () {
+    globalThis.WebSocket = {OPEN: 1};
+    reconnectingSocketCtor.mockImplementation(function () {
       return {close: vi.fn(), readyState: 1, send: vi.fn()};
     });
-    globalThis.WebSocket.OPEN = 1;
   });
 
   afterEach(() => {
@@ -158,9 +162,9 @@ describe('Game', () => {
     await screen.findByRole('button', {name: 'Fighter Select'});
 
     await waitFor(() => {
-      expect(globalThis.WebSocket).toHaveBeenCalled();
+      expect(reconnectingSocketCtor).toHaveBeenCalled();
     });
-    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+    const socketURL = new URL(reconnectingSocketCtor.mock.calls[0][0]);
 
     expect(socketURL.host).toBe(window.location.host);
     expect(socketURL.pathname).toBe('/ws/connect');
@@ -179,9 +183,9 @@ describe('Game', () => {
     await screen.findByRole('button', {name: 'Fighter Select'});
 
     await waitFor(() => {
-      expect(globalThis.WebSocket).toHaveBeenCalled();
+      expect(reconnectingSocketCtor).toHaveBeenCalled();
     });
-    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+    const socketURL = new URL(reconnectingSocketCtor.mock.calls[0][0]);
 
     expect(socketURL.protocol).toBe('wss:');
   });
@@ -189,10 +193,9 @@ describe('Game', () => {
   it('renders each game screen from header controls', async () => {
     const user = userEvent.setup();
     const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
@@ -218,10 +221,9 @@ describe('Game', () => {
   it('waits for the auth token before routing to hub after fighter select', async () => {
     const user = userEvent.setup();
     const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
@@ -238,10 +240,9 @@ describe('Game', () => {
     const user = userEvent.setup();
     const send = vi.fn();
     const socket = {close: vi.fn(), readyState: 1, send};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
@@ -256,10 +257,9 @@ describe('Game', () => {
     const user = userEvent.setup();
     const send = vi.fn();
     const socket = {close: vi.fn(), readyState: 1, send};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
@@ -273,10 +273,9 @@ describe('Game', () => {
 
   it('stores the auth token in localStorage when server responds with a token', async () => {
     const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
@@ -292,10 +291,9 @@ describe('Game', () => {
     const user = userEvent.setup();
     const send = vi.fn();
     const socket = {close: vi.fn(), readyState: 1, send};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
@@ -314,10 +312,9 @@ describe('Game', () => {
     const user = userEvent.setup();
     const send = vi.fn();
     const socket = {close: vi.fn(), readyState: 1, send};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     setLocalStorage(undefined);
@@ -335,10 +332,9 @@ describe('Game', () => {
     const user = userEvent.setup();
     const send = vi.fn();
     const socket = {close: vi.fn(), readyState: 1, send};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
@@ -353,10 +349,9 @@ describe('Game', () => {
     const user = userEvent.setup();
     const send = vi.fn();
     const socket = {close: vi.fn(), readyState: 1, send};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
@@ -370,10 +365,9 @@ describe('Game', () => {
   it('renders and recovers from the fallback screen', async () => {
     const user = userEvent.setup();
     const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return socket;
     });
-    globalThis.WebSocket.OPEN = 1;
     const gameModule = await import('./index.js');
 
     renderGame({gameModule});
@@ -409,7 +403,7 @@ describe('Game', () => {
 
   it('keeps the websocket connected when the game unmounts', async () => {
     const close = vi.fn();
-    globalThis.WebSocket = vi.fn(function () {
+    reconnectingSocketCtor.mockImplementation(function () {
       return {close, send: vi.fn()};
     });
     const gameModule = await import('./index.js');

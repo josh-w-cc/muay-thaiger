@@ -1,3 +1,5 @@
+import ReconnectingWebSocket from 'reconnecting-websocket';
+
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
@@ -38,7 +40,7 @@ function connectSocket() {
   if(socket) {
     return socket;
   }
-  socket = new WebSocket(createWebSocketURL());
+  socket = new ReconnectingWebSocket(createWebSocketURL(), [], {WebSocket});
   socket.onmessage = onSocketMessage;
   return socket;
 }
