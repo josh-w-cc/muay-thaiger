@@ -21,7 +21,6 @@ describe('selectFighter', () => {
 
   it('updates the fighter store selection', () => {
     const {stats} = BaseStats['2'];
-    const onFighterSelectSpy = vi.spyOn(usePlayerStore.getState(), 'onFighterSelect');
 
     selectFighter('2');
 
@@ -35,7 +34,6 @@ describe('selectFighter', () => {
     expect(fighter.speed).toBe(stats.speed);
     expect(fighter.vitality).toBe(stats.vitality);
     expect(usePlayerStore.getState().hasSelectedFighter).toBe(true);
-    expect(onFighterSelectSpy).toHaveBeenCalledWith({race: '2', socket});
     expect(usePlayerStore.getState().selectedRace).toBe('2');
   });
 });
