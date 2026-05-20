@@ -41,20 +41,10 @@ export async function onMessage(raw, socket, models) {
     return;
   }
   try {
-    switch(message.cmd) {
-      case 'auth':
-        return await authenticateAndSendPlayerState(models, message, socket);
-      case 'idle':
-        return await registerFighterAction(models, message, socket);
-      default:
-        socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
-    }
+    await processMessageCommand(message, socket, models);
   }
   catch {
-    if(!isSocketOpen(socket)) {
-      return;
-    }
-    socket.send(JSON.stringify({cmd: 'error', error: 'internal-error'}));
+    sendSocketError(socket, 'internal-error');
   }
 }
 
@@ -99,4 +89,22 @@ function parseMessage(raw) {
   catch {
     return null;
   }
+}
+
+async function processMessageCommand(message, socket, models) {
+  switch(message.cmd) {
+    case 'auth':
+      return authenticateAndSendPlayerState(models, message, socket);
+    case 'idle':
+      return registerFighterAction(models, message, socket);
+    default:
+      sendSocketError(socket, 'invalid-cmd');
+  }
+}
+
+function sendSocketError(socket, error) {
+  if(!isSocketOpen(socket)) {
+    return;
+  }
+  socket.send(JSON.stringify({cmd: 'error', error}));
 }
