@@ -36,17 +36,6 @@ describe('usePlayerStore', () => {
     });
   }
 
-  it('sends auth/new after fighter selection when auth request is received', () => {
-    const send = vi.fn();
-    const socket = {readyState: 1, send};
-
-    usePlayerStore.setState({hasReceivedAuthRequest: true});
-    usePlayerStore.getState().onFighterSelect({race: '1', socket});
-
-    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
-    expect(routerNavigate).not.toHaveBeenCalled();
-  });
-
   it('stores auth token and routes to hub when fighter is already selected', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};

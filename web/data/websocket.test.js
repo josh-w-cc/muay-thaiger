@@ -6,7 +6,7 @@ vi.mock('@/router.js', () => ({
 }));
 
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
-import {generateOnFighterSelectFn, generateOnSocketMessageFn} from './websocket.js';
+import {generateOnSocketMessageFn, selectFighterCmd} from './websocket.js';
 
 
 describe('player websocket helpers', () => {
@@ -32,7 +32,7 @@ describe('player websocket helpers', () => {
     const get = () => state;
     const set = (updates) => Object.assign(state, updates);
 
-    generateOnFighterSelectFn({get, set})({race: '1', socket});
+    selectFighterCmd({get, race: '1', set, socket});
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
     expect(routerNavigate).not.toHaveBeenCalled();
