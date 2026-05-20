@@ -269,6 +269,23 @@ describe('Game', () => {
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'existing-token'}));
   });
 
+  it('responds with auth/local token after auth on initial protected-route load', async () => {
+    const send = vi.fn();
+    const socket = {close: vi.fn(), readyState: 1, send};
+    globalThis.WebSocket = vi.fn(function () {
+      return socket;
+    });
+    globalThis.WebSocket.OPEN = 1;
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
+    const gameModule = await import('./index.js');
+
+    renderGame({gameModule, initialPath: '/hub'});
+    await screen.findByRole('heading', {name: 'Hub Screen'});
+    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+
+    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'existing-token'}));
+  });
+
   it('stores the auth token in localStorage when server responds with a token', async () => {
     const socket = {close: vi.fn(), readyState: 1, send: vi.fn()};
     globalThis.WebSocket = vi.fn(function () {

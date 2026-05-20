@@ -22,11 +22,11 @@ export function generateOnSocketMessageFn({get, set}) {
   };
 }
 
-function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
+function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket, token}) {
   return Boolean(
     !hasRespondedToAuth
     && hasReceivedAuthRequest
-    && hasSelectedFighter
+    && (hasSelectedFighter || token)
     && socket
     && socket.readyState === WebSocket.OPEN,
   );
@@ -50,7 +50,7 @@ function onAuth({get, message, set, socket}) {
 
 function respondToAuth({get, set, socket}) {
   const {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, token} = get();
-  if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket})) {
+  if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket, token})) {
     return;
   }
   set({hasRespondedToAuth: true});
@@ -58,8 +58,8 @@ function respondToAuth({get, set, socket}) {
 }
 
 function routeToHubIfAuthorized({get}) {
-  const {hasSelectedFighter, token} = get();
-  if(!hasSelectedFighter || !token) {
+  const {token} = get();
+  if(!token) {
     return;
   }
   router.navigate('/hub');

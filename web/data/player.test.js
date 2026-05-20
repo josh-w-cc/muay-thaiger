@@ -48,6 +48,17 @@ describe('usePlayerStore', () => {
     expect(routerNavigate).toHaveBeenCalledWith('/hub');
   });
 
+  it('responds with stored token and routes to hub without fighter selection', () => {
+    const send = vi.fn();
+    const socket = {readyState: 1, send};
+    setPlayerToken('existing-token');
+
+    usePlayerStore.getState().onSocketMessage({message: {token: 'existing-token', type: 'auth'}, socket});
+
+    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'existing-token'}));
+    expect(routerNavigate).toHaveBeenCalledWith('/hub');
+  });
+
   it('loads auth token into the player store', () => {
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
 
