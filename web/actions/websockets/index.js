@@ -11,7 +11,6 @@ let socket = null;
 const onSocketCommand = {
   'auth': onAuth,
   'auth-invalid-token': onAuthInvalidToken,
-  'ok': () => {},
   'player_state': onPlayerState,
 };
 
@@ -105,9 +104,10 @@ function routeToHubIfAuthorized() {
 }
 
 function runSocketCommand(message) {
-  if(!onSocketCommand[message.cmd]) {
-    return false;
+  const onCommand = onSocketCommand[message.cmd];
+  if(!onCommand) {
+    return message.cmd === 'ok';
   }
-  onSocketCommand[message.cmd](message);
+  onCommand(message);
   return true;
 }
