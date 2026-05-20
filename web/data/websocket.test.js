@@ -7,7 +7,7 @@ vi.mock('@/router.js', () => ({
 
 import usePlayerStore, {resetPlayerStore, setPlayerToken} from './player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
-import {connectSocketOnAppLoad, getConnectedSocket, resetSocketState, selectFighterCmd} from './websocket.js';
+import {connectSocketOnAppLoad, resetSocketState, selectFighterCmd} from './websocket.js';
 
 
 describe('player websocket helpers', () => {
@@ -33,8 +33,8 @@ describe('player websocket helpers', () => {
     });
   });
 
-  it('sends auth/new after fighter selection when auth request is received', () => {
-    const socket = getConnectedSocket();
+  it('sends a new auth command after fighter selection when auth request is received', () => {
+    const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
@@ -54,7 +54,7 @@ describe('player websocket helpers', () => {
     expect(socketURL.protocol).toBe('ws:');
   });
 
-  it('uses secure websocket protocol on https pages', () => {
+  it('uses secure WebSocket protocol on https pages', () => {
     Object.defineProperty(globalThis.window, 'location', {
       configurable: true,
       enumerable: true,
@@ -69,7 +69,7 @@ describe('player websocket helpers', () => {
   });
 
   it('does not send auth when the fighter race is not selected', () => {
-    const socket = getConnectedSocket();
+    const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
@@ -85,7 +85,7 @@ describe('player websocket helpers', () => {
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
     setPlayerToken('existing-token');
     usePlayerStore.getState().selectFighter('1');
-    const socket = getConnectedSocket();
+    const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
     socket.onmessage({data: JSON.stringify({type: 'auth'})});
@@ -98,7 +98,7 @@ describe('player websocket helpers', () => {
 
   it('stores auth token and routes to hub when fighter is selected', () => {
     usePlayerStore.getState().selectFighter('1');
-    const socket = getConnectedSocket();
+    const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
     socket.onmessage({data: JSON.stringify({token: 'new-token', type: 'auth'})});
@@ -109,7 +109,7 @@ describe('player websocket helpers', () => {
   });
 
   it('ignores invalid and non-auth websocket messages', () => {
-    const socket = getConnectedSocket();
+    const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
 

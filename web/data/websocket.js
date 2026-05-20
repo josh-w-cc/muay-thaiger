@@ -3,13 +3,11 @@ import router from '@/router.js';
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
 let socket = null;
-export function connectSocketOnAppLoad() {
-  return getConnectedSocket();
-}
-export function getConnectedSocket() {
-  return connectSocket();
-}
+export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
+  if(socket?.close) {
+    socket.close();
+  }
   hasReceivedAuthRequest = false;
   hasRespondedToAuth = false;
   socket = null;
@@ -78,9 +76,6 @@ function routeToHubIfAuthorized() {
   }
   router.navigate('/hub');
 }
-function canRespondToAuth() {
-  return hasAuthHandshakeState() && hasAuthResponseData() && isSocketReady();
-}
 function getAuthResponse() {
   const {selectedRace, token} = usePlayerStore.getState();
   if(token) {
@@ -88,7 +83,10 @@ function getAuthResponse() {
   }
   return {cmd: 'auth', race: selectedRace, token: 'new'};
 }
-function hasAuthHandshakeState() {
+function canRespondToAuth() {
+  return isAuthHandshakePending() && hasAuthResponseData() && isSocketReady();
+}
+function isAuthHandshakePending() {
   return !hasRespondedToAuth && hasReceivedAuthRequest;
 }
 function hasAuthResponseData() {
