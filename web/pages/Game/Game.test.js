@@ -6,6 +6,7 @@ import selectFighter from '@/actions/selectFighter.js';
 import {resetPlayerStore, setPlayerToken} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
 import {connectSocketOnAppLoad, resetSocketState} from '@/data/websocket.js';
+import {Component as GameLayout, loader as gameScreenLoader} from './GameLayout.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -108,15 +109,12 @@ describe('Game', () => {
   });
 
   it('loader returns null for token-protected screens when token exists', async () => {
-    const {gameScreenLoader} = await import('./index.js');
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
 
     expect(await gameScreenLoader()).toBeNull();
   });
 
   it('loader redirects to fighter select for token-protected screens when token is missing', async () => {
-    const {gameScreenLoader} = await import('./index.js');
-
     const response = await gameScreenLoader();
 
     expect(response.headers.get('Location')).toBe('/');
@@ -124,7 +122,6 @@ describe('Game', () => {
   });
 
   it('loader redirects to fighter select when localStorage is unavailable', async () => {
-    const {gameScreenLoader} = await import('./index.js');
     setLocalStorage(undefined);
 
     const response = await gameScreenLoader();
@@ -427,9 +424,7 @@ function renderGame({gameModule, initialPath = '/'}) {
     default: Game,
     FallbackScreen,
     FightScreen,
-    GameLayout,
     fighterSelectLoader,
-    gameScreenLoader,
     HubScreen,
     ShopScreen,
     TrainScreen,

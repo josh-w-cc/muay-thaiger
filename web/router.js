@@ -32,7 +32,7 @@ const router = createBrowserRouter([
           {path: 'train', lazy: lazyPage(importGamePage, {component: 'TrainScreen'})},
           {path: '*', lazy: lazyPage(importGamePage, {component: 'FallbackScreen'})},
         ],
-        lazy: lazyPage(importGamePage, {component: 'GameLayout', loader: 'gameScreenLoader'}),
+        lazy: () => import('./pages/Game/GameLayout.js'),
       },
       {path: '*', element: <NotFound />},
     ],

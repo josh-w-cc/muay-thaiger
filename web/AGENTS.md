@@ -4,8 +4,8 @@
 
 The web app is a Vite-built SPA using React Router for client-side routing. It has no direct database access — all data flows through the Fastify API.
 
-- **`pages/`** — Route components with React Router loaders. Each page exports a default component and a `loader` function. Loaders fetch data from `/api/...` (relative URLs) before the route renders. Components access loader data via `useLoaderData()`.
-- **`router.js`** — Route configuration using `createBrowserRouter`. Routes use `lazy()` via a `lazyPage(importFn)` helper that maps each page module's `{default, loader}` to `{Component, loader}` for code-splitting.
+- **`pages/`** — Route components with React Router loaders. Each page exports a `Component` function and an optional `loader` function. Loaders fetch data from `/api/...` (relative URLs) before the route renders. Components access loader data via `useLoaderData()`. Route modules that export `Component` and `loader` directly can be lazily imported with `lazy: () => import('./MyPage.js')` — React Router merges the returned module properties into the route.
+- **`router.js`** — Route configuration using `createBrowserRouter`. Standard route modules use `lazy: () => import('./pages/MyPage.js')` directly. A `lazyPage(importFn, {component, loader})` helper handles older-style modules that export named components (e.g., `FightScreen`) instead of the standard `Component` export.
 - **`actions/`** — Client-side mutation helpers. These call the Fastify API via `fetchAPI()` from `utils/fetchAPI.js`. After mutations, actions update Zustand stores directly so the UI reflects changes without re-running loaders. Each action file should have only a default export and be named after the action (e.g., `moveTask.js`).
 - **`components/`** — Shared components live here.
 - **`data/`** — Zustand stores.  Actions update stores optimistically before awaiting API calls.
