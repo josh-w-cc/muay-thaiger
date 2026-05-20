@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Button from '@/components/Button.js';
 import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import useFighterStore from '@/data/fighter.js';
@@ -11,16 +9,21 @@ function Shop() {
   const buy = useInventoryStore((state) => state.buy);
   const fighter = useFighterStore();
 
-  return (<>
-    <h1>SHOP</h1>
-    {Object.keys(Items).map(i => <>
-      {Items[i].name}
-      {' '}
-      {formatHugeNumber(Items[i].cost)}฿
-      <Button onClick={() => buy(fighter, Items[i])}>Buy</Button>
-      <br />
-    </>)}
-  </>);
+  return (
+    <>
+      <h1>SHOP</h1>
+      {Object.keys(Items).map((itemKey) => (
+        <div key={itemKey}>
+          {Items[itemKey].name}
+          {' '}
+          {formatHugeNumber(Items[itemKey].cost)}
+          ฿
+          <Button onClick={() => buy(fighter, Items[itemKey])}>Buy</Button>
+          <br />
+        </div>
+      ))}
+    </>
+  );
 }
 
 export default Shop;

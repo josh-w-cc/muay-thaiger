@@ -40,7 +40,7 @@ vi.mock('./Hub.js', () => ({
   },
 }));
 
-vi.mock('../../orig/src/menus/Shop', () => ({
+vi.mock('./Shop', () => ({
   default: function MockShop() {
     return <h2>Shop Screen</h2>;
   },
