@@ -1,8 +1,7 @@
 :root {
   --color-bg: #333333;
-  --color-fg: rgba(255, 255, 255, 0.87);
   --color-border: #e0e0e0;
-  --font-heading-accent: 'Ma Shan Zheng', 'Brush Script MT', 'Segoe Script', 'Lucida Handwriting', cursive;
+  --color-fg: rgba(255, 255, 255, 0.87);
   --color-gold: #c9952a;
   --color-muted: #666666;
   --color-on-gold: #1a1a1a;
@@ -11,13 +10,14 @@
   --color-red: #c0392b;
   --color-red-hover: #962d22;
   --color-white: #ffffff;
-  --radius-sm: 4px;
+  --font-heading-accent: 'Ma Shan Zheng', 'Brush Script MT', 'Segoe Script', 'Lucida Handwriting', cursive;
   --radius-md: 8px;
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
+  --radius-sm: 4px;
   --space-lg: 24px;
+  --space-md: 16px;
+  --space-sm: 8px;
   --space-xl: 32px;
+  --space-xs: 4px;
   --transition-fast: 150ms ease;
 }
 
