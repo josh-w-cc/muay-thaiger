@@ -2,8 +2,7 @@ import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
 import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} from '@/actions/websockets/websocketState.js';
-
-
+import {clearPlayerToken, loadPlayerToken, setPlayerToken} from '@/actions/websockets/token.js';
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
 let socket = null;
@@ -38,6 +37,7 @@ function connectSocket() {
   if(socket) {
     return socket;
   }
+  loadPlayerToken();
   socket = new WebSocket(createWebSocketURL());
   socket.onmessage = onSocketMessage;
   return socket;
@@ -54,7 +54,7 @@ function onAuth(message) {
     usePlayerStore.getState().setPlayerID(message.player_id);
   }
   if(message.token) {
-    usePlayerStore.getState().setToken(message.token);
+    setPlayerToken(message.token);
     routeToHubIfAuthorized();
   }
   hasReceivedAuthRequest = true;
@@ -62,7 +62,7 @@ function onAuth(message) {
 }
 
 function onAuthInvalidToken() {
-  usePlayerStore.getState().clearToken();
+  clearPlayerToken();
   hasRespondedToAuth = false;
   respondToAuth();
 }
@@ -82,9 +82,12 @@ function onSocketMessage(event) {
   if(!message) {
     return;
   }
-  if(!runSocketCommand(message)) {
+  const onCommand = onSocketCommand[message.cmd];
+  if(!onCommand) {
     console.warn('Unknown websocket cmd:', message.cmd);
+    return;
   }
+  onCommand(message);
 }
 
 function respondToAuth() {
@@ -102,13 +105,4 @@ function routeToHubIfAuthorized() {
     return;
   }
   router.navigate('/hub');
-}
-
-function runSocketCommand(message) {
-  const onCommand = onSocketCommand[message.cmd];
-  if(!onCommand) {
-    return false;
-  }
-  onCommand(message);
-  return true;
 }
