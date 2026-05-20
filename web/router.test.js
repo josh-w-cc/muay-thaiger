@@ -13,7 +13,7 @@ vi.mock('./pages/RootLayout/index.js', () => ({
 }));
 
 vi.mock('./pages/Game/index.js', () => ({
-  characterSelectLoader: vi.fn(),
+  fighterSelectLoader: vi.fn(),
   default: () => <div />,
 }));
 

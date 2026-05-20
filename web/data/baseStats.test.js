@@ -2,7 +2,7 @@ import BaseStats, {RACES} from './baseStats.js';
 
 
 describe('BaseStats', () => {
-  it('maps races into character select data', () => {
+  it('maps races into fighter select data', () => {
     expect(Object.keys(BaseStats)).toEqual(RACES.map((item) => `${item.id}`));
 
     for(const race of RACES) {
