@@ -2,7 +2,7 @@ import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import {authenticate} from '../logic/auth.js';
-import {createAndSend} from '../logic/fighter-actions.js';
+import {registerFighterAction} from '../logic/fighter-actions.js';
 
 export default async function websocketRoutes(app) {
   const models = {
@@ -32,7 +32,7 @@ export async function onMessage(raw, socket, models) {
     case 'auth':
       return authenticate(models, message, socket);
     case 'idle':
-      return createAndSend(models, message, socket);
+      return registerFighterAction(models, message, socket);
     default:
       socket.send(JSON.stringify({error: 'invalid-cmd', type: 'error'}));
   }
