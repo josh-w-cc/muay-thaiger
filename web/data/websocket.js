@@ -50,17 +50,17 @@ function onSocketMessage(event) {
   if(!message) {
     return;
   }
-  const messageType = message.type;
-  if(messageType === 'auth-invalid-token') {
-    usePlayerStore.getState().clearToken();
-    hasRespondedToAuth = false;
-    respondToAuth();
-    return;
+  const cmd = message.cmd || message.type;
+  switch(cmd) {
+    case 'auth':
+      onAuth(message);
+      return;
+    case 'auth-invalid-token':
+      onAuthInvalidToken();
+      return;
+    default:
+      console.warn('Unknown websocket cmd:', cmd);
   }
-  if(messageType !== 'auth') {
-    return;
-  }
-  onAuth(message);
 }
 
 function parseMessage(event) {
@@ -78,6 +78,12 @@ function respondToAuth() {
   }
   hasRespondedToAuth = true;
   socket.send(JSON.stringify(getAuthResponse()));
+}
+
+function onAuthInvalidToken() {
+  usePlayerStore.getState().clearToken();
+  hasRespondedToAuth = false;
+  respondToAuth();
 }
 
 function routeToHubIfAuthorized() {
