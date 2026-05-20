@@ -8,14 +8,11 @@ const SKILLS_BY_ACTION_ID = Object.freeze(
 
 export async function registerFighterAction({fighterActions, fighters}, message, socket) {
   const normalizedMessage = normalizeMessage(message);
-  if(!normalizedMessage || !socket.player || socket.readyState !== socket.OPEN) {
+  if(!normalizedMessage || !isSocketReady(socket)) {
     return;
   }
   const currentFighter = await fighters.findCurrentByPlayerID(socket.player.id);
-  if(!currentFighter) {
-    return;
-  }
-  if(!isValidAction(currentFighter, normalizedMessage.action_id)) {
+  if(!currentFighter || !isValidAction(currentFighter, normalizedMessage.action_id)) {
     return;
   }
   const fighterAction = await fighterActions.create({
@@ -39,6 +36,10 @@ function normalizeMessage(message) {
   return {
     action_id: actionId,
   };
+}
+
+function isSocketReady(socket) {
+  return socket.player && socket.readyState === socket.OPEN;
 }
 
 function isValidAction(fighter, actionID) {
