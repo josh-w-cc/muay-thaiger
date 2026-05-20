@@ -2,8 +2,22 @@ import {SKILL_IDS, SKILL_SEED_ACTIONS} from 'shared/skills.js';
 
 
 export const SEED_FIGHTERS = [
-  {display_name: 'RamrodRit Jr', gold: '0', id: 1, player_id: 1, race: 1},
-  {display_name: 'SaklekSilva Jr', gold: '0', id: 2, player_id: 2, race: 2},
+  {
+    display_name: 'RamrodRit Jr',
+    gold: '0',
+    id: 1,
+    player_id: 1,
+    race: 1,
+    stats: {anima: 1, durability: 1, reach: 2, speed: 1, strength: 2, vitality: 2},
+  },
+  {
+    display_name: 'SaklekSilva Jr',
+    gold: '0',
+    id: 2,
+    player_id: 2,
+    race: 2,
+    stats: {anima: 2, durability: 2, reach: 1, speed: 2, strength: 1, vitality: 1},
+  },
 ];
 
 export const SEED_PLAYERS = [
