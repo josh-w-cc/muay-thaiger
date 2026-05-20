@@ -2,6 +2,7 @@ import {act, render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router-dom';
 
+import selectFighter from '@/actions/selectFighter.js';
 import {resetPlayerStore, setPlayerToken} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
 
@@ -15,8 +16,8 @@ const {routerNavigate} = vi.hoisted(() => ({
 }));
 
 vi.mock('./CharacterSelect', () => ({
-  default: function MockCharacterSelect({onExit}) {
-    return <button onClick={() => onExit('1')}>Character Select</button>;
+  default: function MockCharacterSelect() {
+    return <button onClick={() => selectFighter('1')}>Character Select</button>;
   },
 }));
 

@@ -21,7 +21,6 @@ describe('CharacterSelect', () => {
 
   it('renders races and selects the chosen race', async () => {
     const user = userEvent.setup();
-    const onExit = vi.fn();
     const raceID = 2;
     const races = [
       {
@@ -32,7 +31,7 @@ describe('CharacterSelect', () => {
     ];
     const {default: CharacterSelect} = await import('./index.js');
 
-    render(<CharacterSelect onExit={onExit} races={races} />);
+    render(<CharacterSelect races={races} />);
 
     const raceHeading = screen.getByRole('heading', {name: 'Snow Leopard Prime'});
     const raceCard = raceHeading.closest('div');
@@ -40,8 +39,6 @@ describe('CharacterSelect', () => {
     await user.click(within(raceCard).getByRole('button', {name: 'CHOOSE'}));
 
     expect(selectMock).toHaveBeenCalledWith(`${raceID}`);
-    expect(onExit).toHaveBeenCalledWith(`${raceID}`);
-    expect(onExit).toHaveBeenCalledTimes(1);
   });
 
   it('renders all races that are provided and maps images by race ID', async () => {
@@ -59,7 +56,7 @@ describe('CharacterSelect', () => {
       },
     ];
 
-    render(<CharacterSelect onExit={vi.fn()} races={races} />);
+    render(<CharacterSelect races={races} />);
 
     expect(screen.getByRole('heading', {name: 'Tiger'})).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: 'Snow Leopard Prime'})).toBeInTheDocument();
