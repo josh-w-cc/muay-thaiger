@@ -50,6 +50,19 @@ describe('Train', () => {
     expect(screen.queryByRole('button', {name: 'Once'})).not.toBeInTheDocument();
   });
 
+  it('shows mock training regimen options with progress bars', () => {
+    render(<Train />);
+
+    expect(screen.getByRole('heading', {name: 'Training Regimen:'})).toBeInTheDocument();
+    expect(screen.getByText('Footwork Ladder')).toBeInTheDocument();
+    expect(screen.getByText('Pad Work')).toBeInTheDocument();
+    expect(screen.getByText('Clinch Rounds')).toBeInTheDocument();
+
+    expect(screen.getByRole('progressbar', {name: 'Footwork Ladder completion'})).toHaveAttribute('aria-valuenow', '34');
+    expect(screen.getByRole('progressbar', {name: 'Pad Work completion'})).toHaveAttribute('aria-valuenow', '61');
+    expect(screen.getByRole('progressbar', {name: 'Clinch Rounds completion'})).toHaveAttribute('aria-valuenow', '86');
+  });
+
   it('starts idling for a skill when idle is clicked', async () => {
     const user = userEvent.setup();
     render(<Train />);
