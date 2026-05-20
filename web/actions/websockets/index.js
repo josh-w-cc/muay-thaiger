@@ -1,7 +1,7 @@
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
-import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} from './websocketState.js';
+import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} from '@/actions/websockets/websocketState.js';
 
 
 let hasReceivedAuthRequest = false;
