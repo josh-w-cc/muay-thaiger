@@ -1,7 +1,16 @@
 import {create} from 'zustand';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
-import {getInitialState, getSelectionState, getSocketOverwriteState, getTrainingEffect, isFightIdling, isTrainIdling, mergeState, tickTrain} from './fighterState.js';
+import {
+  getInitialState,
+  getSelectionState,
+  getTrainingEffect,
+  isFightIdling,
+  isTrainIdling,
+  mergeState,
+  tickTrain,
+} from './fighterState.js';
+import {getSocketOverwriteState} from './socketFighterState.js';
 
 const useFighterStore = create((set, get) => ({
   ...getInitialState(),

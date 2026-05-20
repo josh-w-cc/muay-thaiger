@@ -74,19 +74,6 @@ export function getSelectionState(id) {
   };
 }
 
-export function getSocketOverwriteState({fighter}) {
-  const race = `${fighter?.race ?? initialRace}`;
-  const nextGold = Number(fighter?.gold);
-  return {
-    ...getSelectionState(race),
-    ...fighter?.stats,
-    gold: Number.isFinite(nextGold) ? nextGold : 0,
-    id: fighter?.id ?? null,
-    idling: false,
-    race,
-  };
-}
-
 function getBaseSelectionState({anima, durability, reach, speed, strength: innateStrength, vitality}) {
   return {
     agility: 0,
