@@ -121,6 +121,17 @@ describe('player websocket helpers', () => {
     expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
   });
 
+  it('silently accepts ok command without sending or warning', () => {
+    const socket = connectSocketOnAppLoad();
+    const send = vi.fn();
+    socket.send = send;
+
+    socket.onmessage({data: JSON.stringify({cmd: 'ok', metadata: {responded_cmd: 'idle'}})});
+
+    expect(send).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
   it('ignores invalid websocket messages and logs unknown commands', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();

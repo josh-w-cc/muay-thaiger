@@ -5,9 +5,7 @@ let hasRespondedToAuth = false;
 let socket = null;
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
-  if(socket?.close) {
-    socket.close();
-  }
+  socket?.close?.();
   hasReceivedAuthRequest = false;
   hasRespondedToAuth = false;
   socket = null;
@@ -49,6 +47,12 @@ function onAuth(message) {
   respondToAuth();
 }
 
+function onAuthInvalidToken() {
+  usePlayerStore.getState().clearToken();
+  hasRespondedToAuth = false;
+  respondToAuth();
+}
+
 function onSocketMessage(event) {
   const message = parseMessage(event);
   if(!message) {
@@ -60,9 +64,9 @@ function onSocketMessage(event) {
       onAuth(message);
       return;
     case 'auth-invalid-token':
-      usePlayerStore.getState().clearToken();
-      hasRespondedToAuth = false;
-      respondToAuth();
+      onAuthInvalidToken();
+      return;
+    case 'ok':
       return;
     default:
       console.warn('Unknown websocket cmd:', cmd);
