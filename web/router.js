@@ -1,5 +1,6 @@
 import {createBrowserRouter} from 'react-router-dom';
 
+import Game, {characterSelectLoader} from './pages/Game/index.js';
 import RootLayout from './pages/RootLayout/index.js';
 import NotFound from './pages/NotFound.js';
 
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <NotFound />,
     children: [
-      {index: true, lazy: lazyPage(importGamePage, {loader: 'characterSelectLoader'})},
+      {element: <Game />, index: true, loader: characterSelectLoader},
       {
         children: [
           {path: 'fight', lazy: lazyPage(importGamePage, {component: 'FightScreen'})},
