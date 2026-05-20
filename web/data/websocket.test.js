@@ -25,16 +25,37 @@ describe('player websocket helpers', () => {
     const state = {
       hasReceivedAuthRequest: true,
       hasRespondedToAuth: false,
-      hasSelectedFighter: false,
-      selectedRace: null,
+      hasSelectedFighter: true,
+      selectedRace: '1',
       token: null,
     };
     const get = () => state;
     const set = (updates) => Object.assign(state, updates);
 
-    selectFighterCmd({get, race: '1', set, socket});
+    selectFighterCmd({get, set, socket});
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
+    expect(routerNavigate).not.toHaveBeenCalled();
+  });
+
+  it('does not set fighter selection state', () => {
+    const send = vi.fn();
+    const socket = {readyState: 1, send};
+    const state = {
+      hasReceivedAuthRequest: true,
+      hasRespondedToAuth: false,
+      hasSelectedFighter: false,
+      selectedRace: null,
+      token: 'existing-token',
+    };
+    const get = () => state;
+    const set = (updates) => Object.assign(state, updates);
+
+    selectFighterCmd({get, set, socket});
+
+    expect(state.hasSelectedFighter).toBe(false);
+    expect(state.selectedRace).toBeNull();
+    expect(send).not.toHaveBeenCalled();
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
