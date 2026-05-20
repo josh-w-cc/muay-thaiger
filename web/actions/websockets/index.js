@@ -50,6 +50,9 @@ function createWebSocketURL() {
 }
 
 function onAuth(message) {
+  if(message.display_name) {
+    usePlayerStore.getState().setPlayerName(message.display_name);
+  }
   if(Number.isInteger(message.player_id)) {
     usePlayerStore.getState().setPlayerID(message.player_id);
   }

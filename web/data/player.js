@@ -3,9 +3,10 @@ import {create} from 'zustand';
 const usePlayerStore = create((set) => ({
   ...getInitialState(),
   clearToken: () => set({token: null}),
-  setPlayerID: (playerID) => set({playerID}),
-  setToken: (token) => set({token}),
   selectFighter: (race) => set({selectedRace: race}),
+  setPlayerID: (playerID) => set({playerID}),
+  setPlayerName: (playerName) => set({playerName}),
+  setToken: (token) => set({token}),
 }));
 export default usePlayerStore;
 
@@ -17,6 +18,7 @@ export const resetPlayerStore = () => {
 function getInitialState() {
   return {
     playerID: null,
+    playerName: null,
     selectedRace: null,
     token: null,
   };

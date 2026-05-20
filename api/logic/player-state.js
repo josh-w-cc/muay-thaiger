@@ -10,6 +10,10 @@ export async function authenticateAndSendPlayerState(models, message, socket) {
     return;
   }
   const actions = await models.fighterActions.listByFighterID(fighter.id);
+  sendPlayerState(actions, fighter, socket);
+}
+
+export function sendPlayerState(actions, fighter, socket) {
   socket.send(JSON.stringify({actions, cmd: 'player_state', fighter}));
 }
 

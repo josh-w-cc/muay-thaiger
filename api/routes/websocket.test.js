@@ -161,7 +161,7 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'auth', race: 2, token: 'new'}), socket, {fighters, players, races});
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', player_id: 1, token: 'player-uuid-token'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', display_name: 'Player-abcdefgh', player_id: 1, token: 'player-uuid-token'});
   });
 
   it('creates a fighter with the chosen race when creating a player on auth new', async () => {
@@ -233,7 +233,7 @@ describe('WebSocket /ws/connect', () => {
 
   it('translates an existing player token to player id on auth', async () => {
     const send = createCallTracker();
-    const player = {id: 5, token: 'known-token'};
+    const player = {display_name: 'Player-known', id: 5, token: 'known-token'};
     const socket = {OPEN: 1, readyState: 1, send};
     const players = {
       create: async () => null,
@@ -248,7 +248,7 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players});
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', player_id: 5, token: 'known-token'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', display_name: 'Player-known', player_id: 5, token: 'known-token'});
   });
 
   it('attaches player to socket after successful authentication', async () => {
@@ -298,6 +298,22 @@ describe('WebSocket /ws/connect', () => {
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth-invalid-token'});
+  });
+
+  it('sends an internal error message when a command handler throws', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+    const players = {
+      create: async () => null,
+      findByToken: async () => {
+        throw new Error('database failure');
+      },
+    };
+
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players});
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'internal-error'});
   });
 
   it('does not respond to idle messages when the player has no current fighter', async () => {

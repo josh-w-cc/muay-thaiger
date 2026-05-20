@@ -121,6 +121,13 @@ describe('player websocket helpers', () => {
     expect(usePlayerStore.getState().playerID).toBe(77);
   });
 
+  it('stores player name when provided in auth message', () => {
+    const socket = connectSocketOnAppLoad();
+    socket.onmessage({data: JSON.stringify({cmd: 'auth', display_name: 'Player-abc123', player_id: 77})});
+
+    expect(usePlayerStore.getState().playerName).toBe('Player-abc123');
+  });
+
   it('overwrites client player and fighter state when player_state is received', () => {
     usePlayerStore.getState().selectFighter('99');
     usePlayerStore.getState().setPlayerID(999);
