@@ -4,7 +4,7 @@ import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
-import {authenticate} from '../logic/auth.js';
+import {authenticateAndSendPlayerState} from '../logic/player-state.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
 import {applyTraining} from '../logic/training.js';
 
@@ -40,19 +40,13 @@ export async function onMessage(raw, socket, models) {
   if(!message || socket.readyState !== socket.OPEN) {
     return;
   }
-  switch(message.cmd) {
-    case 'auth': {
-      await authenticate(models, message, socket);
-      if(!canSendPlayerStateOnAuth(models, socket)) {
-        return;
-      }
-      return sendPlayerState(models, socket);
-    }
-    case 'idle':
-      return registerFighterAction(models, message, socket);
-    default:
-      socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
+  if(message.cmd === 'auth') {
+    return authenticateAndSendPlayerState(models, message, socket);
   }
+  if(message.cmd === 'idle') {
+    return registerFighterAction(models, message, socket);
+  }
+  socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
 }
 
 export async function syncPlayerState({fighterActions, fighters}, sockets) {
@@ -96,21 +90,4 @@ function parseMessage(raw) {
   catch {
     return null;
   }
-}
-
-function canSendPlayerStateOnAuth({fighterActions, fighters}, socket) {
-  return Boolean(
-    socket.player &&
-    fighterActions?.listByFighterID &&
-    fighters?.findCurrentByPlayerID,
-  );
-}
-
-async function sendPlayerState({fighterActions, fighters}, socket) {
-  const fighter = await fighters.findCurrentByPlayerID(socket.player.id);
-  if(!fighter) {
-    return;
-  }
-  const actions = await fighterActions.listByFighterID(fighter.id);
-  socket.send(JSON.stringify({actions, cmd: 'player_state', fighter}));
 }
