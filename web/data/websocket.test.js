@@ -8,7 +8,7 @@ vi.mock('@/router.js', () => ({
 import useFighterStore, {resetFighterStore} from './fighter.js';
 import usePlayerStore, {resetPlayerStore, setPlayerToken} from './player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
-import {connectSocketOnAppLoad, resetSocketState, selectFighterCmd} from './websocket.js';
+import {connectSocketOnAppLoad, createFighterActionCmd, resetSocketState, selectFighterCmd} from './websocket.js';
 
 
 describe('player websocket helpers', () => {
@@ -127,7 +127,6 @@ describe('player websocket helpers', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
-
     expect(usePlayerStore.getState().selectedRace).toBe('99');
     expect(usePlayerStore.getState().playerID).toBe(999);
     expect(useFighterStore.getState().race).toBe('1');
@@ -154,6 +153,16 @@ describe('player websocket helpers', () => {
     expect(useFighterStore.getState().stamina).toBe(7);
     expect(useFighterStore.getState().strength).toBe(8);
     expect(send).not.toHaveBeenCalled();
+  });
+
+  it('sends idle command with action id for fighter actions', () => {
+    const socket = connectSocketOnAppLoad();
+    const send = vi.fn();
+    socket.send = send;
+
+    createFighterActionCmd(2);
+
+    expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
   });
 
   it('ignores invalid websocket messages and logs unknown commands', () => {

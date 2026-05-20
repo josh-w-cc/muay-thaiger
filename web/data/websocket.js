@@ -17,6 +17,14 @@ export function resetSocketState() {
   hasRespondedToAuth = false;
   socket = null;
 }
+
+export function createFighterActionCmd(actionID) {
+  if(!Number.isInteger(actionID) || !isSocketReady()) {
+    return;
+  }
+  socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
+}
+
 export function selectFighterCmd() {
   respondToAuth();
   routeToHubIfAuthorized();
@@ -46,6 +54,12 @@ function onAuth(message) {
     routeToHubIfAuthorized();
   }
   hasReceivedAuthRequest = true;
+  respondToAuth();
+}
+
+function onAuthInvalidToken() {
+  usePlayerStore.getState().clearToken();
+  hasRespondedToAuth = false;
   respondToAuth();
 }
 
@@ -79,12 +93,6 @@ function onSocketMessage(event) {
   console.warn('Unknown websocket cmd:', message.cmd);
 }
 
-function onAuthInvalidToken() {
-  usePlayerStore.getState().clearToken();
-  hasRespondedToAuth = false;
-  respondToAuth();
-}
-
 function respondToAuth() {
   const {selectedRace, token} = usePlayerStore.getState();
   if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, selectedRace, socket, token})) {
@@ -100,4 +108,8 @@ function routeToHubIfAuthorized() {
     return;
   }
   router.navigate('/hub');
+}
+
+function isSocketReady() {
+  return Boolean(socket && socket.readyState === WebSocket.OPEN);
 }
