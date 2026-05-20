@@ -5,7 +5,9 @@ import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
 import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} from '@/actions/websockets/websocketState.js';
 
-let hasReceivedAuthRequest = false, hasRespondedToAuth = false, socket = null;
+let hasReceivedAuthRequest = false;
+let hasRespondedToAuth = false;
+let socket = null;
 const onSocketCommand = {
   'auth': onAuth,
   'auth-invalid-token': onAuthInvalidToken,
@@ -43,9 +45,8 @@ function connectSocket() {
 }
 
 function createWebSocketURL() {
-  const url = new URL('/ws/connect', window.location.href);
-  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-  return url.toString();
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${protocol}//${window.location.host}/ws/connect`;
 }
 
 function onAuth(message) {
@@ -104,10 +105,9 @@ function routeToHubIfAuthorized() {
 }
 
 function runSocketCommand(message) {
-  const onCommand = onSocketCommand[message.cmd];
-  if(!onCommand) {
+  if(!onSocketCommand[message.cmd]) {
     return false;
   }
-  onCommand(message);
+  onSocketCommand[message.cmd](message);
   return true;
 }
