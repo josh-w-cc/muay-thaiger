@@ -5,16 +5,17 @@ import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import selectFighter from './selectFighter.js';
 
 
-const {socket} = vi.hoisted(() => ({
-  socket: {},
+const {selectFighterCmd} = vi.hoisted(() => ({
+  selectFighterCmd: vi.fn(),
 }));
 
-vi.mock('@/pages/Game/useConnectSocket.js', () => ({
-  getConnectedSocket: () => socket,
+vi.mock('@/data/websocket.js', () => ({
+  selectFighterCmd: (...args) => selectFighterCmd(...args),
 }));
 
 describe('selectFighter', () => {
   afterEach(() => {
+    vi.clearAllMocks();
     resetFighterStore();
     resetPlayerStore();
   });
@@ -33,7 +34,7 @@ describe('selectFighter', () => {
     expect(fighter.reach).toBe(stats.reach);
     expect(fighter.speed).toBe(stats.speed);
     expect(fighter.vitality).toBe(stats.vitality);
-    expect(usePlayerStore.getState().hasSelectedFighter).toBe(true);
     expect(usePlayerStore.getState().selectedRace).toBe('2');
+    expect(selectFighterCmd).toHaveBeenCalledTimes(1);
   });
 });

@@ -8,13 +8,11 @@ import Header from './Header.js';
 import Hub from './Hub.js';
 import Shop from './Shop';
 import Train from './Train';
-import useAuthSocket from './useAuthSocket.js';
 import './Game.css';
 import '../../orig/src/index.css';
 
 export default function Game() {
   const races = useLoaderData() ?? [];
-  useAuthSocket();
   return (
     <FighterSelect races={races} />
   );
@@ -36,8 +34,6 @@ export function FightScreen() {
 }
 
 export function GameLayout() {
-  useAuthSocket();
-
   return (
     <>
       <Header />

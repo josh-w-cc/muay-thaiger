@@ -1,66 +1,98 @@
+import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
-import {clearStoredPlayerToken} from './playerTokenStorage.js';
-
-export function selectFighterCmd({get, set, socket}) {
-  respondToAuth({get, set, socket});
-  routeToHubIfAuthorized({get});
+let hasReceivedAuthRequest = false;
+let hasRespondedToAuth = false;
+let socket = null;
+export const connectSocketOnAppLoad = connectSocket;
+export function resetSocketState() {
+  if(socket?.close) {
+    socket.close();
+  }
+  hasReceivedAuthRequest = false;
+  hasRespondedToAuth = false;
+  socket = null;
 }
-
-export function generateOnSocketMessageFn({get, set}) {
-  return ({message, socket}) => {
-    const messageType = message?.type;
-    if(messageType === 'auth-invalid-token') {
-      clearStoredPlayerToken();
-      set({hasRespondedToAuth: false, token: null});
-      respondToAuth({get, set, socket});
-      return;
-    }
-    if(messageType !== 'auth') {
-      return;
-    }
-    onAuth({get, message, set, socket});
-  };
+export function selectFighterCmd() {
+  respondToAuth();
+  routeToHubIfAuthorized();
 }
-
-function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket}) {
-  return Boolean(
-    !hasRespondedToAuth
-    && hasReceivedAuthRequest
-    && hasSelectedFighter
-    && socket
-    && socket.readyState === WebSocket.OPEN,
-  );
+function connectSocket() {
+  if(socket) {
+    return socket;
+  }
+  socket = new WebSocket(createWebSocketURL());
+  socket.onmessage = onSocketMessage;
+  return socket;
 }
-
-function getAuthResponse({selectedRace, token}) {
+function createWebSocketURL() {
+  const url = new URL('/ws/connect', window.location.href);
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  return url.toString();
+}
+function onAuth(message) {
+  if(message.token) {
+    usePlayerStore.getState().setToken(message.token);
+    routeToHubIfAuthorized();
+  }
+  hasReceivedAuthRequest = true;
+  respondToAuth();
+}
+function onSocketMessage(event) {
+  const message = parseMessage(event);
+  if(!message) {
+    return;
+  }
+  const messageType = message.type;
+  if(messageType === 'auth-invalid-token') {
+    usePlayerStore.getState().clearToken();
+    hasRespondedToAuth = false;
+    respondToAuth();
+    return;
+  }
+  if(messageType !== 'auth') {
+    return;
+  }
+  onAuth(message);
+}
+function parseMessage(event) {
+  try {
+    return JSON.parse(event.data);
+  }
+  catch {
+    return null;
+  }
+}
+function respondToAuth() {
+  if(!canRespondToAuth()) {
+    return;
+  }
+  hasRespondedToAuth = true;
+  socket.send(JSON.stringify(getAuthResponse()));
+}
+function routeToHubIfAuthorized() {
+  const {selectedRace, token} = usePlayerStore.getState();
+  if(!selectedRace || !token) {
+    return;
+  }
+  router.navigate('/hub');
+}
+function getAuthResponse() {
+  const {selectedRace, token} = usePlayerStore.getState();
   if(token) {
     return {cmd: 'auth', token};
   }
   return {cmd: 'auth', race: selectedRace, token: 'new'};
 }
-
-function onAuth({get, message, set, socket}) {
-  if(message.token) {
-    get().setToken(message.token);
-    routeToHubIfAuthorized({get});
-  }
-  set({hasReceivedAuthRequest: true});
-  respondToAuth({get, set, socket});
+function canRespondToAuth() {
+  return isAuthHandshakePending() && hasAuthResponseData() && isSocketReady();
 }
-
-function respondToAuth({get, set, socket}) {
-  const {hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, selectedRace, token} = get();
-  if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, hasSelectedFighter, socket})) {
-    return;
-  }
-  set({hasRespondedToAuth: true});
-  socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
+function isAuthHandshakePending() {
+  return !hasRespondedToAuth && hasReceivedAuthRequest;
 }
-
-function routeToHubIfAuthorized({get}) {
-  const {hasSelectedFighter, token} = get();
-  if(!hasSelectedFighter || !token) {
-    return;
-  }
-  router.navigate('/hub');
+function hasAuthResponseData() {
+  const {selectedRace, token} = usePlayerStore.getState();
+  return Boolean(selectedRace || token);
+}
+function isSocketReady() {
+  return Boolean(socket && socket.readyState === WebSocket.OPEN);
 }
