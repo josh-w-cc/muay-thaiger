@@ -48,7 +48,7 @@ function onSocketMessage(event) {
   if(!message) {
     return;
   }
-  const cmd = message.cmd || message.type;
+  const cmd = message.cmd || message.type; // TODO: Remove `type` fallback after backend websocket payloads ship `cmd` for auth/auth-invalid-token.
   switch(cmd) {
     case 'auth':
       onAuth(message);

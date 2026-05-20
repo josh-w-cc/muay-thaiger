@@ -13,9 +13,10 @@ import {connectSocketOnAppLoad, resetSocketState, selectFighterCmd} from './webs
 describe('player websocket helpers', () => {
   const originalWebSocket = globalThis.WebSocket;
   const originalLocation = globalThis.window.location;
-  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  let warnSpy;
 
   beforeEach(() => {
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     globalThis.WebSocket = vi.fn(function () {
       return {close: vi.fn(), readyState: 1, send: vi.fn()};
     });
@@ -32,11 +33,7 @@ describe('player websocket helpers', () => {
       configurable: true,
       value: originalLocation,
     });
-    warn.mockClear();
-  });
-
-  afterAll(() => {
-    warn.mockRestore();
+    warnSpy.mockRestore();
   });
 
   it('sends a new auth command after fighter selection when auth request is received', () => {
@@ -123,6 +120,7 @@ describe('player websocket helpers', () => {
     socket.onmessage({data: JSON.stringify({cmd: 'noop'})});
 
     expect(send).not.toHaveBeenCalled();
-    expect(warn).toHaveBeenCalledWith('Unknown websocket cmd:', 'noop');
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith('Unknown websocket cmd:', 'noop');
   });
 });
