@@ -2,9 +2,9 @@ import {RACES} from './baseStats.js';
 import {getSelectionState} from './fighterState.js';
 
 
-const initialRace = `${RACES[0].id}`;
+const defaultRace = `${RACES[0].id}`;
 
-export function getSocketOverwriteState({fighter}) {
+export function buildStateFromSocketFighter(fighter) {
   const race = getSocketRace(fighter);
   return {
     ...getSelectionState(race),
@@ -35,7 +35,7 @@ function getSocketRace(fighter) {
   if(fighter?.race) {
     return `${fighter.race}`;
   }
-  return initialRace;
+  return defaultRace;
 }
 
 function getSocketStats(fighter) {

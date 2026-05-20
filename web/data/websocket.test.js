@@ -114,8 +114,8 @@ describe('player websocket helpers', () => {
   });
 
   it('overwrites client player and fighter state when player_state is received', () => {
-    usePlayerStore.getState().selectFighter('1');
-    usePlayerStore.getState().setPlayerID(1);
+    usePlayerStore.getState().selectFighter('99');
+    usePlayerStore.getState().setPlayerID(999);
     useFighterStore.setState({
       agility: 99,
       gold: 999,
@@ -127,6 +127,11 @@ describe('player websocket helpers', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
+
+    expect(usePlayerStore.getState().selectedRace).toBe('99');
+    expect(usePlayerStore.getState().playerID).toBe(999);
+    expect(useFighterStore.getState().race).toBe('1');
+
     socket.onmessage({
       data: JSON.stringify({
         cmd: 'player_state',

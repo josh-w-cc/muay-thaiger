@@ -33,7 +33,7 @@ function connectSocket() {
 
 function createWebSocketURL() {
   const url = new URL('/ws/connect', window.location.href);
-  url.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
   return url.toString();
 }
 
