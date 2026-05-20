@@ -49,7 +49,11 @@ export async function onMessage(raw, socket, models) {
 
 export async function syncPlayerState({fighters}, sockets) {
   for(const socket of sockets) {
-    if(!isSocketOpen(socket) || !socket.player) {
+    if(!isSocketOpen(socket)) {
+      sockets.delete(socket);
+      continue;
+    }
+    if(!socket.player) {
       continue;
     }
     const fighter = await fighters.findCurrentByPlayerID(socket.player.id);

@@ -246,6 +246,7 @@ describe('WebSocket /ws/connect', () => {
   it('syncs each authenticated player current fighter state', async () => {
     const sendOpen = createCallTracker();
     const sendNoFighter = createCallTracker();
+    const closedSocket = {OPEN: 1, player: {id: 3}, readyState: 0, send: createCallTracker()};
     const fighters = {
       findCurrentByPlayerID: async (id) => {
         if(id === 1) {
@@ -258,7 +259,7 @@ describe('WebSocket /ws/connect', () => {
       {OPEN: 1, player: {id: 1}, readyState: 1, send: sendOpen},
       {OPEN: 1, player: {id: 2}, readyState: 1, send: sendNoFighter},
       {OPEN: 1, readyState: 1, send: createCallTracker()},
-      {OPEN: 1, player: {id: 3}, readyState: 0, send: createCallTracker()},
+      closedSocket,
     ]);
 
     await syncPlayerState({fighters}, sockets);
@@ -269,6 +270,7 @@ describe('WebSocket /ws/connect', () => {
       type: 'player_state',
     });
     assert.equal(sendNoFighter.calls.length, 0);
+    assert.equal(sockets.has(closedSocket), false);
   });
 });
 
