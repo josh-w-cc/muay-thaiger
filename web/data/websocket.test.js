@@ -178,7 +178,6 @@ describe('player websocket helpers', () => {
     socket.send = send;
     const invalidActionID = '2';
 
-    expect(Number.isInteger(invalidActionID)).toBe(false);
     createFighterActionCmd(invalidActionID);
 
     expect(send).not.toHaveBeenCalled();
