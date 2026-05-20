@@ -40,13 +40,14 @@ export async function onMessage(raw, socket, models) {
   if(!message || socket.readyState !== socket.OPEN) {
     return;
   }
-  if(message.cmd === 'auth') {
-    return authenticateAndSendPlayerState(models, message, socket);
+  switch(message.cmd) {
+    case 'auth':
+      return authenticateAndSendPlayerState(models, message, socket);
+    case 'idle':
+      return registerFighterAction(models, message, socket);
+    default:
+      socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
   }
-  if(message.cmd === 'idle') {
-    return registerFighterAction(models, message, socket);
-  }
-  socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
 }
 
 export async function syncPlayerState({fighterActions, fighters}, sockets) {
