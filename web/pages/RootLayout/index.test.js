@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 
-vi.mock('react-router', () => ({
+vi.mock('react-router-dom', () => ({
   Outlet: () => <div data-testid="outlet" />,
 }));
 

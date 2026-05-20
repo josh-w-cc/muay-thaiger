@@ -1,6 +1,6 @@
 import {act, render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router';
+import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router-dom';
 
 import {resetPlayerStore, setPlayerToken} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
@@ -40,7 +40,7 @@ vi.mock('./Hub.js', () => ({
   },
 }));
 
-vi.mock('../../orig/src/menus/Shop', () => ({
+vi.mock('./Shop', () => ({
   default: function MockShop() {
     return <h2>Shop Screen</h2>;
   },

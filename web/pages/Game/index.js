@@ -1,4 +1,4 @@
-import {Outlet, redirect, useLoaderData, useNavigate} from 'react-router';
+import {Outlet, redirect, useLoaderData, useNavigate} from 'react-router-dom';
 
 import {loadPlayerToken} from '@/data/player.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
@@ -6,7 +6,7 @@ import CharacterSelect from './CharacterSelect';
 import Fight from '../../orig/src/menus/Fight';
 import Header from './Header.js';
 import Hub from './Hub.js';
-import Shop from '../../orig/src/menus/Shop';
+import Shop from './Shop';
 import Train from './Train';
 import useAuthSocket from './useAuthSocket.js';
 import './Game.css';

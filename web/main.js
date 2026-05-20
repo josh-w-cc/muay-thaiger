@@ -1,5 +1,5 @@
 import {createRoot} from 'react-dom/client';
-import {RouterProvider} from 'react-router';
+import {RouterProvider} from 'react-router-dom';
 
 import {connectSocketOnAppLoad} from './pages/Game/useConnectSocket.js';
 import router from './router.js';
