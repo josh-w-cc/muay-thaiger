@@ -102,5 +102,4 @@ describe('player websocket helpers', () => {
     expect(routerNavigate).toHaveBeenCalledWith('/hub');
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'new-token'}));
   });
-
 });
