@@ -12,7 +12,7 @@ const RACE_IMAGES_BY_ID = {
   2: SnowLeopard,
 };
 
-function CharacterSelect({onExit, races = []}) {
+function CharacterSelect({races = []}) {
   return (
     <>
       <h1>Choose your fighter:</h1>
@@ -24,7 +24,6 @@ function CharacterSelect({onExit, races = []}) {
           stats={race.stats}
           onSelect={() => {
             selectFighter(`${race.id}`);
-            onExit(`${race.id}`);
           }}
         />
       ))}

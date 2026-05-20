@@ -66,6 +66,13 @@ describe('usePlayerStore', () => {
     expect(usePlayerStore.getState().token).toBe('existing-token');
   });
 
+  it('stores token in state when localStorage is unavailable', () => {
+    setLocalStorage(undefined);
+
+    expect(() => setPlayerToken('existing-token')).not.toThrow();
+    expect(usePlayerStore.getState().token).toBe('existing-token');
+  });
+
   it('clears invalid token and retries auth with a new token', () => {
     const send = vi.fn();
     const socket = {readyState: 1, send};
