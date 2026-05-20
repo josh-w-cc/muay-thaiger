@@ -1,4 +1,4 @@
-export async function createAndSend({fighterActions, fighters}, message, socket) {
+export async function registerFighterAction({fighterActions, fighters}, message, socket) {
   const normalizedMessage = normalizeMessage(message);
   if(!normalizedMessage || !socket.player || socket.readyState !== socket.OPEN) {
     return;
