@@ -281,7 +281,9 @@ describe('Game', () => {
     await screen.findByRole('button', {name: 'Character Select'});
     socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
 
-    expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new');
+    await waitFor(() => {
+      expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new');
+    });
   });
 
   it('clears invalid auth token and retries auth with new token', async () => {
