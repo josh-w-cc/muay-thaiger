@@ -4,7 +4,7 @@ import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
-import {authenticate} from '../logic/auth.js';
+import {authenticateAndSendPlayerState} from '../logic/player-state.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
 import {applyTraining} from '../logic/training.js';
 
@@ -42,7 +42,7 @@ export async function onMessage(raw, socket, models) {
   }
   switch(message.cmd) {
     case 'auth':
-      return authenticate(models, message, socket);
+      return authenticateAndSendPlayerState(models, message, socket);
     case 'idle':
       return registerFighterAction(models, message, socket);
     default:
