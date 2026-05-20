@@ -3,7 +3,7 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
-import websocketRoutes, {onConnect, onMessage} from '../routes/websocket.js';
+import websocketRoutes, {onConnect, onMessage, syncPlayerState} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
 describe('WebSocket /ws/connect', () => {
@@ -79,6 +79,19 @@ describe('WebSocket /ws/connect', () => {
     await waitForImmediate();
 
     assert.equal(send.calls.length, 0);
+  });
+
+  it('removes websocket from active connections when it closes', async () => {
+    const socketOn = createCallTracker();
+    const socket = {OPEN: 1, on: socketOn, readyState: 1, send: createCallTracker()};
+    const connections = new Set();
+
+    onConnect(socket, {}, connections);
+    assert.equal(connections.has(socket), true);
+
+    const closeListener = socketOn.calls.find(([eventName]) => eventName === 'close')[1];
+    closeListener();
+    assert.equal(connections.has(socket), false);
   });
 
   it('ignores invalid JSON auth messages', async () => {
@@ -228,6 +241,34 @@ describe('WebSocket /ws/connect', () => {
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
+  });
+
+  it('syncs each authenticated player current fighter state', async () => {
+    const sendOpen = createCallTracker();
+    const sendNoFighter = createCallTracker();
+    const fighters = {
+      findCurrentByPlayerID: async (id) => {
+        if(id === 1) {
+          return {id: 9, player_id: 1, retired: false};
+        }
+        return null;
+      },
+    };
+    const sockets = new Set([
+      {OPEN: 1, player: {id: 1}, readyState: 1, send: sendOpen},
+      {OPEN: 1, player: {id: 2}, readyState: 1, send: sendNoFighter},
+      {OPEN: 1, readyState: 1, send: createCallTracker()},
+      {OPEN: 1, player: {id: 3}, readyState: 0, send: createCallTracker()},
+    ]);
+
+    await syncPlayerState({fighters}, sockets);
+
+    assert.equal(sendOpen.calls.length, 1);
+    assert.deepEqual(JSON.parse(sendOpen.calls[0][0]), {
+      fighter: {id: 9, player_id: 1, retired: false},
+      type: 'player_state',
+    });
+    assert.equal(sendNoFighter.calls.length, 0);
   });
 });
 
