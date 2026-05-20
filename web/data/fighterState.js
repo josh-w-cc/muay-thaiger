@@ -6,6 +6,7 @@ const initialRace = `${RACES[0].id}`;
 export function getInitialState() {
   return {
     gold: 0,
+    id: null,
     idling: false,
     ...getSelectionState(initialRace),
   };
@@ -70,6 +71,19 @@ export function getSelectionState(id) {
   return {
     ...nextState,
     ...getCombatState(nextState),
+  };
+}
+
+export function getSocketOverwriteState({fighter}) {
+  const race = `${fighter?.race ?? initialRace}`;
+  const nextGold = Number(fighter?.gold);
+  return {
+    ...getSelectionState(race),
+    ...fighter?.stats,
+    gold: Number.isFinite(nextGold) ? nextGold : 0,
+    id: fighter?.id ?? null,
+    idling: false,
+    race,
   };
 }
 

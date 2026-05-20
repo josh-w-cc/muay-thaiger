@@ -5,6 +5,7 @@ vi.mock('@/router.js', () => ({
   default: {navigate: routerNavigate},
 }));
 
+import useFighterStore, {resetFighterStore} from './fighter.js';
 import usePlayerStore, {resetPlayerStore, setPlayerToken} from './player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 import {connectSocketOnAppLoad, resetSocketState, selectFighterCmd} from './websocket.js';
@@ -26,6 +27,7 @@ describe('player websocket helpers', () => {
   afterEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    resetFighterStore();
     resetPlayerStore();
     resetSocketState();
     globalThis.WebSocket = originalWebSocket;
@@ -109,6 +111,44 @@ describe('player websocket helpers', () => {
     expect(usePlayerStore.getState().token).toBe('new-token');
     expect(routerNavigate).toHaveBeenCalledWith('/hub');
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'new-token'}));
+  });
+
+  it('overwrites client player and fighter state when player_state is received', () => {
+    usePlayerStore.getState().selectFighter('1');
+    usePlayerStore.getState().setPlayerID(1);
+    useFighterStore.setState({
+      agility: 99,
+      gold: 999,
+      id: 55,
+      race: '1',
+      stamina: 99,
+      strength: 99,
+    });
+    const socket = connectSocketOnAppLoad();
+    const send = vi.fn();
+    socket.send = send;
+    socket.onmessage({
+      data: JSON.stringify({
+        cmd: 'player_state',
+        fighter: {
+          gold: '250',
+          id: 9,
+          player_id: 77,
+          race: 2,
+          stats: {agility: 6, stamina: 7, strength: 8},
+        },
+      }),
+    });
+
+    expect(usePlayerStore.getState().playerID).toBe(77);
+    expect(usePlayerStore.getState().selectedRace).toBe('2');
+    expect(useFighterStore.getState().gold).toBe(250);
+    expect(useFighterStore.getState().id).toBe(9);
+    expect(useFighterStore.getState().race).toBe('2');
+    expect(useFighterStore.getState().agility).toBe(6);
+    expect(useFighterStore.getState().stamina).toBe(7);
+    expect(useFighterStore.getState().strength).toBe(8);
+    expect(send).not.toHaveBeenCalled();
   });
 
   it('ignores invalid websocket messages and logs unknown commands', () => {

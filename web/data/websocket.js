@@ -1,3 +1,4 @@
+import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
 
@@ -35,12 +36,25 @@ function createWebSocketURL() {
 }
 
 function onAuth(message) {
+  if(message.player_id) {
+    usePlayerStore.getState().setPlayerID(message.player_id);
+  }
   if(message.token) {
     usePlayerStore.getState().setToken(message.token);
     routeToHubIfAuthorized();
   }
   hasReceivedAuthRequest = true;
   respondToAuth();
+}
+
+function onPlayerState(message) {
+  if(!message.fighter) {
+    return;
+  }
+  useFighterStore.getState().overwrite(message.fighter);
+  usePlayerStore.getState().setPlayerID(message.fighter.player_id ?? null);
+  usePlayerStore.getState().selectFighter(`${message.fighter.race}`);
+  routeToHubIfAuthorized();
 }
 
 function onSocketMessage(event) {
@@ -57,6 +71,9 @@ function onSocketMessage(event) {
       usePlayerStore.getState().clearToken();
       hasRespondedToAuth = false;
       respondToAuth();
+      return;
+    case 'player_state':
+      onPlayerState(message);
       return;
     default:
       console.warn('Unknown websocket cmd:', cmd);
