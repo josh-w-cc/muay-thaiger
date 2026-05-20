@@ -11,7 +11,7 @@ export async function registerFighterAction({fighterActions, fighters}, message,
     action_id: normalizedMessage.action_id,
     fighter_id: currentFighter.id,
   });
-  socket.send(JSON.stringify({fighterAction, type: 'fighter_action'}));
+  socket.send(JSON.stringify({cmd: 'fighter_action', fighterAction}));
 }
 
 function normalizeMessage(message) {

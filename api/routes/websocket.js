@@ -28,7 +28,7 @@ export function onConnect(socket, models, connections = null) {
     if(!isSocketOpen(socket)) {
       return;
     }
-    socket.send(JSON.stringify({type: 'auth'}));
+    socket.send(JSON.stringify({cmd: 'auth'}));
   });
 }
 
@@ -43,7 +43,7 @@ export async function onMessage(raw, socket, models) {
     case 'idle':
       return registerFighterAction(models, message, socket);
     default:
-      socket.send(JSON.stringify({error: 'invalid-cmd', type: 'error'}));
+      socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
   }
 }
 
@@ -56,7 +56,7 @@ export async function syncPlayerState({fighters}, sockets) {
     if(!fighter) {
       continue;
     }
-    socket.send(JSON.stringify({fighter, type: 'player_state'}));
+    socket.send(JSON.stringify({cmd: 'player_state', fighter}));
   }
 }
 
