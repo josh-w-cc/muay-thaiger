@@ -1,4 +1,3 @@
-import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
 let hasReceivedAuthRequest = false;
@@ -50,16 +49,6 @@ function onAuth(message) {
   respondToAuth();
 }
 
-function onAuthInvalidToken() {
-  usePlayerStore.getState().clearToken();
-  hasRespondedToAuth = false;
-  respondToAuth();
-}
-
-function onPlayerState(message) {
-  useFighterStore.getState().setActions(message.actions || []);
-}
-
 function onSocketMessage(event) {
   const message = parseMessage(event);
   if(!message) {
@@ -67,11 +56,17 @@ function onSocketMessage(event) {
   }
   const {cmd} = message;
   switch(cmd) {
-    case 'auth': return onAuth(message);
-    case 'auth-invalid-token': return onAuthInvalidToken();
-    case 'player_state': return onPlayerState(message);
+    case 'auth':
+      onAuth(message);
+      return;
+    case 'auth-invalid-token':
+      usePlayerStore.getState().clearToken();
+      hasRespondedToAuth = false;
+      respondToAuth();
+      return;
+    default:
+      console.warn('Unknown websocket cmd:', cmd);
   }
-  console.warn('Unknown websocket cmd:', cmd);
 }
 function parseMessage(event) {
   try {

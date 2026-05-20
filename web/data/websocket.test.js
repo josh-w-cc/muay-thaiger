@@ -5,7 +5,6 @@ vi.mock('@/router.js', () => ({
   default: {navigate: routerNavigate},
 }));
 
-import useFighterStore, {resetFighterStore} from './fighter.js';
 import usePlayerStore, {resetPlayerStore, setPlayerToken} from './player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 import {connectSocketOnAppLoad, createFighterActionCmd, resetSocketState, selectFighterCmd} from './websocket.js';
@@ -27,7 +26,6 @@ describe('player websocket helpers', () => {
   afterEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
-    resetFighterStore();
     resetPlayerStore();
     resetSocketState();
     globalThis.WebSocket = originalWebSocket;
@@ -134,23 +132,5 @@ describe('player websocket helpers', () => {
     expect(send).not.toHaveBeenCalled();
     expect(warnSpy).toHaveBeenCalledTimes(1);
     expect(warnSpy).toHaveBeenCalledWith('Unknown websocket cmd:', 'noop');
-  });
-
-  it('updates fighter actions from player_state message', () => {
-    const socket = connectSocketOnAppLoad();
-    const actions = [{action_id: 1, fighter_id: 9, id: 5}];
-
-    socket.onmessage({data: JSON.stringify({actions, cmd: 'player_state', fighter: {id: 9}})});
-
-    expect(useFighterStore.getState().actions).toEqual(actions);
-  });
-
-  it('clears fighter actions when player_state has no actions', () => {
-    useFighterStore.setState({actions: [{action_id: 1, fighter_id: 9, id: 5}]});
-    const socket = connectSocketOnAppLoad();
-
-    socket.onmessage({data: JSON.stringify({cmd: 'player_state', fighter: {id: 9}})});
-
-    expect(useFighterStore.getState().actions).toEqual([]);
   });
 });

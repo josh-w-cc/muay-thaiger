@@ -5,7 +5,6 @@ const initialRace = `${RACES[0].id}`;
 
 export function getInitialState() {
   return {
-    actions: [],
     gold: 0,
     idling: false,
     ...getSelectionState(initialRace),
