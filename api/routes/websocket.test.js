@@ -63,7 +63,10 @@ describe('WebSocket /ws/connect', () => {
     socket.send(JSON.stringify({action_id: 2, cmd: 'idle'}));
     const message = await readMessage(socket);
 
-    assert.deepEqual(message, {cmd: 'fighter_action', fighterAction: created});
+    assert.deepEqual(message, {
+      cmd: 'ok',
+      metadata: {fighterAction: created, responded_cmd: 'idle'},
+    });
     socket.terminate();
     await app.close();
   });
