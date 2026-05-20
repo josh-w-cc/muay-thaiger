@@ -14,6 +14,14 @@ const STAT_FIELDS = [
   {name: 'Skill', stat: 'skill'},
   {name: 'Stanima', stat: 'stamina'},
 ];
+const CLINCH_ROUNDS_PROGRESS = 86;
+const FOOTWORK_LADDER_PROGRESS = 34;
+const PAD_WORK_PROGRESS = 61;
+const TRAINING_REGIMEN = [
+  {name: 'Footwork Ladder', progress: FOOTWORK_LADDER_PROGRESS},
+  {name: 'Pad Work', progress: PAD_WORK_PROGRESS},
+  {name: 'Clinch Rounds', progress: CLINCH_ROUNDS_PROGRESS},
+];
 
 export default function Train() {
   const fighter = useFighterStore();
@@ -27,7 +35,44 @@ export default function Train() {
       </div>
       <h3>Skills:</h3>
       <SkillRows fighter={fighter} />
+      <h3>Training Regimen:</h3>
+      <RegimenRows />
     </>
+  );
+}
+
+function RegimenRows() {
+  return (
+    <div className={css.regimen}>
+      {TRAINING_REGIMEN.map(({name, progress}) => <RegimenRow key={name} name={name} progress={progress} />)}
+    </div>
+  );
+}
+
+function RegimenRow({name, progress}) {
+  return (
+    <div className={css.regimenRow}>
+      <div>{name}</div>
+      <RegimenProgress name={name} progress={progress} />
+    </div>
+  );
+}
+
+function RegimenProgress({name, progress}) {
+  return (
+    <div className={css.regimenProgress}>
+      <div
+        aria-label={`${name} completion`}
+        aria-valuemax={100}
+        aria-valuemin={0}
+        aria-valuenow={progress}
+        className={css.regimenProgressTrack}
+        role="progressbar"
+      >
+        <div className={css.regimenProgressFill} style={{width: `${progress}%`}} />
+      </div>
+      <span className={css.regimenProgressLabel}>{`${progress}%`}</span>
+    </div>
   );
 }
 
