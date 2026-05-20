@@ -353,6 +353,14 @@ describe('WebSocket /ws/connect', () => {
   });
 });
 
+function createCallTracker() {
+  const fn = (...args) => {
+    fn.calls.push(args);
+  };
+  fn.calls = [];
+  return fn;
+}
+
 async function readMessage(socket) {
   return new Promise((resolve, reject) => {
     socket.once('error', reject);
@@ -388,14 +396,6 @@ function sendAndReadMessages(socket, message, count) {
   const messagesPromise = readMessages(socket, count);
   socket.send(JSON.stringify(message));
   return messagesPromise;
-}
-
-function createCallTracker() {
-  const fn = (...args) => {
-    fn.calls.push(args);
-  };
-  fn.calls = [];
-  return fn;
 }
 
 async function waitForImmediate() {
