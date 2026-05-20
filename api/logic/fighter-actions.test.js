@@ -59,6 +59,34 @@ describe('registerFighterAction', () => {
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
   });
+
+  it('does not respond when action_id does not map to a valid skill', async () => {
+    const send = createCallTracker();
+    const create = createCallTracker();
+    const socket = {OPEN: 1, player: {id: 8}, readyState: 1, send};
+    const fighterActions = {create};
+    const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {}})};
+
+    await registerFighterAction({fighterActions, fighters}, {action_id: 999}, socket);
+
+    assert.equal(send.calls.length, 0);
+    assert.equal(create.calls.length, 0);
+  });
+
+  it('does not respond when fighter does not meet the action requirements', async () => {
+    const send = createCallTracker();
+    const create = createCallTracker();
+    const socket = {OPEN: 1, player: {id: 8}, readyState: 1, send};
+    const fighterActions = {create};
+    const fighters = {
+      findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {stamina: 50}}),
+    };
+
+    await registerFighterAction({fighterActions, fighters}, {action_id: 3}, socket);
+
+    assert.equal(send.calls.length, 0);
+    assert.equal(create.calls.length, 0);
+  });
 });
 
 function createCallTracker() {
