@@ -10,7 +10,7 @@ const {socket} = vi.hoisted(() => ({
 }));
 
 vi.mock('@/pages/Game/useConnectSocket.js', () => ({
-  connectSocketOnAppLoad: () => socket,
+  getConnectedSocket: () => socket,
 }));
 
 describe('selectFighter', () => {

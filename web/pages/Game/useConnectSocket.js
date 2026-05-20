@@ -7,6 +7,10 @@ let socket = null;
 
 
 export function connectSocketOnAppLoad() {
+  return getConnectedSocket();
+}
+
+export function getConnectedSocket() {
   return connectSocket();
 }
 
