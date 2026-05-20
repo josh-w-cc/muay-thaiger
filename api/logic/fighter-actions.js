@@ -2,7 +2,7 @@ import {SKILL_DEFINITIONS, SKILL_IDS} from 'shared/skills.js';
 
 const SKILLS_BY_ACTION_ID = Object.freeze(
   Object.fromEntries(
-    Object.entries(SKILL_IDS).map(([key, id]) => [id, SKILL_DEFINITIONS[key]]),
+    Object.entries(SKILL_IDS).map(([skillKey, id]) => [id, SKILL_DEFINITIONS[skillKey]]),
   ),
 );
 
@@ -29,8 +29,8 @@ function isSocketReady(socket) {
   return socket.player && socket.readyState === socket.OPEN;
 }
 
-function isValidAction(fighter, actionId) {
-  const skill = SKILLS_BY_ACTION_ID[actionId];
+function isValidAction(fighter, actionID) {
+  const skill = SKILLS_BY_ACTION_ID[actionID];
   if(!skill) {
     return false;
   }
@@ -41,11 +41,11 @@ function normalizeMessage(message) {
   if(!message) {
     return null;
   }
-  const actionId = Number(message.action_id);
-  if(!Number.isInteger(actionId)) {
+  const actionID = Number(message.action_id);
+  if(!Number.isInteger(actionID)) {
     return null;
   }
   return {
-    action_id: actionId,
+    action_id: actionID,
   };
 }
