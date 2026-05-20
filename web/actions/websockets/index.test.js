@@ -5,10 +5,10 @@ vi.mock('@/router.js', () => ({
   default: {navigate: routerNavigate},
 }));
 
-import useFighterStore, {resetFighterStore} from './fighter.js';
-import usePlayerStore, {resetPlayerStore, setPlayerToken} from './player.js';
-import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
-import {connectSocketOnAppLoad, createFighterActionCmd, resetSocketState, selectFighterCmd} from './websocket.js';
+import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
+import usePlayerStore, {resetPlayerStore, setPlayerToken} from '@/data/player.js';
+import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
+import {connectSocketOnAppLoad, createFighterActionCmd, resetSocketState, selectFighterCmd} from './index.js';
 
 
 describe('player websocket helpers', () => {
