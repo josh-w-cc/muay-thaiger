@@ -36,6 +36,12 @@ describe('usePlayerStore', () => {
     expect(usePlayerStore.getState().selectedRace).toBe('2');
   });
 
+  it('stores player name in player state', () => {
+    usePlayerStore.getState().setPlayerName('Fighter Joe');
+
+    expect(usePlayerStore.getState().playerName).toBe('Fighter Joe');
+  });
+
   it('stores token in state when localStorage is unavailable', () => {
     setLocalStorage(undefined);
 

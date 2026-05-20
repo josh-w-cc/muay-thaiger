@@ -50,6 +50,9 @@ function createWebSocketURL() {
 }
 
 function onAuth(message) {
+  if(message.display_name) {
+    usePlayerStore.getState().setPlayerName(message.display_name);
+  }
   if(Number.isInteger(message.player_id)) {
     usePlayerStore.getState().setPlayerID(message.player_id);
   }
@@ -82,9 +85,12 @@ function onSocketMessage(event) {
   if(!message) {
     return;
   }
-  if(!runSocketCommand(message)) {
+  const onCommand = onSocketCommand[message.cmd];
+  if(!onCommand) {
     console.warn('Unknown websocket cmd:', message.cmd);
+    return;
   }
+  onCommand(message);
 }
 
 function respondToAuth() {
@@ -102,13 +108,4 @@ function routeToHubIfAuthorized() {
     return;
   }
   router.navigate('/hub');
-}
-
-function runSocketCommand(message) {
-  const onCommand = onSocketCommand[message.cmd];
-  if(!onCommand) {
-    return false;
-  }
-  onCommand(message);
-  return true;
 }

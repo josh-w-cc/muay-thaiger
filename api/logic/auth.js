@@ -17,7 +17,7 @@ export async function authenticate({fighters, players, races}, message, socket) 
     return;
   }
   socket.player = player;
-  socket.send(JSON.stringify({cmd: 'auth', player_id: player.id, token: player.token}));
+  socket.send(JSON.stringify({cmd: 'auth', display_name: player.display_name, player_id: player.id, token: player.token}));
 }
 
 async function getPlayer({fighters, players, races}, token, race) {

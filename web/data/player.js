@@ -4,8 +4,9 @@ import {clearStoredPlayerToken, getStoredPlayerToken, setStoredPlayerToken} from
 const usePlayerStore = create((set) => ({
   ...getInitialState(),
   loadToken: () => loadPlayerTokenIntoState(set),
-  setPlayerID: (playerID) => set({playerID}),
   selectFighter: (race) => set({selectedRace: race}),
+  setPlayerID: (playerID) => set({playerID}),
+  setPlayerName: (playerName) => set({playerName}),
   setToken: (token) => {
     setStoredPlayerToken(token);
     set({token});
@@ -28,6 +29,7 @@ export const setPlayerToken = (token) => usePlayerStore.getState().setToken(toke
 function getInitialState() {
   return {
     playerID: null,
+    playerName: null,
     selectedRace: null,
     token: getStoredPlayerToken(),
   };
