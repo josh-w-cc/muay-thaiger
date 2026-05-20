@@ -176,8 +176,10 @@ describe('player websocket helpers', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
+    const invalidActionID = '2';
 
-    createFighterActionCmd('2');
+    expect(Number.isInteger(invalidActionID)).toBe(false);
+    createFighterActionCmd(invalidActionID);
 
     expect(send).not.toHaveBeenCalled();
   });

@@ -3,7 +3,7 @@ import {buildStateFromServerFighter} from './serverFighterState.js';
 
 
 describe('buildStateFromServerFighter', () => {
-  it('uses defaults when player_state fighter data is missing or invalid', () => {
+  it('falls back to defaults when fighter data has invalid types', () => {
     const state = buildStateFromServerFighter({
       gold: 'not-a-number',
       id: 1.5,
