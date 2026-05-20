@@ -41,8 +41,13 @@ export async function onMessage(raw, socket, models) {
     return;
   }
   switch(message.cmd) {
-    case 'auth':
-      return authenticate(models, message, socket);
+    case 'auth': {
+      await authenticate(models, message, socket);
+      if(!canSendPlayerStateOnAuth(models, socket)) {
+        return;
+      }
+      return sendPlayerState(models, socket);
+    }
     case 'idle':
       return registerFighterAction(models, message, socket);
     default:
@@ -91,4 +96,21 @@ function parseMessage(raw) {
   catch {
     return null;
   }
+}
+
+function canSendPlayerStateOnAuth({fighterActions, fighters}, socket) {
+  return Boolean(
+    socket.player &&
+    fighterActions?.listByFighterID &&
+    fighters?.findCurrentByPlayerID,
+  );
+}
+
+async function sendPlayerState({fighterActions, fighters}, socket) {
+  const fighter = await fighters.findCurrentByPlayerID(socket.player.id);
+  if(!fighter) {
+    return;
+  }
+  const actions = await fighterActions.listByFighterID(fighter.id);
+  socket.send(JSON.stringify({actions, cmd: 'player_state', fighter}));
 }

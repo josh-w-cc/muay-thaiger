@@ -35,12 +35,16 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    socket.send(JSON.stringify({cmd: 'auth', race: 2, token: 'new'}));
-    const message = await readMessage(socket);
+    const [authMessage, playerStateMessage] = await sendAndReadMessages(
+      socket,
+      {cmd: 'auth', race: 2, token: 'new'},
+      2,
+    );
 
-    assert.equal(message.cmd, 'auth');
-    assert.equal(message.player_id, 1);
-    assert.equal(message.token, 'generated-token');
+    assert.equal(authMessage.cmd, 'auth');
+    assert.equal(authMessage.player_id, 1);
+    assert.equal(authMessage.token, 'generated-token');
+    assert.equal(playerStateMessage.cmd, 'player_state');
     socket.terminate();
     await app.close();
   });
@@ -49,7 +53,7 @@ describe('WebSocket /ws/connect', () => {
     const created = {id: 1, action_id: 2, fighter_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const currentFighter = {id: 3, player_id: 8, retired: false};
     const player = {id: 8, token: 'player-token'};
-    const {knex} = mockKnexMulti([player, currentFighter, [created]]);
+    const {knex} = mockKnexMulti([player, currentFighter, [], currentFighter, [created]]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(websocket);
@@ -58,8 +62,7 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    socket.send(JSON.stringify({cmd: 'auth', token: 'player-token'}));
-    await readMessage(socket);
+    await sendAndReadMessages(socket, {cmd: 'auth', token: 'player-token'}, 2);
     socket.send(JSON.stringify({action_id: 2, cmd: 'idle'}));
     const message = await readMessage(socket);
 
@@ -262,6 +265,30 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(socket.player, player);
   });
 
+  it('sends player_state after successful authentication when models support it', async () => {
+    const send = createCallTracker();
+    const player = {id: 5, token: 'known-token'};
+    const fighter = {gold: '0', id: 9, player_id: 5, retired: false, stats: {}};
+    const actions = [{action_id: 1, fighter_id: 9, id: 7}];
+    const socket = {OPEN: 1, readyState: 1, send};
+    const fighterActions = {
+      listByFighterID: async () => actions,
+    };
+    const fighters = {
+      findCurrentByPlayerID: async () => fighter,
+    };
+    const players = {
+      create: async () => null,
+      findByToken: async (token) => (token === 'known-token' ? player : null),
+    };
+
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {fighterActions, fighters, players});
+
+    assert.equal(send.calls.length, 2);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', player_id: 5, token: 'known-token'});
+    assert.deepEqual(JSON.parse(send.calls[1][0]), {actions, cmd: 'player_state', fighter});
+  });
+
   it('responds with token invalid message when auth token does not match a player', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
@@ -331,6 +358,36 @@ async function readMessage(socket) {
     socket.once('error', reject);
     socket.once('message', (data) => resolve(JSON.parse(data)));
   });
+}
+
+async function readMessages(socket, count) {
+  return new Promise((resolve, reject) => {
+    const messages = [];
+    const onError = (error) => {
+      cleanup();
+      reject(error);
+    };
+    const onMessage = (data) => {
+      messages.push(JSON.parse(data));
+      if(messages.length < count) {
+        return;
+      }
+      cleanup();
+      resolve(messages);
+    };
+    const cleanup = () => {
+      socket.off('error', onError);
+      socket.off('message', onMessage);
+    };
+    socket.on('error', onError);
+    socket.on('message', onMessage);
+  });
+}
+
+function sendAndReadMessages(socket, message, count) {
+  const messagesPromise = readMessages(socket, count);
+  socket.send(JSON.stringify(message));
+  return messagesPromise;
 }
 
 function createCallTracker() {
