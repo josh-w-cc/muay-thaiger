@@ -1,24 +1,12 @@
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 
-const {routerNavigate} = vi.hoisted(() => ({
-  routerNavigate: vi.fn(),
-}));
-vi.mock('@/router.js', () => ({
-  default: {navigate: routerNavigate},
-}));
-
 import usePlayerStore, {loadPlayerToken, resetPlayerStore, setPlayerToken} from './player.js';
 
 
-const originalWebSocket = globalThis.WebSocket;
 const originalLocalStorage = globalThis.localStorage;
 
 
 describe('usePlayerStore', () => {
-  beforeEach(() => {
-    globalThis.WebSocket = {OPEN: 1};
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
     if(globalThis.localStorage) {
@@ -26,7 +14,6 @@ describe('usePlayerStore', () => {
     }
     resetPlayerStore();
     setLocalStorage(originalLocalStorage);
-    globalThis.WebSocket = originalWebSocket;
   });
 
   function setLocalStorage(value) {
@@ -35,18 +22,6 @@ describe('usePlayerStore', () => {
       value,
     });
   }
-
-  it('stores auth token and routes to hub when fighter is already selected', () => {
-    const send = vi.fn();
-    const socket = {readyState: 1, send};
-
-    usePlayerStore.setState({hasSelectedFighter: true, selectedRace: '1'});
-    usePlayerStore.getState().onSocketMessage({message: {token: 'new-token', type: 'auth'}, socket});
-
-    expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new-token');
-    expect(usePlayerStore.getState().token).toBe('new-token');
-    expect(routerNavigate).toHaveBeenCalledWith('/hub');
-  });
 
   it('loads auth token into the player store', () => {
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
@@ -58,7 +33,6 @@ describe('usePlayerStore', () => {
   it('stores fighter selection in player state', () => {
     usePlayerStore.getState().selectFighter('2');
 
-    expect(usePlayerStore.getState().hasSelectedFighter).toBe(true);
     expect(usePlayerStore.getState().selectedRace).toBe('2');
   });
 
@@ -69,22 +43,12 @@ describe('usePlayerStore', () => {
     expect(usePlayerStore.getState().token).toBe('existing-token');
   });
 
-  it('clears invalid token and retries auth with a new token', () => {
-    const send = vi.fn();
-    const socket = {readyState: 1, send};
+  it('clears token from state and localStorage', () => {
     setPlayerToken('existing-token');
 
-    usePlayerStore.setState({
-      hasReceivedAuthRequest: true,
-      hasRespondedToAuth: true,
-      hasSelectedFighter: true,
-      selectedRace: '1',
-    });
-    usePlayerStore.getState().onSocketMessage({message: {type: 'auth-invalid-token'}, socket});
+    usePlayerStore.getState().clearToken();
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
     expect(usePlayerStore.getState().token).toBeNull();
-    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
-    expect(routerNavigate).not.toHaveBeenCalled();
   });
 });

@@ -1,17 +1,17 @@
 import {create} from 'zustand';
-import {generateOnSocketMessageFn} from './websocket.js';
 import {clearStoredPlayerToken, getStoredPlayerToken, setStoredPlayerToken} from './playerTokenStorage.js';
 
-const usePlayerStore = create((set, get) => ({
+const usePlayerStore = create((set) => ({
   ...getInitialState(),
   loadToken: () => loadPlayerTokenIntoState(set),
-  onSocketMessage: generateOnSocketMessageFn({get, set}),
-  selectFighter: (race) => {
-    set({hasSelectedFighter: true, selectedRace: race});
-  },
+  selectFighter: (race) => set({selectedRace: race}),
   setToken: (token) => {
     setStoredPlayerToken(token);
     set({token});
+  },
+  clearToken: () => {
+    clearStoredPlayerToken();
+    set({token: null});
   },
 }));
 export default usePlayerStore;
@@ -26,9 +26,6 @@ export const setPlayerToken = (token) => usePlayerStore.getState().setToken(toke
 
 function getInitialState() {
   return {
-    hasReceivedAuthRequest: false,
-    hasRespondedToAuth: false,
-    hasSelectedFighter: false,
     selectedRace: null,
     token: getStoredPlayerToken(),
   };

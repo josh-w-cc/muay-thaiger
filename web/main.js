@@ -1,7 +1,7 @@
 import {createRoot} from 'react-dom/client';
 import {RouterProvider} from 'react-router-dom';
 
-import {connectSocketOnAppLoad} from './pages/Game/useConnectSocket.js';
+import {connectSocketOnAppLoad} from './data/websocket.js';
 import router from './router.js';
 
 import './globals.css';

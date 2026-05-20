@@ -5,6 +5,7 @@ import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router-dom'
 import selectFighter from '@/actions/selectFighter.js';
 import {resetPlayerStore, setPlayerToken} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
+import {connectSocketOnAppLoad, resetSocketState} from '@/data/websocket.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -80,6 +81,7 @@ describe('Game', () => {
     if(globalThis.localStorage) {
       localStorage.removeItem(PLAYER_TOKEN_STORAGE_KEY);
     }
+    resetSocketState();
     resetPlayerStore();
     setLocalStorage(originalLocalStorage);
     globalThis.WebSocket = originalWebSocket;
@@ -405,7 +407,7 @@ describe('Game', () => {
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
 
-  it('closes the websocket when the game unmounts', async () => {
+  it('keeps the websocket connected when the game unmounts', async () => {
     const close = vi.fn();
     globalThis.WebSocket = vi.fn(function () {
       return {close, send: vi.fn()};
@@ -416,7 +418,7 @@ describe('Game', () => {
     await screen.findByRole('button', {name: 'Fighter Select'});
     unmount();
 
-    expect(close).toHaveBeenCalledTimes(1);
+    expect(close).toHaveBeenCalledTimes(0);
   });
 });
 
@@ -455,6 +457,7 @@ function renderGame({gameModule, initialPath = '/'}) {
     {initialEntries: [initialPath]},
   );
   routerNavigate.mockImplementation((screenPath) => router.navigate(screenPath));
+  connectSocketOnAppLoad();
 
   return render(
     <RouterProvider fallbackElement={<div>Loading...</div>} router={router} />,

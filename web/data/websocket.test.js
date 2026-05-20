@@ -5,101 +5,117 @@ vi.mock('@/router.js', () => ({
   default: {navigate: routerNavigate},
 }));
 
+import usePlayerStore, {resetPlayerStore, setPlayerToken} from './player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
-import {generateOnSocketMessageFn, selectFighterCmd} from './websocket.js';
+import {connectSocketOnAppLoad, getConnectedSocket, resetSocketState, selectFighterCmd} from './websocket.js';
 
 
 describe('player websocket helpers', () => {
+  const originalWebSocket = globalThis.WebSocket;
+  const originalLocation = globalThis.window.location;
+
   beforeEach(() => {
-    globalThis.WebSocket = {OPEN: 1};
+    globalThis.WebSocket = vi.fn(function () {
+      return {close: vi.fn(), readyState: 1, send: vi.fn()};
+    });
+    globalThis.WebSocket.OPEN = 1;
   });
 
   afterEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    resetPlayerStore();
+    resetSocketState();
+    globalThis.WebSocket = originalWebSocket;
+    Object.defineProperty(globalThis.window, 'location', {
+      configurable: true,
+      value: originalLocation,
+    });
   });
 
   it('sends auth/new after fighter selection when auth request is received', () => {
+    const socket = getConnectedSocket();
     const send = vi.fn();
-    const socket = {readyState: 1, send};
-    const state = {
-      hasReceivedAuthRequest: true,
-      hasRespondedToAuth: false,
-      hasSelectedFighter: true,
-      selectedRace: '1',
-      token: null,
-    };
-    const get = () => state;
-    const set = (updates) => Object.assign(state, updates);
-
-    selectFighterCmd({get, set, socket});
+    socket.send = send;
+    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    usePlayerStore.getState().selectFighter('1');
+    selectFighterCmd();
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
-  it('does not set fighter selection state', () => {
+  it('connects to /ws/connect using the current host', () => {
+    connectSocketOnAppLoad();
+    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+
+    expect(socketURL.host).toBe(window.location.host);
+    expect(socketURL.pathname).toBe('/ws/connect');
+    expect(socketURL.protocol).toBe('ws:');
+  });
+
+  it('uses secure websocket protocol on https pages', () => {
+    Object.defineProperty(globalThis.window, 'location', {
+      configurable: true,
+      enumerable: true,
+      value: new URL('https://example.test/game'),
+      writable: true,
+    });
+
+    connectSocketOnAppLoad();
+    const socketURL = new URL(globalThis.WebSocket.mock.calls[0][0]);
+
+    expect(socketURL.protocol).toBe('wss:');
+  });
+
+  it('does not send auth when the fighter race is not selected', () => {
+    const socket = getConnectedSocket();
     const send = vi.fn();
-    const socket = {readyState: 1, send};
-    const state = {
-      hasReceivedAuthRequest: true,
-      hasRespondedToAuth: false,
-      hasSelectedFighter: false,
-      selectedRace: null,
-      token: 'existing-token',
-    };
-    const get = () => state;
-    const set = (updates) => Object.assign(state, updates);
+    socket.send = send;
+    socket.onmessage({data: JSON.stringify({type: 'auth'})});
 
-    selectFighterCmd({get, set, socket});
+    expect(usePlayerStore.getState().selectedRace).toBeNull();
+    selectFighterCmd();
 
-    expect(state.hasSelectedFighter).toBe(false);
-    expect(state.selectedRace).toBeNull();
-    expect(send).not.toHaveBeenCalled();
+    expect(send).toHaveBeenCalledTimes(0);
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
   it('clears invalid token and retries auth with a new token', () => {
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
+    setPlayerToken('existing-token');
+    usePlayerStore.getState().selectFighter('1');
+    const socket = getConnectedSocket();
     const send = vi.fn();
-    const socket = {readyState: 1, send};
-    const state = {
-      hasReceivedAuthRequest: true,
-      hasRespondedToAuth: true,
-      hasSelectedFighter: true,
-      selectedRace: '1',
-      token: 'existing-token',
-    };
-    const get = () => state;
-    const set = (updates) => Object.assign(state, updates);
-
-    generateOnSocketMessageFn({get, set})({message: {type: 'auth-invalid-token'}, socket});
+    socket.send = send;
+    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
-    expect(state.token).toBeNull();
+    expect(usePlayerStore.getState().token).toBeNull();
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
   });
 
   it('stores auth token and routes to hub when fighter is selected', () => {
+    usePlayerStore.getState().selectFighter('1');
+    const socket = getConnectedSocket();
     const send = vi.fn();
-    const socket = {readyState: 1, send};
-    const state = {
-      hasReceivedAuthRequest: false,
-      hasRespondedToAuth: false,
-      hasSelectedFighter: true,
-      selectedRace: '1',
-      token: null,
-    };
-    state.setToken = vi.fn((token) => {
-      state.token = token;
-    });
-    const get = () => state;
-    const set = (updates) => Object.assign(state, updates);
+    socket.send = send;
+    socket.onmessage({data: JSON.stringify({token: 'new-token', type: 'auth'})});
 
-    generateOnSocketMessageFn({get, set})({message: {token: 'new-token', type: 'auth'}, socket});
-
-    expect(state.setToken).toHaveBeenCalledWith('new-token');
+    expect(usePlayerStore.getState().token).toBe('new-token');
     expect(routerNavigate).toHaveBeenCalledWith('/hub');
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'new-token'}));
+  });
+
+  it('ignores invalid and non-auth websocket messages', () => {
+    const socket = getConnectedSocket();
+    const send = vi.fn();
+    socket.send = send;
+
+    socket.onmessage({data: '{'});
+    socket.onmessage({data: JSON.stringify({type: 'noop'})});
+
+    expect(send).not.toHaveBeenCalled();
   });
 });
