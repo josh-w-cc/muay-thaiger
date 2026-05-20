@@ -1,6 +1,6 @@
 import {SKILL_IDS} from 'shared/skills.js';
 
-import {createFighterActionCmd} from '@/data/websocket.js';
+import {createFighterActionCmd} from '@/actions/websockets/index.js';
 
 
 export default function startIdle({fighter, skill, skillKey}) {

@@ -5,7 +5,7 @@ import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router-dom'
 import selectFighter from '@/actions/selectFighter.js';
 import {resetPlayerStore, setPlayerToken} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
-import {connectSocketOnAppLoad, resetSocketState} from '@/data/websocket.js';
+import {connectSocketOnAppLoad, resetSocketState} from '@/actions/websockets/index.js';
 
 
 const originalWebSocket = globalThis.WebSocket;

@@ -11,7 +11,7 @@ vi.mock('react-router-dom', () => ({
   RouterProvider: () => <div>router</div>,
 }));
 
-vi.mock('./data/websocket.js', () => ({
+vi.mock('./actions/websockets/index.js', () => ({
   connectSocketOnAppLoad,
 }));
 
