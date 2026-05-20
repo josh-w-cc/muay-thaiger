@@ -3,6 +3,7 @@ import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
 import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
+import racesModel from '../data/models/races.js';
 import {authenticate} from '../logic/auth.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
 
@@ -12,6 +13,7 @@ export default async function websocketRoutes(app) {
     fighterActions: fighterActionsModel(app.db),
     fighters: fightersModel(app.db),
     players: playersModel(app.db),
+    races: racesModel(app.db),
   };
   const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
   app.addHook('onClose', () => stateSyncScheduler.stop());
