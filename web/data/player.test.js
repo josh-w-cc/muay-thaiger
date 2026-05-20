@@ -55,6 +55,13 @@ describe('usePlayerStore', () => {
     expect(usePlayerStore.getState().token).toBe('existing-token');
   });
 
+  it('stores fighter selection in player state', () => {
+    usePlayerStore.getState().selectFighter('2');
+
+    expect(usePlayerStore.getState().hasSelectedFighter).toBe(true);
+    expect(usePlayerStore.getState().selectedRace).toBe('2');
+  });
+
   it('stores token in state when localStorage is unavailable', () => {
     setLocalStorage(undefined);
 

@@ -46,7 +46,7 @@ describe('player websocket helpers', () => {
       hasRespondedToAuth: false,
       hasSelectedFighter: false,
       selectedRace: null,
-      token: null,
+      token: 'existing-token',
     };
     const get = () => state;
     const set = (updates) => Object.assign(state, updates);
@@ -56,6 +56,7 @@ describe('player websocket helpers', () => {
     expect(state.hasSelectedFighter).toBe(false);
     expect(state.selectedRace).toBeNull();
     expect(send).not.toHaveBeenCalled();
+    expect(routerNavigate).not.toHaveBeenCalled();
   });
 
   it('clears invalid token and retries auth with a new token', () => {
