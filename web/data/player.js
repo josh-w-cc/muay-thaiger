@@ -6,6 +6,9 @@ const usePlayerStore = create((set, get) => ({
   ...getInitialState(),
   loadToken: () => loadPlayerTokenIntoState(set),
   onSocketMessage: generateOnSocketMessageFn({get, set}),
+  selectFighter: (race) => {
+    set({hasSelectedFighter: true, selectedRace: race});
+  },
   setToken: (token) => {
     setStoredPlayerToken(token);
     set({token});

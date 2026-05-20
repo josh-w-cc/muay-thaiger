@@ -1,8 +1,7 @@
 import router from '@/router.js';
 import {clearStoredPlayerToken} from './playerTokenStorage.js';
 
-export function selectFighterCmd({get, race, set, socket}) {
-  set({hasSelectedFighter: true, selectedRace: race});
+export function selectFighterCmd({get, set, socket}) {
   respondToAuth({get, set, socket});
   routeToHubIfAuthorized({get});
 }
