@@ -20,7 +20,7 @@ vi.mock('./CharacterSelect', () => ({
   },
 }));
 
-vi.mock('../../orig/src/menus/Fight', () => ({
+vi.mock('./Fight', () => ({
   default: function MockFight() {
     return <h2>Fight Screen</h2>;
   },
