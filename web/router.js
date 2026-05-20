@@ -23,7 +23,7 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <NotFound />,
     children: [
-      {element: <Game />, index: true, loader: characterSelectLoader},
+      {element: <Game />, loader: characterSelectLoader, index: true},
       {
         children: [
           {path: 'fight', lazy: lazyPage(importGamePage, {component: 'FightScreen'})},
