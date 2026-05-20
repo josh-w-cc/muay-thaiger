@@ -41,7 +41,7 @@ export async function onMessage(raw, socket, models) {
     return;
   }
   try {
-    await processMessageCommand(message, socket, models);
+    await processMessageCommand(models, message, socket);
   }
   catch {
     sendSocketError(socket, 'internal-error');
@@ -91,7 +91,7 @@ function parseMessage(raw) {
   }
 }
 
-async function processMessageCommand(message, socket, models) {
+async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
     case 'auth':
       return authenticateAndSendPlayerState(models, message, socket);
