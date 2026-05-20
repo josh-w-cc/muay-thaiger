@@ -10,7 +10,7 @@ import {
   mergeState,
   tickTrain,
 } from './fighterState.js';
-import {buildStateFromServerFighter} from './socketFighterState.js';
+import {buildStateFromServerFighter} from './serverFighterState.js';
 
 const useFighterStore = create((set, get) => ({
   ...getInitialState(),
