@@ -14,7 +14,7 @@ describe('registerFighterAction', () => {
     await registerFighterAction({fighterActions, fighters}, {action_id: 2}, socket);
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {fighterAction: created, type: 'fighter_action'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'fighter_action', fighterAction: created});
   });
 
   it('does not respond when action_id is missing', async () => {
