@@ -5,6 +5,7 @@ vi.mock('@/router.js', () => ({
   default: {navigate: routerNavigate},
 }));
 
+import useFighterStore, {resetFighterStore} from './fighter.js';
 import usePlayerStore, {resetPlayerStore, setPlayerToken} from './player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from './playerTokenStorage.js';
 import {connectSocketOnAppLoad, createFighterActionCmd, resetSocketState, selectFighterCmd} from './websocket.js';
@@ -26,6 +27,7 @@ describe('player websocket helpers', () => {
   afterEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    resetFighterStore();
     resetPlayerStore();
     resetSocketState();
     globalThis.WebSocket = originalWebSocket;
@@ -111,6 +113,55 @@ describe('player websocket helpers', () => {
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'new-token'}));
   });
 
+  it('stores auth player id when provided in auth message', () => {
+    const socket = connectSocketOnAppLoad();
+    socket.onmessage({data: JSON.stringify({cmd: 'auth', player_id: 77})});
+
+    expect(usePlayerStore.getState().playerID).toBe(77);
+  });
+
+  it('overwrites client player and fighter state when player_state is received', () => {
+    usePlayerStore.getState().selectFighter('99');
+    usePlayerStore.getState().setPlayerID(999);
+    useFighterStore.setState({
+      agility: 99,
+      gold: 999,
+      id: 55,
+      race: '1',
+      stamina: 99,
+      strength: 99,
+    });
+    const socket = connectSocketOnAppLoad();
+    const send = vi.fn();
+    socket.send = send;
+    expect(usePlayerStore.getState().selectedRace).toBe('99');
+    expect(usePlayerStore.getState().playerID).toBe(999);
+    expect(useFighterStore.getState().race).toBe('1');
+
+    socket.onmessage({
+      data: JSON.stringify({
+        cmd: 'player_state',
+        fighter: {
+          gold: '250',
+          id: 9,
+          player_id: 77,
+          race: 2,
+          stats: {agility: 6, stamina: 7, strength: 8},
+        },
+      }),
+    });
+
+    expect(usePlayerStore.getState().playerID).toBe(77);
+    expect(usePlayerStore.getState().selectedRace).toBe('2');
+    expect(useFighterStore.getState().gold).toBe(250);
+    expect(useFighterStore.getState().id).toBe(9);
+    expect(useFighterStore.getState().race).toBe('2');
+    expect(useFighterStore.getState().agility).toBe(6);
+    expect(useFighterStore.getState().stamina).toBe(7);
+    expect(useFighterStore.getState().strength).toBe(8);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it('sends idle command with action id for fighter actions', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
@@ -119,6 +170,34 @@ describe('player websocket helpers', () => {
     createFighterActionCmd(2);
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
+  });
+
+  it('does not send idle command for invalid fighter actions', () => {
+    const socket = connectSocketOnAppLoad();
+    const send = vi.fn();
+    socket.send = send;
+    const invalidActionIdentifier = '2';
+
+    createFighterActionCmd(invalidActionIdentifier);
+
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('reuses the existing websocket connection', () => {
+    const firstSocket = connectSocketOnAppLoad();
+    const secondSocket = connectSocketOnAppLoad();
+
+    expect(secondSocket).toBe(firstSocket);
+    expect(globalThis.WebSocket).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores player_state messages without fighter data', () => {
+    const initialFighterID = useFighterStore.getState().id;
+    const socket = connectSocketOnAppLoad();
+    socket.onmessage({data: JSON.stringify({cmd: 'player_state'})});
+
+    expect(useFighterStore.getState().id).toBe(initialFighterID);
+    expect(routerNavigate).not.toHaveBeenCalled();
   });
 
   it('silently accepts ok command without sending or warning', () => {

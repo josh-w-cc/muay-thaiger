@@ -1,8 +1,19 @@
+import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
+import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} from './websocketState.js';
+
+
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
 let socket = null;
+const onSocketCommand = {
+  'auth': onAuth,
+  'auth-invalid-token': onAuthInvalidToken,
+  'ok': () => {},
+  'player_state': onPlayerState,
+};
+
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
   socket?.close?.();
@@ -12,7 +23,7 @@ export function resetSocketState() {
 }
 
 export function createFighterActionCmd(actionID) {
-  if(!Number.isInteger(actionID) || !isSocketReady()) {
+  if(!Number.isInteger(actionID) || !isSocketReady(socket)) {
     return;
   }
   socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
@@ -39,6 +50,9 @@ function createWebSocketURL() {
 }
 
 function onAuth(message) {
+  if(Number.isInteger(message.player_id)) {
+    usePlayerStore.getState().setPlayerID(message.player_id);
+  }
   if(message.token) {
     usePlayerStore.getState().setToken(message.token);
     routeToHubIfAuthorized();
@@ -53,40 +67,33 @@ function onAuthInvalidToken() {
   respondToAuth();
 }
 
+function onPlayerState(message) {
+  if(!message.fighter) {
+    return;
+  }
+  useFighterStore.getState().overwrite(message.fighter);
+  usePlayerStore.getState().setPlayerID(message.fighter.player_id ?? null);
+  usePlayerStore.getState().selectFighter(`${message.fighter.race}`);
+  routeToHubIfAuthorized();
+}
+
 function onSocketMessage(event) {
-  const message = parseMessage(event);
+  const message = parseSocketMessage(event);
   if(!message) {
     return;
   }
-  const {cmd} = message;
-  switch(cmd) {
-    case 'auth':
-      onAuth(message);
-      return;
-    case 'auth-invalid-token':
-      onAuthInvalidToken();
-      return;
-    case 'ok':
-      return;
-    default:
-      console.warn('Unknown websocket cmd:', cmd);
-  }
-}
-function parseMessage(event) {
-  try {
-    return JSON.parse(event.data);
-  }
-  catch {
-    return null;
+  if(!runSocketCommand(message)) {
+    console.warn('Unknown websocket cmd:', message.cmd);
   }
 }
 
 function respondToAuth() {
-  if(!canRespondToAuth()) {
+  const {selectedRace, token} = usePlayerStore.getState();
+  if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, selectedRace, socket, token})) {
     return;
   }
   hasRespondedToAuth = true;
-  socket.send(JSON.stringify(getAuthResponse()));
+  socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
 }
 
 function routeToHubIfAuthorized() {
@@ -96,15 +103,12 @@ function routeToHubIfAuthorized() {
   }
   router.navigate('/hub');
 }
-function getAuthResponse() {
-  const {selectedRace, token} = usePlayerStore.getState();
-  return token ? {cmd: 'auth', token} : {cmd: 'auth', race: selectedRace, token: 'new'};
-}
-function canRespondToAuth() {
-  const {selectedRace, token} = usePlayerStore.getState();
-  return !hasRespondedToAuth && hasReceivedAuthRequest && Boolean(selectedRace || token) && isSocketReady();
-}
 
-function isSocketReady() {
-  return Boolean(socket && socket.readyState === WebSocket.OPEN);
+function runSocketCommand(message) {
+  const onCommand = onSocketCommand[message.cmd];
+  if(!onCommand) {
+    return false;
+  }
+  onCommand(message);
+  return true;
 }

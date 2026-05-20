@@ -1,11 +1,21 @@
 import {create} from 'zustand';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
-import {getInitialState, getSelectionState, getTrainingEffect, isFightIdling, isTrainIdling, mergeState, tickTrain} from './fighterState.js';
+import {
+  getInitialState,
+  getSelectionState,
+  getTrainingEffect,
+  isFightIdling,
+  isTrainIdling,
+  mergeState,
+  tickTrain,
+} from './fighterState.js';
+import {buildStateFromServerFighter} from './serverFighterState.js';
 
 const useFighterStore = create((set, get) => ({
   ...getInitialState(),
   idle: generateIdleFn({get, set}),
+  overwrite: generateOverwriteFn(set),
   select: generateSelectFn(set),
   spend: generateSpendFn(set),
   tick: generateTickFn({get, set}),
@@ -26,6 +36,10 @@ function generateIdleFn({get, set}) {
 
     set((state) => mergeState(state, {idling: {action, delta: 0, key}}));
   };
+}
+
+function generateOverwriteFn(set) {
+  return (fighter) => set((state) => mergeState(state, buildStateFromServerFighter(fighter)));
 }
 
 function generateSelectFn(set) {
