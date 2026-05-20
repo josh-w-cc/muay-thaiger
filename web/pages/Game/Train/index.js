@@ -1,4 +1,5 @@
 import Button from '@/components/Button.js';
+import startIdle from '@/actions/startIdle.js';
 import useFighterStore from '@/data/fighter.js';
 
 import Skills from './Skills.js';
@@ -90,7 +91,7 @@ function SkillRow({fighter, skillKey}) {
       {skill.name}
       <Button
         className={fighter.idling?.key === `train-${skillKey}` ? css.idleActive : ''}
-        onClick={() => fighter.idle(`train-${skillKey}`, () => skill.action(fighter))}
+        onClick={() => startIdle({fighter, skill, skillKey})}
       >
         Idle
       </Button>

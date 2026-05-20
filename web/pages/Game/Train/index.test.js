@@ -1,10 +1,11 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {SKILL_IDS} from 'shared/skills.js';
 
 import Train from './index.js';
 
 
-const {action, fighter, idle} = vi.hoisted(() => {
+const {action, createFighterActionCmd, fighter, idle} = vi.hoisted(() => {
   const idle = vi.fn();
   const fighter = {
     agility: 1,
@@ -18,6 +19,7 @@ const {action, fighter, idle} = vi.hoisted(() => {
 
   return {
     action: vi.fn(),
+    createFighterActionCmd: vi.fn(),
     fighter,
     idle,
   };
@@ -29,12 +31,15 @@ vi.mock('@/data/fighter.js', () => ({
 
 vi.mock('./Skills.js', () => ({
   default: {
-    beg: {
+    begging: {
       action,
       name: '฿egging',
       requires: () => true,
     },
   },
+}));
+vi.mock('@/data/websocket.js', () => ({
+  createFighterActionCmd: (...args) => createFighterActionCmd(...args),
 }));
 
 describe('Train', () => {
@@ -70,6 +75,7 @@ describe('Train', () => {
     await user.click(screen.getByRole('button', {name: 'Idle'}));
 
     expect(idle).toHaveBeenCalledTimes(1);
-    expect(idle).toHaveBeenCalledWith('train-beg', expect.any(Function));
+    expect(idle).toHaveBeenCalledWith('train-begging', expect.any(Function));
+    expect(createFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
 });

@@ -1,10 +1,8 @@
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
-
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
 let socket = null;
-
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
   if(socket?.close) {
@@ -15,10 +13,18 @@ export function resetSocketState() {
   socket = null;
 }
 
+export function createFighterActionCmd(actionID) {
+  if(!Number.isInteger(actionID) || !isSocketReady()) {
+    return;
+  }
+  socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
+}
+
 export function selectFighterCmd() {
   respondToAuth();
   routeToHubIfAuthorized();
 }
+
 function connectSocket() {
   if(socket) {
     return socket;
@@ -62,7 +68,6 @@ function onSocketMessage(event) {
       console.warn('Unknown websocket cmd:', cmd);
   }
 }
-
 function parseMessage(event) {
   try {
     return JSON.parse(event.data);
@@ -87,26 +92,13 @@ function routeToHubIfAuthorized() {
   }
   router.navigate('/hub');
 }
-
 function getAuthResponse() {
   const {selectedRace, token} = usePlayerStore.getState();
-  if(token) {
-    return {cmd: 'auth', token};
-  }
-  return {cmd: 'auth', race: selectedRace, token: 'new'};
+  return token ? {cmd: 'auth', token} : {cmd: 'auth', race: selectedRace, token: 'new'};
 }
-
 function canRespondToAuth() {
-  return isAuthHandshakePending() && hasAuthResponseData() && isSocketReady();
-}
-
-function isAuthHandshakePending() {
-  return !hasRespondedToAuth && hasReceivedAuthRequest;
-}
-
-function hasAuthResponseData() {
   const {selectedRace, token} = usePlayerStore.getState();
-  return Boolean(selectedRace || token);
+  return !hasRespondedToAuth && hasReceivedAuthRequest && Boolean(selectedRace || token) && isSocketReady();
 }
 
 function isSocketReady() {
