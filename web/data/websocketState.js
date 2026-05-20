@@ -18,14 +18,14 @@ export function parseSocketMessage(event) {
   }
 }
 
+export function isSocketReady(socket) {
+  return Boolean(socket && socket.readyState === WebSocket.OPEN);
+}
+
 function hasAuthResponseData({selectedRace, token}) {
   return Boolean(selectedRace || token);
 }
 
 function isAuthHandshakePending({hasReceivedAuthRequest, hasRespondedToAuth}) {
   return !hasRespondedToAuth && hasReceivedAuthRequest;
-}
-
-function isSocketReady(socket) {
-  return Boolean(socket && socket.readyState === WebSocket.OPEN);
 }

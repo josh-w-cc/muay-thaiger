@@ -1,7 +1,7 @@
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
-import {canRespondToAuth, getAuthResponse, parseSocketMessage} from './websocketState.js';
+import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} from './websocketState.js';
 
 
 let hasReceivedAuthRequest = false;
@@ -19,7 +19,7 @@ export function resetSocketState() {
 }
 
 export function createFighterActionCmd(actionID) {
-  if(!Number.isInteger(actionID) || !isSocketReady()) {
+  if(!Number.isInteger(actionID) || !isSocketReady(socket)) {
     return;
   }
   socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
@@ -108,8 +108,4 @@ function routeToHubIfAuthorized() {
     return;
   }
   router.navigate('/hub');
-}
-
-function isSocketReady() {
-  return Boolean(socket && socket.readyState === WebSocket.OPEN);
 }
