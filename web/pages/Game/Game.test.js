@@ -2,9 +2,9 @@ import {act, render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router-dom';
 
-import usePlayerStore, {resetPlayerStore, setPlayerToken} from '@/data/player.js';
+import selectFighter from '@/actions/selectFighter.js';
+import {resetPlayerStore, setPlayerToken} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
-import {getConnectedSocket} from './useConnectSocket.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -19,7 +19,7 @@ vi.mock('./CharacterSelect', () => ({
   default: function MockCharacterSelect() {
     return (
       <button
-        onClick={() => usePlayerStore.getState().onFighterSelect({race: '1', socket: getConnectedSocket()})}
+        onClick={() => selectFighter('1')}
       >
         Character Select
       </button>

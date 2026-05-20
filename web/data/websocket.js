@@ -1,12 +1,10 @@
 import router from '@/router.js';
 import {clearStoredPlayerToken} from './playerTokenStorage.js';
 
-export function generateOnFighterSelectFn({get, set}) {
-  return ({race, socket}) => {
-    set({hasSelectedFighter: true, selectedRace: race});
-    respondToAuth({get, set, socket});
-    routeToHubIfAuthorized({get});
-  };
+export function selectFighterCmd({get, race, set, socket}) {
+  set({hasSelectedFighter: true, selectedRace: race});
+  respondToAuth({get, set, socket});
+  routeToHubIfAuthorized({get});
 }
 
 export function generateOnSocketMessageFn({get, set}) {
