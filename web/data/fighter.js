@@ -10,7 +10,7 @@ import {
   mergeState,
   tickTrain,
 } from './fighterState.js';
-import {buildStateFromSocketFighter} from './socketFighterState.js';
+import {buildStateFromServerFighter} from './socketFighterState.js';
 
 const useFighterStore = create((set, get) => ({
   ...getInitialState(),
@@ -39,7 +39,7 @@ function generateIdleFn({get, set}) {
 }
 
 function generateOverwriteFn(set) {
-  return (fighter) => set((state) => mergeState(state, buildStateFromSocketFighter(fighter)));
+  return (fighter) => set((state) => mergeState(state, buildStateFromServerFighter(fighter)));
 }
 
 function generateSelectFn(set) {

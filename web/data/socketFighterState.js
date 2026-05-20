@@ -4,19 +4,19 @@ import {getSelectionState} from './fighterState.js';
 
 const defaultRace = `${RACES[0].id}`;
 
-export function buildStateFromSocketFighter(fighter) {
-  const race = getSocketRace(fighter);
+export function buildStateFromServerFighter(fighter) {
+  const race = getServerRace(fighter);
   return {
     ...getSelectionState(race),
-    ...getSocketStats(fighter),
-    gold: getSocketGold(fighter),
-    id: getSocketID(fighter),
+    ...getServerStats(fighter),
+    gold: getServerGold(fighter),
+    id: getServerID(fighter),
     idling: false,
     race,
   };
 }
 
-function getSocketGold(fighter) {
+function getServerGold(fighter) {
   const nextGold = Number(fighter?.gold);
   if(Number.isFinite(nextGold)) {
     return nextGold;
@@ -24,21 +24,21 @@ function getSocketGold(fighter) {
   return 0;
 }
 
-function getSocketID(fighter) {
+function getServerID(fighter) {
   if(Number.isInteger(fighter?.id)) {
     return fighter.id;
   }
   return null;
 }
 
-function getSocketRace(fighter) {
+function getServerRace(fighter) {
   if(fighter?.race) {
     return `${fighter.race}`;
   }
   return defaultRace;
 }
 
-function getSocketStats(fighter) {
+function getServerStats(fighter) {
   if(fighter?.stats) {
     return fighter.stats;
   }
