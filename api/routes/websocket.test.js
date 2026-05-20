@@ -18,7 +18,7 @@ describe('WebSocket /ws/connect', () => {
     const socket = await app.injectWS('/ws/connect');
     const message = await readMessage(socket);
 
-    assert.deepEqual(message, {type: 'auth'});
+    assert.deepEqual(message, {cmd: 'auth'});
     socket.terminate();
     await app.close();
   });
@@ -36,7 +36,7 @@ describe('WebSocket /ws/connect', () => {
     socket.send(JSON.stringify({cmd: 'auth', race: 2, token: 'new'}));
     const message = await readMessage(socket);
 
-    assert.equal(message.type, 'auth');
+    assert.equal(message.cmd, 'auth');
     assert.equal(message.player_id, 1);
     assert.equal(message.token, 'generated-token');
     socket.terminate();
@@ -61,7 +61,7 @@ describe('WebSocket /ws/connect', () => {
     socket.send(JSON.stringify({action_id: 2, cmd: 'idle'}));
     const message = await readMessage(socket);
 
-    assert.deepEqual(message, {fighterAction: created, type: 'fighter_action'});
+    assert.deepEqual(message, {cmd: 'fighter_action', fighterAction: created});
     socket.terminate();
     await app.close();
   });
@@ -110,7 +110,7 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'auth'}), socket, {});
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth-invalid-token'});
   });
 
   it('sends error invalid-cmd for unrecognized commands', async () => {
@@ -120,7 +120,7 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'noop', token: 'new'}), socket, {});
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {error: 'invalid-cmd', type: 'error'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-cmd'});
   });
 
   it('responds with token invalid message for auth messages with non-string token values', async () => {
@@ -130,7 +130,7 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'auth', token: 123}), socket, {});
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth-invalid-token'});
   });
 
   it('does not send auth confirmation when websocket is not open', async () => {
@@ -152,7 +152,7 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'auth', race: 2, token: 'new'}), socket, {fighters, players});
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 1, token: 'player-uuid-token', type: 'auth'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', player_id: 1, token: 'player-uuid-token'});
   });
 
   it('creates a fighter with the chosen race when creating a player on auth new', async () => {
@@ -202,7 +202,7 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players});
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {player_id: 5, token: 'known-token', type: 'auth'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', player_id: 5, token: 'known-token'});
   });
 
   it('attaches player to socket after successful authentication', async () => {
@@ -227,7 +227,7 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'auth', token: 'unknown-token'}), socket, {players});
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {type: 'auth-invalid-token'});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth-invalid-token'});
   });
 
   it('does not respond to idle messages when the player has no current fighter', async () => {
@@ -266,8 +266,8 @@ describe('WebSocket /ws/connect', () => {
 
     assert.equal(sendOpen.calls.length, 1);
     assert.deepEqual(JSON.parse(sendOpen.calls[0][0]), {
+      cmd: 'player_state',
       fighter: {id: 9, player_id: 1, retired: false},
-      type: 'player_state',
     });
     assert.equal(sendNoFighter.calls.length, 0);
     assert.equal(sockets.has(closedSocket), false);

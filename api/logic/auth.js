@@ -6,12 +6,12 @@ export async function authenticate({fighters, players}, message, socket) {
   const player = await getPlayer({fighters, players}, message.token, message.race);
   if(!player) {
     if(message.token !== 'new') {
-      socket.send(JSON.stringify({type: 'auth-invalid-token'}));
+      socket.send(JSON.stringify({cmd: 'auth-invalid-token'}));
     }
     return;
   }
   socket.player = player;
-  socket.send(JSON.stringify({player_id: player.id, token: player.token, type: 'auth'}));
+  socket.send(JSON.stringify({cmd: 'auth', player_id: player.id, token: player.token}));
 }
 
 async function getPlayer({fighters, players}, token, race) {

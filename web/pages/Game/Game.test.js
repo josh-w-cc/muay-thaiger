@@ -198,7 +198,7 @@ describe('Game', () => {
     renderGame({gameModule});
     await user.click(await screen.findByRole('button', {name: 'Fighter Select'}));
     act(() => {
-      socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
+      socket.onmessage({data: JSON.stringify({cmd: 'auth', token: 'new'})});
     });
 
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
@@ -229,7 +229,7 @@ describe('Game', () => {
 
     expect(screen.getByRole('button', {name: 'Fighter Select'})).toBeInTheDocument();
     act(() => {
-      socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
+      socket.onmessage({data: JSON.stringify({cmd: 'auth', token: 'new'})});
     });
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
   });
@@ -246,7 +246,7 @@ describe('Game', () => {
 
     renderGame({gameModule});
     await screen.findByRole('button', {name: 'Fighter Select'});
-    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
@@ -265,7 +265,7 @@ describe('Game', () => {
     renderGame({gameModule});
     await screen.findByRole('button', {name: 'Fighter Select'});
     setPlayerToken('existing-token');
-    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'existing-token'}));
@@ -281,7 +281,7 @@ describe('Game', () => {
 
     renderGame({gameModule});
     await screen.findByRole('button', {name: 'Fighter Select'});
-    socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth', token: 'new'})});
 
     await waitFor(() => {
       expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new');
@@ -301,9 +301,9 @@ describe('Game', () => {
     renderGame({gameModule});
     await screen.findByRole('button', {name: 'Fighter Select'});
     setPlayerToken('existing-token');
-    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
-    socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth-invalid-token'})});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
     expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({cmd: 'auth', token: 'existing-token'}));
@@ -323,9 +323,9 @@ describe('Game', () => {
     setLocalStorage(undefined);
     renderGame({gameModule});
     await screen.findByRole('button', {name: 'Fighter Select'});
-    socket.onmessage({data: JSON.stringify({type: 'auth'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth'})});
     await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
-    socket.onmessage({data: JSON.stringify({type: 'auth-invalid-token'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'auth-invalid-token'})});
 
     expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
     expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
@@ -361,7 +361,7 @@ describe('Game', () => {
 
     renderGame({gameModule});
     await screen.findByRole('button', {name: 'Fighter Select'});
-    socket.onmessage({data: JSON.stringify({type: 'noop'})});
+    socket.onmessage({data: JSON.stringify({cmd: 'noop'})});
     await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
 
     expect(send).not.toHaveBeenCalled();
@@ -379,7 +379,7 @@ describe('Game', () => {
     renderGame({gameModule});
     await user.click(await screen.findByRole('button', {name: 'Fighter Select'}));
     act(() => {
-      socket.onmessage({data: JSON.stringify({token: 'new', type: 'auth'})});
+      socket.onmessage({data: JSON.stringify({cmd: 'auth', token: 'new'})});
     });
     await screen.findByRole('heading', {name: 'Hub Screen'});
     await user.click(screen.getByRole('button', {name: 'Break Screen'}));
