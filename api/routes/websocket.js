@@ -63,8 +63,8 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
     if(!fighter) {
       continue;
     }
-    const updatedFighter = await applyTraining({fighterActions, fighters}, fighter);
-    socket.send(JSON.stringify({cmd: 'player_state', fighter: updatedFighter}));
+    const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
+    socket.send(JSON.stringify({actions, cmd: 'player_state', fighter: updatedFighter}));
   }
 }
 

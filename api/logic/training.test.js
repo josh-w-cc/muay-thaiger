@@ -6,14 +6,15 @@ import {applyTraining} from './training.js';
 const BASE_STATS = {agility: 0, anima: 1, constitution: 0, skill: 0, speed: 1, stamina: 0, strength: 1, vitality: 1};
 
 describe('applyTraining', () => {
-  it('returns the original fighter when there are no active actions', async () => {
+  it('returns the original fighter with empty actions when there are no active actions', async () => {
     const fighter = {id: 1, gold: '0', stats: BASE_STATS};
     const fighterActions = {listByFighterID: async () => []};
     const fighters = {};
 
     const result = await applyTraining({fighterActions, fighters}, fighter);
 
-    assert.equal(result, fighter);
+    assert.equal(result.fighter, fighter);
+    assert.deepEqual(result.actions, []);
   });
 
   it('applies stamina training for the walking action', async () => {
@@ -101,7 +102,7 @@ describe('applyTraining', () => {
     assert.equal(updateCalls[0].gold, '1');
   });
 
-  it('returns the updated fighter from the fighters model', async () => {
+  it('returns the updated fighter and actions from the fighters model', async () => {
     const fighter = {id: 1, gold: '0', stats: BASE_STATS};
     const updatedFighter = {id: 1, gold: '0', stats: {...BASE_STATS, stamina: 1}};
     const actions = [{action_id: 2, fighter_id: 1, id: 5}];
@@ -113,7 +114,8 @@ describe('applyTraining', () => {
 
     const result = await applyTraining({fighterActions, fighters}, fighter);
 
-    assert.equal(result, updatedFighter);
+    assert.equal(result.fighter, updatedFighter);
+    assert.equal(result.actions, actions);
   });
 
   it('skips unknown action IDs without error', async () => {

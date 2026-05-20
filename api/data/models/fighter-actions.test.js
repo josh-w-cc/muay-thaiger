@@ -39,7 +39,7 @@ describe('fighterActions.list', () => {
 });
 
 describe('fighterActions.listByFighterID', () => {
-  it('lists actions for the given fighter ID', async () => {
+  it('lists actions for a fighter by id', async () => {
     const actions = [{action_id: 2, fighter_id: 7, id: 1}];
     const {calls, knex} = mockKnex(actions);
     const fighterActions = fighterActionsModel(knex);

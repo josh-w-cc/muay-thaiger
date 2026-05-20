@@ -10,12 +10,12 @@ const SKILLS_BY_ACTION_ID = Object.freeze(
 export async function applyTraining({fighterActions, fighters}, fighter) {
   const actions = await fighterActions.listByFighterID(fighter.id);
   if(!actions.length) {
-    return fighter;
+    return {actions, fighter};
   }
   const {gold, stats} = trainStats(actions, fighter);
   const updatedFighter = await fighters.update(fighter.id, {gold, stats});
   await Promise.all(actions.map((action) => fighterActions.touch(action.id)));
-  return updatedFighter;
+  return {actions, fighter: updatedFighter};
 }
 
 function createFighterProxy(stats, onWin) {
