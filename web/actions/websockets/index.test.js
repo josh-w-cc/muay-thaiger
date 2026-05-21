@@ -7,8 +7,7 @@ vi.mock('@/router.js', () => ({
 
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
 import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
-import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
-import {setPlayerToken} from './token.js';
+import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './token.js';
 import {connectSocketOnAppLoad, createFighterActionCmd, resetSocketState, selectFighterCmd} from './index.js';
 
 
