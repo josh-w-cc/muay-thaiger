@@ -1,4 +1,5 @@
 import {randomUUID} from 'node:crypto';
+import {createCommandError} from './command-errors.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
 const DEFAULT_TRAINING_STATS = {
@@ -49,8 +50,4 @@ async function createPlayer({fighters, players, races}, race) {
 
 function getDefaultStats({stats = {}}) {
   return {...DEFAULT_TRAINING_STATS, ...stats};
-}
-
-function createCommandError(code) {
-  return Object.assign(new Error(code), {code});
 }

@@ -1,4 +1,5 @@
 import {SKILL_DEFINITIONS, SKILL_IDS} from 'shared/skills.js';
+import {createCommandError} from './command-errors.js';
 
 const SKILLS_BY_ACTION_ID = Object.freeze(
   Object.fromEntries(
@@ -48,8 +49,4 @@ function normalizeMessage(message) {
   return {
     action_id: actionID,
   };
-}
-
-function createCommandError(code) {
-  return Object.assign(new Error(code), {code});
 }
