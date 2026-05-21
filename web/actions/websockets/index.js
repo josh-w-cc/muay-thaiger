@@ -1,11 +1,17 @@
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
-import {onAuth, onAuthInvalidToken, resetAuthState, respondToAuth, routeToHubIfAuthorized} from '@/actions/websockets/auth.js';
+import {
+  onAuth as onAuthMessage,
+  onAuthInvalidToken as onAuthInvalidTokenMessage,
+  resetAuthState,
+  respondToAuth,
+  routeToHubIfAuthorized,
+} from '@/actions/websockets/auth.js';
 import {isSocketReady, parseSocketMessage} from '@/actions/websockets/websocketState.js';
 import {loadPlayerToken} from '@/actions/websockets/token.js';
 
 let socket = null;
-const onSocketCommand = {'auth': onAuthCommand, 'auth-invalid-token': onAuthInvalidTokenCommand, 'ok': () => {}, 'player_state': onPlayerState};
+const onSocketCommand = {'auth': onAuth, 'auth-invalid-token': onAuthInvalidToken, 'ok': () => {}, 'player_state': onPlayerState};
 
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
@@ -42,12 +48,12 @@ function createWebSocketURL() {
   return url.toString();
 }
 
-function onAuthCommand(message) {
-  onAuth({message, socket});
+function onAuth(message) {
+  onAuthMessage({message, socket});
 }
 
-function onAuthInvalidTokenCommand() {
-  onAuthInvalidToken(socket);
+function onAuthInvalidToken() {
+  onAuthInvalidTokenMessage(socket);
 }
 
 function onPlayerState(message) {
