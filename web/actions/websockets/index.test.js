@@ -5,6 +5,7 @@ vi.mock('@/router.js', () => ({
   default: {navigate: routerNavigate},
 }));
 
+import useFighterActionsStore, {resetFighterActionsStore} from '@/data/fighterActions.js';
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
 import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './token.js';
@@ -27,6 +28,7 @@ describe('player websocket helpers', () => {
   afterEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    resetFighterActionsStore();
     resetFighterStore();
     resetPlayerStore();
     resetSocketState();
@@ -129,6 +131,7 @@ describe('player websocket helpers', () => {
   it('overwrites client player and fighter state when player_state is received', () => {
     usePlayerStore.getState().selectFighter('99');
     usePlayerStore.getState().setPlayerID(999);
+    useFighterActionsStore.getState().setActions([{id: 5}]);
     useFighterStore.setState({
       agility: 99,
       gold: 999,
@@ -147,6 +150,7 @@ describe('player websocket helpers', () => {
     socket.onmessage({
       data: JSON.stringify({
         cmd: 'player_state',
+        actions: [{action_id: 2, id: 11}],
         fighter: {
           gold: '250',
           id: 9,
@@ -159,6 +163,7 @@ describe('player websocket helpers', () => {
 
     expect(usePlayerStore.getState().playerID).toBe(77);
     expect(usePlayerStore.getState().selectedRace).toBe('2');
+    expect(useFighterActionsStore.getState().actions).toEqual([{action_id: 2, id: 11}]);
     expect(useFighterStore.getState().gold).toBe(250);
     expect(useFighterStore.getState().id).toBe(9);
     expect(useFighterStore.getState().race).toBe('2');
@@ -206,13 +211,15 @@ describe('player websocket helpers', () => {
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
-  it('silently accepts ok command without sending or warning', () => {
+  it('captures fighter action metadata from ok command without sending or warning', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
+    const fighterAction = {action_id: 2, id: 15};
 
-    socket.onmessage({data: JSON.stringify({cmd: 'ok', metadata: {responded_cmd: 'idle'}})});
+    socket.onmessage({data: JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'idle'}})});
 
+    expect(useFighterActionsStore.getState().actions).toEqual([fighterAction]);
     expect(send).not.toHaveBeenCalled();
     expect(warnSpy).not.toHaveBeenCalled();
   });

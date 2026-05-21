@@ -1,3 +1,4 @@
+import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
@@ -6,7 +7,7 @@ import {clearPlayerToken, getPlayerToken, loadPlayerToken, setPlayerToken} from 
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
 let socket = null;
-const onSocketCommand = {'auth': onAuth, 'auth-invalid-token': onAuthInvalidToken, 'ok': () => {}, 'player_state': onPlayerState};
+const onSocketCommand = {'auth': onAuth, 'auth-invalid-token': onAuthInvalidToken, 'ok': onOk, 'player_state': onPlayerState};
 
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
@@ -69,10 +70,17 @@ function onPlayerState(message) {
   if(!message.fighter) {
     return;
   }
+  useFighterActionsStore.getState().setActions(Array.isArray(message.actions) ? message.actions : []);
   useFighterStore.getState().overwrite(message.fighter);
   usePlayerStore.getState().setPlayerID(message.fighter.player_id ?? null);
   usePlayerStore.getState().selectFighter(`${message.fighter.race}`);
   routeToHubIfAuthorized();
+}
+
+function onOk(message) {
+  if(message.metadata?.responded_cmd === 'idle' && message.metadata.fighterAction) {
+    useFighterActionsStore.getState().addAction(message.metadata.fighterAction);
+  }
 }
 
 function onSocketMessage(event) {
