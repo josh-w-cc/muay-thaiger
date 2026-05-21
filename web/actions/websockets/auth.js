@@ -1,6 +1,6 @@
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
-import {canRespondToAuth, getAuthResponse, isSocketReady} from '@/actions/websockets/websocketState.js';
+import {canRespondToAuth, getAuthResponse} from '@/actions/websockets/websocketState.js';
 import {clearPlayerToken, getPlayerToken, setPlayerToken} from '@/actions/websockets/token.js';
 
 let hasReceivedAuthRequest = false;
