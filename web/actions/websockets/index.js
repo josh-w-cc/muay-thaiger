@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
@@ -19,7 +20,8 @@ const onSocketCommand = {
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
   socket?.close?.();
-  clearReconnectSocketTimeout();
+  clearTimeout(reconnectSocketTimeout);
+  reconnectSocketTimeout = null;
   hasReceivedAuthRequest = false;
   hasRespondedToAuth = false;
   socket = null;
@@ -98,16 +100,6 @@ function onSocketMessage(event) {
   onCommand(message);
 }
 
-function clearReconnectSocketTimeout() {
-  clearTimeout(reconnectSocketTimeout);
-  reconnectSocketTimeout = null;
-}
-
-function reconnectSocket() {
-  resetSocketState();
-  connectSocket();
-}
-
 function respondToAuth() {
   const {selectedRace, token} = usePlayerStore.getState();
   if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, selectedRace, socket, token})) {
@@ -126,6 +118,9 @@ function routeToHubIfAuthorized() {
 }
 
 function scheduleSocketReconnectTimeout() {
-  clearReconnectSocketTimeout();
-  reconnectSocketTimeout = setTimeout(reconnectSocket, SOCKET_INACTIVITY_MILLISECONDS);
+  clearTimeout(reconnectSocketTimeout);
+  reconnectSocketTimeout = setTimeout(() => {
+    resetSocketState();
+    connectSocket();
+  }, SOCKET_INACTIVITY_MILLISECONDS);
 }
