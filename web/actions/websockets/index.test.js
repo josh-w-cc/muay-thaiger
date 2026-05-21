@@ -6,8 +6,8 @@ vi.mock('@/router.js', () => ({
 }));
 
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
-import usePlayerStore, {resetPlayerStore, setPlayerToken} from '@/data/player.js';
-import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
+import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
+import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './token.js';
 import {connectSocketOnAppLoad, createFighterActionCmd, resetSocketState, selectFighterCmd} from './index.js';
 
 
@@ -97,7 +97,6 @@ describe('player websocket helpers', () => {
     socket.onmessage({data: JSON.stringify({cmd: 'auth-invalid-token'})});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
-    expect(usePlayerStore.getState().token).toBeNull();
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
   });
 
@@ -108,7 +107,7 @@ describe('player websocket helpers', () => {
     socket.send = send;
     socket.onmessage({data: JSON.stringify({cmd: 'auth', token: 'new-token'})});
 
-    expect(usePlayerStore.getState().token).toBe('new-token');
+    expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBe('new-token');
     expect(routerNavigate).toHaveBeenCalledWith('/hub');
     expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', token: 'new-token'}));
   });
