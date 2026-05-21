@@ -43,8 +43,8 @@ export async function onMessage(raw, socket, models) {
   try {
     await processMessageCommand(models, message, socket);
   }
-  catch {
-    sendSocketError(socket, 'internal-error');
+  catch(error) {
+    sendCommandError(socket, error);
   }
 }
 
@@ -107,4 +107,19 @@ function sendSocketError(socket, error) {
     return;
   }
   socket.send(JSON.stringify({cmd: 'error', error}));
+}
+
+function sendCommandError(socket, error) {
+  if(!isSocketOpen(socket)) {
+    return;
+  }
+  if(error?.code === 'auth-invalid-token') {
+    socket.send(JSON.stringify({cmd: 'auth-invalid-token'}));
+    return;
+  }
+  if(error?.code) {
+    sendSocketError(socket, error.code);
+    return;
+  }
+  sendSocketError(socket, 'internal-error');
 }
