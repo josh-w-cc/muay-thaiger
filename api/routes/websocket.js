@@ -1,5 +1,4 @@
 import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
-
 import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
@@ -7,20 +6,13 @@ import racesModel from '../data/models/races.js';
 import {authenticateAndSendPlayerState, sendPlayerState} from '../logic/player-state.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
 import {applyTraining} from '../logic/training.js';
-
 export default async function websocketRoutes(app) {
   const connections = new Set();
-  const models = {
-    fighterActions: fighterActionsModel(app.db),
-    fighters: fightersModel(app.db),
-    players: playersModel(app.db),
-    races: racesModel(app.db),
-  };
+  const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), players: playersModel(app.db), races: racesModel(app.db)};
   const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
   app.addHook('onClose', () => stateSyncScheduler.stop());
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
-
 export function onConnect(socket, models, connections = null) {
   if(connections) {
     connections.add(socket);
@@ -28,13 +20,11 @@ export function onConnect(socket, models, connections = null) {
   }
   socket.on('message', (raw) => onMessage(raw, socket, models));
   setImmediate(() => {
-    if(!isSocketOpen(socket)) {
-      return;
+    if(isSocketOpen(socket)) {
+      socket.send(JSON.stringify({cmd: 'auth'}));
     }
-    socket.send(JSON.stringify({cmd: 'auth'}));
   });
 }
-
 export async function onMessage(raw, socket, models) {
   const message = parseMessage(raw);
   if(!message || socket.readyState !== socket.OPEN) {
@@ -44,10 +34,9 @@ export async function onMessage(raw, socket, models) {
     await processMessageCommand(models, message, socket);
   }
   catch(error) {
-    sendCommandError(socket, error);
+    sendSocketError(socket, resolveCommandError(error));
   }
 }
-
 export async function syncPlayerState({fighterActions, fighters}, sockets) {
   for(const socket of sockets) {
     if(!isSocketOpen(socket)) {
@@ -65,7 +54,6 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
     sendPlayerState(actions, updatedFighter, socket);
   }
 }
-
 function createPlayerStateSyncScheduler(models, connections, logger) {
   const scheduler = new ToadScheduler();
   const task = new AsyncTask(
@@ -77,11 +65,9 @@ function createPlayerStateSyncScheduler(models, connections, logger) {
   scheduler.addSimpleIntervalJob(job);
   return scheduler;
 }
-
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
 }
-
 function parseMessage(raw) {
   try {
     return JSON.parse(raw);
@@ -90,7 +76,6 @@ function parseMessage(raw) {
     return null;
   }
 }
-
 async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
     case 'auth':
@@ -101,25 +86,14 @@ async function processMessageCommand(models, message, socket) {
       sendSocketError(socket, 'invalid-cmd');
   }
 }
-
 function sendSocketError(socket, error) {
   if(!isSocketOpen(socket)) {
     return;
   }
-  socket.send(JSON.stringify({cmd: 'error', error}));
+  socket.send(error === 'auth-invalid-token'
+    ? JSON.stringify({cmd: 'auth-invalid-token'})
+    : JSON.stringify({cmd: 'error', error}));
 }
-
-function sendCommandError(socket, error) {
-  if(!isSocketOpen(socket)) {
-    return;
-  }
-  if(error?.code === 'auth-invalid-token') {
-    socket.send(JSON.stringify({cmd: 'auth-invalid-token'}));
-    return;
-  }
-  if(error?.code) {
-    sendSocketError(socket, error.code);
-    return;
-  }
-  sendSocketError(socket, 'internal-error');
+function resolveCommandError(error) {
+  return error?.code || 'internal-error';
 }
