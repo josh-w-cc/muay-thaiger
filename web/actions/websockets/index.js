@@ -6,7 +6,9 @@ import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} fr
 
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
+let reconnectSocketTimeout = null;
 let socket = null;
+const SOCKET_INACTIVITY_MILLISECONDS = 15 * 60 * 1000;
 const onSocketCommand = {
   'auth': onAuth,
   'auth-invalid-token': onAuthInvalidToken,
@@ -17,6 +19,7 @@ const onSocketCommand = {
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
   socket?.close?.();
+  clearReconnectSocketTimeout();
   hasReceivedAuthRequest = false;
   hasRespondedToAuth = false;
   socket = null;
@@ -40,6 +43,7 @@ function connectSocket() {
   }
   socket = new WebSocket(createWebSocketURL());
   socket.onmessage = onSocketMessage;
+  scheduleSocketReconnectTimeout();
   return socket;
 }
 
@@ -81,6 +85,7 @@ function onPlayerState(message) {
 }
 
 function onSocketMessage(event) {
+  scheduleSocketReconnectTimeout();
   const message = parseSocketMessage(event);
   if(!message) {
     return;
@@ -91,6 +96,16 @@ function onSocketMessage(event) {
     return;
   }
   onCommand(message);
+}
+
+function clearReconnectSocketTimeout() {
+  clearTimeout(reconnectSocketTimeout);
+  reconnectSocketTimeout = null;
+}
+
+function reconnectSocket() {
+  resetSocketState();
+  connectSocket();
 }
 
 function respondToAuth() {
@@ -108,4 +123,9 @@ function routeToHubIfAuthorized() {
     return;
   }
   router.navigate('/hub');
+}
+
+function scheduleSocketReconnectTimeout() {
+  clearReconnectSocketTimeout();
+  reconnectSocketTimeout = setTimeout(reconnectSocket, SOCKET_INACTIVITY_MILLISECONDS);
 }
