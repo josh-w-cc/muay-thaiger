@@ -1,19 +1,22 @@
-import usePlayerStore from '@/data/player.js';
 import {clearStoredPlayerToken, getStoredPlayerToken, setStoredPlayerToken} from '@/data/playerTokenStorage.js';
+let playerToken = null;
 
 
 export function clearPlayerToken() {
   clearStoredPlayerToken();
-  usePlayerStore.getState().clearToken();
+  playerToken = null;
+}
+
+export function getPlayerToken() {
+  return playerToken;
 }
 
 export function loadPlayerToken() {
-  const token = getStoredPlayerToken();
-  usePlayerStore.getState().setToken(token);
-  return token;
+  playerToken = getStoredPlayerToken();
+  return playerToken;
 }
 
 export function setPlayerToken(token) {
   setStoredPlayerToken(token);
-  usePlayerStore.getState().setToken(token);
+  playerToken = token;
 }

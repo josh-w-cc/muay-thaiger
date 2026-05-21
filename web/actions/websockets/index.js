@@ -2,16 +2,11 @@ import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
 import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} from '@/actions/websockets/websocketState.js';
-import {clearPlayerToken, loadPlayerToken, setPlayerToken} from '@/actions/websockets/token.js';
+import {clearPlayerToken, getPlayerToken, loadPlayerToken, setPlayerToken} from '@/actions/websockets/token.js';
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
 let socket = null;
-const onSocketCommand = {
-  'auth': onAuth,
-  'auth-invalid-token': onAuthInvalidToken,
-  'ok': () => {},
-  'player_state': onPlayerState,
-};
+const onSocketCommand = {'auth': onAuth, 'auth-invalid-token': onAuthInvalidToken, 'ok': () => {}, 'player_state': onPlayerState};
 
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
@@ -94,7 +89,8 @@ function onSocketMessage(event) {
 }
 
 function respondToAuth() {
-  const {selectedRace, token} = usePlayerStore.getState();
+  const {selectedRace} = usePlayerStore.getState();
+  const token = getPlayerToken();
   if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, selectedRace, socket, token})) {
     return;
   }
@@ -103,7 +99,8 @@ function respondToAuth() {
 }
 
 function routeToHubIfAuthorized() {
-  const {selectedRace, token} = usePlayerStore.getState();
+  const {selectedRace} = usePlayerStore.getState();
+  const token = getPlayerToken();
   if(!selectedRace || !token) {
     return;
   }

@@ -18,17 +18,4 @@ describe('usePlayerStore', () => {
 
     expect(usePlayerStore.getState().playerName).toBe('Fighter Joe');
   });
-
-  it('stores token in state', () => {
-    usePlayerStore.getState().setToken('existing-token');
-    expect(usePlayerStore.getState().token).toBe('existing-token');
-  });
-
-  it('clears token from state', () => {
-    usePlayerStore.getState().setToken('existing-token');
-
-    usePlayerStore.getState().clearToken();
-
-    expect(usePlayerStore.getState().token).toBeNull();
-  });
 });
