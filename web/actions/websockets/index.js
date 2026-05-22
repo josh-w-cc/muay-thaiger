@@ -1,19 +1,22 @@
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
-import routeToHubIfAuthorized from '@/actions/websockets/routeToHubIfAuthorized.js';
-import {canRespondToAuth, getAuthResponse, isSocketReady, parseSocketMessage} from '@/actions/websockets/websocketState.js';
-import {clearPlayerToken, getPlayerToken, loadPlayerToken, setPlayerToken} from '@/actions/websockets/token.js';
-let hasReceivedAuthRequest = false;
-let hasRespondedToAuth = false;
+import {
+  onAuth as onAuthMessage,
+  onAuthInvalidToken as onAuthInvalidTokenMessage,
+  resetAuthState,
+  respondToAuth,
+  routeToHubIfAuthorized,
+} from '@/actions/websockets/auth.js';
+import {isSocketReady, parseSocketMessage} from '@/actions/websockets/websocketState.js';
+import {loadPlayerToken} from '@/actions/websockets/token.js';
 let socket = null;
 const onSocketCommand = {'auth': onAuth, 'auth-invalid-token': onAuthInvalidToken, 'ok': onIdleOk, 'player_state': onPlayerState};
 
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
   socket?.close?.();
-  hasReceivedAuthRequest = false;
-  hasRespondedToAuth = false;
+  resetAuthState();
   socket = null;
 }
 
@@ -25,7 +28,7 @@ export function createFighterActionCmd(actionID) {
 }
 
 export function selectFighterCmd() {
-  respondToAuth();
+  respondToAuth(socket);
   routeToHubIfAuthorized();
 }
 
@@ -42,24 +45,11 @@ function connectSocket() {
 }
 
 function onAuth(message) {
-  if(message.display_name) {
-    usePlayerStore.getState().setPlayerName(message.display_name);
-  }
-  if(Number.isInteger(message.player_id)) {
-    usePlayerStore.getState().setPlayerID(message.player_id);
-  }
-  if(message.token) {
-    setPlayerToken(message.token);
-    routeToHubIfAuthorized();
-  }
-  hasReceivedAuthRequest = true;
-  respondToAuth();
+  onAuthMessage({message, socket});
 }
 
 function onAuthInvalidToken() {
-  clearPlayerToken();
-  hasRespondedToAuth = false;
-  respondToAuth();
+  onAuthInvalidTokenMessage(socket);
 }
 
 function onPlayerState(message) {
@@ -90,14 +80,4 @@ function onSocketMessage(event) {
     return;
   }
   onCommand(message);
-}
-
-function respondToAuth() {
-  const {selectedRace} = usePlayerStore.getState();
-  const token = getPlayerToken();
-  if(!canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, selectedRace, socket, token})) {
-    return;
-  }
-  hasRespondedToAuth = true;
-  socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
 }
