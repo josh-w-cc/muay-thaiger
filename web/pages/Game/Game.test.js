@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event';
 import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router-dom';
 
 import selectFighter from '@/actions/selectFighter.js';
-import {resetPlayerStore, setPlayerToken} from '@/data/player.js';
-import {PLAYER_TOKEN_STORAGE_KEY} from '@/data/playerTokenStorage.js';
-import {connectSocketOnAppLoad, resetSocketState} from '@/data/websocket.js';
+import {connectSocketOnAppLoad, resetSocketState} from '@/actions/websockets/index.js';
+import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '@/actions/websockets/token.js';
+import {resetPlayerStore} from '@/data/player.js';
 import {Component as GameLayout, loader as gameScreenLoader} from './GameLayout.js';
 
 

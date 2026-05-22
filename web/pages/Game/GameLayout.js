@@ -1,6 +1,6 @@
 import {Outlet, redirect} from 'react-router-dom';
 
-import {loadPlayerToken} from '@/data/player.js';
+import {loadPlayerToken} from '@/actions/websockets/token.js';
 import Header from './Header.js';
 
 

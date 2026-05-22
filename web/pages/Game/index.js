@@ -1,6 +1,6 @@
 import {redirect, useLoaderData, useNavigate} from 'react-router-dom';
 
-import {loadPlayerToken} from '@/data/player.js';
+import {loadPlayerToken} from '@/actions/websockets/token.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import FighterSelect from './FighterSelect';
 import Fight from './Fight';

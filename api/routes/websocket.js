@@ -4,7 +4,7 @@ import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
-import {authenticate} from '../logic/auth.js';
+import {authenticateAndSendPlayerState, sendPlayerState} from '../logic/player-state.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
 import {applyTraining} from '../logic/training.js';
 
@@ -40,13 +40,11 @@ export async function onMessage(raw, socket, models) {
   if(!message || socket.readyState !== socket.OPEN) {
     return;
   }
-  switch(message.cmd) {
-    case 'auth':
-      return authenticate(models, message, socket);
-    case 'idle':
-      return registerFighterAction(models, message, socket);
-    default:
-      socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
+  try {
+    await processMessageCommand(models, message, socket);
+  }
+  catch {
+    sendSocketError(socket, 'internal-error');
   }
 }
 
@@ -64,7 +62,7 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
       continue;
     }
     const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
-    socket.send(JSON.stringify({actions, cmd: 'player_state', fighter: updatedFighter}));
+    sendPlayerState(actions, updatedFighter, socket);
   }
 }
 
@@ -91,4 +89,22 @@ function parseMessage(raw) {
   catch {
     return null;
   }
+}
+
+async function processMessageCommand(models, message, socket) {
+  switch(message.cmd) {
+    case 'auth':
+      return authenticateAndSendPlayerState(models, message, socket);
+    case 'idle':
+      return registerFighterAction(models, message, socket);
+    default:
+      sendSocketError(socket, 'invalid-cmd');
+  }
+}
+
+function sendSocketError(socket, error) {
+  if(!isSocketOpen(socket)) {
+    return;
+  }
+  socket.send(JSON.stringify({cmd: 'error', error}));
 }

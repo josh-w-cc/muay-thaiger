@@ -9,7 +9,7 @@ const {selectFighterCmd} = vi.hoisted(() => ({
   selectFighterCmd: vi.fn(),
 }));
 
-vi.mock('@/data/websocket.js', () => ({
+vi.mock('@/actions/websockets/index.js', () => ({
   selectFighterCmd: (...args) => selectFighterCmd(...args),
 }));
 
