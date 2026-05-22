@@ -1,4 +1,5 @@
 import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
+
 import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
@@ -6,6 +7,7 @@ import racesModel from '../data/models/races.js';
 import {authenticateAndSendPlayerState, sendPlayerState} from '../logic/player-state.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
 import {applyTraining} from '../logic/training.js';
+
 export default async function websocketRoutes(app) {
   const connections = new Set();
   const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), players: playersModel(app.db), races: racesModel(app.db)};
@@ -13,6 +15,7 @@ export default async function websocketRoutes(app) {
   app.addHook('onClose', () => stateSyncScheduler.stop());
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
+
 export function onConnect(socket, models, connections = null) {
   if(connections) {
     connections.add(socket);
@@ -25,6 +28,7 @@ export function onConnect(socket, models, connections = null) {
     }
   });
 }
+
 export async function onMessage(raw, socket, models) {
   const message = parseMessage(raw);
   if(!message || socket.readyState !== socket.OPEN) {
@@ -37,6 +41,7 @@ export async function onMessage(raw, socket, models) {
     sendSocketError(socket, resolveCommandError(error));
   }
 }
+
 export async function syncPlayerState({fighterActions, fighters}, sockets) {
   for(const socket of sockets) {
     if(!isSocketOpen(socket)) {
@@ -54,6 +59,7 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
     sendPlayerState(actions, updatedFighter, socket);
   }
 }
+
 function createPlayerStateSyncScheduler(models, connections, logger) {
   const scheduler = new ToadScheduler();
   const task = new AsyncTask(
@@ -65,9 +71,11 @@ function createPlayerStateSyncScheduler(models, connections, logger) {
   scheduler.addSimpleIntervalJob(job);
   return scheduler;
 }
+
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
 }
+
 function parseMessage(raw) {
   try {
     return JSON.parse(raw);
@@ -76,6 +84,7 @@ function parseMessage(raw) {
     return null;
   }
 }
+
 async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
     case 'auth':
@@ -86,6 +95,7 @@ async function processMessageCommand(models, message, socket) {
       sendSocketError(socket, 'invalid-cmd');
   }
 }
+
 function sendSocketError(socket, error) {
   if(!isSocketOpen(socket)) {
     return;
@@ -94,6 +104,7 @@ function sendSocketError(socket, error) {
     ? JSON.stringify({cmd: 'auth-invalid-token'})
     : JSON.stringify({cmd: 'error', error}));
 }
+
 function resolveCommandError(error) {
   return error?.code || 'internal-error';
 }
