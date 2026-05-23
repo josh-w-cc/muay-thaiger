@@ -53,6 +53,23 @@ describe('fighterActions.listByFighterID', () => {
   });
 });
 
+describe('fighterActions.listStaleBefore', () => {
+  it('lists stale fighter action rows by touched time', async () => {
+    const staleBefore = new Date('2026-05-20T01:00:00.000Z');
+    const actions = [{fighter_id: 7}, {fighter_id: 7}, {fighter_id: 8}];
+    const {calls, knex} = mockKnex(actions);
+    const fighterActions = fighterActionsModel(knex);
+
+    const result = await fighterActions.listStaleBefore(staleBefore);
+
+    assert.deepEqual(result, actions);
+    assert.deepEqual(calls[0], ['table', 'fighter_actions']);
+    assert.deepEqual(calls[1], ['select', 'fighter_id']);
+    assert.deepEqual(calls[2], ['where', 'touched_at', '<=', staleBefore]);
+    assert.deepEqual(calls[3], ['orderBy', 'touched_at']);
+  });
+});
+
 describe('fighterActions.touch', () => {
   it('updates touched_at for the given fighter action ID', async () => {
     const updated = {id: 5, action_id: 2, fighter_id: 7, touched_at: '2026-05-20T00:00:00.000Z'};

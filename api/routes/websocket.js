@@ -10,8 +10,12 @@ import {processMessageCommand} from '../logic/websocket-commands.js';
 export default async function websocketRoutes(app) {
   const connections = new Set();
   const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), players: playersModel(app.db), races: racesModel(app.db)};
+  const offlineTrainingScheduler = createOfflineTrainingScheduler(models, app.log);
   const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
-  app.addHook('onClose', () => stateSyncScheduler.stop());
+  app.addHook('onClose', () => {
+    offlineTrainingScheduler.stop();
+    stateSyncScheduler.stop();
+  });
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
 
@@ -55,6 +59,31 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
       sendPlayerState(state.actions, state.fighter, socket);
     }
   }
+}
+
+export async function applyOfflineTraining({fighterActions, fighters}) {
+  const staleBefore = new Date(Date.now() - 60 * 60 * 1000);
+  const staleActions = await fighterActions.listStaleBefore(staleBefore);
+  const fighterIDs = [...new Set(staleActions.map(({fighter_id: fighterID}) => fighterID))];
+  for(const fighterID of fighterIDs) {
+    const fighter = await fighters.find(fighterID);
+    if(!fighter || fighter.retired) {
+      continue;
+    }
+    await getPlayerState({fighterActions, fighters}, fighter.player_id);
+  }
+}
+
+function createOfflineTrainingScheduler(models, logger) {
+  const scheduler = new ToadScheduler();
+  const task = new AsyncTask(
+    'offline-apply-training',
+    () => applyOfflineTraining(models),
+    (error) => logger.error({err: error}, 'offline-apply-training failed'),
+  );
+  const job = new SimpleIntervalJob({hours: 1}, task);
+  scheduler.addSimpleIntervalJob(job);
+  return scheduler;
 }
 
 function createPlayerStateSyncScheduler(models, connections, logger) {
