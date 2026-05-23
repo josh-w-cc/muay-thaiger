@@ -9,13 +9,16 @@ import healthRoutes from './routes/health.js';
 import playersRoutes from './routes/players.js';
 import raceRoutes from './routes/race.js';
 import websocketRoutes from './routes/websocket.js';
+import {attachScheduler} from './services/scheduler.js';
 
 
 export default async function build(opts = {}) {
   const app = Fastify(opts);
 
   await app.register(dbPlugin);
+  app.decorate('websocketConnections', new Set());
   await app.register(websocket);
+  attachScheduler(app);
   await app.register(actionsRoutes, {prefix: '/api'});
   await app.register(fightersRoutes, {prefix: '/api'});
   await app.register(healthRoutes);

@@ -3,11 +3,9 @@ import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
 import {processMessageCommand} from '../logic/websocket-commands.js';
-import {attachScheduler} from '../services/scheduler.js';
 export default async function websocketRoutes(app) {
-  const connections = new Set();
+  const connections = getConnections(app);
   const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), players: playersModel(app.db), races: racesModel(app.db)};
-  attachScheduler(app, connections, models);
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
 export function onConnect(socket, models, connections = null) {
@@ -55,4 +53,10 @@ function sendSocketError(socket, error) {
 }
 function resolveCommandError(error) {
   return error?.code || 'internal-error';
+}
+function getConnections(app) {
+  if(!app.hasDecorator('websocketConnections')) {
+    app.decorate('websocketConnections', new Set());
+  }
+  return app.websocketConnections;
 }
