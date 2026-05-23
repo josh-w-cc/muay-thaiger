@@ -10,12 +10,21 @@ import {
 } from '@/actions/websockets/auth.js';
 import {isSocketReady, parseSocketMessage} from '@/actions/websockets/websocketState.js';
 import {loadPlayerToken} from '@/actions/websockets/token.js';
+let reconnectSocketTimeout = null;
 let socket = null;
-const onSocketCommand = {'auth': onAuth, 'auth-invalid-token': onAuthInvalidToken, 'ok': onIdleOk, 'player_state': onPlayerState};
+const SOCKET_INACTIVITY_MILLISECONDS = 15 * 60 * 1000;
+const onSocketCommand = {
+  'auth': onAuth,
+  'auth-invalid-token': onAuthInvalidToken,
+  'ok': onIdleOk,
+  'player_state': onPlayerState,
+};
 
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
   socket?.close?.();
+  clearTimeout(reconnectSocketTimeout);
+  reconnectSocketTimeout = null;
   resetAuthState();
   socket = null;
 }
@@ -37,11 +46,16 @@ function connectSocket() {
     return socket;
   }
   loadPlayerToken();
+  socket = new WebSocket(createWebSocketURL());
+  socket.onmessage = onSocketMessage;
+  scheduleSocketReconnectTimeout();
+  return socket;
+}
+
+function createWebSocketURL() {
   const url = new URL('/ws/connect', window.location.href);
   url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-  socket = new WebSocket(url.toString());
-  socket.onmessage = onSocketMessage;
-  return socket;
+  return url.toString();
 }
 
 function onAuth(message) {
@@ -70,6 +84,7 @@ function onIdleOk(message) {
 }
 
 function onSocketMessage(event) {
+  scheduleSocketReconnectTimeout();
   const message = parseSocketMessage(event);
   if(!message) {
     return;
@@ -80,4 +95,12 @@ function onSocketMessage(event) {
     return;
   }
   onCommand(message);
+}
+
+function scheduleSocketReconnectTimeout() {
+  clearTimeout(reconnectSocketTimeout);
+  reconnectSocketTimeout = setTimeout(() => {
+    resetSocketState();
+    connectSocket();
+  }, SOCKET_INACTIVITY_MILLISECONDS);
 }
