@@ -21,13 +21,7 @@
 }
 
 .section {
-  composes: insetSectionBase from '../../components/primitive/css-modules/inset-section-base.module.css';
-
-  display: grid;
-  gap: var(--space-sm);
-  margin: 0 auto var(--space-md);
-  max-width: 420px;
-  text-align: left;
+  composes: sectionBase from '../../components/primitive/css-modules/section-base.module.css';
 }
 
 .stats {
