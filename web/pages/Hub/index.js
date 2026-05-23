@@ -1,6 +1,7 @@
 import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import useFighterStore from '@/data/fighter.js';
 
+import Leaderboard from './Leaderboard.js';
 import css from './Hub.module.css';
 
 const STAT_FIELDS = [
@@ -42,21 +43,17 @@ const EVENTS = [
 ];
 
 export default function Hub() {
-  const fighter = useFighterStore();
-
   return (
     <>
       <h1>HUB</h1>
       <section className={css.section}>
-        <h3>Stats:</h3>
-        <dl className={css.stats}>
-          {STAT_FIELDS.map(({key, label}) => (
-            <Stat key={key} label={label} value={formatHugeNumber(getStatValue({fighter, key}))} />
-          ))}
-        </dl>
+        <Stats />
       </section>
       <section className={css.section}>
         <Events />
+      </section>
+      <section className={css.section}>
+        <Leaderboard />
       </section>
     </>
   );
@@ -64,11 +61,9 @@ export default function Hub() {
 
 function Events() {
   return (
-    <>
-      <ul className={css.events}>
-        {EVENTS.map((event) => <Event event={event} key={event.title} />)}
-      </ul>
-    </>
+    <ul className={css.events}>
+      {EVENTS.map((event) => <Event event={event} key={event.title} />)}
+    </ul>
   );
 }
 
@@ -79,6 +74,21 @@ function Event({event}) {
       <strong>{event.title}</strong>
       <span>{event.detail}</span>
     </li>
+  );
+}
+
+function Stats() {
+  const fighter = useFighterStore();
+
+  return (
+    <>
+      <h3>Stats:</h3>
+      <dl className={css.stats}>
+        {STAT_FIELDS.map(({key, label}) => (
+          <Stat key={key} label={label} value={formatHugeNumber(getStatValue({fighter, key}))} />
+        ))}
+      </dl>
+    </>
   );
 }
 
