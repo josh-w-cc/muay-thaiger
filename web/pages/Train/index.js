@@ -1,10 +1,10 @@
 import {SKILL_SEED_ACTIONS} from 'shared/skills.js';
 import Button from '@/components/Button.js';
-import startIdle from '@/actions/startIdle.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 
 import Skills from './Skills.js';
+import {isActionEnabled, onActionButtonClick} from './skillButtons.js';
 import TrainStat from './TrainStat.js';
 
 import css from './Train.module.css';
@@ -77,22 +77,31 @@ function RegimenProgress({name, progress}) {
 }
 
 function SkillRows({fighter}) {
+  const {actions} = useFighterActionsStore();
+
   return Object.keys(Skills)
     .filter((skillKey) => Skills[skillKey].requires(fighter))
-    .map((skillKey) => <SkillRow fighter={fighter} key={skillKey} skillKey={skillKey} />);
+    .map((skillKey) => (
+      <SkillRow
+        actionEnabled={isActionEnabled(actions, skillKey)}
+        fighter={fighter}
+        key={skillKey}
+        skillKey={skillKey}
+      />
+    ));
 }
 
-function SkillRow({fighter, skillKey}) {
+function SkillRow({actionEnabled, fighter, skillKey}) {
   const skill = Skills[skillKey];
 
   return (
     <div>
       {skill.name}
       <Button
-        className={fighter.idling?.key === `train-${skillKey}` ? css.idleActive : ''}
-        onClick={() => startIdle({fighter, skill, skillKey})}
+        className={actionEnabled ? css.idleActive : ''}
+        onClick={() => onActionButtonClick({actionEnabled, fighter, skill, skillKey})}
       >
-        Idle
+        {actionEnabled ? 'STOP' : 'IDLE'}
       </Button>
     </div>
   );
