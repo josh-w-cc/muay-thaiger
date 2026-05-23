@@ -1,4 +1,22 @@
+import fighterActionsModel from '../data/models/fighter-actions.js';
+import fightersModel from '../data/models/fighters.js';
 import {applyTraining} from './training.js';
+
+const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+
+export async function applyOfflineTraining(db, models = null) {
+  const {fighterActions, fighters} = getOfflineTrainingModels(db, models);
+  const staleBefore = new Date(Date.now() - HOUR_IN_MILLISECONDS);
+  const staleActions = await fighterActions.listStaleBefore(staleBefore);
+  const fighterIDs = [...new Set(staleActions.map(({fighter_id: fighterID}) => fighterID))];
+  for(const fighterID of fighterIDs) {
+    const fighter = await fighters.find(fighterID);
+    if(!shouldSyncOfflineFighter(fighter)) {
+      continue;
+    }
+    await applyTraining({fighterActions, fighters}, fighter);
+  }
+}
 
 export async function getPlayerState({fighterActions, fighters}, playerID) {
   const fighter = await fighters.findCurrentByPlayerID(playerID);
@@ -31,4 +49,22 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
 
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
+}
+
+function createOfflineTrainingModels(db) {
+  return {fighterActions: fighterActionsModel(db), fighters: fightersModel(db)};
+}
+
+function getOfflineTrainingModels(db, models) {
+  if(models) {
+    return models;
+  }
+  return createOfflineTrainingModels(db);
+}
+
+function shouldSyncOfflineFighter(fighter) {
+  if(!fighter) {
+    return false;
+  }
+  return !fighter.retired;
 }

@@ -8,10 +8,7 @@ const SKILLS_BY_ACTION_ID = Object.freeze(
 );
 
 export async function registerFighterAction({fighterActions, fighters}, message, playerID) {
-  const normalizedMessage = normalizeMessage(message);
-  if(!normalizedMessage) {
-    throw createCommandError('invalid-idle-message');
-  }
+  const normalizedMessage = normalizeMessage(message, 'invalid-idle-message');
   const currentFighter = await fighters.findCurrentByPlayerID(playerID);
   if(!currentFighter || !isValidAction(currentFighter, normalizedMessage.action_id)) {
     throw createCommandError('invalid-idle-message');
@@ -22,6 +19,18 @@ export async function registerFighterAction({fighterActions, fighters}, message,
   });
 }
 
+export async function unregisterFighterAction({fighterActions, fighters}, message, playerID) {
+  const normalizedMessage = normalizeMessage(message, 'invalid-stop-message');
+  const currentFighter = await fighters.findCurrentByPlayerID(playerID);
+  if(!currentFighter) {
+    throw createCommandError('invalid-stop-message');
+  }
+  const actions = await fighterActions.listByFighterID(currentFighter.id);
+  const matchingActions = actions.filter((action) => action.action_id === normalizedMessage.action_id);
+  await Promise.all(matchingActions.map((action) => fighterActions.remove(action.id)));
+  return {action_id: normalizedMessage.action_id};
+}
+
 function isValidAction(fighter, actionID) {
   const skill = SKILLS_BY_ACTION_ID[actionID];
   if(!skill) {
@@ -30,13 +39,13 @@ function isValidAction(fighter, actionID) {
   return skill.requires(fighter.stats || {});
 }
 
-function normalizeMessage(message) {
+function normalizeMessage(message, errorCode) {
   if(!message) {
-    return null;
+    throw createCommandError(errorCode);
   }
   const actionID = Number(message.action_id);
   if(!Number.isInteger(actionID)) {
-    return null;
+    throw createCommandError(errorCode);
   }
   return {
     action_id: actionID,

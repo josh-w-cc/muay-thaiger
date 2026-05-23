@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {registerFighterAction} from './fighter-actions.js';
+import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
 
 describe('registerFighterAction', () => {
   it('creates a fighter action for the player current fighter and returns it on a valid message', async () => {
@@ -12,6 +12,43 @@ describe('registerFighterAction', () => {
     const result = await registerFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
 
     assert.deepEqual(result, created);
+  });
+
+  describe('unregisterFighterAction', () => {
+    it('removes matching fighter actions for the player current fighter and returns metadata', async () => {
+      const remove = createCallTracker();
+      const fighterActions = {
+        listByFighterID: async () => [{action_id: 2, id: 8}, {action_id: 6, id: 9}, {action_id: 2, id: 10}],
+        remove,
+      };
+      const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false})};
+
+      const result = await unregisterFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
+
+      assert.deepEqual(result, {action_id: 2});
+      assert.deepEqual(remove.calls, [[8], [10]]);
+    });
+
+    it('throws invalid-stop-message when action_id is missing', async () => {
+      await assert.rejects(
+        unregisterFighterAction({}, {}, 8),
+        {message: 'invalid-stop-message'},
+      );
+    });
+
+    it('throws invalid-stop-message when the player has no current fighter', async () => {
+      const remove = createCallTracker();
+      const fighterActions = {listByFighterID: createCallTracker(), remove};
+      const fighters = {findCurrentByPlayerID: async () => null};
+
+      await assert.rejects(
+        unregisterFighterAction({fighterActions, fighters}, {action_id: 1}, 1),
+        {message: 'invalid-stop-message'},
+      );
+
+      assert.equal(fighterActions.listByFighterID.calls.length, 0);
+      assert.equal(remove.calls.length, 0);
+    });
   });
 
   it('throws invalid-idle-message when action_id is missing', async () => {
