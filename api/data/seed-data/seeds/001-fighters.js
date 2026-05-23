@@ -1,3 +1,4 @@
+import {RACES} from 'shared/races.js';
 import {SKILL_IDS, SKILL_SEED_ACTIONS} from 'shared/skills.js';
 import {MOVE_IDS, MOVE_SEED_MOVES} from 'shared/moves.js';
 
@@ -32,18 +33,7 @@ export const SEED_ACTIONS = SKILL_SEED_ACTIONS;
 export {MOVE_IDS};
 export const SEED_MOVES = MOVE_SEED_MOVES;
 
-export const SEED_RACES = [
-  {
-    id: 1,
-    name: 'Tiger',
-    stats: {anima: 1, durability: 1, reach: 2, speed: 1, vigor: 2, vitality: 2},
-  },
-  {
-    id: 2,
-    name: 'Snow Leopard',
-    stats: {anima: 2, durability: 2, reach: 1, speed: 2, vigor: 1, vitality: 1},
-  },
-];
+export const SEED_RACES = RACES;
 
 export async function seed(knex) {
   await insertMoves(knex);
