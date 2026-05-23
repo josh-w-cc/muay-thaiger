@@ -1,4 +1,3 @@
-import useFighterActionsStore from '@/data/fighterActions.js';
 import {
   respondToAuth,
   routeToHubIfAuthorized,
@@ -6,10 +5,9 @@ import {
 import {isSocketReady} from '@/actions/websockets/websocketState.js';
 
 export function createFighterActionCmd(socket, actionID) {
-  if(!Number.isInteger(actionID) || !isSocketReady(socket)) {
+  if(!isSocketReady(socket)) {
     return;
   }
-  useFighterActionsStore.getState().addAction({action_id: actionID});
   socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
 }
 

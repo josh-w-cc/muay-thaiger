@@ -1,14 +1,7 @@
-const {addAction, isSocketReady, respondToAuth, routeToHubIfAuthorized} = vi.hoisted(() => ({
-  addAction: vi.fn(),
+const {isSocketReady, respondToAuth, routeToHubIfAuthorized} = vi.hoisted(() => ({
   isSocketReady: vi.fn(),
   respondToAuth: vi.fn(),
   routeToHubIfAuthorized: vi.fn(),
-}));
-
-vi.mock('@/data/fighterActions.js', () => ({
-  default: {
-    getState: () => ({addAction}),
-  },
 }));
 
 vi.mock('@/actions/websockets/auth.js', () => ({
@@ -26,7 +19,7 @@ describe('client websocket commands', () => {
     vi.resetModules();
   });
 
-  it('sends an idle command and optimistically stores the action', async () => {
+  it('sends an idle command', async () => {
     isSocketReady.mockReturnValue(true);
     const {createFighterActionCmd} = await import('./clientCommands.js');
     const send = vi.fn();
@@ -34,20 +27,17 @@ describe('client websocket commands', () => {
 
     createFighterActionCmd(socket, 2);
 
-    expect(addAction).toHaveBeenCalledWith({action_id: 2});
     expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
   });
 
-  it('does not send an idle command for invalid action identifiers or unavailable sockets', async () => {
+  it('does not send an idle command when the socket is unavailable', async () => {
     isSocketReady.mockReturnValue(false);
     const {createFighterActionCmd} = await import('./clientCommands.js');
     const send = vi.fn();
     const socket = {send};
 
     createFighterActionCmd(socket, 2);
-    createFighterActionCmd(socket, '2');
 
-    expect(addAction).not.toHaveBeenCalled();
     expect(send).not.toHaveBeenCalled();
   });
 

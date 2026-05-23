@@ -5,7 +5,7 @@ import {SKILL_IDS} from 'shared/skills.js';
 import Train from './index.js';
 
 
-const {action, createFighterActionCmd, fighter, idle} = vi.hoisted(() => {
+const {action, addAction, createFighterActionCmd, fighter, idle} = vi.hoisted(() => {
   const idle = vi.fn();
   const fighter = {
     agility: 1,
@@ -19,6 +19,7 @@ const {action, createFighterActionCmd, fighter, idle} = vi.hoisted(() => {
 
   return {
     action: vi.fn(),
+    addAction: vi.fn(),
     createFighterActionCmd: vi.fn(),
     fighter,
     idle,
@@ -37,7 +38,9 @@ vi.mock('@/data/fighter.js', () => ({
 }));
 
 vi.mock('@/data/fighterActions.js', () => ({
-  default: () => fighterActions,
+  default: Object.assign(() => fighterActions, {
+    getState: () => ({addAction}),
+  }),
 }));
 
 vi.mock('./Skills.js', () => ({
