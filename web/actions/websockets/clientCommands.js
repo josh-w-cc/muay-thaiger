@@ -5,11 +5,11 @@ import {
 import {isSocketReady} from '@/actions/websockets/websocketState.js';
 
 export function createFighterActionCmd(socket, actionID) {
-  sendFighterActionCmd(socket, {action_id: actionID, cmd: 'idle'});
+  sendCommand(socket, {action_id: actionID, cmd: 'idle'});
 }
 
 export function removeFighterActionCmd(socket, actionID) {
-  sendFighterActionCmd(socket, {action_id: actionID, cmd: 'stop'});
+  sendCommand(socket, {action_id: actionID, cmd: 'stop'});
 }
 
 export function selectFighterCmd(socket) {
@@ -17,7 +17,7 @@ export function selectFighterCmd(socket) {
   routeToHubIfAuthorized();
 }
 
-function sendFighterActionCmd(socket, command) {
+function sendCommand(socket, command) {
   if(!isSocketReady(socket)) {
     return;
   }
