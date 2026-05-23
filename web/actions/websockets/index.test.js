@@ -5,6 +5,7 @@ vi.mock('@/router.js', () => ({
   default: {navigate: routerNavigate},
 }));
 
+import useFighterActionsStore, {resetFighterActionsStore} from '@/data/fighterActions.js';
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
 import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './token.js';
@@ -28,6 +29,7 @@ describe('player websocket helpers', () => {
     vi.clearAllMocks();
     vi.useRealTimers();
     localStorage.clear();
+    resetFighterActionsStore();
     resetFighterStore();
     resetPlayerStore();
     resetSocketState();
@@ -130,6 +132,7 @@ describe('player websocket helpers', () => {
   it('overwrites client player and fighter state when player_state is received', () => {
     usePlayerStore.getState().selectFighter('99');
     usePlayerStore.getState().setPlayerID(999);
+    useFighterActionsStore.getState().setActions([{id: 5}]);
     useFighterStore.setState({
       agility: 99,
       gold: 999,
@@ -148,6 +151,7 @@ describe('player websocket helpers', () => {
     socket.onmessage({
       data: JSON.stringify({
         cmd: 'player_state',
+        actions: [{action_id: 2, id: 11}],
         fighter: {
           gold: '250',
           id: 9,
@@ -160,6 +164,7 @@ describe('player websocket helpers', () => {
 
     expect(usePlayerStore.getState().playerID).toBe(77);
     expect(usePlayerStore.getState().selectedRace).toBe('2');
+    expect(useFighterActionsStore.getState().actions).toEqual([{action_id: 2, id: 11}]);
     expect(useFighterStore.getState().gold).toBe(250);
     expect(useFighterStore.getState().id).toBe(9);
     expect(useFighterStore.getState().race).toBe('2');
@@ -167,6 +172,28 @@ describe('player websocket helpers', () => {
     expect(useFighterStore.getState().stamina).toBe(7);
     expect(useFighterStore.getState().strength).toBe(8);
     expect(send).not.toHaveBeenCalled();
+  });
+
+  it('normalizes player_state actions and player id when payload fields are missing', () => {
+    usePlayerStore.getState().setPlayerID(999);
+    useFighterActionsStore.getState().setActions([{id: 5}]);
+    const socket = connectSocketOnAppLoad();
+    socket.onmessage({
+      data: JSON.stringify({
+        cmd: 'player_state',
+        actions: {id: 11},
+        fighter: {
+          gold: '250',
+          id: 9,
+          player_id: null,
+          race: 2,
+          stats: {agility: 6, stamina: 7, strength: 8},
+        },
+      }),
+    });
+
+    expect(usePlayerStore.getState().playerID).toBeNull();
+    expect(useFighterActionsStore.getState().actions).toEqual([]);
   });
 
   it('does not route to hub when player_state is received', () => {
@@ -197,6 +224,7 @@ describe('player websocket helpers', () => {
 
     createFighterActionCmd(2);
 
+    expect(useFighterActionsStore.getState().actions).toEqual([{action_id: 2}]);
     expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
   });
 
@@ -242,15 +270,29 @@ describe('player websocket helpers', () => {
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
-  it('silently accepts ok command without sending or warning', () => {
+  it('ignores ok command metadata without sending or warning', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
+    const fighterAction = {action_id: 2, id: 15};
 
-    socket.onmessage({data: JSON.stringify({cmd: 'ok', metadata: {responded_cmd: 'idle'}})});
+    socket.onmessage({data: JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'idle'}})});
 
+    expect(useFighterActionsStore.getState().actions).toEqual([]);
     expect(send).not.toHaveBeenCalled();
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('ignores ok command metadata when not idle fighter action', () => {
+    const socket = connectSocketOnAppLoad();
+    useFighterActionsStore.getState().setActions([{id: 1}]);
+
+    socket.onmessage({data: JSON.stringify({cmd: 'ok', metadata: {responded_cmd: 'idle'}})});
+    socket.onmessage({
+      data: JSON.stringify({cmd: 'ok', metadata: {fighterAction: {id: 2}, responded_cmd: 'auth'}}),
+    });
+
+    expect(useFighterActionsStore.getState().actions).toEqual([{id: 1}]);
   });
 
   it('ignores invalid websocket messages and logs unknown commands', () => {

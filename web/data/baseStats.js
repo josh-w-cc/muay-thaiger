@@ -1,5 +1,5 @@
-import SnowLeopard from '@/pages/Game/FighterSelect/assets/SnowLeopard.png';
-import Tiger from '@/pages/Game/FighterSelect/assets/Tiger.png';
+import SnowLeopard from '@/pages/FighterSelect/assets/SnowLeopard.png';
+import Tiger from '@/pages/FighterSelect/assets/Tiger.png';
 
 const RACE_IMAGES = {
   1: Tiger,
