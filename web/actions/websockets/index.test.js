@@ -26,6 +26,7 @@ describe('player websocket helpers', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers();
     localStorage.clear();
     resetFighterStore();
     resetPlayerStore();
@@ -195,6 +196,20 @@ describe('player websocket helpers', () => {
 
     expect(secondSocket).toBe(firstSocket);
     expect(globalThis.WebSocket).toHaveBeenCalledTimes(1);
+  });
+
+  it('reconnects after fifteen minutes without websocket commands', () => {
+    vi.useFakeTimers();
+    const firstSocket = connectSocketOnAppLoad();
+    const firstSocketClose = vi.fn();
+    firstSocket.close = firstSocketClose;
+
+    vi.advanceTimersByTime(15 * 60 * 1000);
+
+    const secondSocket = connectSocketOnAppLoad();
+    expect(secondSocket).not.toBe(firstSocket);
+    expect(firstSocketClose).toHaveBeenCalledTimes(1);
+    expect(globalThis.WebSocket).toHaveBeenCalledTimes(2);
   });
 
   it('ignores player_state messages without fighter data', () => {
