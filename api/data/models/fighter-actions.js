@@ -37,9 +37,9 @@ function generateListFighterActionsFn(db, fighters) {
 }
 
 function generateTouchFn(db) {
-  return (id) => db('fighter_actions')
+  return (id, touchedAt = null) => db('fighter_actions')
     .where({id})
-    .update({touched_at: db.fn.now()})
+    .update({touched_at: touchedAt || db.fn.now()})
     .returning('*')
     .then((rows) => rows[0]);
 }
