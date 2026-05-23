@@ -196,6 +196,27 @@ describe('player websocket helpers', () => {
     expect(useFighterActionsStore.getState().actions).toEqual([]);
   });
 
+  it('does not route to hub when player_state is received', () => {
+    usePlayerStore.getState().selectFighter('1');
+    setPlayerToken('existing-token');
+    const socket = connectSocketOnAppLoad();
+
+    socket.onmessage({
+      data: JSON.stringify({
+        cmd: 'player_state',
+        fighter: {
+          gold: '250',
+          id: 9,
+          player_id: 77,
+          race: 2,
+          stats: {agility: 6, stamina: 7, strength: 8},
+        },
+      }),
+    });
+
+    expect(routerNavigate).not.toHaveBeenCalled();
+  });
+
   it('sends idle command with action id for fighter actions', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();

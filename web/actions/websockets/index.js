@@ -75,7 +75,6 @@ function onPlayerState(message) {
   useFighterStore.getState().overwrite(message.fighter);
   usePlayerStore.getState().setPlayerID(message.fighter.player_id ?? null);
   usePlayerStore.getState().selectFighter(`${message.fighter.race}`);
-  routeToHubIfAuthorized();
 }
 
 function onSocketMessage(event) {
