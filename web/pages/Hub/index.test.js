@@ -55,4 +55,20 @@ describe('Hub', () => {
     expect(screen.getByText('Won against Iron Cobra in the Lumpinee Bracket.')).toBeInTheDocument();
     expect(screen.getByText('Clinched 3 rounds in sparring and gained +2 Skill.')).toBeInTheDocument();
   });
+
+  it('renders leaderboard with ranked fighter entries', () => {
+    render(<Hub />);
+
+    expect(screen.getByRole('heading', {name: 'Leaderboard:'})).toBeInTheDocument();
+    expect(screen.getByRole('table')).toBeInTheDocument();
+
+    const rows = screen.getAllByRole('row');
+
+    expect(rows).toHaveLength(6);
+    expect(screen.getByText('Iron Cobra')).toBeInTheDocument();
+    expect(screen.getByText('Shadow Fang')).toBeInTheDocument();
+    expect(screen.getByText('Burning Lotus')).toBeInTheDocument();
+    expect(screen.getByText('Stone Viper')).toBeInTheDocument();
+    expect(screen.getByText('Red Hawk')).toBeInTheDocument();
+  });
 });
