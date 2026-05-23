@@ -30,5 +30,5 @@ function getFighterAgeHours(createdAt) {
     return null;
   }
   const ms = Date.now() - new Date(createdAt).getTime();
-  return Math.floor(ms / (1000 * 60 * 60));
+  return Math.max(0, Math.floor(ms / (1000 * 60 * 60)));
 }
