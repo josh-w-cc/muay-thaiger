@@ -1,9 +1,0 @@
-.sectionBase {
-  composes: insetSectionBase from './inset-section-base.module.css';
-
-  display: grid;
-  gap: var(--space-sm);
-  margin: 0 auto var(--space-md);
-  max-width: 420px;
-  text-align: left;
-}
