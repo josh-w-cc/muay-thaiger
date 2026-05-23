@@ -83,14 +83,16 @@ describe('useFighterStore', () => {
     expect(useFighterStore.getState().idling).toBe(false);
   });
 
-  it('does not train while a fight is idling', () => {
+  it('trains while a fight is idling', () => {
     useFighterStore.setState({
       idling: {action: vi.fn(), delta: 0, key: 'FIGHT-club'},
+      strength: 0,
+      vigor: 1,
     });
 
     useFighterStore.getState().train('strength');
 
-    expect(useFighterStore.getState().strength).toBe(0);
+    expect(useFighterStore.getState().strength).toBe(1);
   });
 
   it('logs and ignores unknown training stats', () => {

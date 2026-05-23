@@ -63,10 +63,6 @@ function generateTickFn({get, set}) {
 
 function generateTrainFn({get, set}) {
   return (stat, amount = 1) => {
-    if(isFightIdling(get().idling)) {
-      return;
-    }
-
     const trainingEffect = getTrainingEffect(get());
     if(!Object.hasOwn(trainingEffect, stat)) {
       console.error('Tried to train unknown stat:', stat);
