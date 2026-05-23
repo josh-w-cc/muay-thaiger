@@ -6,6 +6,11 @@ import selectFighter from '@/actions/selectFighter.js';
 import {connectSocketOnAppLoad, resetSocketState} from '@/actions/websockets/index.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '@/actions/websockets/token.js';
 import {resetPlayerStore} from '@/data/player.js';
+import Fight from '../Fight';
+import Hub from '../Hub';
+import Shop from '../Shop';
+import Train from '../Train';
+import Fallback from './Fallback.js';
 import {GameLayout, loader as gameScreenLoader} from './GameLayout.js';
 
 
@@ -17,7 +22,7 @@ const {routerNavigate} = vi.hoisted(() => ({
   routerNavigate: vi.fn(),
 }));
 
-vi.mock('./FighterSelect', () => ({
+vi.mock('../FighterSelect', () => ({
   default: function MockFighterSelect() {
     return (
       <button
@@ -29,13 +34,13 @@ vi.mock('./FighterSelect', () => ({
   },
 }));
 
-vi.mock('./Fight', () => ({
+vi.mock('../Fight', () => ({
   default: function MockFight() {
     return <h2>Fight Screen</h2>;
   },
 }));
 
-vi.mock('./Hub.js', () => ({
+vi.mock('../Hub', () => ({
   default: function MockHub() {
     const navigate = useNavigate();
 
@@ -49,13 +54,13 @@ vi.mock('./Hub.js', () => ({
   },
 }));
 
-vi.mock('./Shop', () => ({
+vi.mock('../Shop', () => ({
   default: function MockShop() {
     return <h2>Shop Screen</h2>;
   },
 }));
 
-vi.mock('./Train', () => ({
+vi.mock('../Train', () => ({
   default: function MockTrain() {
     return <h2>Train Screen</h2>;
   },
@@ -422,12 +427,7 @@ describe('Game', () => {
 function renderGame({gameModule, initialPath = '/'}) {
   const {
     default: Game,
-    FallbackScreen,
-    FightScreen,
     fighterSelectLoader,
-    HubScreen,
-    ShopScreen,
-    TrainScreen,
   } = gameModule;
   const router = createMemoryRouter(
     [
@@ -436,11 +436,11 @@ function renderGame({gameModule, initialPath = '/'}) {
           {index: true, element: <Game />, loader: fighterSelectLoader},
           {
             children: [
-              {element: <FightScreen />, path: 'fight'},
-              {element: <HubScreen />, path: 'hub'},
-              {element: <ShopScreen />, path: 'shop'},
-              {element: <TrainScreen />, path: 'train'},
-              {element: <FallbackScreen />, path: '*'},
+              {element: <Fight />, path: 'fight'},
+              {element: <Hub />, path: 'hub'},
+              {element: <Shop />, path: 'shop'},
+              {element: <Train />, path: 'train'},
+              {element: <Fallback />, path: '*'},
             ],
             element: <GameLayout />,
             loader: gameScreenLoader,
