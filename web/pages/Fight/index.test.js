@@ -60,6 +60,12 @@ describe('Fight', () => {
     expect(screen.getByText('Zeroth Fight')).toBeInTheDocument();
   });
 
+  it('wraps fight content in a section', () => {
+    const {container} = render(<Fight />);
+
+    expect(container.querySelector('section')).toBeInTheDocument();
+  });
+
   it('starts a fight for selected risk', async () => {
     const user = userEvent.setup();
     render(<Fight />);
