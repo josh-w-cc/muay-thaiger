@@ -16,7 +16,7 @@ const SOCKET_INACTIVITY_MILLISECONDS = 15 * 60 * 1000;
 const onSocketCommand = {
   'auth': onAuth,
   'auth-invalid-token': onAuthInvalidToken,
-  'ok': onIdleOk,
+  'ok': () => {},
   'player_state': onPlayerState,
 };
 
@@ -33,6 +33,7 @@ export function createFighterActionCmd(actionID) {
   if(!Number.isInteger(actionID) || !isSocketReady(socket)) {
     return;
   }
+  useFighterActionsStore.getState().addAction({action_id: actionID});
   socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
 }
 
@@ -75,12 +76,6 @@ function onPlayerState(message) {
   usePlayerStore.getState().setPlayerID(message.fighter.player_id ?? null);
   usePlayerStore.getState().selectFighter(`${message.fighter.race}`);
   routeToHubIfAuthorized();
-}
-
-function onIdleOk(message) {
-  if(message.metadata?.responded_cmd === 'idle' && message.metadata.fighterAction) {
-    useFighterActionsStore.getState().addAction(message.metadata.fighterAction);
-  }
 }
 
 function onSocketMessage(event) {

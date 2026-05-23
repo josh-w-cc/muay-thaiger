@@ -203,6 +203,7 @@ describe('player websocket helpers', () => {
 
     createFighterActionCmd(2);
 
+    expect(useFighterActionsStore.getState().actions).toEqual([{action_id: 2}]);
     expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
   });
 
@@ -248,7 +249,7 @@ describe('player websocket helpers', () => {
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
-  it('captures fighter action metadata from ok command without sending or warning', () => {
+  it('ignores ok command metadata without sending or warning', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
@@ -256,7 +257,7 @@ describe('player websocket helpers', () => {
 
     socket.onmessage({data: JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'idle'}})});
 
-    expect(useFighterActionsStore.getState().actions).toEqual([fighterAction]);
+    expect(useFighterActionsStore.getState().actions).toEqual([]);
     expect(send).not.toHaveBeenCalled();
     expect(warnSpy).not.toHaveBeenCalled();
   });
