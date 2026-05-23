@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 
-import {SKILL_IDS} from '../data/seed-data/seeds/001-fighters.js';
+import {MOVE_IDS, SKILL_IDS} from '../data/seed-data/seeds/001-fighters.js';
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
 import testReseedRoutes from '../routes/test-reseed.js';
 
 
 describe('POST /api/test/reseed', () => {
   it('truncates tables and reseeds data, returns 204', async () => {
-    const {knex, calls} = mockKnexMulti([[], [], [], []], []);
+    const {knex, calls} = mockKnexMulti([[], [], [], [], []], []);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(testReseedRoutes);
@@ -20,10 +20,18 @@ describe('POST /api/test/reseed', () => {
     assert.equal(calls[0][0], 'raw');
     assert.ok(calls[0][1].includes('TRUNCATE'));
     assert.ok(calls[0][1].includes('fighter_actions'));
+    assert.ok(calls[0][1].includes('moves'));
     assert.equal(calls[1][0], 'table');
-    assert.equal(calls[1][1], 'actions');
+    assert.equal(calls[1][1], 'moves');
     assert.equal(calls[2][0], 'insert');
     assert.deepEqual(calls[2][1].map(({id}) => id), [
+      MOVE_IDS.wildPunch,
+      MOVE_IDS.wildKick,
+    ]);
+    assert.equal(calls[3][0], 'table');
+    assert.equal(calls[3][1], 'actions');
+    assert.equal(calls[4][0], 'insert');
+    assert.deepEqual(calls[4][1].map(({id}) => id), [
       SKILL_IDS.begging,
       SKILL_IDS.walking,
       SKILL_IDS.shadowBoxing,
@@ -34,15 +42,15 @@ describe('POST /api/test/reseed', () => {
       SKILL_IDS.running,
       SKILL_IDS.gymnastics,
     ]);
-    assert.equal(calls[3][0], 'table');
-    assert.equal(calls[3][1], 'players');
-    assert.equal(calls[4][0], 'insert');
     assert.equal(calls[5][0], 'table');
-    assert.equal(calls[5][1], 'races');
+    assert.equal(calls[5][1], 'players');
     assert.equal(calls[6][0], 'insert');
     assert.equal(calls[7][0], 'table');
-    assert.equal(calls[7][1], 'fighters');
+    assert.equal(calls[7][1], 'races');
     assert.equal(calls[8][0], 'insert');
+    assert.equal(calls[9][0], 'table');
+    assert.equal(calls[9][1], 'fighters');
+    assert.equal(calls[10][0], 'insert');
     await app.close();
   });
 });
