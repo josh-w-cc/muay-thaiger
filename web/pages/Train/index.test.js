@@ -77,21 +77,27 @@ describe('Train', () => {
     expect(screen.getByRole('button', {name: 'IDLE'})).toBeInTheDocument();
     expect(container.querySelector('br')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Once'})).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: 'Skills:'})).not.toBeInTheDocument();
   });
 
-  it('shows training regimen from fighter actions store with progress bars', () => {
-    fighterActions.actions = [
-      {action_id: 2, id: 5, progress: 23},
-      {action_id: 1, id: 6, progress: 77},
-    ];
+  it('shows training regimen with progress bar and button for each skill', () => {
+    fighterActions.actions = [{action_id: SKILL_IDS.begging, id: 6, progress: 77}];
     render(<Train />);
 
     expect(screen.getByRole('heading', {name: 'Training Regimen:'})).toBeInTheDocument();
-    expect(screen.getByText('Walking')).toBeInTheDocument();
-    expect(screen.getAllByText('฿egging')).toHaveLength(2);
+    expect(screen.queryByRole('heading', {name: 'Skills:'})).not.toBeInTheDocument();
+    expect(screen.getByText('฿egging')).toBeInTheDocument();
 
-    expect(screen.getByRole('progressbar', {name: 'Walking completion'})).toHaveAttribute('aria-valuenow', '23');
     expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '77');
+    expect(screen.getByRole('button', {name: 'STOP'})).toBeInTheDocument();
+  });
+
+  it('shows gray progress bar for inactive skills', () => {
+    fighterActions.actions = [];
+    render(<Train />);
+
+    expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '0');
+    expect(screen.getByRole('button', {name: 'IDLE'})).toBeInTheDocument();
   });
 
   it('starts idling for a skill when idle is clicked', async () => {

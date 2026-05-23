@@ -1,4 +1,4 @@
-import {SKILL_SEED_ACTIONS} from 'shared/skills.js';
+import {SKILL_IDS} from 'shared/skills.js';
 import Button from '@/components/Button.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
@@ -9,7 +9,6 @@ import TrainStat from './TrainStat.js';
 
 import css from './Train.module.css';
 
-const ACTIONS_BY_ID = Object.fromEntries(SKILL_SEED_ACTIONS.map((action) => [action.id, action]));
 const STAT_FIELDS = [
   {name: 'Agility', stat: 'agility'},
   {name: 'Strength', stat: 'strength'},
@@ -29,84 +28,65 @@ export default function Train() {
         <div className={css.stats}>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</div>
       </section>
       <section className={css.section}>
-        <h3>Skills:</h3>
-        <SkillRows fighter={fighter} />
-      </section>
-      <section className={css.section}>
         <h3>Training Regimen:</h3>
-        <RegimenRows />
+        <RegimenRows fighter={fighter} />
       </section>
     </>
   );
 }
 
-function RegimenRows() {
+function RegimenRows({fighter}) {
   const {actions} = useFighterActionsStore();
   return (
     <div className={css.regimen}>
-      {actions.map((action) => <RegimenRow key={action.action_id} name={getRegimenName(action.action_id)} progress={action.progress || 0} />)}
+      {Object.keys(Skills)
+        .filter((skillKey) => Skills[skillKey].requires(fighter))
+        .map((skillKey) => (
+          <RegimenRow
+            actionEnabled={isActionEnabled(actions, skillKey)}
+            fighter={fighter}
+            key={skillKey}
+            name={Skills[skillKey].name}
+            progress={actions.find((a) => a.action_id === SKILL_IDS[skillKey])?.progress || 0}
+            skill={Skills[skillKey]}
+            skillKey={skillKey}
+          />
+        ))}
     </div>
   );
 }
 
-function RegimenRow({name, progress}) {
+function RegimenRow({actionEnabled, fighter, name, progress, skill, skillKey}) {
   return (
     <div className={css.regimenRow}>
       <div>{name}</div>
-      <RegimenProgress name={name} progress={progress} />
+      <div className={css.regimenProgress}>
+        <RegimenProgress actionEnabled={actionEnabled} name={name} progress={progress} />
+        <Button
+          className={actionEnabled ? css.idleActive : ''}
+          onClick={() => onActionButtonClick({actionEnabled, fighter, skill, skillKey})}
+        >
+          {actionEnabled ? 'STOP' : 'IDLE'}
+        </Button>
+      </div>
     </div>
   );
 }
 
-function RegimenProgress({name, progress}) {
+function RegimenProgress({actionEnabled, name, progress}) {
   return (
-    <div className={css.regimenProgress}>
+    <>
       <div
         aria-label={`${name} completion`}
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={progress}
-        className={css.regimenProgressTrack}
+        className={actionEnabled ? css.regimenProgressTrack : `${css.regimenProgressTrack} ${css.regimenProgressTrackDisabled}`}
         role="progressbar"
       >
         <div className={css.regimenProgressFill} style={{width: `${progress}%`}} />
       </div>
       <span className={css.regimenProgressLabel}>{`${progress}%`}</span>
-    </div>
+    </>
   );
-}
-
-function SkillRows({fighter}) {
-  const {actions} = useFighterActionsStore();
-
-  return Object.keys(Skills)
-    .filter((skillKey) => Skills[skillKey].requires(fighter))
-    .map((skillKey) => (
-      <SkillRow
-        actionEnabled={isActionEnabled(actions, skillKey)}
-        fighter={fighter}
-        key={skillKey}
-        skillKey={skillKey}
-      />
-    ));
-}
-
-function SkillRow({actionEnabled, fighter, skillKey}) {
-  const skill = Skills[skillKey];
-
-  return (
-    <div>
-      {skill.name}
-      <Button
-        className={actionEnabled ? css.idleActive : ''}
-        onClick={() => onActionButtonClick({actionEnabled, fighter, skill, skillKey})}
-      >
-        {actionEnabled ? 'STOP' : 'IDLE'}
-      </Button>
-    </div>
-  );
-}
-
-function getRegimenName(actionID) {
-  return ACTIONS_BY_ID[actionID]?.name ?? `Action ${actionID}`;
 }
