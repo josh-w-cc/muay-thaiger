@@ -9,13 +9,12 @@ const DEFAULT_TRAINING_STATS = {
   stamina: 0,
 };
 
-export async function authenticate({fighters, players, races}, message, socket) {
+export async function authenticate({fighters, players, races}, message) {
   const player = await getPlayer({fighters, players, races}, message.token, message.race);
   if(!player) {
     throw createCommandError('auth-invalid-token');
   }
-  socket.player = player;
-  socket.send(JSON.stringify({cmd: 'auth', display_name: player.display_name, player_id: player.id, token: player.token}));
+  return player;
 }
 
 async function getPlayer({fighters, players, races}, token, race) {

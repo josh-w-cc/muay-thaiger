@@ -2,7 +2,7 @@ import {useNavigate} from 'react-router-dom';
 
 import Button from '@/components/Button.js';
 import FightButton from './assets/FightButton.png';
-import HubButton from '../../orig/src/assets/HubButton.png';
+import HubButton from './assets/HubButton.png';
 import ShopButton from '../../orig/src/assets/ShopButton.png';
 import TrainButton from '../../orig/src/assets/TrainButton.png';
 
