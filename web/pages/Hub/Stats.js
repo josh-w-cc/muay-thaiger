@@ -7,7 +7,7 @@ const STAT_FIELDS = [
   {key: 'agility', label: 'Agility'},
   {key: 'speed', label: 'Speed'},
   {key: 'strength', label: 'Strength'},
-  {key: 'innateStrength', label: 'Innate Strength'},
+  {key: 'vigor', label: 'Vigor'},
   {key: 'vitality', label: 'Vitality'},
   {key: 'anima', label: 'Anima'},
   {key: 'durability', label: 'Durability'},

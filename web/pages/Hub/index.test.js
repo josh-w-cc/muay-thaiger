@@ -15,7 +15,7 @@ const fighter = vi.hoisted(() => ({
   durability: 17,
   gold: 2100,
   health: 25,
-  innateStrength: 14,
+  vigor: 14,
   power: 26,
   race: '1',
   reach: 18,

@@ -46,13 +46,13 @@ export function tickTrain({delta, get, idling, set}) {
   }
 }
 
-export function getTrainingEffect({anima, innateStrength, speed, vitality}) {
+export function getTrainingEffect({anima, vigor, speed, vitality}) {
   return {
     agility: speed,
     constitution: vitality,
     skill: anima,
     stamina: vitality,
-    strength: innateStrength,
+    strength: vigor,
   };
 }
 
@@ -76,13 +76,13 @@ export function getSelectionState(id) {
   };
 }
 
-function getBaseSelectionState({anima, durability, innateStrength, reach, speed, vitality}) {
+function getBaseSelectionState({anima, durability, vigor, reach, speed, vitality}) {
   return {
     agility: 0,
     anima,
     constitution: 0,
     durability,
-    innateStrength,
+    vigor,
     reach,
     skill: 0,
     speed,

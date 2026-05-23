@@ -7,7 +7,7 @@ const BASE_STATS = {
   agility: 0,
   anima: 1,
   constitution: 0,
-  innateStrength: 1,
+  vigor: 1,
   skill: 0,
   speed: 1,
   stamina: 0,
@@ -74,8 +74,8 @@ describe('applyTraining', () => {
     assert.equal(updateCalls[0].stats.constitution, 3);
   });
 
-  it('trains strength using innateStrength rather than current strength', async () => {
-    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, innateStrength: 3, stamina: 120, strength: 5}};
+  it('trains strength using vigor rather than current strength', async () => {
+    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, vigor: 3, stamina: 120, strength: 5}};
     const actions = [{action_id: 5, fighter_id: 1, id: 5, touched_at: getOffsetDate(-3000)}];
     const updateCalls = [];
     const fighterActions = {

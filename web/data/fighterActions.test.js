@@ -161,7 +161,7 @@ describe('useFighterActionsStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:02.500Z'));
     useFighterStore.setState({
-      innateStrength: 1,
+      vigor: 1,
       speed: 1,
       stamina: 0,
       vitality: 3,
