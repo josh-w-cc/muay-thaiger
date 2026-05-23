@@ -65,7 +65,6 @@ export default function Hub() {
 function Events() {
   return (
     <>
-      <h3>Events:</h3>
       <ul className={css.events}>
         {EVENTS.map((event) => <Event event={event} key={event.title} />)}
       </ul>

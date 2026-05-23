@@ -42,7 +42,7 @@ describe('Hub', () => {
 
     expect(staminaRow).toBeInTheDocument();
     expect(within(staminaRow).getByText('21')).toBeInTheDocument();
-    expect(screen.getByRole('heading', {name: 'Events:'})).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: 'Events:'})).not.toBeInTheDocument();
     expect(screen.getByRole('list')).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
     expect(screen.getByText('Technique: Flying Knee Drill')).toBeInTheDocument();
