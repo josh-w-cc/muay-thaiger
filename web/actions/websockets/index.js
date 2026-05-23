@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import {
