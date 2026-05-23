@@ -7,14 +7,12 @@
 }
 
 .events {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   gap: var(--space-xs);
   list-style: none;
-  margin: var(--space-md) auto 0;
-  min-width: 300px;
-  padding: 0 0 0 var(--space-md);
-  text-align: left;
+  margin: 0;
+  padding: 0;
 }
 
 .events li:last-child {
@@ -22,15 +20,21 @@
   padding-bottom: 0;
 }
 
+.section {
+  composes: insetSectionBase from '../../components/primitive/css-modules/inset-section-base.module.css';
+
+  display: grid;
+  gap: var(--space-sm);
+  margin: 0 auto var(--space-md);
+  max-width: 420px;
+  text-align: left;
+}
+
 .stats {
-  border-left: 3px solid var(--color-gold);
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-  margin: 0 auto;
-  min-width: 300px;
-  padding-left: var(--space-md);
-  text-align: left;
+  margin: 0;
 }
 
 .stat {
