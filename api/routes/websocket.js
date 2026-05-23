@@ -11,11 +11,9 @@ export default async function websocketRoutes(app) {
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
 
-export function onConnect(socket, models, connections = null) {
-  if(connections) {
-    connections.add(socket);
-    socket.on('close', () => connections.delete(socket));
-  }
+export function onConnect(socket, models, connections) {
+  connections.add(socket);
+  socket.on('close', () => connections.delete(socket));
   socket.on('message', (raw) => onMessage(raw, socket, models));
   setImmediate(() => {
     if(isSocketOpen(socket)) {
