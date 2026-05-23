@@ -173,6 +173,28 @@ describe('player websocket helpers', () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it('normalizes player_state actions and player id when payload fields are missing', () => {
+    usePlayerStore.getState().setPlayerID(999);
+    useFighterActionsStore.getState().setActions([{id: 5}]);
+    const socket = connectSocketOnAppLoad();
+    socket.onmessage({
+      data: JSON.stringify({
+        cmd: 'player_state',
+        actions: {id: 11},
+        fighter: {
+          gold: '250',
+          id: 9,
+          player_id: null,
+          race: 2,
+          stats: {agility: 6, stamina: 7, strength: 8},
+        },
+      }),
+    });
+
+    expect(usePlayerStore.getState().playerID).toBeNull();
+    expect(useFighterActionsStore.getState().actions).toEqual([]);
+  });
+
   it('sends idle command with action id for fighter actions', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
@@ -222,6 +244,18 @@ describe('player websocket helpers', () => {
     expect(useFighterActionsStore.getState().actions).toEqual([fighterAction]);
     expect(send).not.toHaveBeenCalled();
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('ignores ok command metadata when not idle fighter action', () => {
+    const socket = connectSocketOnAppLoad();
+    useFighterActionsStore.getState().setActions([{id: 1}]);
+
+    socket.onmessage({data: JSON.stringify({cmd: 'ok', metadata: {responded_cmd: 'idle'}})});
+    socket.onmessage({
+      data: JSON.stringify({cmd: 'ok', metadata: {fighterAction: {id: 2}, responded_cmd: 'auth'}}),
+    });
+
+    expect(useFighterActionsStore.getState().actions).toEqual([{id: 1}]);
   });
 
   it('ignores invalid websocket messages and logs unknown commands', () => {
