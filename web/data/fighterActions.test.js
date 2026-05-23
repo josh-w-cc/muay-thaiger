@@ -60,4 +60,52 @@ describe('useFighterActionsStore', () => {
       expect.objectContaining({action_id: 6, id: 2, progress: 50}),
     ]);
   });
+
+  it('uses now for invalid action timestamps', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
+    useFighterActionsStore.getState().setActions([
+      {action_id: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
+      {action_id: 2, created_at: 'not-a-date', id: 2},
+    ]);
+
+    useFighterActionsStore.getState().tick();
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
+      expect.objectContaining({action_id: 2, id: 2, progress: 0}),
+    ]);
+  });
+
+  it('handles elapsed time that spans multiple queued actions', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
+    useFighterActionsStore.getState().setActions([
+      {action_id: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
+      {action_id: 2, created_at: '2026-01-01T00:00:01.000Z', id: 2},
+    ]);
+
+    useFighterActionsStore.getState().tick();
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
+      expect.objectContaining({action_id: 2, id: 2, progress: 0}),
+    ]);
+  });
+
+  it('prefers touched_at timestamps when calculating progress', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
+    useFighterActionsStore.getState().setActions([
+      {action_id: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
+      {action_id: 2, created_at: 'not-a-date', id: 2, progress: 25, touched_at: '2026-01-01T00:00:04.000Z'},
+    ]);
+
+    useFighterActionsStore.getState().tick();
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
+      expect.objectContaining({action_id: 2, id: 2, progress: 0}),
+    ]);
+  });
 });
