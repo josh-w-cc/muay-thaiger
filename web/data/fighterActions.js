@@ -2,6 +2,7 @@ import {create} from 'zustand';
 import {SKILL_DEFINITIONS, SKILL_IDS} from 'shared/skills.js';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
+import {runFighterActionTick} from './fighterActionTick.js';
 
 
 const SKILLS_BY_ACTION_ID = Object.freeze(
@@ -20,7 +21,7 @@ const useFighterActionsStore = create((set) => ({
     actions: setActionProgress(state.actions.filter((action) => action.action_id !== actionID)),
   })),
   setActions: (actions) => set({actions: setActionProgress(actions.map((action) => normalizeAction(action)))}),
-  tick: () => set((state) => ({actions: setActionProgress(state.actions)})),
+  tick: () => set((state) => ({actions: tickActions(state.actions)})),
 }));
 
 export default useFighterActionsStore;
@@ -69,9 +70,7 @@ function getActionTime(action, nowMs) {
 function setActionProgress(actions) {
   const nowMs = Date.now();
   const progressByIndex = new Map(actions.map((_, index) => [index, 0]));
-  const scheduledActions = actions
-    .map((action, index) => ({action, durationMs: (SKILLS_BY_ACTION_ID[action.action_id]?.duration || 0) * 1000, index}))
-    .filter((action) => action.durationMs > 0);
+  const scheduledActions = getScheduledActions(actions);
   setScheduledActionProgress(progressByIndex, scheduledActions, nowMs);
   return actions.map((action, index) => ({...action, progress: progressByIndex.get(index) || 0}));
 }
@@ -94,6 +93,16 @@ function setScheduledActionProgress(progressByIndex, scheduledActions, nowMs) {
     scheduledActions[actionIndex].index,
     Math.floor(remainingMs / scheduledActions[actionIndex].durationMs * 100),
   );
+}
+
+function tickActions(actions) {
+  return setActionProgress(runFighterActionTick(actions));
+}
+
+function getScheduledActions(actions) {
+  return actions
+    .map((action, index) => ({action, durationMs: (SKILLS_BY_ACTION_ID[action.action_id]?.duration || 0) * 1000, index}))
+    .filter((action) => action.durationMs > 0);
 }
 
 TickerState.addListener(() => useFighterActionsStore.getState().tick());
