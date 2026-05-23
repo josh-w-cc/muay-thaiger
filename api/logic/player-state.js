@@ -1,10 +1,12 @@
+import {applyTraining} from './training.js';
+
 export async function getPlayerState({fighterActions, fighters}, playerID) {
   const fighter = await fighters.findCurrentByPlayerID(playerID);
   if(!fighter) {
     return null;
   }
-  const actions = await fighterActions.listByFighterID(fighter.id);
-  return {actions, fighter};
+  const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
+  return {actions, fighter: updatedFighter};
 }
 
 export function sendPlayerState(actions, fighter, socket) {

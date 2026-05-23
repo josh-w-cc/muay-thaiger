@@ -278,6 +278,7 @@ describe('WebSocket /ws/connect', () => {
     };
     const fighters = {
       findCurrentByPlayerID: async () => fighter,
+      update: async () => fighter,
     };
     const players = {
       create: async () => null,
