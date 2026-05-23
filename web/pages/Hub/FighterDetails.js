@@ -1,8 +1,10 @@
 import BaseStats from '@/data/baseStats.js';
+import useFighterStore from '@/data/fighter.js';
 
 import css from './Hub.module.css';
 
-export default function FighterDetails({fighter}) {
+export default function FighterDetails() {
+  const fighter = useFighterStore();
   const raceName = BaseStats[fighter.race]?.name ?? '—';
   const ageHours = getFighterAgeHours(fighter.createdAt);
   const fields = [

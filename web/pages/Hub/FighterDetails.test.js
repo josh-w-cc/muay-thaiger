@@ -2,15 +2,20 @@ import {render, screen, within} from '@testing-library/react';
 
 import FighterDetails from './FighterDetails.js';
 
+
+const fighter = vi.hoisted(() => ({
+  createdAt: new Date(Date.now() - 7200000).toISOString(),
+  displayName: 'Iron Tiger',
+  race: '1',
+}));
+
+vi.mock('@/data/fighter.js', () => ({
+  default: () => fighter,
+}));
+
 describe('FighterDetails', () => {
   it('renders fighter name, age, and race when all data is present', () => {
-    const fighter = {
-      createdAt: new Date(Date.now() - 7200000).toISOString(),
-      displayName: 'Iron Tiger',
-      race: '1',
-    };
-
-    render(<FighterDetails fighter={fighter} />);
+    render(<FighterDetails />);
 
     expect(within(screen.getByText('Name').closest('div')).getByText('Iron Tiger')).toBeInTheDocument();
     expect(within(screen.getByText('Race').closest('div')).getByText('Tiger')).toBeInTheDocument();
@@ -18,19 +23,24 @@ describe('FighterDetails', () => {
   });
 
   it('shows dashes when createdAt, displayName, and race are absent', () => {
-    const fighter = {
-      createdAt: null,
-      displayName: '',
-      race: 'unknown',
-    };
+    const original = {...fighter};
 
-    render(<FighterDetails fighter={fighter} />);
+    fighter.createdAt = null;
+    fighter.displayName = '';
+    fighter.race = 'unknown';
+
+    render(<FighterDetails />);
 
     const nameDashes = within(screen.getByText('Name').closest('div')).getAllByText('—');
+
     expect(nameDashes.length).toBeGreaterThan(0);
     const ageDashes = within(screen.getByText('Age').closest('div')).getAllByText('—');
+
     expect(ageDashes.length).toBeGreaterThan(0);
     const raceDashes = within(screen.getByText('Race').closest('div')).getAllByText('—');
+
     expect(raceDashes.length).toBeGreaterThan(0);
+
+    Object.assign(fighter, original);
   });
 });

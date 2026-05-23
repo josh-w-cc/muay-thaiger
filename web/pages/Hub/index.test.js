@@ -41,8 +41,8 @@ describe('Hub', () => {
     expect(screen.getByRole('heading', {name: 'Fighter Details:'})).toBeInTheDocument();
     expect(screen.getByText('Name').closest('div')).toBeInTheDocument();
     expect(within(screen.getByText('Name').closest('div')).getByText('Iron Tiger')).toBeInTheDocument();
-    expect(screen.getByText('Race').closest('div')).toBeInTheDocument();
-    expect(within(screen.getByText('Race').closest('div')).getByText('Tiger')).toBeInTheDocument();
+    expect(screen.getByText('Race', {selector: 'dt'}).closest('div')).toBeInTheDocument();
+    expect(within(screen.getByText('Race', {selector: 'dt'}).closest('div')).getByText('Tiger')).toBeInTheDocument();
     expect(screen.getByText('Age').closest('div')).toBeInTheDocument();
   });
 
@@ -68,5 +68,21 @@ describe('Hub', () => {
     expect(screen.getByText('Unlocked Flying Knee Drill in Training.')).toBeInTheDocument();
     expect(screen.getByText('Won against Iron Cobra in the Lumpinee Bracket.')).toBeInTheDocument();
     expect(screen.getByText('Clinched 3 rounds in sparring and gained +2 Skill.')).toBeInTheDocument();
+  });
+
+  it('renders leaderboard with ranked fighter entries', () => {
+    render(<Hub />);
+
+    expect(screen.getByRole('heading', {name: 'Leaderboard:'})).toBeInTheDocument();
+    expect(screen.getByRole('table')).toBeInTheDocument();
+
+    const rows = screen.getAllByRole('row');
+
+    expect(rows).toHaveLength(6);
+    expect(screen.getByText('Iron Cobra')).toBeInTheDocument();
+    expect(screen.getByText('Shadow Fang')).toBeInTheDocument();
+    expect(screen.getByText('Burning Lotus')).toBeInTheDocument();
+    expect(screen.getByText('Stone Viper')).toBeInTheDocument();
+    expect(screen.getByText('Red Hawk')).toBeInTheDocument();
   });
 });
