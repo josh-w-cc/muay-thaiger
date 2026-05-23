@@ -1,23 +1,11 @@
 import SnowLeopard from '@/pages/FighterSelect/assets/SnowLeopard.png';
 import Tiger from '@/pages/FighterSelect/assets/Tiger.png';
+import {RACES} from 'shared/races.js';
 
 const RACE_IMAGES = {
   1: Tiger,
   2: SnowLeopard,
 };
-
-export const RACES = [
-  {
-    id: 1,
-    name: 'Tiger',
-    stats: {anima: 1, durability: 1, reach: 2, speed: 1, vigor: 2, vitality: 2},
-  },
-  {
-    id: 2,
-    name: 'Snow Leopard',
-    stats: {anima: 2, durability: 2, reach: 1, speed: 2, vigor: 1, vitality: 1},
-  },
-];
 
 const BaseStats = Object.fromEntries(
   RACES
@@ -30,3 +18,4 @@ const BaseStats = Object.fromEntries(
 );
 
 export default BaseStats;
+export {RACES};
