@@ -4,9 +4,9 @@ import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
-import {authenticateAndSendPlayerState, sendPlayerState} from '../logic/player-state.js';
-import {registerFighterAction} from '../logic/fighter-actions.js';
+import {sendPlayerState} from '../logic/player-state.js';
 import {applyTraining} from '../logic/training.js';
+import {processMessageCommand} from './websocket-commands.js';
 
 export default async function websocketRoutes(app) {
   const connections = new Set();
@@ -82,17 +82,6 @@ function parseMessage(raw) {
   }
   catch {
     return null;
-  }
-}
-
-async function processMessageCommand(models, message, socket) {
-  switch(message.cmd) {
-    case 'auth':
-      return authenticateAndSendPlayerState(models, message, socket);
-    case 'idle':
-      return registerFighterAction(models, message, socket);
-    default:
-      sendSocketError(socket, 'invalid-cmd');
   }
 }
 
