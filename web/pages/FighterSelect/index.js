@@ -61,7 +61,7 @@ function FighterCardBody({image, name, onSelect, stats}) {
 function renderStats(stats) {
   return [
     ['Speed', stats.speed],
-    ['Strength', stats.strength],
+    ['Strength', stats.innateStrength],
     ['Vitality', stats.vitality],
     ['Anima', stats.anima],
     ['Durability', stats.durability],
