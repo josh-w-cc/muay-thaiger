@@ -22,6 +22,14 @@ describe('FighterDetails', () => {
     expect(within(screen.getByText('Age').closest('div')).getByText('2h')).toBeInTheDocument();
   });
 
+  it('renders Age last in the details list', () => {
+    render(<FighterDetails />);
+
+    const items = screen.getAllByRole('term');
+
+    expect(items[items.length - 1]).toHaveTextContent('Age');
+  });
+
   it('shows 0h for a newly-created fighter with a future createdAt', () => {
     const original = {...fighter};
 

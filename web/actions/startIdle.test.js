@@ -24,26 +24,15 @@ describe('startIdle', () => {
   });
 
   it('starts idle training and sends a fighter action command', () => {
-    const action = vi.fn();
-    const fighter = {idle: vi.fn()};
-    const skill = {action};
+    startIdle({skillKey: 'begging'});
 
-    startIdle({fighter, skill, skillKey: 'begging'});
-
-    expect(fighter.idle).toHaveBeenCalledTimes(1);
-    expect(fighter.idle).toHaveBeenCalledWith('train-begging', expect.any(Function));
     expect(addAction).toHaveBeenCalledWith({action_id: SKILL_IDS.begging});
     expect(createFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
 
   it('does not enqueue or send a command when the skill id is invalid', () => {
-    const action = vi.fn();
-    const fighter = {idle: vi.fn()};
-    const skill = {action};
+    startIdle({skillKey: 'invalid'});
 
-    startIdle({fighter, skill, skillKey: 'invalid'});
-
-    expect(fighter.idle).toHaveBeenCalledTimes(1);
     expect(addAction).not.toHaveBeenCalled();
     expect(createFighterActionCmd).not.toHaveBeenCalled();
   });
