@@ -1,11 +1,10 @@
-import {SKILL_IDS, SKILL_SEED_ACTIONS} from 'shared/skills.js';
+import {SKILL_SEED_ACTIONS} from 'shared/skills.js';
 import Button from '@/components/Button.js';
-import startIdle from '@/actions/startIdle.js';
-import stopIdle from '@/actions/stopIdle.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 
 import Skills from './Skills.js';
+import {isActionEnabled, onActionButtonClick} from './skillButtons.js';
 import TrainStat from './TrainStat.js';
 
 import css from './Train.module.css';
@@ -100,7 +99,7 @@ function SkillRow({actionEnabled, fighter, skillKey}) {
       {skill.name}
       <Button
         className={actionEnabled ? css.idleActive : ''}
-        onClick={() => onActionButtonClick(actionEnabled, fighter, skill, skillKey)}
+        onClick={() => onActionButtonClick({actionEnabled, fighter, skill, skillKey})}
       >
         {actionEnabled ? 'STOP' : 'IDLE'}
       </Button>
@@ -110,17 +109,4 @@ function SkillRow({actionEnabled, fighter, skillKey}) {
 
 function getRegimenName(actionID) {
   return ACTIONS_BY_ID[actionID]?.name ?? `Action ${actionID}`;
-}
-
-function isActionEnabled(actions, skillKey) {
-  const actionID = SKILL_IDS[skillKey];
-  return actions.some((action) => action.action_id === actionID);
-}
-
-function onActionButtonClick(actionEnabled, fighter, skill, skillKey) {
-  if(actionEnabled) {
-    stopIdle({skillKey});
-    return;
-  }
-  startIdle({fighter, skill, skillKey});
 }
