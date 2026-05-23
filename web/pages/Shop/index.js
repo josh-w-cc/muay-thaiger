@@ -4,6 +4,8 @@ import useFighterStore from '@/data/fighter.js';
 import useInventoryStore from '@/data/inventory.js';
 import Items from './Items.js';
 
+import css from './Shop.module.css';
+
 
 function Shop() {
   const buy = useInventoryStore((state) => state.buy);
@@ -12,18 +14,24 @@ function Shop() {
   return (
     <>
       <h1>SHOP</h1>
-      {Object.keys(Items).map((itemKey) => (
-        <div key={itemKey}>
-          {Items[itemKey].name}
-          {' '}
-          {formatHugeNumber(Items[itemKey].cost)}
-          ฿
-          <Button onClick={() => buy(fighter, Items[itemKey])}>Buy</Button>
-          <br />
-        </div>
-      ))}
+      <section className={css.section}>
+        <ShopRows buy={buy} fighter={fighter} />
+      </section>
     </>
   );
+}
+
+function ShopRows({buy, fighter}) {
+  return Object.keys(Items).map((itemKey) => (
+    <div key={itemKey}>
+      {Items[itemKey].name}
+      {' '}
+      {formatHugeNumber(Items[itemKey].cost)}
+      ฿
+      <Button onClick={() => buy(fighter, Items[itemKey])}>Buy</Button>
+      <br />
+    </div>
+  ));
 }
 
 export default Shop;
