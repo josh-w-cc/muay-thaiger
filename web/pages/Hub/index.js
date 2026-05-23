@@ -47,13 +47,17 @@ export default function Hub() {
   return (
     <>
       <h1>HUB</h1>
-      <h3>Stats:</h3>
-      <dl className={css.stats}>
-        {STAT_FIELDS.map(({key, label}) => (
-          <Stat key={key} label={label} value={formatHugeNumber(getStatValue({fighter, key}))} />
-        ))}
-      </dl>
-      <Events />
+      <section className={css.section}>
+        <h3>Stats:</h3>
+        <dl className={css.stats}>
+          {STAT_FIELDS.map(({key, label}) => (
+            <Stat key={key} label={label} value={formatHugeNumber(getStatValue({fighter, key}))} />
+          ))}
+        </dl>
+      </section>
+      <section className={css.section}>
+        <Events />
+      </section>
     </>
   );
 }
