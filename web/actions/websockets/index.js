@@ -4,7 +4,7 @@ import {
   respondToAuth,
   routeToHubIfAuthorized,
 } from '@/actions/websockets/auth.js';
-import {generateOnSocketMessageFn} from '@/actions/websockets/commands.js';
+import {generateOnSocketMessageFn} from '@/actions/websockets/serverCommands.js';
 import {isSocketReady} from '@/actions/websockets/websocketState.js';
 import {loadPlayerToken} from '@/actions/websockets/token.js';
 let reconnectSocketTimeout = null;
