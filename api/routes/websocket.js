@@ -4,7 +4,7 @@ import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
-import {getPlayerState, sendPlayerState} from '../logic/player-state.js';
+import {syncPlayerState} from '../logic/player-state.js';
 import {processMessageCommand} from '../logic/websocket-commands.js';
 
 export default async function websocketRoutes(app) {
@@ -38,22 +38,6 @@ export async function onMessage(raw, socket, models) {
   }
   catch(error) {
     sendSocketError(socket, resolveCommandError(error));
-  }
-}
-
-export async function syncPlayerState({fighterActions, fighters}, sockets) {
-  for(const socket of sockets) {
-    if(!isSocketOpen(socket)) {
-      sockets.delete(socket);
-      continue;
-    }
-    if(!socket.player) {
-      continue;
-    }
-    const state = await getPlayerState({fighterActions, fighters}, socket.player.id);
-    if(state) {
-      sendPlayerState(state.actions, state.fighter, socket);
-    }
   }
 }
 
