@@ -52,7 +52,7 @@ describe('Hub', () => {
     expect(container.querySelector('dl')).toBeInTheDocument();
     expect(container.querySelectorAll('dl > div')).toHaveLength(20);
     expect(container.querySelector('br')).not.toBeInTheDocument();
-    const staminaRow = screen.getByText('Stanima').closest('div');
+    const staminaRow = screen.getByText('Stanima', {selector: 'dt'}).closest('div');
 
     expect(staminaRow).toBeInTheDocument();
     expect(within(staminaRow).getByText('21')).toBeInTheDocument();
@@ -70,19 +70,28 @@ describe('Hub', () => {
     expect(screen.getByText('Clinched 3 rounds in sparring and gained +2 Skill.')).toBeInTheDocument();
   });
 
-  it('renders leaderboard with ranked fighter entries', () => {
+  it('renders leaderboard with one fighter for each trainable stat', () => {
     render(<Hub />);
 
     expect(screen.getByRole('heading', {name: 'Leaderboard:'})).toBeInTheDocument();
-    expect(screen.getByRole('table')).toBeInTheDocument();
+    const leaderboard = screen.getByRole('table');
+
+    expect(leaderboard).toBeInTheDocument();
 
     const rows = screen.getAllByRole('row');
 
     expect(rows).toHaveLength(6);
-    expect(screen.getByText('Iron Cobra')).toBeInTheDocument();
-    expect(screen.getByText('Shadow Fang')).toBeInTheDocument();
-    expect(screen.getByText('Burning Lotus')).toBeInTheDocument();
-    expect(screen.getByText('Stone Viper')).toBeInTheDocument();
-    expect(screen.getByText('Red Hawk')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Agility')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Constitution')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Skill')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Stanima')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Strength')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Iron Cobra')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Shadow Fang')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Burning Lotus')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Stone Viper')).toBeInTheDocument();
+    expect(within(leaderboard).getByText('Red Hawk')).toBeInTheDocument();
+    expect(within(leaderboard).queryByText('Anima')).not.toBeInTheDocument();
+    expect(within(leaderboard).queryByText('Reach')).not.toBeInTheDocument();
   });
 });
