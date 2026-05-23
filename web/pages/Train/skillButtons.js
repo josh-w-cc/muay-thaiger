@@ -9,10 +9,10 @@ export function isActionEnabled(actions, skillKey) {
   return actions.some((action) => action.action_id === actionID);
 }
 
-export function onActionButtonClick({actionEnabled, fighter, skill, skillKey}) {
+export function onActionButtonClick({actionEnabled, skillKey}) {
   if(actionEnabled) {
     stopIdle({skillKey});
     return;
   }
-  startIdle({fighter, skill, skillKey});
+  startIdle({skillKey});
 }
