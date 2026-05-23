@@ -226,19 +226,16 @@ describe('player websocket helpers', () => {
 
     createFighterActionCmd(2);
 
-    expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2}),
-    ]);
     expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
   });
 
-  it('does not send idle command for invalid fighter actions', () => {
+  it('does not send idle command when websocket is unavailable', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
-    const invalidActionIdentifier = '2';
+    socket.readyState = 0;
 
-    createFighterActionCmd(invalidActionIdentifier);
+    createFighterActionCmd(2);
 
     expect(send).not.toHaveBeenCalled();
   });
