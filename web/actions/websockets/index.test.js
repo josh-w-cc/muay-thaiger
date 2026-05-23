@@ -164,7 +164,9 @@ describe('player websocket helpers', () => {
 
     expect(usePlayerStore.getState().playerID).toBe(77);
     expect(usePlayerStore.getState().selectedRace).toBe('2');
-    expect(useFighterActionsStore.getState().actions).toEqual([{action_id: 2, id: 11}]);
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 2, id: 11}),
+    ]);
     expect(useFighterStore.getState().gold).toBe(250);
     expect(useFighterStore.getState().id).toBe(9);
     expect(useFighterStore.getState().race).toBe('2');
@@ -291,7 +293,9 @@ describe('player websocket helpers', () => {
       data: JSON.stringify({cmd: 'ok', metadata: {fighterAction: {id: 2}, responded_cmd: 'auth'}}),
     });
 
-    expect(useFighterActionsStore.getState().actions).toEqual([{id: 1}]);
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({id: 1}),
+    ]);
   });
 
   it('ignores invalid websocket messages and logs unknown commands', () => {

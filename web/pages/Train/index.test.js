@@ -28,8 +28,8 @@ const {action, addAction, createFighterActionCmd, fighter, idle} = vi.hoisted(()
 
 const fighterActions = vi.hoisted(() => ({
   actions: [
-    {action_id: 2, id: 5},
-    {action_id: 1, id: 6},
+    {action_id: 2, id: 5, progress: 23},
+    {action_id: 1, id: 6, progress: 77},
   ],
 }));
 
@@ -76,8 +76,8 @@ describe('Train', () => {
     expect(screen.getByText('Walking')).toBeInTheDocument();
     expect(screen.getAllByText('฿egging')).toHaveLength(2);
 
-    expect(screen.getByRole('progressbar', {name: 'Walking completion'})).toHaveAttribute('aria-valuenow', '0');
-    expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '0');
+    expect(screen.getByRole('progressbar', {name: 'Walking completion'})).toHaveAttribute('aria-valuenow', '23');
+    expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '77');
   });
 
   it('starts idling for a skill when idle is clicked', async () => {
