@@ -5,7 +5,7 @@ import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
 import {getPlayerState, sendPlayerState} from '../logic/player-state.js';
-import {processMessageCommand} from './websocket-commands.js';
+import {processMessageCommand} from '../logic/websocket-commands.js';
 
 export default async function websocketRoutes(app) {
   const connections = new Set();

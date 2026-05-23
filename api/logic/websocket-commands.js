@@ -1,7 +1,7 @@
-import {authenticate} from '../logic/auth.js';
-import {createCommandError} from '../logic/command-errors.js';
-import {registerFighterAction} from '../logic/fighter-actions.js';
-import {getPlayerState, sendPlayerState} from '../logic/player-state.js';
+import {authenticate} from './auth.js';
+import {createCommandError} from './command-errors.js';
+import {registerFighterAction} from './fighter-actions.js';
+import {getPlayerState, sendPlayerState} from './player-state.js';
 
 export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
