@@ -9,9 +9,7 @@ import TrainStat from './TrainStat.js';
 
 import css from './Train.module.css';
 
-
 const ACTIONS_BY_ID = Object.fromEntries(SKILL_SEED_ACTIONS.map((action) => [action.id, action]));
-
 const STAT_FIELDS = [
   {name: 'Agility', stat: 'agility'},
   {name: 'Strength', stat: 'strength'},
@@ -26,14 +24,18 @@ export default function Train() {
   return (
     <>
       <h1>Training</h1>
-      <h3>Stats:</h3>
-      <div className={css.stats}>
-        {STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}
-      </div>
-      <h3>Skills:</h3>
-      <SkillRows fighter={fighter} />
-      <h3>Training Regimen:</h3>
-      <RegimenRows />
+      <section className={css.section}>
+        <h3>Stats:</h3>
+        <div className={css.stats}>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</div>
+      </section>
+      <section className={css.section}>
+        <h3>Skills:</h3>
+        <SkillRows fighter={fighter} />
+      </section>
+      <section className={css.section}>
+        <h3>Training Regimen:</h3>
+        <RegimenRows />
+      </section>
     </>
   );
 }
@@ -42,11 +44,7 @@ function RegimenRows() {
   const {actions} = useFighterActionsStore();
   return (
     <div className={css.regimen}>
-      {actions.map((action) => {
-        const skill = ACTIONS_BY_ID[action.action_id];
-        const name = skill?.name ?? `Action ${action.action_id}`;
-        return <RegimenRow key={action.action_id} name={name} progress={action.progress || 0} />;
-      })}
+      {actions.map((action) => <RegimenRow key={action.action_id} name={getRegimenName(action.action_id)} progress={action.progress || 0} />)}
     </div>
   );
 }
@@ -98,4 +96,8 @@ function SkillRow({fighter, skillKey}) {
       </Button>
     </div>
   );
+}
+
+function getRegimenName(actionID) {
+  return ACTIONS_BY_ID[actionID]?.name ?? `Action ${actionID}`;
 }
