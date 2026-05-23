@@ -18,10 +18,14 @@ describe('buildStateFromServerFighter', () => {
     expect(state.race).toBe(defaultRace);
     expect(state.anima).toBe(BaseStats[defaultRace].stats.anima);
     expect(state.speed).toBe(BaseStats[defaultRace].stats.speed);
+    expect(state.createdAt).toBeNull();
+    expect(state.displayName).toBe('');
   });
 
   it('uses fighter data values when they are valid', () => {
     const state = buildStateFromServerFighter({
+      created_at: '2026-01-01T00:00:00.000Z',
+      display_name: 'Iron Fist',
       gold: '250',
       id: 5,
       race: 2,
@@ -34,5 +38,7 @@ describe('buildStateFromServerFighter', () => {
     expect(state.agility).toBe(7);
     expect(state.stamina).toBe(8);
     expect(state.strength).toBe(9);
+    expect(state.createdAt).toBe('2026-01-01T00:00:00.000Z');
+    expect(state.displayName).toBe('Iron Fist');
   });
 });
