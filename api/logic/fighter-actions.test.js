@@ -24,7 +24,10 @@ describe('registerFighterAction', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await registerFighterAction({}, {}, socket);
+    await assert.rejects(
+      registerFighterAction({}, {}, socket),
+      {message: 'invalid-idle-message'},
+    );
 
     assert.equal(send.calls.length, 0);
   });
@@ -33,16 +36,10 @@ describe('registerFighterAction', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await registerFighterAction({}, {action_id: 1}, socket);
-
-    assert.equal(send.calls.length, 0);
-  });
-
-  it('does not respond when websocket is not open', async () => {
-    const send = createCallTracker();
-    const socket = {OPEN: 1, readyState: 0, send};
-
-    await registerFighterAction({}, {action_id: 1}, socket);
+    await assert.rejects(
+      registerFighterAction({}, {action_id: 1}, socket),
+      {message: 'invalid-idle-message'},
+    );
 
     assert.equal(send.calls.length, 0);
   });
@@ -54,7 +51,10 @@ describe('registerFighterAction', () => {
     const fighterActions = {create};
     const fighters = {findCurrentByPlayerID: async () => null};
 
-    await registerFighterAction({fighterActions, fighters}, {action_id: 1}, socket);
+    await assert.rejects(
+      registerFighterAction({fighterActions, fighters}, {action_id: 1}, socket),
+      {message: 'invalid-idle-message'},
+    );
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
@@ -67,7 +67,10 @@ describe('registerFighterAction', () => {
     const fighterActions = {create};
     const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {}})};
 
-    await registerFighterAction({fighterActions, fighters}, {action_id: 999}, socket);
+    await assert.rejects(
+      registerFighterAction({fighterActions, fighters}, {action_id: 999}, socket),
+      {message: 'invalid-idle-message'},
+    );
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
@@ -82,7 +85,10 @@ describe('registerFighterAction', () => {
       findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {stamina: 50}}),
     };
 
-    await registerFighterAction({fighterActions, fighters}, {action_id: 3}, socket);
+    await assert.rejects(
+      registerFighterAction({fighterActions, fighters}, {action_id: 3}, socket),
+      {message: 'invalid-idle-message'},
+    );
 
     assert.equal(send.calls.length, 0);
     assert.equal(create.calls.length, 0);
