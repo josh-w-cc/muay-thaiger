@@ -1,6 +1,6 @@
 import {render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import SnowLeopard from './assets/SnowLeopard.png';
+import SnowLeopard from './assets/SnowLeopardMuayThaiReady.png';
 import Tiger from './assets/Tiger.png';
 
 
