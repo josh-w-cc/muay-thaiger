@@ -1,10 +1,9 @@
-import {Outlet, redirect, useLoaderData, useNavigate} from 'react-router-dom';
+import {redirect, useLoaderData, useNavigate} from 'react-router-dom';
 
 import {loadPlayerToken} from '@/actions/websockets/token.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import FighterSelect from './FighterSelect';
 import Fight from './Fight';
-import Header from './Header.js';
 import Hub from './Hub.js';
 import Shop from './Shop';
 import Train from './Train';
@@ -32,15 +31,6 @@ export function FightScreen() {
   return <Fight />;
 }
 
-export function GameLayout() {
-  return (
-    <>
-      <Header />
-      <Outlet />
-    </>
-  );
-}
-
 export function HubScreen() {
   return <Hub />;
 }
@@ -58,13 +48,6 @@ export async function fighterSelectLoader() {
     return redirect('/hub');
   }
   return loadRaces();
-}
-
-export async function gameScreenLoader() {
-  if(!hasPlayerToken()) {
-    return redirect('/');
-  }
-  return null;
 }
 
 function hasPlayerToken() {
