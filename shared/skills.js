@@ -32,7 +32,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('stamina', 3);
     },
     name: 'Shadow Boxing',
-    requires: (fighter) => fighter.stamina > 50,
+    requires: (fighter) => fighter.stamina > 25,
     duration: 2,
   },
   breathwork: {
@@ -61,7 +61,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('constitution', 1);
     },
     name: 'Calisthenics',
-    requires: (fighter) => fighter.stamina > 1000 && fighter.constitution > 100 && fighter.strength > 100,
+    requires: (fighter) => fighter.stamina > 250 && fighter.constitution > 10 && fighter.strength > 25,
     duration: 4,
   },
   laboring: {
@@ -72,7 +72,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('constitution', 1);
     },
     name: 'La฿oring',
-    requires: (fighter) => fighter.stamina > 1000 && fighter.constitution > 1000 && fighter.strength > 1000,
+    requires: (fighter) => fighter.stamina > 500 && fighter.constitution > 100 && fighter.strength > 100,
     duration: 4,
   },
   running: {
@@ -80,7 +80,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('stamina', 25);
     },
     name: 'Running',
-    requires: (fighter) => fighter.stamina > 10000 && fighter.constitution > 100,
+    requires: (fighter) => fighter.stamina > 1000 && fighter.constitution > 250,
     duration: 8,
   },
   gymnastics: {
@@ -91,7 +91,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('agility', 15);
     },
     name: 'Gymnastics',
-    requires: (fighter) => fighter.stamina > 10000 && fighter.strength > 1000 && fighter.constitution > 1000 && fighter.agility > 1000,
+    requires: (fighter) => fighter.stamina > 2500 && fighter.strength > 250 && fighter.agility > 500,
     duration: 8,
   },
 });

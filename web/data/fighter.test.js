@@ -16,7 +16,7 @@ describe('useFighterStore', () => {
     expect(fighter.race).toBe(initialRace);
     expect(fighter.anima).toBe(BaseStats[initialRace].stats.anima);
     expect(fighter.durability).toBe(BaseStats[initialRace].stats.durability);
-    expect(fighter.innateStrength).toBe(BaseStats[initialRace].stats.innateStrength);
+    expect(fighter.vigor).toBe(BaseStats[initialRace].stats.vigor);
     expect(fighter.reach).toBe(BaseStats[initialRace].stats.reach);
     expect(fighter.speed).toBe(BaseStats[initialRace].stats.speed);
     expect(fighter.vitality).toBe(BaseStats[initialRace].stats.vitality);
