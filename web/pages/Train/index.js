@@ -24,11 +24,9 @@ export default function Train() {
     <>
       <h1>Training</h1>
       <section className={css.section}>
-        <h3>Stats:</h3>
         <div className={css.stats}>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</div>
       </section>
       <section className={css.section}>
-        <h3>Training Regimen:</h3>
         <RegimenRows fighter={fighter} />
       </section>
     </>
