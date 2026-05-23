@@ -3,7 +3,17 @@ import {describe, it} from 'node:test';
 
 import {applyTraining} from './training.js';
 
-const BASE_STATS = {agility: 0, anima: 1, constitution: 0, skill: 0, speed: 1, stamina: 0, strength: 1, vitality: 1};
+const BASE_STATS = {
+  agility: 0,
+  anima: 1,
+  constitution: 0,
+  innateStrength: 1,
+  skill: 0,
+  speed: 1,
+  stamina: 0,
+  strength: 0,
+  vitality: 1,
+};
 
 describe('applyTraining', () => {
   it('returns the original fighter with empty actions when there are no active actions', async () => {
@@ -62,6 +72,27 @@ describe('applyTraining', () => {
     assert.equal(updateCalls.length, 1);
     assert.equal(updateCalls[0].stats.stamina, 6);
     assert.equal(updateCalls[0].stats.constitution, 3);
+  });
+
+  it('trains strength using innateStrength rather than current strength', async () => {
+    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, innateStrength: 3, stamina: 120, strength: 5}};
+    const actions = [{action_id: 5, fighter_id: 1, id: 5, touched_at: getOffsetDate(-3000)}];
+    const updateCalls = [];
+    const fighterActions = {
+      listByFighterID: async () => actions,
+      touch: async () => null,
+    };
+    const fighters = {
+      update: async (id, data) => {
+        updateCalls.push(data);
+        return {...fighter, ...data};
+      },
+    };
+
+    await applyTraining({fighterActions, fighters}, fighter);
+
+    assert.equal(updateCalls.length, 1);
+    assert.equal(updateCalls[0].stats.strength, 8);
   });
 
   it('touches applied actions using sequential skill timing', async () => {

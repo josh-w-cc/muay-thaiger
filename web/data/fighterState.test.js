@@ -1,4 +1,5 @@
-import {isFightIdling, isTrainIdling, tickTrain} from './fighterState.js';
+import BaseStats from './baseStats.js';
+import {getSelectionState, isFightIdling, isTrainIdling, tickTrain} from './fighterState.js';
 
 
 describe('fighterState helpers', () => {
@@ -50,5 +51,19 @@ describe('fighterState helpers', () => {
     });
 
     expect(state.idling).toBe(false);
+  });
+
+  it('does not fall back to legacy race strength when innateStrength is missing', () => {
+    const raceID = '1';
+    const stats = BaseStats[raceID].stats;
+    BaseStats[raceID].stats = {...stats, innateStrength: undefined, strength: 7};
+    try {
+      const state = getSelectionState(raceID);
+
+      expect(state.innateStrength).toBeUndefined();
+    }
+    finally {
+      BaseStats[raceID].stats = stats;
+    }
   });
 });
