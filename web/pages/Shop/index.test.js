@@ -24,10 +24,13 @@ describe('Shop', () => {
 
   it('renders items and buys the selected one', async () => {
     const user = userEvent.setup();
-    render(<Shop />);
+    const {container} = render(<Shop />);
 
     const buyButtons = screen.getAllByRole('button', {name: 'Buy'});
+    const section = container.querySelector('section');
+
     expect(buyButtons).toHaveLength(2);
+    expect(section).toBeInTheDocument();
     await user.click(buyButtons[0]);
 
     expect(buy).toHaveBeenCalledTimes(1);
