@@ -1,7 +1,9 @@
 import {applyTraining} from './training.js';
 
+const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+
 export async function applyOfflineTraining({fighterActions, fighters}) {
-  const staleBefore = new Date(Date.now() - 60 * 60 * 1000);
+  const staleBefore = new Date(Date.now() - HOUR_IN_MILLISECONDS);
   const staleActions = await fighterActions.listStaleBefore(staleBefore);
   const fighterIDs = [...new Set(staleActions.map(({fighter_id: fighterID}) => fighterID))];
   for(const fighterID of fighterIDs) {
