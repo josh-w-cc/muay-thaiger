@@ -14,7 +14,7 @@ export async function applyOfflineTraining(db, models = null) {
     if(!shouldSyncOfflineFighter(fighter)) {
       continue;
     }
-    await getPlayerState({fighterActions, fighters}, fighter.player_id);
+    await applyTraining({fighterActions, fighters}, fighter);
   }
 }
 

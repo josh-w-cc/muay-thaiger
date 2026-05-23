@@ -6,7 +6,7 @@ import {applyOfflineTraining, getPlayerState, sendPlayerState} from './player-st
 describe('applyOfflineTraining', () => {
   it('applies training for stale non-retired fighters only once per fighter', async () => {
     const staleRows = [{fighter_id: 1}, {fighter_id: 1}, {fighter_id: 2}, {fighter_id: 3}];
-    const touchedPlayerIDs = [];
+    const updatedFighterIDs = [];
     const fighterActions = {
       listByFighterID: async () => [{action_id: 1, fighter_id: 1, id: 10, touched_at: new Date().toISOString()}],
       listStaleBefore: async () => staleRows,
@@ -22,16 +22,15 @@ describe('applyOfflineTraining', () => {
         }
         return null;
       },
-      findCurrentByPlayerID: async (playerID) => {
-        touchedPlayerIDs.push(playerID);
-        return {gold: '0', id: 1, player_id: playerID, retired: false, stats: {}};
+      update: async (fighterID, data) => {
+        updatedFighterIDs.push(fighterID);
+        return {id: fighterID, player_id: 11, retired: false, ...data};
       },
-      update: async (fighterID, data) => ({id: fighterID, player_id: 11, retired: false, ...data}),
     };
 
     await applyOfflineTraining(null, {fighterActions, fighters});
 
-    assert.deepEqual(touchedPlayerIDs, [11]);
+    assert.deepEqual(updatedFighterIDs, [1]);
   });
 });
 
