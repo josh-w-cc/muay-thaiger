@@ -3,6 +3,14 @@
   justify-content: space-around;
 }
 
+.navigationButton {
+  border-color: transparent;
+}
+
+.navigationButton:hover {
+  border-color: transparent;
+}
+
 .navigationImage {
   max-height: 120px;
 }
