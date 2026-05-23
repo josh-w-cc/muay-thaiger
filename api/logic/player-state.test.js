@@ -1,7 +1,38 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {getPlayerState, sendPlayerState} from './player-state.js';
+import {applyOfflineTraining, getPlayerState, sendPlayerState} from './player-state.js';
+
+describe('applyOfflineTraining', () => {
+  it('applies training for stale non-retired fighters only once per fighter', async () => {
+    const staleRows = [{fighter_id: 1}, {fighter_id: 1}, {fighter_id: 2}, {fighter_id: 3}];
+    const updatedFighterIDs = [];
+    const fighterActions = {
+      listByFighterID: async () => [{action_id: 1, fighter_id: 1, id: 10, touched_at: new Date().toISOString()}],
+      listStaleBefore: async () => staleRows,
+      touch: async () => null,
+    };
+    const fighters = {
+      find: async (fighterID) => {
+        if(fighterID === 1) {
+          return {id: 1, player_id: 11, retired: false, stats: {}};
+        }
+        if(fighterID === 2) {
+          return {id: 2, player_id: 22, retired: true, stats: {}};
+        }
+        return null;
+      },
+      update: async (fighterID, data) => {
+        updatedFighterIDs.push(fighterID);
+        return {id: fighterID, player_id: 11, retired: false, ...data};
+      },
+    };
+
+    await applyOfflineTraining(null, {fighterActions, fighters});
+
+    assert.deepEqual(updatedFighterIDs, [1]);
+  });
+});
 
 describe('getPlayerState', () => {
   it('returns actions and updated fighter after applying training', async () => {
