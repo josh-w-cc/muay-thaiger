@@ -5,6 +5,8 @@ const initialRace = `${RACES[0].id}`;
 
 export function getInitialState() {
   return {
+    createdAt: null,
+    displayName: '',
     gold: 0,
     id: null,
     idling: false,

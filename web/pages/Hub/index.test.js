@@ -9,12 +9,15 @@ const fighter = vi.hoisted(() => ({
   apm: 22,
   attack: 23,
   constitution: 19,
+  createdAt: '2026-01-01T00:00:00.000Z',
   defense: 24,
+  displayName: 'Iron Tiger',
   durability: 17,
   gold: 2100,
   health: 25,
   innateStrength: 14,
   power: 26,
+  race: '1',
   reach: 18,
   skill: 20,
   speed: 12,
@@ -32,11 +35,22 @@ describe('Hub', () => {
     vi.clearAllMocks();
   });
 
+  it('renders fighter details section with name, age, and race', () => {
+    render(<Hub />);
+
+    expect(screen.getByRole('heading', {name: 'Fighter Details:'})).toBeInTheDocument();
+    expect(screen.getByText('Name').closest('div')).toBeInTheDocument();
+    expect(within(screen.getByText('Name').closest('div')).getByText('Iron Tiger')).toBeInTheDocument();
+    expect(screen.getByText('Race').closest('div')).toBeInTheDocument();
+    expect(within(screen.getByText('Race').closest('div')).getByText('Tiger')).toBeInTheDocument();
+    expect(screen.getByText('Age').closest('div')).toBeInTheDocument();
+  });
+
   it('renders stats in a readable list layout', () => {
     const {container} = render(<Hub />);
 
     expect(container.querySelector('dl')).toBeInTheDocument();
-    expect(container.querySelectorAll('dl > div')).toHaveLength(17);
+    expect(container.querySelectorAll('dl > div')).toHaveLength(20);
     expect(container.querySelector('br')).not.toBeInTheDocument();
     const staminaRow = screen.getByText('Stanima').closest('div');
 

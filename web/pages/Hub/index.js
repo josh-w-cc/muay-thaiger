@@ -1,6 +1,7 @@
 import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import useFighterStore from '@/data/fighter.js';
 
+import FighterDetails from './FighterDetails.js';
 import css from './Hub.module.css';
 
 const STAT_FIELDS = [
@@ -48,17 +49,27 @@ export default function Hub() {
     <>
       <h1>HUB</h1>
       <section className={css.section}>
+        <h3>Fighter Details:</h3>
+        <FighterDetails fighter={fighter} />
+      </section>
+      <section className={css.section}>
         <h3>Stats:</h3>
-        <dl className={css.stats}>
-          {STAT_FIELDS.map(({key, label}) => (
-            <Stat key={key} label={label} value={formatHugeNumber(getStatValue({fighter, key}))} />
-          ))}
-        </dl>
+        <FighterStats fighter={fighter} />
       </section>
       <section className={css.section}>
         <Events />
       </section>
     </>
+  );
+}
+
+function FighterStats({fighter}) {
+  return (
+    <dl className={css.stats}>
+      {STAT_FIELDS.map(({key, label}) => (
+        <Stat key={key} label={label} value={formatHugeNumber(getStatValue({fighter, key}))} />
+      ))}
+    </dl>
   );
 }
 
