@@ -44,7 +44,7 @@ function RegimenRows() {
   const {actions} = useFighterActionsStore();
   return (
     <div className={css.regimen}>
-      {actions.map((action) => <RegimenRow key={action.action_id} name={getRegimenName(action.action_id)} progress={0} />)}
+      {actions.map((action) => <RegimenRow key={action.action_id} name={getRegimenName(action.action_id)} progress={action.progress || 0} />)}
     </div>
   );
 }
