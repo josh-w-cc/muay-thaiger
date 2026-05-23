@@ -1,6 +1,6 @@
 import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
-import {registerFighterAction} from './fighter-actions.js';
+import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 
 export async function processMessageCommand(models, message, socket) {
@@ -9,6 +9,8 @@ export async function processMessageCommand(models, message, socket) {
       return handleAuth(models, message, socket);
     case 'idle':
       return handleIdle(models, message, socket);
+    case 'stop':
+      return handleStop(models, message, socket);
     default:
       socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
   }
@@ -36,4 +38,12 @@ async function handleIdle(models, message, socket) {
   }
   const fighterAction = await registerFighterAction(models, message, socket.player.id);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'idle'}}));
+}
+
+async function handleStop(models, message, socket) {
+  if(!socket.player) {
+    throw createCommandError('invalid-stop-message');
+  }
+  const fighterAction = await unregisterFighterAction(models, message, socket.player.id);
+  socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'stop'}}));
 }

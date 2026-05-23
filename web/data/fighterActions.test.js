@@ -45,6 +45,20 @@ describe('useFighterActionsStore', () => {
     ]);
   });
 
+  it('removes fighter actions by action id', () => {
+    useFighterActionsStore.getState().setActions([
+      {action_id: 2, id: 1},
+      {action_id: 6, id: 2},
+      {action_id: 2, id: 3},
+    ]);
+
+    useFighterActionsStore.getState().removeAction(2);
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 6, id: 2}),
+    ]);
+  });
+
   it('ticks action progress sequentially using action durations', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));

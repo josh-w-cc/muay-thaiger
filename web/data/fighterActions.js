@@ -16,6 +16,9 @@ const useFighterActionsStore = create((set) => ({
     const nextActions = [...state.actions, normalizeAction(action)];
     return {actions: setActionProgress(nextActions)};
   }),
+  removeAction: (actionID) => set((state) => ({
+    actions: setActionProgress(state.actions.filter((action) => action.action_id !== actionID)),
+  })),
   setActions: (actions) => set({actions: setActionProgress(actions.map((action) => normalizeAction(action)))}),
   tick: () => set((state) => ({actions: setActionProgress(state.actions)})),
 }));
