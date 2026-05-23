@@ -26,7 +26,7 @@ describe('FighterSelect', () => {
       {
         id: raceID,
         name: 'Snow Leopard Prime',
-        stats: {anima: 8, durability: 7, reach: 6, speed: 9, strength: 5, vitality: 4},
+        stats: {anima: 8, durability: 7, innateStrength: 5, reach: 6, speed: 9, vitality: 4},
       },
     ];
     const {default: FighterSelect} = await import('./index.js');
@@ -47,12 +47,12 @@ describe('FighterSelect', () => {
       {
         id: 2,
         name: 'Snow Leopard Prime',
-        stats: {anima: 8, durability: 7, reach: 6, speed: 9, strength: 5, vitality: 4},
+        stats: {anima: 8, durability: 7, innateStrength: 5, reach: 6, speed: 9, vitality: 4},
       },
       {
         id: 1,
         name: 'Tiger',
-        stats: {anima: 1, durability: 1, reach: 1, speed: 1, strength: 1, vitality: 1},
+        stats: {anima: 1, durability: 1, innateStrength: 1, reach: 1, speed: 1, vitality: 1},
       },
     ];
 

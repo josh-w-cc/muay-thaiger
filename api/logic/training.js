@@ -21,12 +21,13 @@ export async function applyTraining({fighterActions, fighters}, fighter) {
   return {actions, fighter: updatedFighter};
 }
 function createFighterProxy(stats, onWin) {
+  const innateStrength = stats.innateStrength ?? stats.strength ?? 0;
   const trainingEffect = {
     agility: stats.speed,
     constitution: stats.vitality,
     skill: stats.anima,
     stamina: stats.vitality,
-    strength: stats.strength,
+    strength: innateStrength,
   };
   return {
     train: (stat, amount = 1) => {
