@@ -1,0 +1,12 @@
+.baht {
+  color: var(--color-gold);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: var(--space-sm) 0 0 var(--space-sm);
+}
+
+.layout {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+}
