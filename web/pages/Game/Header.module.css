@@ -30,3 +30,18 @@
   pointer-events: none;
   position: absolute;
 }
+
+@media(max-width: 768px) {
+  .header {
+    gap: var(--space-lg);
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-inline: var(--space-md);
+    scroll-snap-type: x mandatory;
+  }
+
+  .navigationButton {
+    flex: 0 0 calc(100% - var(--space-md) * 2);
+    scroll-snap-align: center;
+  }
+}

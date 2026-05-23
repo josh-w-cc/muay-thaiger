@@ -1,3 +1,4 @@
+import React from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 
 import Button from '@/components/Button.js';
@@ -17,10 +18,19 @@ const NAVIGATION_ITEMS = [
 
 export default function Header() {
   const {pathname} = useLocation();
+  const headerRef = React.useRef();
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    const currentButton = headerRef.current?.querySelector('[aria-current="page"]');
+
+    if(typeof currentButton?.scrollIntoView === 'function') {
+      currentButton.scrollIntoView({block: 'nearest', inline: 'center'});
+    }
+  }, [pathname]);
+
   return (
-    <div className={css.header}>
+    <div className={css.header} ref={headerRef}>
       {NAVIGATION_ITEMS.map((item) => <NavigationButton item={item} key={item.label} navigate={navigate} pathname={pathname} />)}
     </div>
   );
