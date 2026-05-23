@@ -80,6 +80,6 @@ describe('FighterSelect', () => {
 
     render(<FighterSelect races={races} />);
 
-    expect(screen.queryByText(/Strength:\s*7/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Vigor:\s*7/i)).not.toBeInTheDocument();
   });
 });
