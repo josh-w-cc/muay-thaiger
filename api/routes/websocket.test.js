@@ -7,7 +7,7 @@ import {syncPlayerState} from '../logic/player-state.js';
 import websocketRoutes, {onConnect, onMessage} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
-const RACE_DEFAULT_STATS = {anima: 2, durability: 2, innateStrength: 1, reach: 1, speed: 2, vitality: 1};
+const RACE_DEFAULT_STATS = {anima: 2, durability: 2, reach: 1, speed: 2, vigor: 1, vitality: 1};
 
 describe('WebSocket /ws/connect', () => {
   it('sends an auth request when the websocket connects', async () => {
@@ -199,8 +199,8 @@ describe('WebSocket /ws/connect', () => {
         skill: 0,
         speed: 2,
         stamina: 0,
-        innateStrength: 1,
         strength: 0,
+        vigor: 1,
         vitality: 1,
       },
     });
