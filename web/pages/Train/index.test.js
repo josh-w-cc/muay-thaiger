@@ -5,13 +5,11 @@ import {SKILL_IDS} from 'shared/skills.js';
 import Train from './index.js';
 
 
-const {action, addAction, createFighterActionCmd, fighter, idle, removeAction, removeFighterActionCmd, setFighterState} = vi.hoisted(() => {
-  const idle = vi.fn();
+const {action, addAction, createFighterActionCmd, fighter, removeAction, removeFighterActionCmd} = vi.hoisted(() => {
   const fighter = {
     agility: 1,
     constitution: 1,
     idling: null,
-    idle,
     skill: 1,
     stamina: 1,
     strength: 1,
@@ -22,10 +20,8 @@ const {action, addAction, createFighterActionCmd, fighter, idle, removeAction, r
     addAction: vi.fn(),
     createFighterActionCmd: vi.fn(),
     fighter,
-    idle,
     removeAction: vi.fn(),
     removeFighterActionCmd: vi.fn(),
-    setFighterState: vi.fn(),
   };
 });
 
@@ -44,7 +40,6 @@ vi.mock('@/data/fighterActions.js', () => ({
 vi.mock('@/data/fighter.js', () => {
   const mockedStore = () => fighter;
   mockedStore.getState = () => fighter;
-  mockedStore.setState = (...args) => setFighterState(...args);
   return {default: mockedStore};
 });
 
@@ -106,8 +101,7 @@ describe('Train', () => {
 
     await user.click(screen.getByRole('button', {name: 'IDLE'}));
 
-    expect(idle).toHaveBeenCalledTimes(1);
-    expect(idle).toHaveBeenCalledWith('train-begging', expect.any(Function));
+    expect(addAction).toHaveBeenCalledWith({action_id: SKILL_IDS.begging});
     expect(createFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
 
@@ -120,7 +114,6 @@ describe('Train', () => {
     await user.click(screen.getByRole('button', {name: 'STOP'}));
 
     expect(removeAction).toHaveBeenCalledWith(SKILL_IDS.begging);
-    expect(setFighterState).toHaveBeenCalledWith({idling: false});
     expect(removeFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
 });
