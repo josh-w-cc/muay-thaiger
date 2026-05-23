@@ -5,20 +5,21 @@ import {
 import {isSocketReady} from '@/actions/websockets/websocketState.js';
 
 export function createFighterActionCmd(socket, actionID) {
-  if(!isSocketReady(socket)) {
-    return;
-  }
-  socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
+  sendCommand(socket, {action_id: actionID, cmd: 'idle'});
 }
 
 export function removeFighterActionCmd(socket, actionID) {
-  if(!isSocketReady(socket)) {
-    return;
-  }
-  socket.send(JSON.stringify({action_id: actionID, cmd: 'stop'}));
+  sendCommand(socket, {action_id: actionID, cmd: 'stop'});
 }
 
 export function selectFighterCmd(socket) {
   respondToAuth(socket);
   routeToHubIfAuthorized();
+}
+
+function sendCommand(socket, command) {
+  if(!isSocketReady(socket)) {
+    return;
+  }
+  socket.send(JSON.stringify(command));
 }
