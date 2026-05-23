@@ -345,6 +345,36 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(create.calls.length, 0);
   });
 
+  it('sends error for stop command when socket has no authenticated player', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'stop'}), socket, {});
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-stop-message'});
+  });
+
+  it('removes fighter actions and responds to stop commands for authenticated sockets', async () => {
+    const send = createCallTracker();
+    const remove = createCallTracker();
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+    const fighterActions = {
+      listByFighterID: async () => [{action_id: 1, id: 4}, {action_id: 2, id: 5}, {action_id: 1, id: 6}],
+      remove,
+    };
+    const fighters = {findCurrentByPlayerID: async () => ({id: 9, player_id: 1, retired: false})};
+
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'stop'}), socket, {fighterActions, fighters});
+
+    assert.deepEqual(remove.calls, [[4], [6]]);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {
+      cmd: 'ok',
+      metadata: {fighterAction: {action_id: 1}, responded_cmd: 'stop'},
+    });
+  });
+
   it('syncs each authenticated player current fighter state', async () => {
     const sendOpen = createCallTracker();
     const sendNoFighter = createCallTracker();

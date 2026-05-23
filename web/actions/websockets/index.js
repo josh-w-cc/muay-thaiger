@@ -3,6 +3,7 @@ import {
 } from '@/actions/websockets/auth.js';
 import {
   createFighterActionCmd as onCreateFighterActionCmd,
+  removeFighterActionCmd as onRemoveFighterActionCmd,
   selectFighterCmd as onSelectFighterCmd,
 } from '@/actions/websockets/clientCommands.js';
 import {generateOnSocketMessageFn} from '@/actions/websockets/serverCommands.js';
@@ -22,6 +23,10 @@ export function resetSocketState() {
 
 export function createFighterActionCmd(actionID) {
   onCreateFighterActionCmd(socket, actionID);
+}
+
+export function removeFighterActionCmd(actionID) {
+  onRemoveFighterActionCmd(socket, actionID);
 }
 
 export function selectFighterCmd() {
