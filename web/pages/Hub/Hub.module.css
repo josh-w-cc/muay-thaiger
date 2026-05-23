@@ -7,7 +7,6 @@
 }
 
 .events {
-  border-left: 3px solid var(--color-gold);
   display: inline-flex;
   flex-direction: column;
   gap: var(--space-xs);
