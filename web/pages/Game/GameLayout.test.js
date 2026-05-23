@@ -26,7 +26,7 @@ describe('GameLayout', () => {
 
     render(<GameLayout />);
 
-    const baht = screen.getByText('฿ 21');
+    const baht = screen.getByText(createBahtMatcher({value: '21'}));
     const header = screen.getByText('Header');
 
     expect(baht).toBeInTheDocument();
@@ -40,6 +40,14 @@ describe('GameLayout', () => {
 
     render(<GameLayout />);
 
-    expect(screen.getByText('฿ 21.55')).toBeInTheDocument();
+    expect(screen.getByText(createBahtMatcher({value: '21.55'}))).toBeInTheDocument();
   });
 });
+
+function createBahtMatcher({value}) {
+  return (_content, element) => normalizeText(element?.textContent || '') === `฿${value}`;
+}
+
+function normalizeText(text) {
+  return text.replace(/\s+/g, '').trim();
+}
