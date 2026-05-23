@@ -11,6 +11,13 @@ export function createFighterActionCmd(socket, actionID) {
   socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
 }
 
+export function removeFighterActionCmd(socket, actionID) {
+  if(!isSocketReady(socket)) {
+    return;
+  }
+  socket.send(JSON.stringify({action_id: actionID, cmd: 'stop'}));
+}
+
 export function selectFighterCmd(socket) {
   respondToAuth(socket);
   routeToHubIfAuthorized();

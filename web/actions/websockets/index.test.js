@@ -9,7 +9,13 @@ import useFighterActionsStore, {resetFighterActionsStore} from '@/data/fighterAc
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
 import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './token.js';
-import {connectSocketOnAppLoad, createFighterActionCmd, resetSocketState, selectFighterCmd} from './index.js';
+import {
+  connectSocketOnAppLoad,
+  createFighterActionCmd,
+  removeFighterActionCmd,
+  resetSocketState,
+  selectFighterCmd,
+} from './index.js';
 
 
 describe('player websocket helpers', () => {
@@ -236,6 +242,27 @@ describe('player websocket helpers', () => {
     socket.readyState = 0;
 
     createFighterActionCmd(2);
+
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('sends stop command with action id for fighter actions', () => {
+    const socket = connectSocketOnAppLoad();
+    const send = vi.fn();
+    socket.send = send;
+
+    removeFighterActionCmd(2);
+
+    expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'stop'}));
+  });
+
+  it('does not send stop command when websocket is unavailable', () => {
+    const socket = connectSocketOnAppLoad();
+    const send = vi.fn();
+    socket.send = send;
+    socket.readyState = 0;
+
+    removeFighterActionCmd(2);
 
     expect(send).not.toHaveBeenCalled();
   });

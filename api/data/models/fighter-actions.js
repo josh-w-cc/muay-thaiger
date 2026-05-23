@@ -13,6 +13,7 @@ export default function fighterActions(db) {
     find: generateFindFn(db, 'fighter_actions'),
     list: generateListFighterActionsFn(db, fighters),
     listByFighterID: generateListByFighterIDFn(db),
+    listStaleBefore: generateListStaleBeforeFn(db),
     remove: generateRemoveFn(db, 'fighter_actions'),
     touch: generateTouchFn(db),
   };
@@ -34,6 +35,13 @@ function generateListFighterActionsFn(db, fighters) {
       .where({fighter_id: currentFighter.id})
       .orderBy('created_at');
   };
+}
+
+function generateListStaleBeforeFn(db) {
+  return (staleBefore) => db('fighter_actions')
+    .select('fighter_id')
+    .where('touched_at', '<=', staleBefore)
+    .orderBy('touched_at');
 }
 
 function generateTouchFn(db) {
