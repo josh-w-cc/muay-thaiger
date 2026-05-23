@@ -1,6 +1,6 @@
 import {RACES} from 'shared/races.js';
 import {SKILL_IDS, SKILL_SEED_ACTIONS} from 'shared/skills.js';
-
+import {MOVE_IDS, MOVE_SEED_MOVES} from 'shared/moves.js';
 
 export const SEED_FIGHTERS = [
   {
@@ -30,15 +30,25 @@ export const SEED_PLAYERS = [
 
 export {SKILL_IDS};
 export const SEED_ACTIONS = SKILL_SEED_ACTIONS;
+export {MOVE_IDS};
+export const SEED_MOVES = MOVE_SEED_MOVES;
 
 export const SEED_RACES = RACES;
 
 export async function seed(knex) {
+  await insertMoves(knex);
   await insertActions(knex);
   await insertPlayers(knex);
   await insertRaces(knex);
   await insertFighters(knex);
   await resetSequences(knex);
+}
+
+async function insertMoves(knex) {
+  await knex('moves')
+    .insert(SEED_MOVES)
+    .onConflict('id')
+    .ignore();
 }
 
 async function insertActions(knex) {
@@ -70,20 +80,11 @@ async function insertRaces(knex) {
 }
 
 async function resetSequences(knex) {
-  await knex.raw(
-    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "actions"), 0) + 1, false)`,
-    ['actions'],
-  );
-  await knex.raw(
-    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "fighters"), 0) + 1, false)`,
-    ['fighters'],
-  );
-  await knex.raw(
-    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "players"), 0) + 1, false)`,
-    ['players'],
-  );
-  await knex.raw(
-    `SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "races"), 0) + 1, false)`,
-    ['races'],
-  );
+  for(const table of ['actions', 'fighters', 'moves', 'players', 'races']) {
+    await resetSequence(knex, table);
+  }
+}
+
+async function resetSequence(knex, table) {
+  await knex.raw(`SELECT setval(pg_get_serial_sequence(?, 'id'), COALESCE((SELECT MAX(id) FROM "${table}"), 0) + 1, false)`, [table]);
 }
