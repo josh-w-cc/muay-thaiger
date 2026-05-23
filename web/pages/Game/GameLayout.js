@@ -4,7 +4,7 @@ import {loadPlayerToken} from '@/actions/websockets/token.js';
 import Header from './Header.js';
 
 
-export function Component() {
+export function GameLayout() {
   return (
     <>
       <Header />

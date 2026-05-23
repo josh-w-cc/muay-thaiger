@@ -6,7 +6,7 @@ import selectFighter from '@/actions/selectFighter.js';
 import {connectSocketOnAppLoad, resetSocketState} from '@/actions/websockets/index.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '@/actions/websockets/token.js';
 import {resetPlayerStore} from '@/data/player.js';
-import {Component as GameLayout, loader as gameScreenLoader} from './GameLayout.js';
+import {GameLayout, loader as gameScreenLoader} from './GameLayout.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
