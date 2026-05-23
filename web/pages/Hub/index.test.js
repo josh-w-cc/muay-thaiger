@@ -1,6 +1,6 @@
 import {render, screen, within} from '@testing-library/react';
 
-import Hub from './Hub.js';
+import Hub from './index.js';
 
 
 const fighter = vi.hoisted(() => ({
