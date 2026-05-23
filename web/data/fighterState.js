@@ -74,14 +74,13 @@ export function getSelectionState(id) {
   };
 }
 
-function getBaseSelectionState({anima, durability, innateStrength, reach, speed, strength, vitality}) {
-  const nextInnateStrength = innateStrength ?? strength ?? 0;
+function getBaseSelectionState({anima, durability, innateStrength, reach, speed, vitality}) {
   return {
     agility: 0,
     anima,
     constitution: 0,
     durability,
-    innateStrength: nextInnateStrength,
+    innateStrength,
     reach,
     skill: 0,
     speed,

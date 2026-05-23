@@ -53,14 +53,14 @@ describe('fighterState helpers', () => {
     expect(state.idling).toBe(false);
   });
 
-  it('falls back to legacy race strength when innateStrength is missing', () => {
+  it('does not fall back to legacy race strength when innateStrength is missing', () => {
     const raceID = '1';
     const stats = BaseStats[raceID].stats;
     BaseStats[raceID].stats = {...stats, innateStrength: undefined, strength: 7};
     try {
       const state = getSelectionState(raceID);
 
-      expect(state.innateStrength).toBe(7);
+      expect(state.innateStrength).toBeUndefined();
     }
     finally {
       BaseStats[raceID].stats = stats;
