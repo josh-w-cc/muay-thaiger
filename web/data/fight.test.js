@@ -30,7 +30,7 @@ describe('useFightStore', () => {
     expect(fight.fighters).toHaveLength(2);
     expect(fight.state).toBe(FIGHT_IN_PROGRESS);
     expect(fighter.idle).toHaveBeenCalledTimes(1);
-    expect(fighter.idle).toHaveBeenCalledWith('FIGHT', expect.any(Function));
+    expect(fighter.idle).toHaveBeenCalledWith(expect.any(Function));
   });
 
   it('finishes a won fight by paying out and resetting state', () => {

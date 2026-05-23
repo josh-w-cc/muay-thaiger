@@ -14,10 +14,6 @@ export function getInitialState() {
   };
 }
 
-export function isFightIdling(idling) {
-  return idling?.key?.substring(0, 5).toUpperCase() === 'FIGHT';
-}
-
 export function mergeState(state, updates) {
   const nextState = {
     ...state,

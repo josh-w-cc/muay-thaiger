@@ -62,7 +62,7 @@ export function generateStartFn({get, set}) {
       ],
       state: FIGHT_IN_PROGRESS,
     });
-    left.idle('FIGHT', (delta) => get().tick(delta));
+    left.idle((delta) => get().tick(delta));
   };
 }
 

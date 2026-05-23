@@ -5,14 +5,13 @@ import {
   getInitialState,
   getSelectionState,
   getTrainingEffect,
-  isFightIdling,
   mergeState,
 } from './fighterState.js';
 import {buildStateFromServerFighter} from './serverFighterState.js';
 
 const useFighterStore = create((set, get) => ({
   ...getInitialState(),
-  idle: generateIdleFn({get, set}),
+  idle: generateIdleFn(set),
   overwrite: generateOverwriteFn(set),
   select: generateSelectFn(set),
   spend: generateSpendFn(set),
@@ -26,13 +25,9 @@ export function resetFighterStore() {
   useFighterStore.setState((state) => mergeState(state, getInitialState()));
 }
 
-function generateIdleFn({get, set}) {
-  return (key, action) => {
-    if(isFightIdling(get().idling)) {
-      return;
-    }
-
-    set((state) => mergeState(state, {idling: {action, delta: 0, key}}));
+function generateIdleFn(set) {
+  return (action) => {
+    set((state) => mergeState(state, {idling: {action}}));
   };
 }
 

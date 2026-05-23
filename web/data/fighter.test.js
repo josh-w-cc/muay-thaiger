@@ -43,14 +43,11 @@ describe('useFighterStore', () => {
     expect(trainedFighter.power).toBeCloseTo(2.8284271247461903);
   });
 
-  it('does not replace fight idling with a new idle action', () => {
-    useFighterStore.setState({
-      idling: {action: vi.fn(), delta: 0, key: 'FIGHT-club'},
-    });
+  it('stores idle actions', () => {
+    const action = vi.fn();
+    useFighterStore.getState().idle(action);
 
-    useFighterStore.getState().idle('train-strength', vi.fn());
-
-    expect(useFighterStore.getState().idling.key).toBe('FIGHT-club');
+    expect(useFighterStore.getState().idling).toEqual({action});
   });
 
   it('returns early when ticking without an idle action', () => {
@@ -62,19 +59,19 @@ describe('useFighterStore', () => {
   it('keeps non-training idle actions active until they report completion', () => {
     const action = vi.fn().mockReturnValue(false);
     useFighterStore.setState({
-      idling: {action, delta: 0, key: 'shop-refresh'},
+      idling: {action},
     });
 
     useFighterStore.getState().tick(25);
 
     expect(action).toHaveBeenCalledWith(25);
-    expect(useFighterStore.getState().idling.key).toBe('shop-refresh');
+    expect(useFighterStore.getState().idling.action).toBe(action);
   });
 
   it('clears non-training idle actions once they finish', () => {
     const action = vi.fn().mockReturnValue(true);
     useFighterStore.setState({
-      idling: {action, delta: 0, key: 'shop-refresh'},
+      idling: {action},
     });
 
     useFighterStore.getState().tick(25);
@@ -85,7 +82,7 @@ describe('useFighterStore', () => {
 
   it('trains while a fight is idling', () => {
     useFighterStore.setState({
-      idling: {action: vi.fn(), delta: 0, key: 'FIGHT-club'},
+      idling: {action: vi.fn()},
       strength: 0,
       vigor: 1,
     });

@@ -9,7 +9,6 @@ const {action, addAction, createFighterActionCmd, fighter, removeAction, removeF
   const fighter = {
     agility: 1,
     constitution: 1,
-    idling: null,
     skill: 1,
     stamina: 1,
     strength: 1,
@@ -59,7 +58,6 @@ vi.mock('@/actions/websockets/index.js', () => ({
 
 describe('Train', () => {
   afterEach(() => {
-    fighter.idling = null;
     fighterActions.actions = [
       {action_id: 2, id: 5, progress: 23},
     ];
@@ -107,7 +105,6 @@ describe('Train', () => {
 
   it('shows stop control for enabled actions and sends stop command when clicked', async () => {
     fighterActions.actions = [{action_id: SKILL_IDS.begging, id: 6, progress: 77}];
-    fighter.idling = {key: 'train-begging'};
     const user = userEvent.setup();
     render(<Train />);
 
