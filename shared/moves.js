@@ -22,8 +22,6 @@ export const MOVE_DEFINITIONS = Object.freeze({
 
 export const MOVE_SEED_MOVES = Object.freeze(
   Object.entries(MOVE_DEFINITIONS).map(([key, move]) => ({
-    affect: key,
-    duration: move.duration,
     id: MOVE_IDS[key],
     name: move.name,
   })),

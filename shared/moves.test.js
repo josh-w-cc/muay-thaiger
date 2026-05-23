@@ -16,8 +16,8 @@ describe('MOVE_IDS', () => {
 describe('MOVE_SEED_MOVES', () => {
   it('creates move seed data from the shared move definitions', () => {
     deepEqual(MOVE_SEED_MOVES, [
-      {affect: 'wildPunch', duration: 1, id: MOVE_IDS.wildPunch, name: 'Wild Punch'},
-      {affect: 'wildKick', duration: 2, id: MOVE_IDS.wildKick, name: 'Wild Kick'},
+      {id: MOVE_IDS.wildPunch, name: 'Wild Punch'},
+      {id: MOVE_IDS.wildKick, name: 'Wild Kick'},
     ]);
   });
 });
