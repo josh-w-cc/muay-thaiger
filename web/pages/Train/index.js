@@ -7,7 +7,6 @@ import TrainStat from './TrainStat.js';
 
 import css from './Train.module.css';
 
-
 const STAT_FIELDS = [
   {name: 'Agility', stat: 'agility'},
   {name: 'Strength', stat: 'strength'},
@@ -30,24 +29,24 @@ export default function Train() {
   return (
     <>
       <h1>Training</h1>
-      <h3>Stats:</h3>
-      <div className={css.stats}>
-        {STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}
-      </div>
-      <h3>Skills:</h3>
-      <SkillRows fighter={fighter} />
-      <h3>Training Regimen:</h3>
-      <RegimenRows />
+      <section className={css.section}>
+        <h3>Stats:</h3>
+        <div className={css.stats}>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</div>
+      </section>
+      <section className={css.section}>
+        <h3>Skills:</h3>
+        <SkillRows fighter={fighter} />
+      </section>
+      <section className={css.section}>
+        <h3>Training Regimen:</h3>
+        <RegimenRows />
+      </section>
     </>
   );
 }
 
 function RegimenRows() {
-  return (
-    <div className={css.regimen}>
-      {TRAINING_REGIMEN.map(({name, progress}) => <RegimenRow key={name} name={name} progress={progress} />)}
-    </div>
-  );
+  return <div className={css.regimen}>{TRAINING_REGIMEN.map(({name, progress}) => <RegimenRow key={name} name={name} progress={progress} />)}</div>;
 }
 
 function RegimenRow({name, progress}) {

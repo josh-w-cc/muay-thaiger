@@ -9,12 +9,20 @@
   color: var(--color-on-gold);
 }
 
+.section {
+  composes: insetSectionBase from '../../components/primitive/css-modules/inset-section-base.module.css';
+
+  display: grid;
+  gap: var(--space-sm);
+  margin: 0 auto var(--space-md);
+  max-width: 420px;
+  text-align: left;
+}
+
 .regimen {
   display: grid;
   gap: var(--space-sm);
-  margin: 0 auto;
-  max-width: 420px;
-  text-align: left;
+  margin: 0;
 }
 
 .regimenProgress {
@@ -50,12 +58,8 @@
 }
 
 .stats {
-  border-left: 3px solid var(--color-gold);
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-  margin: 0 auto var(--space-md);
-  min-width: 300px;
-  padding-left: var(--space-md);
-  text-align: left;
+  margin: 0;
 }
