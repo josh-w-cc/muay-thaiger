@@ -7,6 +7,7 @@ import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import Button from '@/components/Button.js';
 
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
+import css from './Fight.module.css';
 
 
 function FightMenu() {
@@ -92,9 +93,11 @@ function FightMenu() {
   return (
     <>
       <h1>Fight for ฿</h1>
-      <h2>{announcer}</h2>
-      {content}
-      {fight.messages.slice().reverse()}
+      <section className={css.section}>
+        <h2>{announcer}</h2>
+        {content}
+        {fight.messages.slice().reverse()}
+      </section>
     </>
   );
 }
