@@ -36,7 +36,7 @@ describe('ZerothFight', () => {
   });
 
   it('spends all gold and shows the strength branch message', () => {
-    Object.assign(fighter, {gold: 150, stamina: 1});
+    Object.assign(fighter, {gold: 150, stamina: 1, strength: 0});
     render(<ZerothFight />);
 
     expect(fighter.spend).toHaveBeenCalledTimes(1);
@@ -45,7 +45,7 @@ describe('ZerothFight', () => {
   });
 
   it('shows the stanima branch message when stamina is missing', () => {
-    Object.assign(fighter, {gold: 150, stamina: 0});
+    Object.assign(fighter, {gold: 150, stamina: 0, strength: 1});
     render(<ZerothFight />);
 
     expect(screen.getByText(/You need more/i)).toBeInTheDocument();

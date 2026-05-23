@@ -6,6 +6,24 @@ import useFighterStore from '@/data/fighter.js';
 import css from './ZerothFight.module.css';
 
 
+const MESSAGE_MISSING_STAMINA = (
+  <span>
+    You need more
+    <strong>stanima</strong>
+    {' '}
+    to catch him.
+  </span>
+);
+const MESSAGE_MISSING_STRENGTH = (
+  <span>
+    You catch him, but you lack the
+    <strong>strength</strong>
+    {' '}
+    to get your ฿ back.
+  </span>
+);
+
+
 // eslint-disable-next-line max-lines-per-function
 function ZerothFight() {
   const fighter = useFighterStore();
@@ -28,28 +46,22 @@ function ZerothFight() {
   setEvent(
     <div className={css.message}>
       He takes your ฿ and pushes you down.  He runs off.
-      {fighter.stamina
-        ? (
-            <span>
-              You catch him, but you lack the
-              <strong>strength</strong>
-              {' '}
-              to get your ฿ back.
-            </span>
-          )
-        : (
-            <span>
-              You need more
-              <strong>stanima</strong>
-              {' '}
-              to catch him.
-            </span>
-          )}
+      {getEscapeMessage(fighter)}
     </div>,
   );
 }
 
 export default ZerothFight;
+
+function getEscapeMessage({stamina, strength}) {
+  if(!stamina) {
+    return MESSAGE_MISSING_STAMINA;
+  }
+  if(!strength) {
+    return MESSAGE_MISSING_STRENGTH;
+  }
+  return null;
+}
 
 
 export function needsZerothFight(fighter) {
