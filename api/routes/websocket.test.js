@@ -3,7 +3,7 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
-import websocketRoutes, {applyOfflineTraining, onConnect, onMessage, syncPlayerState} from '../routes/websocket.js';
+import websocketRoutes, {onConnect, onMessage, syncPlayerState} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
 const RACE_DEFAULT_STATS = {anima: 2, durability: 2, reach: 1, speed: 2, strength: 1, vitality: 1};
@@ -380,36 +380,6 @@ describe('WebSocket /ws/connect', () => {
     });
     assert.equal(sendNoFighter.calls.length, 0);
     assert.equal(sockets.has(closedSocket), false);
-  });
-
-  it('applies training hourly to stale fighters with enabled actions', async () => {
-    const staleRows = [{fighter_id: 1}, {fighter_id: 1}, {fighter_id: 2}, {fighter_id: 3}];
-    const fighterActions = {
-      listByFighterID: async () => [{action_id: 1, fighter_id: 1, id: 10}],
-      listStaleBefore: async () => staleRows,
-      touch: async () => null,
-    };
-    const updatedPlayers = [];
-    const fighters = {
-      find: async (fighterID) => {
-        if(fighterID === 1) {
-          return {id: 1, player_id: 11, retired: false, stats: {}};
-        }
-        if(fighterID === 2) {
-          return {id: 2, player_id: 22, retired: true, stats: {}};
-        }
-        return null;
-      },
-      findCurrentByPlayerID: async (playerID) => {
-        updatedPlayers.push(playerID);
-        return {gold: '0', id: 1, player_id: playerID, retired: false, stats: {}};
-      },
-      update: async (fighterID, data) => ({id: fighterID, player_id: 11, retired: false, ...data}),
-    };
-
-    await applyOfflineTraining({fighterActions, fighters});
-
-    assert.deepEqual(updatedPlayers, [11]);
   });
 });
 

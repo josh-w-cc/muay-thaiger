@@ -1,7 +1,39 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {getPlayerState, sendPlayerState} from './player-state.js';
+import {applyOfflineTraining, getPlayerState, sendPlayerState} from './player-state.js';
+
+describe('applyOfflineTraining', () => {
+  it('applies training for stale non-retired fighters only once per fighter', async () => {
+    const staleRows = [{fighter_id: 1}, {fighter_id: 1}, {fighter_id: 2}, {fighter_id: 3}];
+    const touchedPlayerIDs = [];
+    const fighterActions = {
+      listByFighterID: async () => [{action_id: 1, fighter_id: 1, id: 10, touched_at: new Date().toISOString()}],
+      listStaleBefore: async () => staleRows,
+      touch: async () => null,
+    };
+    const fighters = {
+      find: async (fighterID) => {
+        if(fighterID === 1) {
+          return {id: 1, player_id: 11, retired: false, stats: {}};
+        }
+        if(fighterID === 2) {
+          return {id: 2, player_id: 22, retired: true, stats: {}};
+        }
+        return null;
+      },
+      findCurrentByPlayerID: async (playerID) => {
+        touchedPlayerIDs.push(playerID);
+        return {gold: '0', id: 1, player_id: playerID, retired: false, stats: {}};
+      },
+      update: async (fighterID, data) => ({id: fighterID, player_id: 11, retired: false, ...data}),
+    };
+
+    await applyOfflineTraining({fighterActions, fighters});
+
+    assert.deepEqual(touchedPlayerIDs, [11]);
+  });
+});
 
 describe('getPlayerState', () => {
   it('returns actions and updated fighter after applying training', async () => {
