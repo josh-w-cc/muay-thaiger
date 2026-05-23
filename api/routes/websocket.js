@@ -1,20 +1,13 @@
-import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
 import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
-import {createOfflineTrainingScheduler} from '../logic/offline-training-scheduler.js';
-import {syncPlayerState} from '../logic/player-state.js';
 import {processMessageCommand} from '../logic/websocket-commands.js';
+import {attachScheduler} from '../services/scheduler.js';
 export default async function websocketRoutes(app) {
   const connections = new Set();
   const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), players: playersModel(app.db), races: racesModel(app.db)};
-  const offlineTrainingScheduler = createOfflineTrainingScheduler(models, app.log);
-  const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
-  app.addHook('onClose', () => {
-    offlineTrainingScheduler.stop();
-    stateSyncScheduler.stop();
-  });
+  attachScheduler(app, connections, models);
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
 export function onConnect(socket, models, connections = null) {
@@ -40,17 +33,6 @@ export async function onMessage(raw, socket, models) {
   catch(error) {
     sendSocketError(socket, resolveCommandError(error));
   }
-}
-function createPlayerStateSyncScheduler(models, connections, logger) {
-  const scheduler = new ToadScheduler();
-  const task = new AsyncTask(
-    'sync-player-state',
-    () => syncPlayerState(models, connections),
-    (error) => logger.error({err: error}, 'sync-player-state failed'),
-  );
-  const job = new SimpleIntervalJob({minutes: 1}, task);
-  scheduler.addSimpleIntervalJob(job);
-  return scheduler;
 }
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;

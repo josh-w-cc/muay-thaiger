@@ -29,7 +29,7 @@ describe('applyOfflineTraining', () => {
       update: async (fighterID, data) => ({id: fighterID, player_id: 11, retired: false, ...data}),
     };
 
-    await applyOfflineTraining({fighterActions, fighters});
+    await applyOfflineTraining(null, {fighterActions, fighters});
 
     assert.deepEqual(touchedPlayerIDs, [11]);
   });
