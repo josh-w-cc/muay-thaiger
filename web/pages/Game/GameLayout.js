@@ -12,7 +12,10 @@ export function GameLayout() {
 
   return (
     <div className={css.layout}>
-      <div className={css.baht}>฿ {formatBaht({gold: fighter.gold})}</div>
+      <div className={css.baht}>
+        ฿
+        {formatBaht({gold: fighter.gold})}
+      </div>
       <Header />
       <Outlet />
     </div>
