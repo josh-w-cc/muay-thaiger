@@ -20,6 +20,7 @@ export async function applyTraining({fighterActions, fighters}, fighter) {
   await touchAppliedActions(fighterActions, actions, trainingTimeline.touchedAtByActionID);
   return {actions, fighter: updatedFighter};
 }
+
 function createFighterProxy(stats, onWin) {
   const trainingEffect = {
     agility: stats.speed,
@@ -38,6 +39,7 @@ function createFighterProxy(stats, onWin) {
     win: onWin,
   };
 }
+
 function trainStats(actions, fighter) {
   const stats = {...fighter.stats};
   let gold = fighter.gold;
@@ -49,6 +51,7 @@ function trainStats(actions, fighter) {
   }
   return {gold, stats};
 }
+
 async function touchAppliedActions(fighterActions, actions, touchedAtByActionID) {
   for(const action of actions) {
     if(!touchedAtByActionID.has(action.id)) {
