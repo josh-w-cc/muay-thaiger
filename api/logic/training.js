@@ -1,5 +1,6 @@
 import addHugeNumber from 'shared/addHugeNumber.js';
 import {SKILL_DEFINITIONS, SKILL_IDS} from 'shared/skills.js';
+import {createTrainingTimeline} from './training-timeline.js';
 
 const SKILLS_BY_ACTION_ID = Object.freeze(
   Object.fromEntries(
@@ -12,14 +13,21 @@ export async function applyTraining({fighterActions, fighters}, fighter) {
   if(!actions.length) {
     return {actions, fighter};
   }
-  const {gold, stats} = trainStats(actions, fighter);
+  const now = new Date();
+  const trainingTimeline = createTrainingTimeline(actions, SKILLS_BY_ACTION_ID, now);
+  const {gold, stats} = trainStats(trainingTimeline.appliedActions, fighter);
   const updatedFighter = await fighters.update(fighter.id, {gold, stats});
-  await Promise.all(actions.map((action) => fighterActions.touch(action.id)));
+  await touchAppliedActions(fighterActions, actions, trainingTimeline.touchedAtByActionID);
   return {actions, fighter: updatedFighter};
 }
-
 function createFighterProxy(stats, onWin) {
-  const trainingEffect = getTrainingEffect(stats);
+  const trainingEffect = {
+    agility: stats.speed,
+    constitution: stats.vitality,
+    skill: stats.anima,
+    stamina: stats.vitality,
+    strength: stats.strength,
+  };
   return {
     train: (stat, amount = 1) => {
       if(!Object.hasOwn(trainingEffect, stat)) {
@@ -30,17 +38,6 @@ function createFighterProxy(stats, onWin) {
     win: onWin,
   };
 }
-
-function getTrainingEffect(stats) {
-  return {
-    agility: stats.speed,
-    constitution: stats.vitality,
-    skill: stats.anima,
-    stamina: stats.vitality,
-    strength: stats.strength,
-  };
-}
-
 function trainStats(actions, fighter) {
   const stats = {...fighter.stats};
   let gold = fighter.gold;
@@ -48,7 +45,15 @@ function trainStats(actions, fighter) {
     gold = addHugeNumber(gold, amount);
   });
   for(const action of actions) {
-    SKILLS_BY_ACTION_ID[action.action_id]?.action(proxy);
+    action.skill.action(proxy);
   }
   return {gold, stats};
+}
+async function touchAppliedActions(fighterActions, actions, touchedAtByActionID) {
+  for(const action of actions) {
+    if(!touchedAtByActionID.has(action.id)) {
+      continue;
+    }
+    await fighterActions.touch(action.id, touchedAtByActionID.get(action.id));
+  }
 }
