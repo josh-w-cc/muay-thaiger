@@ -3,7 +3,8 @@ import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
-import {applyOfflineTraining, getPlayerState, sendPlayerState} from '../logic/player-state.js';
+import {createOfflineTrainingScheduler} from '../logic/offline-training-scheduler.js';
+import {getPlayerState, sendPlayerState} from '../logic/player-state.js';
 import {processMessageCommand} from '../logic/websocket-commands.js';
 export default async function websocketRoutes(app) {
   const connections = new Set();
@@ -54,16 +55,6 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
       sendPlayerState(state.actions, state.fighter, socket);
     }
   }
-}
-function createOfflineTrainingScheduler(models, logger) {
-  const scheduler = new ToadScheduler();
-  const task = new AsyncTask(
-    'offline-apply-training',
-    () => applyOfflineTraining(models),
-    (error) => logger.error({err: error}, 'offline-apply-training failed'),
-  );
-  scheduler.addSimpleIntervalJob(new SimpleIntervalJob({hours: 1}, task));
-  return scheduler;
 }
 function createPlayerStateSyncScheduler(models, connections, logger) {
   const scheduler = new ToadScheduler();
