@@ -23,8 +23,19 @@ const fighter = vi.hoisted(() => ({
   vitality: 15,
 }));
 
+const fighterActions = vi.hoisted(() => ({
+  actions: [
+    {action_id: 2, id: 5},
+    {action_id: 1, id: 6},
+  ],
+}));
+
 vi.mock('@/data/fighter.js', () => ({
   default: () => fighter,
+}));
+
+vi.mock('@/data/fighterActions.js', () => ({
+  default: () => fighterActions,
 }));
 
 describe('Hub', () => {
@@ -44,15 +55,9 @@ describe('Hub', () => {
     expect(within(staminaRow).getByText('21')).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: 'Events:'})).toBeInTheDocument();
     expect(screen.getByRole('list')).toBeInTheDocument();
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
-    expect(screen.getByText('Technique: Flying Knee Drill')).toBeInTheDocument();
-    expect(screen.getByText('Lumpinee Rookie Cup')).toBeInTheDocument();
-    expect(screen.getByText('Camp Sparring Session')).toBeInTheDocument();
-    expect(screen.getByText('Unlocked')).toBeInTheDocument();
-    expect(screen.getByText('Tournament Win')).toBeInTheDocument();
-    expect(screen.getByText('Skill Gain')).toBeInTheDocument();
-    expect(screen.getByText('Unlocked Flying Knee Drill in Training.')).toBeInTheDocument();
-    expect(screen.getByText('Won against Iron Cobra in the Lumpinee Bracket.')).toBeInTheDocument();
-    expect(screen.getByText('Clinched 3 rounds in sparring and gained +2 Skill.')).toBeInTheDocument();
+    expect(screen.getAllByRole('listitem')).toHaveLength(2);
+    expect(screen.getByText('Walking')).toBeInTheDocument();
+    expect(screen.getByText('฿egging')).toBeInTheDocument();
+    expect(screen.getAllByText('train')).toHaveLength(2);
   });
 });

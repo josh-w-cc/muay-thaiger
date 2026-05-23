@@ -1,7 +1,11 @@
+import {SKILL_SEED_ACTIONS} from 'shared/skills.js';
 import formatHugeNumber from '@/utils/formatHugeNumber.js';
+import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 
 import css from './Hub.module.css';
+
+const ACTIONS_BY_ID = Object.fromEntries(SKILL_SEED_ACTIONS.map((action) => [action.id, action]));
 
 const STAT_FIELDS = [
   {key: 'agility', label: 'Agility'},
@@ -23,24 +27,6 @@ const STAT_FIELDS = [
   {key: 'power', label: 'Power'},
 ];
 
-const EVENTS = [
-  {
-    detail: 'Unlocked Flying Knee Drill in Training.',
-    outcome: 'Unlocked',
-    title: 'Technique: Flying Knee Drill',
-  },
-  {
-    detail: 'Won against Iron Cobra in the Lumpinee Bracket.',
-    outcome: 'Tournament Win',
-    title: 'Lumpinee Rookie Cup',
-  },
-  {
-    detail: 'Clinched 3 rounds in sparring and gained +2 Skill.',
-    outcome: 'Skill Gain',
-    title: 'Camp Sparring Session',
-  },
-];
-
 export default function Hub() {
   const fighter = useFighterStore();
 
@@ -59,22 +45,23 @@ export default function Hub() {
 }
 
 function Events() {
+  const {actions} = useFighterActionsStore();
   return (
     <>
       <h3>Events:</h3>
       <ul className={css.events}>
-        {EVENTS.map((event) => <Event event={event} key={event.title} />)}
+        {actions.map((action) => <Event action={action} key={action.id ?? action.action_id} />)}
       </ul>
     </>
   );
 }
 
-function Event({event}) {
+function Event({action}) {
+  const skill = ACTIONS_BY_ID[action.action_id];
   return (
     <li className={css.event}>
-      <span className={css.outcome}>{event.outcome}</span>
-      <strong>{event.title}</strong>
-      <span>{event.detail}</span>
+      <span className={css.outcome}>{skill?.type}</span>
+      <strong>{skill?.name}</strong>
     </li>
   );
 }
