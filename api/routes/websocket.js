@@ -4,9 +4,8 @@ import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
-import {authenticateAndSendPlayerState, sendPlayerState} from '../logic/player-state.js';
+import {authenticateAndSendPlayerState, applyTrainingAndSend} from '../logic/player-state.js';
 import {registerFighterAction} from '../logic/fighter-actions.js';
-import {applyTraining} from '../logic/training.js';
 
 export default async function websocketRoutes(app) {
   const connections = new Set();
@@ -57,12 +56,7 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
     if(!socket.player) {
       continue;
     }
-    const fighter = await fighters.findCurrentByPlayerID(socket.player.id);
-    if(!fighter) {
-      continue;
-    }
-    const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
-    sendPlayerState(actions, updatedFighter, socket);
+    await applyTrainingAndSend({fighterActions, fighters}, socket);
   }
 }
 
