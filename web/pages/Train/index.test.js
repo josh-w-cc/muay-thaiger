@@ -25,8 +25,19 @@ const {action, createFighterActionCmd, fighter, idle} = vi.hoisted(() => {
   };
 });
 
+const fighterActions = vi.hoisted(() => ({
+  actions: [
+    {action_id: 2, id: 5},
+    {action_id: 1, id: 6},
+  ],
+}));
+
 vi.mock('@/data/fighter.js', () => ({
   default: () => fighter,
+}));
+
+vi.mock('@/data/fighterActions.js', () => ({
+  default: () => fighterActions,
 }));
 
 vi.mock('./Skills.js', () => ({
@@ -55,17 +66,15 @@ describe('Train', () => {
     expect(screen.queryByRole('button', {name: 'Once'})).not.toBeInTheDocument();
   });
 
-  it('shows mock training regimen options with progress bars', () => {
+  it('shows training regimen from fighter actions store with progress bars', () => {
     render(<Train />);
 
     expect(screen.getByRole('heading', {name: 'Training Regimen:'})).toBeInTheDocument();
-    expect(screen.getByText('Footwork Ladder')).toBeInTheDocument();
-    expect(screen.getByText('Pad Work')).toBeInTheDocument();
-    expect(screen.getByText('Clinch Rounds')).toBeInTheDocument();
+    expect(screen.getByText('Walking')).toBeInTheDocument();
+    expect(screen.getAllByText('฿egging')).toHaveLength(2);
 
-    expect(screen.getByRole('progressbar', {name: 'Footwork Ladder completion'})).toHaveAttribute('aria-valuenow', '34');
-    expect(screen.getByRole('progressbar', {name: 'Pad Work completion'})).toHaveAttribute('aria-valuenow', '61');
-    expect(screen.getByRole('progressbar', {name: 'Clinch Rounds completion'})).toHaveAttribute('aria-valuenow', '86');
+    expect(screen.getByRole('progressbar', {name: 'Walking completion'})).toHaveAttribute('aria-valuenow', '0');
+    expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '0');
   });
 
   it('starts idling for a skill when idle is clicked', async () => {
