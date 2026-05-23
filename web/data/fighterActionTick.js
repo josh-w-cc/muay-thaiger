@@ -86,15 +86,9 @@ function trainFighter(actions) {
 
 function applyAction(action, fighter) {
   const skill = getActionSkill(action);
-  if(!skill?.action) {
-    return;
-  }
   skill.action(fighter);
 }
 
 function getActionSkill(action) {
-  if(!action?.action_id) {
-    return null;
-  }
   return SKILLS_BY_ACTION_ID[action.action_id];
 }
