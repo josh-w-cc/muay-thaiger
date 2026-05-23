@@ -5,6 +5,7 @@
 
 .navigationButton {
   border-color: transparent;
+  position: relative;
 }
 
 .navigationButton:hover {
@@ -13,4 +14,30 @@
 
 .navigationImage {
   max-height: 120px;
+  position: relative;
+  z-index: 1;
+}
+
+.activeNavigationButton {
+  border-color: var(--color-gold);
+}
+
+.activeNavigationButton:hover {
+  border-color: var(--color-gold);
+}
+
+.navigationMask {
+  background-color: var(--color-gold);
+  inset: 0;
+  mask-image: var(--navigation-mask);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  opacity: 0.6;
+  pointer-events: none;
+  position: absolute;
+  -webkit-mask-image: var(--navigation-mask);
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
 }
