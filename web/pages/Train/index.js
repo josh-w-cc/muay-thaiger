@@ -44,11 +44,9 @@ function RegimenRows({fighter}) {
         .map((skillKey) => (
           <RegimenRow
             actionEnabled={isActionEnabled(actions, skillKey)}
-            fighter={fighter}
             key={skillKey}
             name={Skills[skillKey].name}
             progress={actions.find((a) => a.action_id === SKILL_IDS[skillKey])?.progress || 0}
-            skill={Skills[skillKey]}
             skillKey={skillKey}
           />
         ))}
@@ -56,7 +54,7 @@ function RegimenRows({fighter}) {
   );
 }
 
-function RegimenRow({actionEnabled, fighter, name, progress, skill, skillKey}) {
+function RegimenRow({actionEnabled, name, progress, skillKey}) {
   return (
     <div className={css.regimenRow}>
       <div>{name}</div>
@@ -64,7 +62,7 @@ function RegimenRow({actionEnabled, fighter, name, progress, skill, skillKey}) {
         <RegimenProgress actionEnabled={actionEnabled} name={name} progress={progress} />
         <Button
           className={actionEnabled ? css.idleActive : ''}
-          onClick={() => onActionButtonClick({actionEnabled, fighter, skill, skillKey})}
+          onClick={() => onActionButtonClick({actionEnabled, skillKey})}
         >
           {actionEnabled ? 'STOP' : 'IDLE'}
         </Button>
