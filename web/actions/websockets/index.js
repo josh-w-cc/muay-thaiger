@@ -1,11 +1,11 @@
-import useFighterActionsStore from '@/data/fighterActions.js';
 import {
   resetAuthState,
-  respondToAuth,
-  routeToHubIfAuthorized,
 } from '@/actions/websockets/auth.js';
+import {
+  createFighterActionCmd as onCreateFighterActionCmd,
+  selectFighterCmd as onSelectFighterCmd,
+} from '@/actions/websockets/clientCommands.js';
 import {generateOnSocketMessageFn} from '@/actions/websockets/serverCommands.js';
-import {isSocketReady} from '@/actions/websockets/websocketState.js';
 import {loadPlayerToken} from '@/actions/websockets/token.js';
 let reconnectSocketTimeout = null;
 let socket = null;
@@ -21,16 +21,11 @@ export function resetSocketState() {
 }
 
 export function createFighterActionCmd(actionID) {
-  if(!Number.isInteger(actionID) || !isSocketReady(socket)) {
-    return;
-  }
-  useFighterActionsStore.getState().addAction({action_id: actionID});
-  socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
+  onCreateFighterActionCmd(socket, actionID);
 }
 
 export function selectFighterCmd() {
-  respondToAuth(socket);
-  routeToHubIfAuthorized();
+  onSelectFighterCmd(socket);
 }
 
 function connectSocket() {
