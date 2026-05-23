@@ -54,7 +54,6 @@ describe('Header', () => {
 
     expect(source).toMatch(/\.navigationButton:hover\s*{[^}]*background-color:\s*transparent;/s);
   });
-
   it('marks the current route button as active', async () => {
     pathname = '/train';
     const {default: Header} = await import('./Header.js');
