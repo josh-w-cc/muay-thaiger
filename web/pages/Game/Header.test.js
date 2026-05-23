@@ -11,14 +11,17 @@ import TrainButton from './assets/TrainButton.png';
 const {navigate} = vi.hoisted(() => ({
   navigate: vi.fn(),
 }));
+let pathname = '/hub';
 
 vi.mock('react-router-dom', () => ({
+  useLocation: () => ({pathname}),
   useNavigate: () => navigate,
 }));
 
 describe('Header', () => {
   afterEach(() => {
     vi.clearAllMocks();
+    pathname = '/hub';
   });
 
   it('renders navigation buttons and uses colocated game images', async () => {
@@ -30,6 +33,8 @@ describe('Header', () => {
     expect(screen.getByRole('img', {name: 'Hub'})).toHaveAttribute('src', expect.stringContaining(HubButton));
     expect(screen.getByRole('img', {name: 'Shop'})).toHaveAttribute('src', expect.stringContaining(ShopButton));
     expect(screen.getByRole('img', {name: 'Train'})).toHaveAttribute('src', expect.stringContaining(TrainButton));
+    expect(screen.getByRole('button', {name: 'Hub'})).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('button', {name: 'Fight'})).not.toHaveAttribute('aria-current');
 
     await user.click(screen.getByRole('button', {name: 'Fight'}));
     await user.click(screen.getByRole('button', {name: 'Hub'}));
@@ -48,5 +53,14 @@ describe('Header', () => {
     const source = fs.readFileSync(modulePath, 'utf8');
 
     expect(source).toMatch(/\.navigationButton:hover\s*{[^}]*background-color:\s*transparent;/s);
+  });
+  it('marks the current route button as active', async () => {
+    pathname = '/train';
+    const {default: Header} = await import('./Header.js');
+
+    render(<Header />);
+
+    expect(screen.getByRole('button', {name: 'Train'})).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('button', {name: 'Hub'})).not.toHaveAttribute('aria-current');
   });
 });
