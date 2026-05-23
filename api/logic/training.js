@@ -27,7 +27,7 @@ function createFighterProxy(stats, onWin) {
     constitution: stats.vitality,
     skill: stats.anima,
     stamina: stats.vitality,
-    strength: stats.strength,
+    strength: stats.innateStrength,
   };
   return {
     train: (stat, amount = 1) => {

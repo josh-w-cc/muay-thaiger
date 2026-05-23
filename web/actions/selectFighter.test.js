@@ -30,7 +30,7 @@ describe('selectFighter', () => {
     expect(fighter.race).toBe('2');
     expect(fighter.anima).toBe(stats.anima);
     expect(fighter.durability).toBe(stats.durability);
-    expect(fighter.innateStrength).toBe(stats.strength);
+    expect(fighter.innateStrength).toBe(stats.innateStrength);
     expect(fighter.reach).toBe(stats.reach);
     expect(fighter.speed).toBe(stats.speed);
     expect(fighter.vitality).toBe(stats.vitality);
