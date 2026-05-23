@@ -14,6 +14,7 @@ describe('WebSocket /ws/connect', () => {
     const {knex} = mockKnex(undefined);
     const app = Fastify();
     app.decorate('db', knex);
+    app.decorate('websocketConnections', new Set());
     await app.register(websocket);
     await app.register(websocketRoutes, {prefix: '/ws'});
     await app.ready();
@@ -30,6 +31,7 @@ describe('WebSocket /ws/connect', () => {
     const {knex} = mockKnex([{display_name: 'Player-12345678', id: 1, token: 'generated-token'}]);
     const app = Fastify();
     app.decorate('db', knex);
+    app.decorate('websocketConnections', new Set());
     await app.register(websocket);
     await app.register(websocketRoutes, {prefix: '/ws'});
     await app.ready();
@@ -57,6 +59,7 @@ describe('WebSocket /ws/connect', () => {
     const {knex} = mockKnexMulti([player, currentFighter, [], currentFighter, [created]]);
     const app = Fastify();
     app.decorate('db', knex);
+    app.decorate('websocketConnections', new Set());
     await app.register(websocket);
     await app.register(websocketRoutes, {prefix: '/ws'});
     await app.ready();
@@ -83,8 +86,9 @@ describe('WebSocket /ws/connect', () => {
       readyState: 0,
       send,
     };
+    const connections = new Set();
 
-    onConnect(socket, {});
+    onConnect(socket, {}, connections);
     await waitForImmediate();
 
     assert.equal(send.calls.length, 0);

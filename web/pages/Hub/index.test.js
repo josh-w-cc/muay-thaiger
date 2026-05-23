@@ -38,7 +38,7 @@ describe('Hub', () => {
   it('renders fighter details section with name, age, and race', () => {
     render(<Hub />);
 
-    expect(screen.getByRole('heading', {name: 'Fighter Details:'})).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: 'Fighter Details:'})).not.toBeInTheDocument();
     expect(screen.getByText('Name').closest('div')).toBeInTheDocument();
     expect(within(screen.getByText('Name').closest('div')).getByText('Iron Tiger')).toBeInTheDocument();
     expect(screen.getByText('Race', {selector: 'dt'}).closest('div')).toBeInTheDocument();

@@ -6,9 +6,7 @@ import {
   getSelectionState,
   getTrainingEffect,
   isFightIdling,
-  isTrainIdling,
   mergeState,
-  tickTrain,
 } from './fighterState.js';
 import {buildStateFromServerFighter} from './serverFighterState.js';
 
@@ -54,11 +52,6 @@ function generateTickFn({get, set}) {
   return (delta) => {
     const {idling} = get();
     if(!idling?.action) {
-      return;
-    }
-
-    if(isTrainIdling(idling)) {
-      tickTrain({delta, get, idling, set});
       return;
     }
 

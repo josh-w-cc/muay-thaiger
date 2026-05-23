@@ -18,10 +18,6 @@ export function isFightIdling(idling) {
   return idling?.key?.substring(0, 5).toUpperCase() === 'FIGHT';
 }
 
-export function isTrainIdling(idling) {
-  return idling?.key?.substring(0, 5).toLowerCase() === 'train';
-}
-
 export function mergeState(state, updates) {
   const nextState = {
     ...state,
@@ -29,21 +25,6 @@ export function mergeState(state, updates) {
   };
 
   return {...nextState, ...getCombatState(nextState)};
-}
-
-export function tickTrain({delta, get, idling, set}) {
-  set((state) => mergeState(state, {idling: {...idling, delta: idling.delta + delta}}));
-
-  const {idling: nextIdling} = get();
-  if(nextIdling.delta <= 1000) {
-    return;
-  }
-
-  nextIdling.action();
-  const {idling: updatedIdling} = get();
-  if(updatedIdling) {
-    set((state) => mergeState(state, {idling: {...updatedIdling, delta: updatedIdling.delta - 1000}}));
-  }
 }
 
 export function getTrainingEffect({anima, vigor, speed, vitality}) {

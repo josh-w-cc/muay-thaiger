@@ -43,19 +43,6 @@ describe('useFighterStore', () => {
     expect(trainedFighter.power).toBeCloseTo(2.8284271247461903);
   });
 
-  it('ticks idle training actions through the Zustand store', () => {
-    const fighter = useFighterStore.getState();
-
-    fighter.idle('train-strength', () => useFighterStore.getState().train('strength'));
-    fighter.tick(1001);
-
-    const idlingFighter = useFighterStore.getState();
-
-    expect(idlingFighter.strength).toBe(2);
-    expect(idlingFighter.idling.delta).toBe(1);
-    expect(idlingFighter.power).toBe(0);
-  });
-
   it('does not replace fight idling with a new idle action', () => {
     useFighterStore.setState({
       idling: {action: vi.fn(), delta: 0, key: 'FIGHT-club'},
