@@ -32,10 +32,9 @@ function getIsCurrentPage(pathname, route) {
 
 function NavigationButton({item, navigate, pathname}) {
   const isCurrentPage = getIsCurrentPage(pathname, item.route);
-  const classes = [css.navigationButton, isCurrentPage ? css.activeNavigationButton : null].filter(Boolean).join(' ');
 
   return (
-    <Button aria-current={isCurrentPage ? 'page' : undefined} className={classes} onClick={() => navigate(item.route)}>
+    <Button aria-current={isCurrentPage ? 'page' : undefined} className={css.navigationButton} onClick={() => navigate(item.route)}>
       {isCurrentPage ? <span className={css.navigationMask} style={{'--navigation-mask': `url(${item.icon})`}} /> : null}
       <img alt={item.label} className={css.navigationImage} src={item.icon} />
     </Button>

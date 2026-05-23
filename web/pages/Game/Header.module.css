@@ -18,16 +18,8 @@
   z-index: 1;
 }
 
-.activeNavigationButton {
-  border-color: var(--color-gold);
-}
-
-.activeNavigationButton:hover {
-  border-color: var(--color-gold);
-}
-
 .navigationMask {
-  background-color: var(--color-gold);
+  background-color: var(--color-red);
   inset: 0;
   mask-image: var(--navigation-mask);
   mask-position: center;
@@ -36,8 +28,4 @@
   opacity: 0.6;
   pointer-events: none;
   position: absolute;
-  -webkit-mask-image: var(--navigation-mask);
-  -webkit-mask-position: center;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
 }
