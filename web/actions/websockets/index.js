@@ -1,3 +1,4 @@
+import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 import usePlayerStore from '@/data/player.js';
 import {
@@ -32,6 +33,7 @@ export function createFighterActionCmd(actionID) {
   if(!Number.isInteger(actionID) || !isSocketReady(socket)) {
     return;
   }
+  useFighterActionsStore.getState().addAction({action_id: actionID});
   socket.send(JSON.stringify({action_id: actionID, cmd: 'idle'}));
 }
 
@@ -69,6 +71,7 @@ function onPlayerState(message) {
   if(!message.fighter) {
     return;
   }
+  useFighterActionsStore.getState().setActions(Array.isArray(message.actions) ? message.actions : []);
   useFighterStore.getState().overwrite(message.fighter);
   usePlayerStore.getState().setPlayerID(message.fighter.player_id ?? null);
   usePlayerStore.getState().selectFighter(`${message.fighter.race}`);
