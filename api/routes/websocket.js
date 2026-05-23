@@ -6,7 +6,7 @@ import {processMessageCommand} from '../logic/websocket-commands.js';
 
 
 export default async function websocketRoutes(app) {
-  const connections = getConnections(app);
+  const connections = app.websocketConnections;
   const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), players: playersModel(app.db), races: racesModel(app.db)};
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
@@ -61,11 +61,4 @@ function sendSocketError(socket, error) {
 
 function resolveCommandError(error) {
   return error?.code || 'internal-error';
-}
-
-function getConnections(app) {
-  if(!app.hasDecorator('websocketConnections')) {
-    app.decorate('websocketConnections', new Set());
-  }
-  return app.websocketConnections;
 }
