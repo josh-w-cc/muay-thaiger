@@ -1,16 +1,21 @@
 import {authenticate} from './auth.js';
+import {applyTraining} from './training.js';
+
+export async function applyTrainingAndSend({fighterActions, fighters}, socket) {
+  const fighter = await fighters.findCurrentByPlayerID(socket.player.id);
+  if(!fighter) {
+    return;
+  }
+  const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
+  sendPlayerState(actions, updatedFighter, socket);
+}
 
 export async function authenticateAndSendPlayerState(models, message, socket) {
   await authenticate(models, message, socket);
   if(!canSendPlayerStateOnAuth(models, socket)) {
     return;
   }
-  const fighter = await models.fighters.findCurrentByPlayerID(socket.player.id);
-  if(!fighter) {
-    return;
-  }
-  const actions = await models.fighterActions.listByFighterID(fighter.id);
-  sendPlayerState(actions, fighter, socket);
+  await applyTrainingAndSend(models, socket);
 }
 
 export function sendPlayerState(actions, fighter, socket) {
