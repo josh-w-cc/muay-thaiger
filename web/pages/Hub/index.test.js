@@ -70,28 +70,37 @@ describe('Hub', () => {
     expect(screen.getByText('Clinched 3 rounds in sparring and gained +2 Skill.')).toBeInTheDocument();
   });
 
-  it('renders leaderboard with one fighter for each trainable stat', () => {
+  it('renders wins leaderboard and a second trainable stat leaderboard', () => {
     render(<Hub />);
 
     expect(screen.getByRole('heading', {name: 'Leaderboard:'})).toBeInTheDocument();
-    const leaderboard = screen.getByRole('table');
+    expect(screen.getByRole('heading', {name: 'Trainable Stat Leaders:'})).toBeInTheDocument();
+    const leaderboards = screen.getAllByRole('table');
 
-    expect(leaderboard).toBeInTheDocument();
+    expect(leaderboards).toHaveLength(2);
+    const winsLeaderboard = leaderboards[0];
+    const statsLeaderboard = leaderboards[1];
 
-    const rows = screen.getAllByRole('row');
+    expect(within(winsLeaderboard).getByText('Wins')).toBeInTheDocument();
+    expect(within(winsLeaderboard).queryByText('Top Value')).not.toBeInTheDocument();
+    expect(within(winsLeaderboard).getByText('Iron Cobra')).toBeInTheDocument();
+    expect(within(winsLeaderboard).getByText('Shadow Fang')).toBeInTheDocument();
+    expect(within(winsLeaderboard).getByText('Burning Lotus')).toBeInTheDocument();
+    expect(within(winsLeaderboard).getByText('Stone Viper')).toBeInTheDocument();
+    expect(within(winsLeaderboard).getByText('Red Hawk')).toBeInTheDocument();
 
-    expect(rows).toHaveLength(6);
-    expect(within(leaderboard).getByText('Agility')).toBeInTheDocument();
-    expect(within(leaderboard).getByText('Constitution')).toBeInTheDocument();
-    expect(within(leaderboard).getByText('Skill')).toBeInTheDocument();
-    expect(within(leaderboard).getByText('Stanima')).toBeInTheDocument();
-    expect(within(leaderboard).getByText('Strength')).toBeInTheDocument();
-    expect(within(leaderboard).getByText('Iron Cobra')).toBeInTheDocument();
-    expect(within(leaderboard).getByText('Shadow Fang')).toBeInTheDocument();
-    expect(within(leaderboard).getByText('Burning Lotus')).toBeInTheDocument();
-    expect(within(leaderboard).getByText('Stone Viper')).toBeInTheDocument();
-    expect(within(leaderboard).getByText('Red Hawk')).toBeInTheDocument();
-    expect(within(leaderboard).queryByText('Anima')).not.toBeInTheDocument();
-    expect(within(leaderboard).queryByText('Reach')).not.toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Top Value')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Agility')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Constitution')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Skill')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Stanima')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Strength')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Iron Cobra')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Shadow Fang')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Burning Lotus')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Stone Viper')).toBeInTheDocument();
+    expect(within(statsLeaderboard).getByText('Red Hawk')).toBeInTheDocument();
+    expect(within(statsLeaderboard).queryByText('Anima')).not.toBeInTheDocument();
+    expect(within(statsLeaderboard).queryByText('Reach')).not.toBeInTheDocument();
   });
 });
