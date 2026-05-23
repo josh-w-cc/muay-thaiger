@@ -7,6 +7,7 @@ const DEFAULT_TRAINING_STATS = {
   constitution: 0,
   skill: 0,
   stamina: 0,
+  strength: 0,
 };
 
 export async function authenticate({fighters, players, races}, message) {
