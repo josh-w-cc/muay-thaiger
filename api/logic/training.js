@@ -21,6 +21,27 @@ export async function applyTraining({fighterActions, fighters}, fighter) {
   return {actions, fighter: updatedFighter};
 }
 
+async function touchAppliedActions(fighterActions, actions, touchedAtByActionID) {
+  for(const action of actions) {
+    if(!touchedAtByActionID.has(action.id)) {
+      continue;
+    }
+    await fighterActions.touch(action.id, touchedAtByActionID.get(action.id));
+  }
+}
+
+function trainStats(actions, fighter) {
+  const stats = {...fighter.stats};
+  let gold = fighter.gold;
+  const proxy = createFighterProxy(stats, (amount) => {
+    gold = addHugeNumber(gold, amount);
+  });
+  for(const action of actions) {
+    action.skill.action(proxy);
+  }
+  return {gold, stats};
+}
+
 function createFighterProxy(stats, onWin) {
   const trainingEffect = {
     agility: stats.speed,
@@ -38,25 +59,4 @@ function createFighterProxy(stats, onWin) {
     },
     win: onWin,
   };
-}
-
-function trainStats(actions, fighter) {
-  const stats = {...fighter.stats};
-  let gold = fighter.gold;
-  const proxy = createFighterProxy(stats, (amount) => {
-    gold = addHugeNumber(gold, amount);
-  });
-  for(const action of actions) {
-    action.skill.action(proxy);
-  }
-  return {gold, stats};
-}
-
-async function touchAppliedActions(fighterActions, actions, touchedAtByActionID) {
-  for(const action of actions) {
-    if(!touchedAtByActionID.has(action.id)) {
-      continue;
-    }
-    await fighterActions.touch(action.id, touchedAtByActionID.get(action.id));
-  }
 }
