@@ -26,7 +26,6 @@ export default function Hub() {
     <>
       <h1>HUB</h1>
       <section className={css.section}>
-        <h3>Fighter Details:</h3>
         <FighterDetails />
       </section>
       <section className={css.section}>
@@ -59,4 +58,3 @@ function Event({event}) {
     </li>
   );
 }
-
