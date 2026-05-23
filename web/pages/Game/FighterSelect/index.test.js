@@ -67,4 +67,19 @@ describe('FighterSelect', () => {
     expect(within(tigerContainer).getByRole('img')).toHaveAttribute('src', expect.stringContaining(Tiger));
     expect(within(snowLeopardContainer).getByRole('img')).toHaveAttribute('src', expect.stringContaining(SnowLeopard));
   });
+
+  it('renders strength from legacy strength field when innateStrength is missing', async () => {
+    const {default: FighterSelect} = await import('./index.js');
+    const races = [
+      {
+        id: 1,
+        name: 'Tiger',
+        stats: {anima: 1, durability: 1, reach: 1, speed: 1, strength: 7, vitality: 1},
+      },
+    ];
+
+    render(<FighterSelect races={races} />);
+
+    expect(screen.getByText(/Strength:\s*7/i)).toBeInTheDocument();
+  });
 });
