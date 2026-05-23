@@ -3,5 +3,10 @@
   border: 1px solid black;
   border-radius: var(--radius-md);
   box-shadow: inset -2px 10px 18px rgba(0, 0, 0, 0.4);
+  display: grid;
+  gap: var(--space-sm);
+  margin: 0 auto var(--space-md);
+  max-width: 420px;
   padding: var(--space-md);
+  text-align: left;
 }
