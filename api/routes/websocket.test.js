@@ -210,7 +210,8 @@ describe('WebSocket /ws/connect', () => {
 
     await onMessage(JSON.stringify({cmd: 'auth', race: 'not-a-race', token: 'new'}), socket, {fighters, players, races});
 
-    assert.equal(send.calls.length, 0);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-auth-data'});
   });
 
   it('does not create a player when auth new race is not found', async () => {
@@ -229,7 +230,8 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'auth', race: '3', token: 'new'}), socket, {fighters, players, races});
 
     assert.equal(createPlayer.calls.length, 0);
-    assert.equal(send.calls.length, 0);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-auth-data'});
   });
 
   it('translates an existing player token to player id on auth', async () => {
@@ -326,7 +328,8 @@ describe('WebSocket /ws/connect', () => {
 
     await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {fighterActions, fighters});
 
-    assert.equal(send.calls.length, 0);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-idle-message'});
     assert.equal(create.calls.length, 0);
   });
 

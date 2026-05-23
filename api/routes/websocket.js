@@ -10,12 +10,7 @@ import {applyTraining} from '../logic/training.js';
 
 export default async function websocketRoutes(app) {
   const connections = new Set();
-  const models = {
-    fighterActions: fighterActionsModel(app.db),
-    fighters: fightersModel(app.db),
-    players: playersModel(app.db),
-    races: racesModel(app.db),
-  };
+  const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), players: playersModel(app.db), races: racesModel(app.db)};
   const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
   app.addHook('onClose', () => stateSyncScheduler.stop());
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
@@ -28,10 +23,9 @@ export function onConnect(socket, models, connections = null) {
   }
   socket.on('message', (raw) => onMessage(raw, socket, models));
   setImmediate(() => {
-    if(!isSocketOpen(socket)) {
-      return;
+    if(isSocketOpen(socket)) {
+      socket.send(JSON.stringify({cmd: 'auth'}));
     }
-    socket.send(JSON.stringify({cmd: 'auth'}));
   });
 }
 
@@ -43,8 +37,8 @@ export async function onMessage(raw, socket, models) {
   try {
     await processMessageCommand(models, message, socket);
   }
-  catch {
-    sendSocketError(socket, 'internal-error');
+  catch(error) {
+    sendSocketError(socket, resolveCommandError(error));
   }
 }
 
@@ -106,5 +100,11 @@ function sendSocketError(socket, error) {
   if(!isSocketOpen(socket)) {
     return;
   }
-  socket.send(JSON.stringify({cmd: 'error', error}));
+  socket.send(error === 'auth-invalid-token'
+    ? JSON.stringify({cmd: 'auth-invalid-token'})
+    : JSON.stringify({cmd: 'error', error}));
+}
+
+function resolveCommandError(error) {
+  return error?.code || 'internal-error';
 }
