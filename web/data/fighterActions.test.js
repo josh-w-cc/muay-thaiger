@@ -4,6 +4,7 @@ import useFighterActionsStore, {resetFighterActionsStore} from './fighterActions
 describe('useFighterActionsStore', () => {
   afterEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers();
     resetFighterActionsStore();
   });
 
@@ -12,7 +13,10 @@ describe('useFighterActionsStore', () => {
 
     useFighterActionsStore.getState().setActions(actions);
 
-    expect(useFighterActionsStore.getState().actions).toEqual(actions);
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({id: 2, progress: 0}),
+      expect.objectContaining({id: 3, progress: 0}),
+    ]);
   });
 
   it('appends a fighter action', () => {
@@ -21,6 +25,39 @@ describe('useFighterActionsStore', () => {
 
     useFighterActionsStore.getState().addAction(action);
 
-    expect(useFighterActionsStore.getState().actions).toEqual([{id: 2}, action]);
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({id: 2}),
+      expect.objectContaining(action),
+    ]);
+  });
+
+  it('stores a created_at timestamp for optimistic fighter actions', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+
+    useFighterActionsStore.getState().addAction({action_id: 2});
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({
+        action_id: 2,
+        created_at: '2026-01-01T00:00:00.000Z',
+      }),
+    ]);
+  });
+
+  it('ticks action progress sequentially using action durations', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+    useFighterActionsStore.getState().setActions([
+      {action_id: 2, created_at: '2025-12-31T23:59:58.000Z', id: 1},
+      {action_id: 6, created_at: '2025-12-31T23:59:57.000Z', id: 2},
+    ]);
+
+    useFighterActionsStore.getState().tick();
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
+      expect.objectContaining({action_id: 6, id: 2, progress: 50}),
+    ]);
   });
 });

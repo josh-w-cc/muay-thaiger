@@ -45,7 +45,7 @@ function RegimenRows() {
       {actions.map((action) => {
         const skill = ACTIONS_BY_ID[action.action_id];
         const name = skill?.name ?? `Action ${action.action_id}`;
-        return <RegimenRow key={action.action_id} name={name} progress={0} />;
+        return <RegimenRow key={action.action_id} name={name} progress={action.progress || 0} />;
       })}
     </div>
   );
