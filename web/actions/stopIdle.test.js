@@ -3,10 +3,9 @@ import {SKILL_IDS} from 'shared/skills.js';
 import stopIdle from './stopIdle.js';
 
 
-const {removeAction, removeFighterActionCmd, setState} = vi.hoisted(() => ({
+const {removeAction, removeFighterActionCmd} = vi.hoisted(() => ({
   removeAction: vi.fn(),
   removeFighterActionCmd: vi.fn(),
-  setState: vi.fn(),
 }));
 
 vi.mock('@/actions/websockets/index.js', () => ({
@@ -19,13 +18,6 @@ vi.mock('@/data/fighterActions.js', () => ({
   },
 }));
 
-vi.mock('@/data/fighter.js', () => ({
-  default: {
-    getState: () => ({idling: {key: 'train-begging'}}),
-    setState: (...args) => setState(...args),
-  },
-}));
-
 describe('stopIdle', () => {
   afterEach(() => {
     vi.clearAllMocks();
@@ -35,7 +27,6 @@ describe('stopIdle', () => {
     stopIdle({skillKey: 'begging'});
 
     expect(removeAction).toHaveBeenCalledWith(SKILL_IDS.begging);
-    expect(setState).toHaveBeenCalledWith({idling: false});
     expect(removeFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
 
@@ -43,7 +34,6 @@ describe('stopIdle', () => {
     stopIdle({skillKey: 'invalid'});
 
     expect(removeAction).not.toHaveBeenCalled();
-    expect(setState).not.toHaveBeenCalled();
     expect(removeFighterActionCmd).not.toHaveBeenCalled();
   });
 });

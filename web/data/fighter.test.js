@@ -16,7 +16,7 @@ describe('useFighterStore', () => {
     expect(fighter.race).toBe(initialRace);
     expect(fighter.anima).toBe(BaseStats[initialRace].stats.anima);
     expect(fighter.durability).toBe(BaseStats[initialRace].stats.durability);
-    expect(fighter.innateStrength).toBe(BaseStats[initialRace].stats.innateStrength);
+    expect(fighter.vigor).toBe(BaseStats[initialRace].stats.vigor);
     expect(fighter.reach).toBe(BaseStats[initialRace].stats.reach);
     expect(fighter.speed).toBe(BaseStats[initialRace].stats.speed);
     expect(fighter.vitality).toBe(BaseStats[initialRace].stats.vitality);
@@ -41,19 +41,6 @@ describe('useFighterStore', () => {
     expect(trainedFighter.defense).toBeCloseTo(1.4142135623730951);
     expect(trainedFighter.health).toBe(3);
     expect(trainedFighter.power).toBeCloseTo(2.8284271247461903);
-  });
-
-  it('ticks idle training actions through the Zustand store', () => {
-    const fighter = useFighterStore.getState();
-
-    fighter.idle('train-strength', () => useFighterStore.getState().train('strength'));
-    fighter.tick(1001);
-
-    const idlingFighter = useFighterStore.getState();
-
-    expect(idlingFighter.strength).toBe(2);
-    expect(idlingFighter.idling.delta).toBe(1);
-    expect(idlingFighter.power).toBe(0);
   });
 
   it('does not replace fight idling with a new idle action', () => {

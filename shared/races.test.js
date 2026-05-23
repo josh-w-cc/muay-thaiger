@@ -10,12 +10,12 @@ describe('RACES', () => {
       {
         id: 1,
         name: 'Tiger',
-        stats: {anima: 1, durability: 1, innateStrength: 2, reach: 2, speed: 1, vitality: 2},
+        stats: {anima: 1, durability: 1, reach: 2, speed: 1, vigor: 2, vitality: 2},
       },
       {
         id: 2,
         name: 'Snow Leopard',
-        stats: {anima: 2, durability: 2, innateStrength: 1, reach: 1, speed: 2, vitality: 1},
+        stats: {anima: 2, durability: 2, reach: 1, speed: 2, vigor: 1, vitality: 1},
       },
     ]);
   });

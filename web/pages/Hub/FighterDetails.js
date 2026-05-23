@@ -8,9 +8,9 @@ export default function FighterDetails() {
   const raceName = BaseStats[fighter.race]?.name ?? '—';
   const ageHours = getFighterAgeHours(fighter.createdAt);
   const fields = [
-    {label: 'Age', value: ageHours !== null ? `${ageHours}h` : '—'},
     {label: 'Name', value: fighter.displayName || '—'},
     {label: 'Race', value: raceName},
+    {label: 'Age', value: ageHours !== null ? `${ageHours}h` : '—'},
   ];
 
   return (
@@ -30,5 +30,5 @@ function getFighterAgeHours(createdAt) {
     return null;
   }
   const ms = Date.now() - new Date(createdAt).getTime();
-  return Math.floor(ms / (1000 * 60 * 60));
+  return Math.max(0, Math.floor(ms / (1000 * 60 * 60)));
 }

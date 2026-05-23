@@ -9,7 +9,7 @@ export const SEED_FIGHTERS = [
     id: 1,
     player_id: 1,
     race: 1,
-    stats: {anima: 1, durability: 1, innateStrength: 2, reach: 2, speed: 1, strength: 0, vitality: 2},
+    stats: {anima: 1, durability: 1, reach: 2, speed: 1, strength: 0, vigor: 2, vitality: 2},
   },
   {
     display_name: 'SaklekSilva Jr',
@@ -17,7 +17,7 @@ export const SEED_FIGHTERS = [
     id: 2,
     player_id: 2,
     race: 2,
-    stats: {anima: 2, durability: 2, innateStrength: 1, reach: 1, speed: 2, strength: 0, vitality: 1},
+    stats: {anima: 2, durability: 2, reach: 1, speed: 2, strength: 0, vigor: 1, vitality: 1},
   },
 ];
 

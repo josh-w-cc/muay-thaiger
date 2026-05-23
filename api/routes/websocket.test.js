@@ -7,13 +7,14 @@ import {syncPlayerState} from '../logic/player-state.js';
 import websocketRoutes, {onConnect, onMessage} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
-const RACE_DEFAULT_STATS = {anima: 2, durability: 2, innateStrength: 1, reach: 1, speed: 2, vitality: 1};
+const RACE_DEFAULT_STATS = {anima: 2, durability: 2, reach: 1, speed: 2, vigor: 1, vitality: 1};
 
 describe('WebSocket /ws/connect', () => {
   it('sends an auth request when the websocket connects', async () => {
     const {knex} = mockKnex(undefined);
     const app = Fastify();
     app.decorate('db', knex);
+    app.decorate('websocketConnections', new Set());
     await app.register(websocket);
     await app.register(websocketRoutes, {prefix: '/ws'});
     await app.ready();
@@ -30,6 +31,7 @@ describe('WebSocket /ws/connect', () => {
     const {knex} = mockKnex([{display_name: 'Player-12345678', id: 1, token: 'generated-token'}]);
     const app = Fastify();
     app.decorate('db', knex);
+    app.decorate('websocketConnections', new Set());
     await app.register(websocket);
     await app.register(websocketRoutes, {prefix: '/ws'});
     await app.ready();
@@ -57,6 +59,7 @@ describe('WebSocket /ws/connect', () => {
     const {knex} = mockKnexMulti([player, currentFighter, [], currentFighter, [created]]);
     const app = Fastify();
     app.decorate('db', knex);
+    app.decorate('websocketConnections', new Set());
     await app.register(websocket);
     await app.register(websocketRoutes, {prefix: '/ws'});
     await app.ready();
@@ -83,8 +86,9 @@ describe('WebSocket /ws/connect', () => {
       readyState: 0,
       send,
     };
+    const connections = new Set();
 
-    onConnect(socket, {});
+    onConnect(socket, {}, connections);
     await waitForImmediate();
 
     assert.equal(send.calls.length, 0);
@@ -195,8 +199,8 @@ describe('WebSocket /ws/connect', () => {
         skill: 0,
         speed: 2,
         stamina: 0,
-        innateStrength: 1,
         strength: 0,
+        vigor: 1,
         vitality: 1,
       },
     });
