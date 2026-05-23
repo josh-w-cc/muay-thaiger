@@ -3,7 +3,8 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
-import websocketRoutes, {onConnect, onMessage, syncPlayerState} from '../routes/websocket.js';
+import {syncPlayerState} from '../logic/player-state.js';
+import websocketRoutes, {onConnect, onMessage} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
 const RACE_DEFAULT_STATS = {anima: 2, durability: 2, innateStrength: 1, reach: 1, speed: 2, vitality: 1};
