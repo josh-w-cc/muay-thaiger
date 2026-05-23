@@ -44,18 +44,6 @@ describe('registerFighterAction', () => {
     assert.equal(send.calls.length, 0);
   });
 
-  it('does not respond when websocket is not open', async () => {
-    const send = createCallTracker();
-    const socket = {OPEN: 1, readyState: 0, send};
-
-    await assert.rejects(
-      registerFighterAction({}, {action_id: 1}, socket),
-      {message: 'invalid-idle-message'},
-    );
-
-    assert.equal(send.calls.length, 0);
-  });
-
   it('does not respond when the player has no current fighter', async () => {
     const send = createCallTracker();
     const create = createCallTracker();

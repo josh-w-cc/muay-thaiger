@@ -9,7 +9,7 @@ const SKILLS_BY_ACTION_ID = Object.freeze(
 
 export async function registerFighterAction({fighterActions, fighters}, message, socket) {
   const normalizedMessage = normalizeMessage(message);
-  if(!normalizedMessage || !isSocketReady(socket)) {
+  if(!hasValidMessageAndPlayer(normalizedMessage, socket)) {
     throw createCommandError('invalid-idle-message');
   }
   const currentFighter = await fighters.findCurrentByPlayerID(socket.player.id);
@@ -26,8 +26,8 @@ export async function registerFighterAction({fighterActions, fighters}, message,
   }));
 }
 
-function isSocketReady(socket) {
-  return socket.player && socket.readyState === socket.OPEN;
+function hasValidMessageAndPlayer(message, socket) {
+  return message && socket?.player;
 }
 
 function isValidAction(fighter, actionID) {
