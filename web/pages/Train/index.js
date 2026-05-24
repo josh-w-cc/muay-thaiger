@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import {SKILL_IDS} from 'shared/skills.js';
 import Button from '@/components/Button.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
@@ -58,7 +59,9 @@ function RegimenRow({actionEnabled, name, progress, skillKey}) {
       <div className={css.regimenProgress}>
         <RegimenProgress actionEnabled={actionEnabled} name={name} progress={progress} />
         <Button
-          className={actionEnabled ? `${css.actionButton} ${css.idleActive}` : css.actionButton}
+          className={classNames(css.actionButton, {
+            [css.idleActive]: actionEnabled,
+          })}
           onClick={() => onActionButtonClick({actionEnabled, skillKey})}
         >
           {actionEnabled ? 'STOP' : 'IDLE'}
@@ -76,7 +79,9 @@ function RegimenProgress({actionEnabled, name, progress}) {
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={progress}
-        className={actionEnabled ? css.regimenProgressTrack : `${css.regimenProgressTrack} ${css.regimenProgressTrackDisabled}`}
+        className={classNames(css.regimenProgressTrack, {
+          [css.regimenProgressTrackDisabled]: !actionEnabled,
+        })}
         role="progressbar"
       >
         <div className={css.regimenProgressFill} style={{width: `${progress}%`}} />
