@@ -1,7 +1,7 @@
 import {deepEqual, equal} from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {SKILL_DEFINITIONS, SKILL_IDS, SKILL_SEED_ACTIONS} from './skills.js';
+import {SKILL_DEFINITIONS, SKILL_IDS, SKILLS_BY_ACTION_ID, SKILL_SEED_ACTIONS} from './skills.js';
 
 
 describe('SKILL_IDS', () => {
@@ -17,6 +17,14 @@ describe('SKILL_IDS', () => {
       walking: 2,
       yoga: 5,
     });
+  });
+});
+
+describe('SKILLS_BY_ACTION_ID', () => {
+  it('maps each action id to its skill definition', () => {
+    for(const [key, id] of Object.entries(SKILL_IDS)) {
+      equal(SKILLS_BY_ACTION_ID[id], SKILL_DEFINITIONS[key]);
+    }
   });
 });
 

@@ -1,11 +1,5 @@
-import {SKILL_DEFINITIONS, SKILL_IDS} from 'shared/skills.js';
+import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
 import {createCommandError} from './command-errors.js';
-
-const SKILLS_BY_ACTION_ID = Object.freeze(
-  Object.fromEntries(
-    Object.entries(SKILL_IDS).map(([skillKey, id]) => [id, SKILL_DEFINITIONS[skillKey]]),
-  ),
-);
 
 export async function registerFighterAction({fighterActions, fighters}, message, playerID) {
   const normalizedMessage = normalizeMessage(message, 'invalid-idle-message');
