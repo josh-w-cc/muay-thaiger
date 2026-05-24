@@ -5,6 +5,7 @@
 
 .navigationButton {
   border-color: transparent;
+  position: relative;
 }
 
 .navigationButton:hover {
@@ -14,4 +15,18 @@
 
 .navigationImage {
   max-height: 120px;
+  position: relative;
+  z-index: 1;
+}
+
+.navigationMask {
+  background-color: var(--color-red);
+  inset: 0;
+  mask-image: var(--navigation-mask);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  opacity: 0.6;
+  pointer-events: none;
+  position: absolute;
 }

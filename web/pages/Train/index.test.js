@@ -69,6 +69,8 @@ describe('Train', () => {
   it('shows only idle controls for skills', () => {
     const {container} = render(<Train />);
 
+    expect(screen.queryByRole('heading', {name: 'Stats:'})).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: 'Training Regimen:'})).not.toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'IDLE'})).toBeInTheDocument();
     expect(container.querySelector('br')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Once'})).not.toBeInTheDocument();
@@ -79,7 +81,7 @@ describe('Train', () => {
     fighterActions.actions = [{action_id: SKILL_IDS.begging, id: 6, progress: 77}];
     render(<Train />);
 
-    expect(screen.getByRole('heading', {name: 'Training Regimen:'})).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: 'Training Regimen:'})).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: 'Skills:'})).not.toBeInTheDocument();
     expect(screen.getByText('฿egging')).toBeInTheDocument();
 
