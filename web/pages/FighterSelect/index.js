@@ -16,17 +16,19 @@ function FighterSelect({races = []}) {
   return (
     <>
       <h1>Choose your fighter:</h1>
-      {races.map((race) => (
-        <FighterCard
-          key={race.id}
-          name={race.name}
-          image={getRaceImage(race.id)}
-          stats={race.stats}
-          onSelect={() => {
-            selectFighter(`${race.id}`);
-          }}
-        />
-      ))}
+      <div className={css.cards}>
+        {races.map((race) => (
+          <FighterCard
+            key={race.id}
+            name={race.name}
+            image={getRaceImage(race.id)}
+            stats={race.stats}
+            onSelect={() => {
+              selectFighter(`${race.id}`);
+            }}
+          />
+        ))}
+      </div>
     </>
   );
 }
