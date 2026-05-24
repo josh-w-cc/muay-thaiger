@@ -1,17 +1,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {render, screen} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import HubButton from './assets/HubButton.png';
 import ShopButton from './assets/ShopButton.png';
 import TrainButton from './assets/TrainButton.png';
 
 
-const {navigate} = vi.hoisted(() => ({
+const {navigate, scrollIntoView} = vi.hoisted(() => ({
   navigate: vi.fn(),
+  scrollIntoView: vi.fn(),
 }));
 let pathname = '/hub';
+const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
 
 vi.mock('react-router-dom', () => ({
   useLocation: () => ({pathname}),
@@ -19,9 +21,25 @@ vi.mock('react-router-dom', () => ({
 }));
 
 describe('Header', () => {
+  beforeAll(() => {
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoView,
+      writable: true,
+    });
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
     pathname = '/hub';
+  });
+
+  afterAll(() => {
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: originalScrollIntoView,
+      writable: true,
+    });
   });
 
   it('renders navigation buttons and uses colocated game images', async () => {
@@ -54,6 +72,22 @@ describe('Header', () => {
 
     expect(source).toMatch(/\.navigationButton:hover\s*{[^}]*background-color:\s*transparent;/s);
   });
+
+  it('defines horizontal mobile header scrolling with snap spacing', () => {
+    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
+    const modulePath = path.join(directoryPath, 'Header.module.css');
+    const mobileHeaderPattern = /@media\(max-width:\s*768px\)\s*{[\s\S]*\.header\s*{[\s\S]*overflow-x:\s*auto;[\s\S]*scroll-snap-type:\s*x mandatory;/s;
+    const mobileNavigationButtonPattern = new RegExp(
+      '@media\\(max-width:\\s*768px\\)\\s*{[\\s\\S]*\\.navigationButton\\s*{[\\s\\S]*'
+      + 'flex:\\s*0 0 calc\\(100% - var\\(--space-md\\) \\* 2\\);[\\s\\S]*scroll-snap-align:\\s*center;',
+      's',
+    );
+    const source = fs.readFileSync(modulePath, 'utf8');
+
+    expect(source).toMatch(mobileHeaderPattern);
+    expect(source).toMatch(mobileNavigationButtonPattern);
+  });
+
   it('marks the current route button as active', async () => {
     pathname = '/train';
     const {default: Header} = await import('./Header.js');
@@ -62,5 +96,16 @@ describe('Header', () => {
 
     expect(screen.getByRole('button', {name: 'Train'})).toHaveAttribute('aria-current', 'page');
     expect(screen.getByRole('button', {name: 'Hub'})).not.toHaveAttribute('aria-current');
+  });
+
+  it('scrolls the active route button into view', async () => {
+    pathname = '/shop';
+    const {default: Header} = await import('./Header.js');
+
+    render(<Header />);
+
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({block: 'nearest', inline: 'center'});
+    });
   });
 });
