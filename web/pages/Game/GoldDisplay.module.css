@@ -1,0 +1,19 @@
+.goldDisplay {
+  align-items: baseline;
+  color: var(--color-gold);
+  display: flex;
+  font-weight: 700;
+  gap: var(--space-xs);
+  left: var(--space-md);
+  position: fixed;
+  top: var(--space-md);
+  z-index: 10;
+}
+
+.symbol {
+  font-size: 1.1em;
+}
+
+.amount {
+  font-size: 1em;
+}
