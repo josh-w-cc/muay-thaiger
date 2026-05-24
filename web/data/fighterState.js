@@ -14,39 +14,6 @@ export function getInitialState() {
   };
 }
 
-export function isFightIdling(idling) {
-  return idling?.key?.substring(0, 5).toUpperCase() === 'FIGHT';
-}
-
-export function mergeState(state, updates) {
-  const nextState = {
-    ...state,
-    ...updates,
-  };
-
-  return {...nextState, ...getCombatState(nextState)};
-}
-
-export function getTrainingEffect({anima, vigor, speed, vitality}) {
-  return {
-    agility: speed,
-    constitution: vitality,
-    skill: anima,
-    stamina: vitality,
-    strength: vigor,
-  };
-}
-
-function getCombatState({agility, constitution, durability, reach, skill, stamina, strength}) {
-  return {
-    apm: Math.max(0, Math.log(agility)) + Math.sqrt(skill),
-    attack: Math.max(0, Math.log(stamina)) + Math.sqrt(agility) + skill + reach,
-    defense: Math.max(0, Math.log(agility)) + Math.sqrt(stamina) + skill,
-    health: stamina + constitution * constitution + durability * durability,
-    power: (strength + agility) * Math.sqrt(stamina) + skill,
-  };
-}
-
 export function getSelectionState(id) {
   const baseSelectionState = getBaseSelectionState(BaseStats[id].stats);
   const nextState = {race: id, ...baseSelectionState};
@@ -71,4 +38,37 @@ function getBaseSelectionState({anima, durability, vigor, reach, speed, vitality
     strength: 0,
     vitality,
   };
+}
+
+function getCombatState({agility, constitution, durability, reach, skill, stamina, strength}) {
+  return {
+    apm: Math.max(0, Math.log(agility)) + Math.sqrt(skill),
+    attack: Math.max(0, Math.log(stamina)) + Math.sqrt(agility) + skill + reach,
+    defense: Math.max(0, Math.log(agility)) + Math.sqrt(stamina) + skill,
+    health: stamina + constitution * constitution + durability * durability,
+    power: (strength + agility) * Math.sqrt(stamina) + skill,
+  };
+}
+
+export function getTrainingEffect({anima, vigor, speed, vitality}) {
+  return {
+    agility: speed,
+    constitution: vitality,
+    skill: anima,
+    stamina: vitality,
+    strength: vigor,
+  };
+}
+
+export function isFightIdling(idling) {
+  return idling?.key?.substring(0, 5).toUpperCase() === 'FIGHT';
+}
+
+export function mergeState(state, updates) {
+  const nextState = {
+    ...state,
+    ...updates,
+  };
+
+  return {...nextState, ...getCombatState(nextState)};
 }
