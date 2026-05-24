@@ -1,10 +1,15 @@
+.cards {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: 1fr;
+}
+
 .outer {
   display: flex;
   flex-direction: column;
   height: 20vh;
   max-height: 300px;
   min-height: 225px;
-  max-width: 50%;
   overflow: hidden;
 }
 
@@ -18,4 +23,10 @@
 
 .stats {
   text-align: left;
+}
+
+@media(min-width: 768px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

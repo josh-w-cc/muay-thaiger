@@ -58,8 +58,13 @@ describe('FighterSelect', () => {
 
     render(<FighterSelect races={races} />);
 
+    const pageHeading = screen.getByRole('heading', {name: 'Choose your fighter:'});
+    const racesContainer = pageHeading.nextElementSibling;
+
     expect(screen.getByRole('heading', {name: 'Tiger'})).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: 'Snow Leopard Prime'})).toBeInTheDocument();
+    expect(racesContainer).toContainElement(screen.getByRole('heading', {name: 'Tiger'}));
+    expect(racesContainer).toContainElement(screen.getByRole('heading', {name: 'Snow Leopard Prime'}));
 
     const tigerContainer = screen.getByRole('heading', {name: 'Tiger'}).closest('div');
     const snowLeopardContainer = screen.getByRole('heading', {name: 'Snow Leopard Prime'}).closest('div');
