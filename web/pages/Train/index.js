@@ -58,7 +58,7 @@ function RegimenRow({actionEnabled, name, progress, skillKey}) {
       <div className={css.regimenProgress}>
         <RegimenProgress actionEnabled={actionEnabled} name={name} progress={progress} />
         <Button
-          className={actionEnabled ? css.idleActive : ''}
+          className={actionEnabled ? `${css.actionButton} ${css.idleActive}` : css.actionButton}
           onClick={() => onActionButtonClick({actionEnabled, skillKey})}
         >
           {actionEnabled ? 'STOP' : 'IDLE'}
