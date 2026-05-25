@@ -1,5 +1,5 @@
 import {applyTrainingActions, createTrainingTimeline, getScheduledTrainingActions} from 'shared/training.js';
-export {findLatestAction, getActionTime} from 'shared/trainingTimeline.js';
+export {getActionTime} from 'shared/trainingTimeline.js';
 
 import useFighterStore from '@/data/fighter.js';
 

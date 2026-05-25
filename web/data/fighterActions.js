@@ -1,12 +1,13 @@
 import {create} from 'zustand';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
-import {findLatestAction, getScheduledActions, runFighterActionTick} from './fighterActionTick.js';
+import {getActionTime, getScheduledActions, runFighterActionTick} from './fighterActionTick.js';
 
 const useFighterActionsStore = create((set) => ({
   ...getInitialState(),
   addAction: (action) => set((state) => {
-    return {actions: [...state.actions, normalizeAction(action)]};
+    const nextActions = [...state.actions, normalizeAction(action)];
+    return {actions: setActionProgress(nextActions)};
   }),
   removeAction: (actionID) => set((state) => ({
     actions: setActionProgress(state.actions.filter((action) => action.action_id !== actionID)),
@@ -49,24 +50,36 @@ function setScheduledActionProgress(progressByIndex, scheduledActions, nowMs) {
   if(!scheduledActions.length) {
     return;
   }
-  const {latestActionIndex, latestActionTime} = findLatestAction(scheduledActions, nowMs);
-  let remainingMs = nowMs - latestActionTime;
+  const orderedActions = getOrderedScheduledActions(scheduledActions, nowMs);
+  const oldestActionTime = getActionTime(orderedActions[0].action, nowMs);
+  let remainingMs = nowMs - oldestActionTime;
   if(remainingMs <= 0) {
     return;
   }
-  let actionIndex = (latestActionIndex + 1) % scheduledActions.length;
-  while(remainingMs >= scheduledActions[actionIndex].durationMs) {
-    remainingMs -= scheduledActions[actionIndex].durationMs;
+  let actionIndex = 0;
+  while(remainingMs >= orderedActions[actionIndex].durationMs) {
+    remainingMs -= orderedActions[actionIndex].durationMs;
     actionIndex = (actionIndex + 1) % scheduledActions.length;
   }
   progressByIndex.set(
-    scheduledActions[actionIndex].index,
-    Math.floor(remainingMs / scheduledActions[actionIndex].durationMs * 100),
+    orderedActions[actionIndex].index,
+    Math.floor(remainingMs / orderedActions[actionIndex].durationMs * 100),
   );
 }
 
 function tickActions(actions) {
   return setActionProgress(runFighterActionTick(actions));
+}
+
+function getOrderedScheduledActions(actions, nowMs) {
+  return [...actions].sort((leftAction, rightAction) => {
+    const leftTime = getActionTime(leftAction.action, nowMs);
+    const rightTime = getActionTime(rightAction.action, nowMs);
+    if(leftTime === rightTime) {
+      return leftAction.index - rightAction.index;
+    }
+    return leftTime - rightTime;
+  });
 }
 
 TickerState.addListener(() => useFighterActionsStore.getState().tick());

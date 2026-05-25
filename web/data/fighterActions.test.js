@@ -46,7 +46,7 @@ describe('useFighterActionsStore', () => {
 
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 6, id: 2, progress: 50}),
+      expect.objectContaining({action_id: 6, id: 2, progress: 75}),
       expect.objectContaining({action_id: 2, id: 3, progress: 0}),
     ]);
   });
@@ -91,7 +91,7 @@ describe('useFighterActionsStore', () => {
 
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 6, id: 2, progress: 50}),
+      expect.objectContaining({action_id: 6, id: 2, progress: 75}),
     ]);
   });
 

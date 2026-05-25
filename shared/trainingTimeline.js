@@ -24,25 +24,13 @@ function createTimelineFromScheduledActions({getTouchedAtKey, getTouchedAtValue,
   if(!scheduledActions.length) {
     return createEmptyTimeline();
   }
-  const {latestActionIndex, latestActionTime} = findLatestAction(scheduledActions, nowMs);
-  const remainingMs = nowMs - latestActionTime;
+  const orderedActions = getOrderedActions(scheduledActions, nowMs);
+  const oldestActionTime = getActionTime(orderedActions[0].action, nowMs);
+  const remainingMs = nowMs - oldestActionTime;
   if(remainingMs <= 0) {
     return createEmptyTimeline();
   }
-  return runTrainingCycle(scheduledActions, latestActionIndex, nowMs, remainingMs, getTouchedAtKey, getTouchedAtValue);
-}
-
-export function findLatestAction(actions, nowMs) {
-  let latestActionIndex = 0;
-  let latestActionTime = getActionTime(actions[latestActionIndex].action, nowMs);
-  for(let index = 1; index < actions.length; index += 1) {
-    const actionTime = getActionTime(actions[index].action, nowMs);
-    if(actionTime >= latestActionTime) {
-      latestActionIndex = index;
-      latestActionTime = actionTime;
-    }
-  }
-  return {latestActionIndex, latestActionTime};
+  return runTrainingCycle(orderedActions, oldestActionTime, remainingMs, getTouchedAtKey, getTouchedAtValue);
 }
 
 export function getActionTime(action, nowMs) {
@@ -53,23 +41,36 @@ export function getActionTime(action, nowMs) {
   return actionTime;
 }
 
-function runTrainingCycle(actions, latestActionIndex, nowMs, startingRemainingMs, getTouchedAtKey, getTouchedAtValue) {
+function runTrainingCycle(actions, oldestActionTime, startingRemainingMs, getTouchedAtKey, getTouchedAtValue) {
   const appliedActions = [];
   const touchedAtByActionKey = new Map();
-  let actionIndex = (latestActionIndex + 1) % actions.length;
+  let actionIndex = 0;
   let remainingMs = startingRemainingMs;
+  let elapsedMs = 0;
   while(true) {
     const action = actions[actionIndex];
     if(remainingMs < action.durationMs) {
       break;
     }
     remainingMs -= action.durationMs;
+    elapsedMs += action.durationMs;
     appliedActions.push(action.action);
-    const touchedAt = new Date(nowMs - remainingMs);
+    const touchedAt = new Date(oldestActionTime + elapsedMs);
     touchedAtByActionKey.set(getTouchedAtKey(action.action, action.index), getTouchedAtValue(touchedAt));
     actionIndex = (actionIndex + 1) % actions.length;
   }
   return {appliedActions, touchedAtByActionKey};
+}
+
+function getOrderedActions(actions, nowMs) {
+  return [...actions].sort((leftAction, rightAction) => {
+    const leftTime = getActionTime(leftAction.action, nowMs);
+    const rightTime = getActionTime(rightAction.action, nowMs);
+    if(leftTime === rightTime) {
+      return leftAction.index - rightAction.index;
+    }
+    return leftTime - rightTime;
+  });
 }
 
 function createEmptyTimeline() {
