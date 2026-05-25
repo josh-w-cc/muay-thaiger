@@ -2,13 +2,6 @@ import Fallback from './Fallback.js';
 import {GameLayout, loader as gameLayoutLoader} from './index.js';
 
 
-function lazyPage(importFn) {
-  return async () => {
-    const mod = await importFn();
-    return {Component: mod.default};
-  };
-}
-
 const gameLayoutRoute = {
   children: [
     {path: 'fight', lazy: lazyPage(() => import('./Fight/index.js'))},
@@ -22,3 +15,10 @@ const gameLayoutRoute = {
 };
 
 export default gameLayoutRoute;
+
+function lazyPage(importFn) {
+  return async () => {
+    const mod = await importFn();
+    return {Component: mod.default};
+  };
+}
