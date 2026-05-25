@@ -12,6 +12,18 @@ export default function addHugeNumber(value, addend) {
   return addIntegerStrings(normalizeIntegerString(value), normalizedAddend);
 }
 
+export function hugeNumberToDouble(value) {
+  if(typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+
+  if(!isIntegerString(value)) {
+    return value;
+  }
+
+  return Number(normalizeIntegerString(value));
+}
+
 function addIntegerStrings(left, right) {
   let carry = 0;
   let sum = '';

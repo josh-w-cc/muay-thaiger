@@ -1,7 +1,7 @@
 import {strictEqual} from 'node:assert';
 import {describe, it} from 'node:test';
 
-import addHugeNumber from './addHugeNumber.js';
+import addHugeNumber, {hugeNumberToDouble} from './addHugeNumber.js';
 
 describe('addHugeNumber', () => {
   it('adds a number to an integer string', () => {
@@ -34,5 +34,30 @@ describe('addHugeNumber', () => {
 
   it('returns the original value for non-numeric addends', () => {
     strictEqual(addHugeNumber('100', 'not-a-number'), '100');
+  });
+});
+
+describe('hugeNumberToDouble', () => {
+  it('converts normalized integer strings to numbers', () => {
+    strictEqual(hugeNumberToDouble('100000'), 100000);
+  });
+
+  it('converts very large integer strings to doubles', () => {
+    strictEqual(hugeNumberToDouble('123456789012345678901234567890'), Number('123456789012345678901234567890'));
+  });
+
+  it('normalizes integer strings before converting', () => {
+    strictEqual(hugeNumberToDouble('+00099'), 99);
+  });
+
+  it('returns finite numeric values as-is', () => {
+    strictEqual(hugeNumberToDouble(123.45), 123.45);
+  });
+
+  it('returns non-integer-string values as-is', () => {
+    const value = {};
+
+    strictEqual(hugeNumberToDouble('not-a-number'), 'not-a-number');
+    strictEqual(hugeNumberToDouble(value), value);
   });
 });
