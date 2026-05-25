@@ -14,8 +14,6 @@ export function getInitialState() {
   };
 }
 
-export {getTrainingEffect} from 'shared/training.js';
-
 export function getSelectionState(id) {
   const baseSelectionState = getBaseSelectionState(BaseStats[id].stats);
   const nextState = {race: id, ...baseSelectionState};
