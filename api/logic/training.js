@@ -1,4 +1,5 @@
 import {applyTrainingAction, getTrainedStatValue} from 'shared/training.js';
+import {parseWholeBigInt} from 'shared/fighter-stats.js';
 import {createTrainingTimeline} from './training-timeline.js';
 
 export async function applyTraining({fighterActions, fighters}, fighter) {
@@ -25,9 +26,9 @@ async function touchAppliedActions(fighterActions, actions, touchedAtByActionID)
 
 function trainStats(actions, fighter) {
   const stats = {...fighter.stats};
-  let gold = fighter.gold;
+  let gold = parseWholeBigInt(fighter.gold) ?? 0n;
   const proxy = createFighterProxy(stats, (amount) => {
-    gold = (BigInt(gold) + BigInt(amount)).toString();
+    gold += parseWholeBigInt(amount) ?? 0n;
   });
   for(const action of actions) {
     applyTrainingAction(action, proxy);

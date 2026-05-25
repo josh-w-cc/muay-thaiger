@@ -1,12 +1,11 @@
+import {createEnemyFromBet, createFightFighter, getFightBet} from './fight-state-helpers.js';
+
 export const FIGHT_STATES = {IN_PROGRESS: 1, LOST: 2, NOT_STARTED: 0, WON: 3};
 const {IN_PROGRESS: FIGHT_IN_PROGRESS, LOST: FIGHT_LOST, NOT_STARTED: FIGHT_NOT_STARTED, WON: FIGHT_WON} = FIGHT_STATES;
 
-
 export function getInitialState() {
-  return {bet: 0, fighters: [], messages: [], state: FIGHT_NOT_STARTED};
+  return {bet: 0n, fighters: [], messages: [], state: FIGHT_NOT_STARTED};
 }
-
-
 export function generateAttackFn({get, set}) {
   return (who) => {
     const {fighters} = get();
@@ -20,8 +19,6 @@ export function generateAttackFn({get, set}) {
     return result.message;
   };
 }
-
-
 export function generateFinishFn({get, set}) {
   return () => {
     const {bet, fighters, state} = get();
@@ -33,40 +30,36 @@ export function generateFinishFn({get, set}) {
     set(getInitialState());
   };
 }
-
-
 export function generateForGoldFn({get, set}) {
   return (fighter, risk) => {
-    const riskPercentages = [0.001, 0.1, 0.25, 0.5, 1];
-    const bet = Math.max(100, Math.floor(fighter.gold * riskPercentages[risk]));
-    const enemy = {
-      apm: Math.max(4, Math.log(bet)) * (Math.random() + 0.5),
-      attack: Math.sqrt(bet) * (Math.random() + 0.5),
-      defense: Math.sqrt(bet) * (Math.random() + 0.5),
-      health: bet * 10 * (Math.random() + 0.5),
-      power: bet * (Math.random() + 0.5),
-      stamina: bet * Math.sqrt(bet) * (Math.random() + 0.5),
-    };
+    const riskPercentages = [
+      {denominator: 1000n, numerator: 1n},
+      {denominator: 10n, numerator: 1n},
+      {denominator: 4n, numerator: 1n},
+      {denominator: 2n, numerator: 1n},
+      {denominator: 1n, numerator: 1n},
+    ];
+    const {denominator, numerator} = riskPercentages[risk];
+    const bet = getFightBet(fighter.gold, numerator, denominator);
+    const enemy = createEnemyFromBet(bet);
     set({bet});
     get().start(fighter, enemy);
   };
 }
-
-
 export function generateStartFn({get, set}) {
   return (left, right) => {
+    const [leftFighter, rightFighter] = [createFightFighter(left), createFightFighter(right)];
+
     set({
       fighters: [
-        {currentAPM: 0, currentHealth: left.health, currentStamina: left.stamina, stats: left},
-        {currentAPM: 0, currentHealth: right.health, currentStamina: right.stamina, stats: right},
+        {currentAPM: 0, currentHealth: leftFighter.health, currentStamina: leftFighter.stamina, stats: leftFighter},
+        {currentAPM: 0, currentHealth: rightFighter.health, currentStamina: rightFighter.stamina, stats: rightFighter},
       ],
       state: FIGHT_IN_PROGRESS,
     });
     left.idle('FIGHT', (delta) => get().tick(delta));
   };
 }
-
-
 export function generateTickFn({get, set}) {
   return (amount) => {
     const {fighters, messages} = get();
@@ -85,8 +78,6 @@ export function generateTickFn({get, set}) {
     }
   };
 }
-
-
 function runFightCycles({fighters, messages, state}) {
   while(fighters[0].currentAPM > 1 || fighters[1].currentAPM > 1) {
     [0, 1].filter((fighterIndex) => fighters[fighterIndex].currentAPM > 1).forEach((fighterIndex) => {
@@ -98,8 +89,6 @@ function runFightCycles({fighters, messages, state}) {
   }
   return state;
 }
-
-
 function attackFighter({fighters, state, who}) {
   const [you, them] = who ? [fighters[1], fighters[0]] : [fighters[0], fighters[1]];
   if(you.stats.attack * Math.random() <= them.stats.defense * Math.random()) {
@@ -107,8 +96,6 @@ function attackFighter({fighters, state, who}) {
   }
   return resolveHit({damage: you.stats.power * (Math.random() + 0.5), state, them, who});
 }
-
-
 function resolveHit({damage, state, them, who}) {
   them.currentHealth -= damage;
   if(them.currentHealth < 0) {

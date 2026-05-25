@@ -4,20 +4,20 @@ import {describe, it} from 'node:test';
 import {applyTraining} from './training.js';
 
 const BASE_STATS = {
-  agility: 0,
-  anima: 1,
-  constitution: 0,
-  vigor: 1,
-  skill: 0,
-  speed: 1,
-  stamina: 0,
-  strength: 0,
-  vitality: 1,
+  agility: 0n,
+  anima: 1n,
+  constitution: 0n,
+  vigor: 1n,
+  skill: 0n,
+  speed: 1n,
+  stamina: 0n,
+  strength: 0n,
+  vitality: 1n,
 };
 
 describe('applyTraining', () => {
   it('returns the original fighter with empty actions when there are no active actions', async () => {
-    const fighter = {id: 1, gold: '0', stats: BASE_STATS};
+    const fighter = {id: 1, gold: 0n, stats: BASE_STATS};
     const fighterActions = {listByFighterID: async () => []};
     const fighters = {};
 
@@ -28,7 +28,7 @@ describe('applyTraining', () => {
   });
 
   it('applies stamina training for the walking action', async () => {
-    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, vitality: 2}};
+    const fighter = {id: 1, gold: 0n, stats: {...BASE_STATS, vitality: 2n}};
     const actions = [{action_id: 2, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const touchCalls = [];
     const updateCalls = [];
@@ -46,11 +46,11 @@ describe('applyTraining', () => {
     await applyTraining({fighterActions, fighters}, fighter);
 
     assert.equal(updateCalls.length, 1);
-    assert.equal(updateCalls[0].data.stats.stamina, 2);
+    assert.equal(updateCalls[0].data.stats.stamina, 2n);
   });
 
   it('updates the fighter stats for multiple active actions', async () => {
-    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, anima: 2, vitality: 3}};
+    const fighter = {id: 1, gold: 0n, stats: {...BASE_STATS, anima: 2n, vitality: 3n}};
     const actions = [
       {action_id: 2, fighter_id: 1, id: 5, touched_at: getOffsetDate(-3000)},
       {action_id: 4, fighter_id: 1, id: 6, touched_at: getOffsetDate(-3000)},
@@ -70,12 +70,12 @@ describe('applyTraining', () => {
     await applyTraining({fighterActions, fighters}, fighter);
 
     assert.equal(updateCalls.length, 1);
-    assert.equal(updateCalls[0].stats.stamina, 6);
-    assert.equal(updateCalls[0].stats.constitution, 3);
+    assert.equal(updateCalls[0].stats.stamina, 6n);
+    assert.equal(updateCalls[0].stats.constitution, 3n);
   });
 
   it('trains strength using vigor rather than current strength', async () => {
-    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, vigor: 3, stamina: 120, strength: 5}};
+    const fighter = {id: 1, gold: 0n, stats: {...BASE_STATS, vigor: 3n, stamina: 120n, strength: 5n}};
     const actions = [{action_id: 5, fighter_id: 1, id: 5, touched_at: getOffsetDate(-3000)}];
     const updateCalls = [];
     const fighterActions = {
@@ -92,11 +92,11 @@ describe('applyTraining', () => {
     await applyTraining({fighterActions, fighters}, fighter);
 
     assert.equal(updateCalls.length, 1);
-    assert.equal(updateCalls[0].stats.strength, 8);
+    assert.equal(updateCalls[0].stats.strength, 8n);
   });
 
   it('touches applied actions using sequential skill timing', async () => {
-    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, strength: 2, vitality: 2}};
+    const fighter = {id: 1, gold: 0n, stats: {...BASE_STATS, strength: 2n, vitality: 2n}};
     const now = Date.now();
     const actions = [
       {action_id: 3, fighter_id: 1, id: 5, touched_at: new Date(now - 10000).toISOString()},
@@ -120,7 +120,7 @@ describe('applyTraining', () => {
   });
 
   it('increases gold for win-type actions', async () => {
-    const fighter = {id: 1, gold: '0', stats: BASE_STATS};
+    const fighter = {id: 1, gold: 0n, stats: BASE_STATS};
     const actions = [{action_id: 1, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const updateCalls = [];
     const fighterActions = {
@@ -136,11 +136,11 @@ describe('applyTraining', () => {
 
     await applyTraining({fighterActions, fighters}, fighter);
 
-    assert.equal(updateCalls[0].gold, '1');
+    assert.equal(updateCalls[0].gold, 1n);
   });
 
   it('uses BigInt arithmetic for large gold values', async () => {
-    const fighter = {id: 1, gold: '9007199254740993', stats: BASE_STATS};
+    const fighter = {id: 1, gold: 9007199254740993n, stats: BASE_STATS};
     const actions = [{action_id: 1, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const updateCalls = [];
     const fighterActions = {
@@ -156,12 +156,12 @@ describe('applyTraining', () => {
 
     await applyTraining({fighterActions, fighters}, fighter);
 
-    assert.equal(updateCalls[0].gold, '9007199254740994');
+    assert.equal(updateCalls[0].gold, 9007199254740994n);
   });
 
   it('returns the updated fighter and actions from the fighters model', async () => {
-    const fighter = {id: 1, gold: '0', stats: BASE_STATS};
-    const updatedFighter = {id: 1, gold: '0', stats: {...BASE_STATS, stamina: 1}};
+    const fighter = {id: 1, gold: 0n, stats: BASE_STATS};
+    const updatedFighter = {id: 1, gold: 0n, stats: {...BASE_STATS, stamina: 1n}};
     const actions = [{action_id: 2, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const fighterActions = {
       listByFighterID: async () => actions,
@@ -176,7 +176,7 @@ describe('applyTraining', () => {
   });
 
   it('skips unknown action IDs without error', async () => {
-    const fighter = {id: 1, gold: '0', stats: BASE_STATS};
+    const fighter = {id: 1, gold: 0n, stats: BASE_STATS};
     const actions = [{action_id: 999, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const updateCalls = [];
     const touchCalls = [];
@@ -194,7 +194,7 @@ describe('applyTraining', () => {
     await applyTraining({fighterActions, fighters}, fighter);
 
     assert.equal(touchCalls.length, 0);
-    assert.equal(updateCalls[0].stats.stamina, 0);
+    assert.equal(updateCalls[0].stats.stamina, 0n);
   });
 });
 

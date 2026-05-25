@@ -1,5 +1,6 @@
 import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import useFighterStore from '@/data/fighter.js';
+import {parseWholeBigInt} from 'shared/fighter-stats.js';
 
 import css from './Hub.module.css';
 
@@ -40,7 +41,7 @@ export default function Stats() {
 
 function getStatValue({fighter, key}) {
   if(key === 'gold') {
-    return fighter.gold / 100;
+    return (parseWholeBigInt(fighter.gold) ?? 0n) / 100n;
   }
   return fighter[key];
 }

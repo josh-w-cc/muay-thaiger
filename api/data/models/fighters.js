@@ -5,16 +5,23 @@ import {
   generateRemoveFn,
   generateUpdateFn,
 } from '../utils/crud.js';
+import {normalizeFighter} from 'shared/fighter-stats.js';
 
 
 export default function fighters(db) {
+  const create = generateCreateFn(db, 'fighters');
+  const find = generateFindFn(db, 'fighters');
+  const findCurrentByPlayerID = generateFindCurrentByPlayerIDFn(db);
+  const list = generateListFn(db, 'fighters', 'display_name');
+  const update = generateUpdateFn(db, 'fighters');
+
   return {
-    create: generateCreateFn(db, 'fighters'),
-    find: generateFindFn(db, 'fighters'),
-    findCurrentByPlayerID: generateFindCurrentByPlayerIDFn(db),
-    list: generateListFn(db, 'fighters', 'display_name'),
+    create: async (data) => normalizeFighter(await create(data)),
+    find: async (id) => normalizeFighter(await find(id)),
+    findCurrentByPlayerID: async (playerId) => normalizeFighter(await findCurrentByPlayerID(playerId)),
+    list: async () => (await list()).map(normalizeFighter),
     remove: generateRemoveFn(db, 'fighters'),
-    update: generateUpdateFn(db, 'fighters'),
+    update: async (id, data) => normalizeFighter(await update(id, data)),
   };
 }
 

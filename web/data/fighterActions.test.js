@@ -172,7 +172,7 @@ describe('useFighterActionsStore', () => {
 
     useFighterActionsStore.getState().tick();
 
-    expect(useFighterStore.getState().stamina).toBe(6);
+    expect(useFighterStore.getState().stamina).toBe(6n);
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({
         action_id: 2,
@@ -183,6 +183,6 @@ describe('useFighterActionsStore', () => {
 
     useFighterActionsStore.getState().tick();
 
-    expect(useFighterStore.getState().stamina).toBe(6);
+    expect(useFighterStore.getState().stamina).toBe(6n);
   });
 });

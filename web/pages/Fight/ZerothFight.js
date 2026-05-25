@@ -1,6 +1,7 @@
 import React from 'react';
 
 import useFighterStore from '@/data/fighter.js';
+import {parseWholeBigInt} from 'shared/fighter-stats.js';
 
 
 import css from './ZerothFight.module.css';
@@ -14,7 +15,7 @@ function ZerothFight() {
   if(event) {
     return event;
   }
-  if(fighter.gold < 100) {
+  if((parseWholeBigInt(fighter.gold) ?? 0n) < 100n) {
     setEvent(
       <div className={css.message}>
         Come back when you have the
@@ -53,5 +54,5 @@ export default ZerothFight;
 
 
 export function needsZerothFight(fighter) {
-  return (fighter.gold < 100 || !fighter.strength || !fighter.stamina);
+  return ((parseWholeBigInt(fighter.gold) ?? 0n) < 100n || !fighter.strength || !fighter.stamina);
 }

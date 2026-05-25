@@ -1,4 +1,5 @@
 import {RACES} from 'shared/races.js';
+import {normalizeFighterStats, parseWholeBigInt} from 'shared/fighter-stats.js';
 
 import {getSelectionState} from './fighterState.js';
 
@@ -34,11 +35,7 @@ function getServerDisplayName(fighter) {
 }
 
 function getServerGold(fighter) {
-  const nextGold = Number(fighter?.gold);
-  if(Number.isFinite(nextGold)) {
-    return nextGold;
-  }
-  return 0;
+  return parseWholeBigInt(fighter?.gold) ?? 0n;
 }
 
 function getServerID(fighter) {
@@ -56,8 +53,5 @@ function getServerRace(fighter) {
 }
 
 function getServerStats(fighter) {
-  if(fighter?.stats) {
-    return fighter.stats;
-  }
-  return {};
+  return normalizeFighterStats(fighter?.stats);
 }

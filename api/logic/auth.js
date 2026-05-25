@@ -1,13 +1,16 @@
 import {randomUUID} from 'node:crypto';
+
+import {normalizeFighterStats} from 'shared/fighter-stats.js';
+
 import {createCommandError} from './command-errors.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
 const DEFAULT_TRAINING_STATS = {
-  agility: 0,
-  constitution: 0,
-  skill: 0,
-  stamina: 0,
-  strength: 0,
+  agility: 0n,
+  constitution: 0n,
+  skill: 0n,
+  stamina: 0n,
+  strength: 0n,
 };
 
 export async function authenticate({fighters, players, races}, message) {
@@ -49,5 +52,5 @@ async function createPlayer({fighters, players, races}, race) {
 }
 
 function getDefaultStats({stats = {}}) {
-  return {...DEFAULT_TRAINING_STATS, ...stats};
+  return normalizeFighterStats({...DEFAULT_TRAINING_STATS, ...stats});
 }

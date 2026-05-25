@@ -1,3 +1,5 @@
+import 'shared/bigInt.js';
+
 import fightersModel from '../data/models/fighters.js';
 
 

@@ -1,4 +1,5 @@
 import {getTrainedStatValue} from 'shared/training.js';
+import {parseWholeBigInt} from 'shared/fighter-stats.js';
 import {create} from 'zustand';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
@@ -45,7 +46,7 @@ function generateSelectFn(set) {
 }
 
 function generateSpendFn(set) {
-  return (gold) => set((state) => mergeState(state, {gold: state.gold - gold}));
+  return (gold) => set((state) => mergeState(state, {gold: state.gold - (parseWholeBigInt(gold) ?? 0n)}));
 }
 
 function generateTickFn({get, set}) {
@@ -74,7 +75,7 @@ function generateTrainFn({get, set}) {
 }
 
 function generateWinFn(set) {
-  return (gold) => set((state) => mergeState(state, {gold: state.gold + gold}));
+  return (gold) => set((state) => mergeState(state, {gold: state.gold + (parseWholeBigInt(gold) ?? 0n)}));
 }
 
 TickerState.addListener((delta) => useFighterStore.getState().tick(delta));

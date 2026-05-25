@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 
 
-const fighter = vi.hoisted(() => ({gold: 0}));
+const fighter = vi.hoisted(() => ({gold: 0n}));
 
 vi.mock('@/data/fighter.js', () => ({
   default: () => fighter,
@@ -10,7 +10,7 @@ vi.mock('@/data/fighter.js', () => ({
 describe('GoldDisplay', () => {
   afterEach(() => {
     vi.clearAllMocks();
-    fighter.gold = 0;
+    fighter.gold = 0n;
   });
 
   it('renders the baht symbol', async () => {
@@ -30,7 +30,7 @@ describe('GoldDisplay', () => {
   });
 
   it('displays gold as baht with cents', async () => {
-    fighter.gold = 500;
+    fighter.gold = 500n;
     const {default: GoldDisplay} = await import('./GoldDisplay.js');
 
     render(<GoldDisplay />);
@@ -39,7 +39,7 @@ describe('GoldDisplay', () => {
   });
 
   it('shows fractional baht values with cents', async () => {
-    fighter.gold = 199;
+    fighter.gold = 199n;
     const {default: GoldDisplay} = await import('./GoldDisplay.js');
 
     render(<GoldDisplay />);
@@ -48,7 +48,7 @@ describe('GoldDisplay', () => {
   });
 
   it('hides cents when baht has at least five digits', async () => {
-    fighter.gold = 1000099;
+    fighter.gold = 1000099n;
     const {default: GoldDisplay} = await import('./GoldDisplay.js');
 
     render(<GoldDisplay />);
@@ -57,7 +57,7 @@ describe('GoldDisplay', () => {
   });
 
   it('formats large gold amounts using exponential notation', async () => {
-    fighter.gold = 10000000;
+    fighter.gold = 10000000n;
     const {default: GoldDisplay} = await import('./GoldDisplay.js');
 
     render(<GoldDisplay />);

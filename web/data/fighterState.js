@@ -1,4 +1,5 @@
 import {RACES} from 'shared/races.js';
+import {normalizeFighterStats, toSafeNumber} from 'shared/fighter-stats.js';
 
 import BaseStats from './baseStats.js';
 
@@ -9,7 +10,7 @@ export function getInitialState() {
   return {
     createdAt: null,
     displayName: '',
-    gold: 0,
+    gold: 0n,
     id: null,
     idling: false,
     ...getSelectionState(initialRace),
@@ -27,7 +28,7 @@ export function getSelectionState(id) {
 }
 
 function getBaseSelectionState({anima, durability, vigor, reach, speed, vitality}) {
-  return {
+  return normalizeFighterStats({
     agility: 0,
     anima,
     constitution: 0,
@@ -39,16 +40,24 @@ function getBaseSelectionState({anima, durability, vigor, reach, speed, vitality
     stamina: 0,
     strength: 0,
     vitality,
-  };
+  });
 }
 
 function getCombatState({agility, constitution, durability, reach, skill, stamina, strength}) {
+  const agilityValue = toSafeNumber(agility);
+  const constitutionValue = toSafeNumber(constitution);
+  const durabilityValue = toSafeNumber(durability);
+  const reachValue = toSafeNumber(reach);
+  const skillValue = toSafeNumber(skill);
+  const staminaValue = toSafeNumber(stamina);
+  const strengthValue = toSafeNumber(strength);
+
   return {
-    apm: Math.max(0, Math.log(agility)) + Math.sqrt(skill),
-    attack: Math.max(0, Math.log(stamina)) + Math.sqrt(agility) + skill + reach,
-    defense: Math.max(0, Math.log(agility)) + Math.sqrt(stamina) + skill,
-    health: stamina + constitution * constitution + durability * durability,
-    power: (strength + agility) * Math.sqrt(stamina) + skill,
+    apm: Math.max(0, Math.log(agilityValue)) + Math.sqrt(skillValue),
+    attack: Math.max(0, Math.log(staminaValue)) + Math.sqrt(agilityValue) + skillValue + reachValue,
+    defense: Math.max(0, Math.log(agilityValue)) + Math.sqrt(staminaValue) + skillValue,
+    health: staminaValue + constitutionValue * constitutionValue + durabilityValue * durabilityValue,
+    power: (strengthValue + agilityValue) * Math.sqrt(staminaValue) + skillValue,
   };
 }
 

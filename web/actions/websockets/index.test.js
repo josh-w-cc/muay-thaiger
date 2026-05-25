@@ -140,12 +140,12 @@ describe('player websocket helpers', () => {
     usePlayerStore.getState().setPlayerID(999);
     useFighterActionsStore.getState().setActions([{id: 5}]);
     useFighterStore.setState({
-      agility: 99,
-      gold: 999,
+      agility: 99n,
+      gold: 999n,
       id: 55,
       race: '1',
-      stamina: 99,
-      strength: 99,
+      stamina: 99n,
+      strength: 99n,
     });
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
@@ -173,12 +173,12 @@ describe('player websocket helpers', () => {
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({action_id: 2, id: 11}),
     ]);
-    expect(useFighterStore.getState().gold).toBe(250);
+    expect(useFighterStore.getState().gold).toBe(250n);
     expect(useFighterStore.getState().id).toBe(9);
     expect(useFighterStore.getState().race).toBe('2');
-    expect(useFighterStore.getState().agility).toBe(6);
-    expect(useFighterStore.getState().stamina).toBe(7);
-    expect(useFighterStore.getState().strength).toBe(8);
+    expect(useFighterStore.getState().agility).toBe(6n);
+    expect(useFighterStore.getState().stamina).toBe(7n);
+    expect(useFighterStore.getState().strength).toBe(8n);
     expect(send).not.toHaveBeenCalled();
   });
 
