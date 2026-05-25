@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {render, screen} from '@testing-library/react';
 
 
@@ -54,5 +57,14 @@ describe('GoldDisplay', () => {
     render(<GoldDisplay />);
 
     expect(screen.getByText('1.00e+5')).toBeInTheDocument();
+  });
+
+  it('aligns baht display to the desktop header edge and keeps mobile spacing', () => {
+    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
+    const modulePath = path.join(directoryPath, 'GoldDisplay.module.css');
+    const source = fs.readFileSync(modulePath, 'utf8');
+
+    expect(source).toMatch(/\.goldDisplay\s*{[\s\S]*left:\s*var\(--space-xl\);/s);
+    expect(source).toMatch(/@media\(max-width:\s*768px\)\s*{[\s\S]*\.goldDisplay\s*{[\s\S]*left:\s*var\(--space-md\);/s);
   });
 });
