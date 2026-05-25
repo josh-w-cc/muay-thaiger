@@ -97,9 +97,11 @@ describe('Train', () => {
     fighterActions.actions = [];
     render(<Train />);
     const button = screen.getByRole('button', {name: 'IDLE'});
+    const progressLabel = screen.getByText('0%');
 
     expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '0');
     expect(button.className).toContain('actionButton');
+    expect(progressLabel.className).toContain('regimenProgressLabelDisabled');
   });
 
   it('wraps the train sections in a page container with extra top spacing', () => {
