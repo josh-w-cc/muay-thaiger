@@ -1,0 +1,35 @@
+.leaderboard {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.leaderboard th {
+  color: var(--color-gold);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-sm);
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.leaderboardRank {
+  text-align: center;
+  width: 2rem;
+}
+
+.leaderboardRow {
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.leaderboardRow td {
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.leaderboardRow:first-child td:first-child {
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
+.leaderboardWins {
+  text-align: right;
+}
