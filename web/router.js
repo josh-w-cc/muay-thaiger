@@ -22,10 +22,10 @@ const router = createBrowserRouter([
       {element: <Game />, index: true, loader: fighterSelectLoader},
       {
         children: [
-          {path: 'fight', lazy: lazyPage(() => import('./pages/Fight/index.js'))},
-          {path: 'hub', lazy: lazyPage(() => import('./pages/Hub/index.js'))},
-          {path: 'shop', lazy: lazyPage(() => import('./pages/Shop/index.js'))},
-          {path: 'train', lazy: lazyPage(() => import('./pages/Train/index.js'))},
+          {path: 'fight', lazy: lazyPage(() => import('./pages/GameRoutes/Fight/index.js'))},
+          {path: 'hub', lazy: lazyPage(() => import('./pages/GameRoutes/Hub/index.js'))},
+          {path: 'shop', lazy: lazyPage(() => import('./pages/GameRoutes/Shop/index.js'))},
+          {path: 'train', lazy: lazyPage(() => import('./pages/GameRoutes/Train/index.js'))},
           {path: '*', element: <Fallback />},
         ],
         Component: GameLayout,
