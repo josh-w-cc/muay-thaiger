@@ -3,6 +3,47 @@ import {describe, it} from 'node:test';
 
 import {SKILL_DEFINITIONS, SKILL_IDS, SKILLS_BY_ACTION_ID, SKILL_SEED_ACTIONS} from './skills.js';
 
+const EXPECTED_SKILL_ACTION_CALLS = {
+  begging: [
+    ['win', 1],
+  ],
+  breathwork: [
+    ['train', 'constitution', 1],
+    ['train', 'stamina', 1],
+  ],
+  calisthenics: [
+    ['train', 'stamina', 5],
+    ['train', 'strength', 3],
+    ['train', 'constitution', 1],
+  ],
+  gymnastics: [
+    ['train', 'stamina', 5],
+    ['train', 'strength', 5],
+    ['train', 'constitution', 1],
+    ['train', 'agility', 15],
+  ],
+  laboring: [
+    ['win', 100],
+    ['train', 'stamina', 1],
+    ['train', 'strength', 1],
+    ['train', 'constitution', 1],
+  ],
+  running: [
+    ['train', 'stamina', 25],
+  ],
+  shadowBoxing: [
+    ['train', 'stamina', 3],
+  ],
+  walking: [
+    ['train', 'stamina', 1],
+  ],
+  yoga: [
+    ['train', 'agility', 1],
+    ['train', 'strength', 1],
+    ['train', 'constitution', 1],
+  ],
+};
+
 
 describe('SKILL_IDS', () => {
   it('defines the expected ids for all train skills', () => {
@@ -30,54 +71,25 @@ describe('SKILLS_BY_ACTION_ID', () => {
 
 describe('SKILL_SEED_ACTIONS', () => {
   it('creates action seed data from the shared skill definitions', () => {
-    deepEqual(SKILL_SEED_ACTIONS, [
-      {id: SKILL_IDS.begging, name: '฿egging', type: 'train'},
-      {id: SKILL_IDS.walking, name: 'Walking', type: 'train'},
-      {id: SKILL_IDS.shadowBoxing, name: 'Shadow Boxing', type: 'train'},
-      {id: SKILL_IDS.breathwork, name: 'Breathwork', type: 'train'},
-      {id: SKILL_IDS.yoga, name: 'Yoga', type: 'train'},
-      {id: SKILL_IDS.calisthenics, name: 'Calisthenics', type: 'train'},
-      {id: SKILL_IDS.laboring, name: 'La฿oring', type: 'train'},
-      {id: SKILL_IDS.running, name: 'Running', type: 'train'},
-      {id: SKILL_IDS.gymnastics, name: 'Gymnastics', type: 'train'},
-    ]);
+    deepEqual(
+      SKILL_SEED_ACTIONS,
+      Object.entries(SKILL_DEFINITIONS).map(([key, skill]) => ({id: SKILL_IDS[key], name: skill.name, type: 'train'})),
+    );
   });
 });
 
 describe('SKILL_DEFINITIONS', () => {
   it('applies each skill action to fighter stats and gold', () => {
-    const calls = [];
-    const fighter = {
-      train: (stat, amount = 1) => calls.push(['train', stat, amount]),
-      win: (amount) => calls.push(['win', amount]),
-    };
-
-    for(const skill of Object.values(SKILL_DEFINITIONS)) {
+    for(const [key, skill] of Object.entries(SKILL_DEFINITIONS)) {
+      const calls = [];
+      const fighter = {
+        train: (stat, amount = 1) => calls.push(['train', stat, amount]),
+        win: (amount) => calls.push(['win', amount]),
+      };
       skill.action(fighter);
-    }
 
-    deepEqual(calls, [
-      ['win', 1],
-      ['train', 'stamina', 1],
-      ['train', 'stamina', 3],
-      ['train', 'constitution', 1],
-      ['train', 'stamina', 1],
-      ['train', 'agility', 1],
-      ['train', 'strength', 1],
-      ['train', 'constitution', 1],
-      ['train', 'stamina', 5],
-      ['train', 'strength', 3],
-      ['train', 'constitution', 1],
-      ['win', 100],
-      ['train', 'stamina', 1],
-      ['train', 'strength', 1],
-      ['train', 'constitution', 1],
-      ['train', 'stamina', 25],
-      ['train', 'stamina', 5],
-      ['train', 'strength', 5],
-      ['train', 'constitution', 1],
-      ['train', 'agility', 15],
-    ]);
+      deepEqual(calls, EXPECTED_SKILL_ACTION_CALLS[key]);
+    }
   });
 
   it('checks skill requirements at each threshold', () => {

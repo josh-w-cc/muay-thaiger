@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 
-import {MOVE_IDS, SKILL_IDS} from '../data/seed-data/seeds/001-fighters.js';
+import {MOVE_IDS, SEED_ACTIONS} from '../data/seed-data/seeds/001-fighters.js';
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
 import testReseedRoutes from '../routes/test-reseed.js';
 
@@ -31,17 +31,7 @@ describe('POST /api/test/reseed', () => {
     assert.equal(calls[3][0], 'table');
     assert.equal(calls[3][1], 'actions');
     assert.equal(calls[4][0], 'insert');
-    assert.deepEqual(calls[4][1].map(({id}) => id), [
-      SKILL_IDS.begging,
-      SKILL_IDS.walking,
-      SKILL_IDS.shadowBoxing,
-      SKILL_IDS.breathwork,
-      SKILL_IDS.yoga,
-      SKILL_IDS.calisthenics,
-      SKILL_IDS.laboring,
-      SKILL_IDS.running,
-      SKILL_IDS.gymnastics,
-    ]);
+    assert.deepEqual(calls[4][1].map(({id}) => id), SEED_ACTIONS.map(({id}) => id));
     assert.equal(calls[5][0], 'table');
     assert.equal(calls[5][1], 'players');
     assert.equal(calls[6][0], 'insert');
