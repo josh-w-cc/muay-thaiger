@@ -5,8 +5,8 @@ import {
   applyTrainingAction,
   applyTrainingActions,
   createTrainingTimeline,
-  findLatestAction,
-  getActionTime,
+  findTouchedAtTransfer,
+  getMaxTouchedAtMs,
   getScheduledTrainingActions,
   getTrainedStatValue,
   getTrainingDurationMs,
@@ -150,20 +150,83 @@ describe('getTrainedStatValue', () => {
   });
 });
 
-describe('timeline helper exports', () => {
-  it('exposes findLatestAction from the shared training module', () => {
-    const actions = [
-      {action: {touched_at: '2026-01-01T00:00:00.000Z'}, durationMs: 1000, index: 0},
-      {action: {touched_at: '2026-01-01T00:00:01.000Z'}, durationMs: 1000, index: 1},
-    ];
-
-    deepEqual(findLatestAction(actions, Date.parse('2026-01-01T00:00:03.000Z')), {
-      latestActionIndex: 1,
-      latestActionTime: Date.parse('2026-01-01T00:00:01.000Z'),
-    });
+describe('getMaxTouchedAtMs', () => {
+  it('returns the max touched_at value in milliseconds', () => {
+    equal(getMaxTouchedAtMs([
+      {touched_at: '2026-01-01T00:00:00.005Z'},
+      {touched_at: '2026-01-01T00:00:00.111Z'},
+      {touched_at: '2026-01-01T00:00:00.050Z'},
+    ]), Date.parse('2026-01-01T00:00:00.111Z'));
   });
 
-  it('exposes getActionTime from the shared training module', () => {
-    equal(getActionTime({created_at: 'invalid-date'}, 12345), 12345);
+  it('ignores actions without a valid touched_at', () => {
+    equal(getMaxTouchedAtMs([
+      {touched_at: '2026-01-01T00:00:00.005Z'},
+      {},
+    ]), Date.parse('2026-01-01T00:00:00.005Z'));
+  });
+
+  it('returns null when no actions have a valid touched_at', () => {
+    equal(getMaxTouchedAtMs([{}, {}]), null);
+  });
+});
+
+describe('findTouchedAtTransfer', () => {
+  it('returns null when remaining actions list is empty', () => {
+    equal(findTouchedAtTransfer([{touched_at: '2026-01-01T00:00:00.111Z'}], []), null);
+  });
+
+  it('returns null when removed actions have no valid touched_at', () => {
+    equal(findTouchedAtTransfer([{}], [{touched_at: '2026-01-01T00:00:00.005Z'}]), null);
+  });
+
+  it('returns null when remaining max is already >= removed max', () => {
+    const result = findTouchedAtTransfer(
+      [{touched_at: '2026-01-01T00:00:00.005Z'}],
+      [{touched_at: '2026-01-01T00:00:00.111Z'}],
+    );
+
+    equal(result, null);
+  });
+
+  it('returns targetAction and touchedAt Date when transfer is needed', () => {
+    const remaining = [{touched_at: '2026-01-01T00:00:00.005Z'}];
+    const result = findTouchedAtTransfer(
+      [{touched_at: '2026-01-01T00:00:00.111Z'}],
+      remaining,
+    );
+
+    deepEqual(result, {targetAction: remaining[0], touchedAt: new Date('2026-01-01T00:00:00.111Z')});
+  });
+
+  it('selects remaining action with latest touched_at as target', () => {
+    const oldest = {touched_at: '2026-01-01T00:00:00.005Z'};
+    const newest = {touched_at: '2026-01-01T00:00:00.050Z'};
+    const result = findTouchedAtTransfer(
+      [{touched_at: '2026-01-01T00:00:00.111Z'}],
+      [oldest, newest],
+    );
+
+    deepEqual(result?.targetAction, newest);
+  });
+
+  it('skips remaining actions without a valid touched_at when selecting target', () => {
+    const valid = {touched_at: '2026-01-01T00:00:00.050Z'};
+    const result = findTouchedAtTransfer(
+      [{touched_at: '2026-01-01T00:00:00.111Z'}],
+      [{}, valid],
+    );
+
+    deepEqual(result?.targetAction, valid);
+  });
+
+  it('uses first remaining action as target when none have a valid touched_at', () => {
+    const first = {};
+    const result = findTouchedAtTransfer(
+      [{touched_at: '2026-01-01T00:00:00.111Z'}],
+      [first, {}],
+    );
+
+    deepEqual(result?.targetAction, first);
   });
 });

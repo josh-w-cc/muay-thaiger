@@ -1,8 +1,9 @@
 import {create} from 'zustand';
-import {findLatestAction, getActionTime, getScheduledTrainingActions} from 'shared/training.js';
+import {getScheduledTrainingActions} from 'shared/training.js';
+import {findLatestAction, getActionTime} from 'shared/trainingTimeline.js';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
-import {runFighterActionTick} from './fighterActionTick.js';
+import {runFighterActionTick, transferLatestTouchedAt} from './fighterActionTick.js';
 
 const useFighterActionsStore = create((set) => ({
   ...getInitialState(),
@@ -10,9 +11,11 @@ const useFighterActionsStore = create((set) => ({
     const nextActions = [...state.actions, normalizeAction(action)];
     return {actions: setActionProgress(nextActions)};
   }),
-  removeAction: (actionID) => set((state) => ({
-    actions: setActionProgress(state.actions.filter((action) => action.action !== actionID)),
-  })),
+  removeAction: (actionID) => set((state) => {
+    const removedActions = state.actions.filter((action) => action.action === actionID);
+    const remainingActions = state.actions.filter((action) => action.action !== actionID);
+    return {actions: setActionProgress(transferLatestTouchedAt(removedActions, remainingActions))};
+  }),
   setActions: (actions) => set({actions: setActionProgress(actions.map((action) => normalizeAction(action)))}),
   tick: () => set((state) => ({actions: tickActions(state.actions)})),
 }));

@@ -45,6 +45,7 @@ describe('registerFighterAction', () => {
       const fighterActions = {
         listByFighterID: async () => [{action: 2, id: 8}, {action: 6, id: 9}, {action: 2, id: 10}],
         remove,
+        touch: createCallTracker(),
       };
       const fighters = {findCurrentByPlayerID: async () => ({id: 3, player: 8, retired: false})};
 
@@ -52,6 +53,59 @@ describe('registerFighterAction', () => {
 
       assert.deepEqual(result, {action_id: 2});
       assert.deepEqual(remove.calls, [[8], [10]]);
+    });
+
+    it('transfers touched_at to next remaining action when removing the latest', async () => {
+      const touch = createCallTracker();
+      const fighterActions = {
+        listByFighterID: async () => [
+          {action: 2, id: 8, touched_at: '2026-01-01T00:00:00.111Z'},
+          {action: 6, id: 9, touched_at: '2026-01-01T00:00:00.005Z'},
+          {action: 2, id: 10, touched_at: '2026-01-01T00:00:00.050Z'},
+        ],
+        remove: createCallTracker(),
+        touch,
+      };
+      const fighters = {findCurrentByPlayerID: async () => ({id: 3, player: 8, retired: false})};
+
+      await unregisterFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
+
+      assert.equal(touch.calls.length, 1);
+      assert.equal(touch.calls[0][0], 9);
+      assert.deepEqual(touch.calls[0][1], new Date('2026-01-01T00:00:00.111Z'));
+    });
+
+    it('does not touch remaining actions when removed action does not have the latest touched_at', async () => {
+      const touch = createCallTracker();
+      const fighterActions = {
+        listByFighterID: async () => [
+          {action: 2, id: 8, touched_at: '2026-01-01T00:00:00.005Z'},
+          {action: 6, id: 9, touched_at: '2026-01-01T00:00:00.111Z'},
+        ],
+        remove: createCallTracker(),
+        touch,
+      };
+      const fighters = {findCurrentByPlayerID: async () => ({id: 3, player: 8, retired: false})};
+
+      await unregisterFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
+
+      assert.equal(touch.calls.length, 0);
+    });
+
+    it('does not touch remaining actions when there are no remaining actions', async () => {
+      const touch = createCallTracker();
+      const fighterActions = {
+        listByFighterID: async () => [
+          {action: 2, id: 8, touched_at: '2026-01-01T00:00:00.111Z'},
+        ],
+        remove: createCallTracker(),
+        touch,
+      };
+      const fighters = {findCurrentByPlayerID: async () => ({id: 3, player: 8, retired: false})};
+
+      await unregisterFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
+
+      assert.equal(touch.calls.length, 0);
     });
 
     it('throws invalid-stop-message when action_id is missing', async () => {
