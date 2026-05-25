@@ -62,8 +62,8 @@ function generateTickFn({get, set}) {
 }
 
 function generateTrainFn({get, set}) {
-  return (stat, amount = 1) => {
-    const trainedStatValue = getTrainedStatValue(get(), stat, amount);
+  return (stat, multiplier = 1) => {
+    const trainedStatValue = getTrainedStatValue(get(), stat, multiplier);
     if(trainedStatValue === null) {
       console.error('Tried to train unknown stat:', stat);
       return;
