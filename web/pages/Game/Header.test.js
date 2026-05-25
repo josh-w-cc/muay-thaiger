@@ -76,7 +76,12 @@ describe('Header', () => {
   it('defines horizontal mobile header scrolling with snap spacing', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const modulePath = path.join(directoryPath, 'Header.module.css');
-    const mobileHeaderPattern = /@media\(max-width:\s*768px\)\s*{[\s\S]*\.header\s*{[\s\S]*overflow-x:\s*auto;[\s\S]*scroll-snap-type:\s*x mandatory;/s;
+    const mobileHeaderPattern = new RegExp(
+      '@media\\(max-width:\\s*768px\\)\\s*{[\\s\\S]*\\.header\\s*{[\\s\\S]*'
+      + 'overflow-x:\\s*auto;[\\s\\S]*right:\\s*var\\(--space-xl\\);[\\s\\S]*'
+      + 'scroll-snap-type:\\s*x mandatory;[\\s\\S]*width:\\s*calc\\(100% \\+ var\\(--space-xl\\) \\* 2\\);',
+      's',
+    );
     const mobileNavigationButtonPattern = new RegExp(
       '@media\\(max-width:\\s*768px\\)\\s*{[\\s\\S]*\\.navigationButton\\s*{[\\s\\S]*'
       + 'flex:\\s*0 0 calc\\(100% - var\\(--space-md\\) \\* 2\\);[\\s\\S]*scroll-snap-align:\\s*center;',

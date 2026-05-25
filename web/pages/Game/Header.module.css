@@ -33,11 +33,14 @@
 
 @media(max-width: 768px) {
   .header {
-    gap: var(--space-lg);
+    gap: var(--space-md);
     justify-content: flex-start;
     overflow-x: auto;
     padding-inline: var(--space-md);
+    position: relative;
+    right: var(--space-xl);
     scroll-snap-type: x mandatory;
+    width: calc(100% + var(--space-xl) * 2);
   }
 
   .navigationButton {
