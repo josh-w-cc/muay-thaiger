@@ -1,6 +1,6 @@
 import {parseGold} from '@/utils/gold.js';
 
-import {RACES} from './baseStats.js';
+import {RACES} from 'shared/races.js';
 import {getSelectionState} from './fighterState.js';
 
 
