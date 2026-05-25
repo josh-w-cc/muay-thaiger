@@ -53,6 +53,6 @@ describe('GoldDisplay', () => {
 
     render(<GoldDisplay />);
 
-    expect(screen.getByText('1.00e+5')).toBeInTheDocument();
+    expect(screen.getByText('1.00e5')).toBeInTheDocument();
   });
 });
