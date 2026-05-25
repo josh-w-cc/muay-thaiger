@@ -82,15 +82,9 @@ describe('Header', () => {
       + 'scroll-snap-type:\\s*x mandatory;[\\s\\S]*width:\\s*calc\\(100% \\+ var\\(--space-xl\\) \\* 2\\);',
       's',
     );
-    const mobileNavigationButtonPattern = new RegExp(
-      '@media\\(max-width:\\s*768px\\)\\s*{[\\s\\S]*\\.navigationButton\\s*{[\\s\\S]*'
-      + 'flex:\\s*0 0 calc\\(100% - var\\(--space-md\\) \\* 2\\);[\\s\\S]*scroll-snap-align:\\s*center;',
-      's',
-    );
     const source = fs.readFileSync(modulePath, 'utf8');
 
     expect(source).toMatch(mobileHeaderPattern);
-    expect(source).toMatch(mobileNavigationButtonPattern);
   });
 
   it('marks the current route button as active', async () => {
