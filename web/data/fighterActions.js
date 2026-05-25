@@ -1,15 +1,12 @@
 import {create} from 'zustand';
 
-import {getTrainingDurationMs} from 'shared/training.js';
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {findLatestAction, getScheduledActions, runFighterActionTick} from './fighterActionTick.js';
 
 const useFighterActionsStore = create((set) => ({
   ...getInitialState(),
   addAction: (action) => set((state) => {
-    const totalDurationMs = state.actions.reduce((sum, a) => sum + getTrainingDurationMs(a), 0);
-    const touchedAt = new Date(Date.now() + totalDurationMs).toISOString();
-    const nextActions = [...state.actions, normalizeAction({...action, touched_at: touchedAt})];
+    const nextActions = [...state.actions, normalizeAction(action)];
     return {actions: setActionProgress(nextActions)};
   }),
   removeAction: (actionID) => set((state) => ({
