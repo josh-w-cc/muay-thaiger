@@ -49,6 +49,27 @@ describe('applyTraining', () => {
     assert.equal(updateCalls[0].data.stats.stamina, 2);
   });
 
+  it('handles numeric string stats when applying training', async () => {
+    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, stamina: '0', vitality: '2'}};
+    const actions = [{action_id: 2, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
+    const updateCalls = [];
+    const fighterActions = {
+      listByFighterID: async () => actions,
+      touch: async () => null,
+    };
+    const fighters = {
+      update: async (id, data) => {
+        updateCalls.push({data, id});
+        return {...fighter, ...data};
+      },
+    };
+
+    await applyTraining({fighterActions, fighters}, fighter);
+
+    assert.equal(updateCalls.length, 1);
+    assert.equal(updateCalls[0].data.stats.stamina, 2);
+  });
+
   it('updates the fighter stats for multiple active actions', async () => {
     const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, anima: 2, vitality: 3}};
     const actions = [

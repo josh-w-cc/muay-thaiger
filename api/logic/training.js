@@ -44,7 +44,9 @@ function createFighterProxy(stats, onWin) {
       if(!Object.hasOwn(trainingEffect, stat)) {
         return;
       }
-      stats[stat] = (stats[stat] || 0) + trainingEffect[stat] * amount;
+      const currentValue = Number(stats[stat]) || 0;
+      const multiplier = Number(trainingEffect[stat]) || 0;
+      stats[stat] = currentValue + multiplier * amount;
     },
     win: onWin,
   };

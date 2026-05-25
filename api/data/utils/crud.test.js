@@ -24,6 +24,15 @@ describe('generateCreateFn', () => {
     assert.deepEqual(calls[1], ['insert', {name: 'Test'}]);
     assert.deepEqual(calls[2], ['returning', '*']);
   });
+
+  it('transforms the input before insert when a transformer is provided', async () => {
+    const {calls, knex} = mockKnex([{id: 1, name: 'Test'}]);
+    const create = generateCreateFn(knex, 'items', (data) => ({...data, status: 'active'}));
+
+    await create({name: 'Test'});
+
+    assert.deepEqual(calls[1], ['insert', {name: 'Test', status: 'active'}]);
+  });
 });
 
 describe('generateFindFn', () => {
@@ -98,5 +107,14 @@ describe('generateUpdateFn', () => {
     assert.deepEqual(calls[1], ['where', {id: 1}]);
     assert.deepEqual(calls[2], ['update', {name: 'Updated'}]);
     assert.deepEqual(calls[3], ['returning', '*']);
+  });
+
+  it('transforms the input before update when a transformer is provided', async () => {
+    const {calls, knex} = mockKnex([{id: 1, name: 'Updated'}]);
+    const update = generateUpdateFn(knex, 'items', (data) => ({...data, status: 'active'}));
+
+    await update(1, {name: 'Updated'});
+
+    assert.deepEqual(calls[2], ['update', {name: 'Updated', status: 'active'}]);
   });
 });
