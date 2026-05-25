@@ -33,7 +33,10 @@ export const SEED_ACTIONS = SKILL_SEED_ACTIONS;
 export {MOVE_IDS};
 export const SEED_MOVES = MOVE_SEED_MOVES;
 
-export const SEED_RACES = RACES;
+export const SEED_RACES = RACES.map((race) => ({
+  ...race,
+  stats: Object.fromEntries(Object.entries(race.stats).map(([key, value]) => [key, value.toString()])),
+}));
 
 export async function seed(knex) {
   await insertMoves(knex);

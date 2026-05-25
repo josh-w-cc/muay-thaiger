@@ -23,7 +23,7 @@ describe('useFighterStore', () => {
     expect(fighter.speed).toBe(BigInt(BaseStats[initialRace].stats.speed));
     expect(fighter.vitality).toBe(BigInt(BaseStats[initialRace].stats.vitality));
     expect(fighter.apm).toBe(0);
-    expect(fighter.attack).toBe(BaseStats[initialRace].stats.reach);
+    expect(fighter.attack).toBe(Number(BaseStats[initialRace].stats.reach));
     expect(fighter.defense).toBe(0);
     expect(fighter.health).toBe(BigInt(BaseStats[initialRace].stats.durability * BaseStats[initialRace].stats.durability));
     expect(fighter.power).toBe(0);
