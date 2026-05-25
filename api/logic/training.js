@@ -1,5 +1,8 @@
-import {applyTrainingActions, getTrainedStatValue} from 'shared/training.js';
-import {createTrainingTimeline} from './training-timeline.js';
+import {
+  applyTrainingActions,
+  createTrainingTimeline as createSharedTrainingTimeline,
+  getTrainedStatValue,
+} from 'shared/training.js';
 
 export async function applyTraining({fighterActions, fighters}, fighter) {
   const actions = await fighterActions.listByFighterID(fighter.id);
@@ -7,7 +10,7 @@ export async function applyTraining({fighterActions, fighters}, fighter) {
     return {actions, fighter};
   }
   const now = new Date();
-  const trainingTimeline = createTrainingTimeline(actions, now);
+  const trainingTimeline = getTrainingTimeline(actions, now);
   const {gold, stats} = trainStats(trainingTimeline.appliedActions, fighter);
   const updatedFighter = await fighters.update(fighter.id, {gold, stats});
   await touchAppliedActions(fighterActions, actions, trainingTimeline.touchedAtByActionID);
@@ -31,6 +34,14 @@ function trainStats(actions, fighter) {
   });
   applyTrainingActions(actions, proxy);
   return {gold, stats};
+}
+
+function getTrainingTimeline(actions, now) {
+  const {appliedActions, touchedAtByActionKey} = createSharedTrainingTimeline(actions, {
+    getTouchedAtKey: (action) => action.id,
+    now,
+  });
+  return {appliedActions, touchedAtByActionID: touchedAtByActionKey};
 }
 
 function createFighterProxy(stats, onWin) {
