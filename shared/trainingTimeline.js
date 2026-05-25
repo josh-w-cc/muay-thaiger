@@ -8,13 +8,22 @@ export function createTrainingTimeline(actions, {
   const scheduledActions = actions
     .map((action, index) => ({action, durationMs: getDurationMs(action), index}))
     .filter((action) => action.durationMs > 0);
+  return createTimelineFromScheduledActions({
+    getTouchedAtKey,
+    getTouchedAtValue,
+    nowMs,
+    scheduledActions,
+  });
+}
+
+function createTimelineFromScheduledActions({getTouchedAtKey, getTouchedAtValue, nowMs, scheduledActions}) {
   if(!scheduledActions.length) {
-    return {appliedActions: [], touchedAtByActionKey: new Map()};
+    return createEmptyTimeline();
   }
   const {latestActionIndex, latestActionTime} = findLatestAction(scheduledActions, nowMs);
   const remainingMs = nowMs - latestActionTime;
   if(remainingMs <= 0) {
-    return {appliedActions: [], touchedAtByActionKey: new Map()};
+    return createEmptyTimeline();
   }
   return runTrainingCycle(scheduledActions, latestActionIndex, nowMs, remainingMs, getTouchedAtKey, getTouchedAtValue);
 }
@@ -57,4 +66,8 @@ function runTrainingCycle(actions, latestActionIndex, nowMs, startingRemainingMs
     actionIndex = (actionIndex + 1) % actions.length;
   }
   return {appliedActions, touchedAtByActionKey};
+}
+
+function createEmptyTimeline() {
+  return {appliedActions: [], touchedAtByActionKey: new Map()};
 }
