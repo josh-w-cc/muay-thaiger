@@ -85,7 +85,7 @@ describe('Fight', () => {
     Object.assign(fightState, {
       fighters: [
         {currentHealth: '900', stats: {apm: '1', attack: '2', defense: '3', health: '4', power: '5', stamina: '6'}},
-        {currentHealth: '800', stats: {apm: '7', attack: '8', defense: '9', health: '10', power: '11', stamina: '12'}},
+        {currentHealth: '800', stats: {apm: '7', attack: '8', defense: '9', health: '100000', power: '11', stamina: '12'}},
       ],
       messages: ['msg-a', 'msg-b'],
       state: 'in-progress',
@@ -96,6 +96,7 @@ describe('Fight', () => {
 
     expect(attack).toHaveBeenCalledWith(0);
     expect(screen.getByRole('heading', {name: 'POW!'})).toBeInTheDocument();
+    expect(document.body).toHaveTextContent('1.00e5');
     expect(document.body).toHaveTextContent('Stanima:');
     expect(document.body).toHaveTextContent('msg-a');
     expect(document.body).toHaveTextContent('msg-b');
