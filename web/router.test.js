@@ -17,6 +17,18 @@ vi.mock('./pages/Game/index.js', () => ({
   default: () => <div />,
 }));
 
+vi.mock('./pages/GameLayout/router.js', () => ({
+  default: {
+    children: [
+      {path: 'fight'},
+      {path: 'hub'},
+      {path: 'shop'},
+      {path: 'train'},
+      {path: '*'},
+    ],
+  },
+}));
+
 describe('router', () => {
   afterEach(() => {
     vi.clearAllMocks();
