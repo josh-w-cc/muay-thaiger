@@ -53,20 +53,5 @@ function getTrainingSkill(action) {
 }
 
 function getStatValue(stats, stat) {
-  if(stats?.[stat] === undefined || stats?.[stat] === null) {
-    return 0n;
-  }
-  return toBigInt(stats[stat]);
-}
-
-function toBigInt(value) {
-  if(value === null || value === undefined || value === '') {
-    return 0n;
-  }
-  try {
-    return BigInt(value);
-  }
-  catch {
-    return 0n;
-  }
+  return stats?.[stat] ?? 0n;
 }

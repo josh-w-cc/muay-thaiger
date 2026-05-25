@@ -51,7 +51,7 @@ describe('useFightStore', () => {
     const fight = useFightStore.getState();
     expect(fighter.win).toHaveBeenCalledWith(250n);
     expect(fighter.spend).not.toHaveBeenCalled();
-    expect(fighter.train).toHaveBeenCalledWith('skill', 1);
+    expect(fighter.train).toHaveBeenCalledWith('skill', 1n);
     expect(fight.bet).toBe(0n);
     expect(fight.fighters).toEqual([]);
     expect(fight.messages).toEqual([]);
@@ -76,7 +76,7 @@ describe('useFightStore', () => {
     const fight = useFightStore.getState();
     expect(fighter.spend).toHaveBeenCalledWith(100n);
     expect(fighter.win).not.toHaveBeenCalled();
-    expect(fighter.train).toHaveBeenCalledWith('skill', 1);
+    expect(fighter.train).toHaveBeenCalledWith('skill', 1n);
     expect(fight.state).toBe(FIGHT_NOT_STARTED);
   });
 

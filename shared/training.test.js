@@ -132,7 +132,7 @@ describe('getTrainedStatValue', () => {
   });
 
   it('returns null for unknown training stats', () => {
-    equal(getTrainedStatValue({vitality: 7}, 'charisma'), null);
+    equal(getTrainedStatValue({vitality: 7n}, 'charisma'), null);
   });
 });
 

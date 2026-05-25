@@ -120,7 +120,7 @@ describe('applyTraining', () => {
   });
 
   it('touches applied actions by database id after building the shared timeline', async () => {
-    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, vitality: 2}};
+    const fighter = {id: 1, gold: 0n, stats: {...BASE_STATS, vitality: 2n}};
     const actions = [{action_id: 2, fighter_id: 1, id: 99, touched_at: getOffsetDate(-1000)}];
     const touchCalls = [];
     const fighterActions = {
