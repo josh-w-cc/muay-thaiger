@@ -56,7 +56,7 @@ describe('WebSocket /ws/connect', () => {
     const created = {id: 1, action_id: 2, fighter_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const currentFighter = {id: 3, player_id: 8, retired: false};
     const player = {id: 8, token: 'player-token'};
-    const {knex} = mockKnexMulti([player, currentFighter, [], currentFighter, [created]]);
+    const {knex} = mockKnexMulti([player, currentFighter, [], currentFighter, [], currentFighter, [created]]);
     const app = Fastify();
     app.decorate('db', knex);
     app.decorate('websocketConnections', new Set());
@@ -372,6 +372,39 @@ describe('WebSocket /ws/connect', () => {
       cmd: 'player_state',
       fighter,
     });
+  });
+
+  it('applies training before creating the fighter action on idle command', async () => {
+    const callOrder = [];
+    const existingAction = {action_id: 2, fighter_id: 9, id: 7, touched_at: new Date(Date.now() - 2000).toISOString()};
+    const fighter = {gold: '0', id: 9, player_id: 1, retired: false, stats: {anima: 1, speed: 1, vigor: 1, vitality: 1}};
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send: createCallTracker()};
+    let listCallCount = 0;
+    const fighterActions = {
+      create: async () => {
+        callOrder.push('create');
+        return {action_id: 2, fighter_id: 9, id: 8};
+      },
+      listByFighterID: async () => {
+        listCallCount += 1;
+        return listCallCount === 1 ? [existingAction] : [];
+      },
+      touch: async () => {},
+    };
+    const fighters = {
+      findCurrentByPlayerID: async () => fighter,
+      update: async () => {
+        callOrder.push('update');
+        return fighter;
+      },
+    };
+
+    await onMessage(JSON.stringify({action_id: 2, cmd: 'idle'}), socket, {fighterActions, fighters});
+
+    assert.ok(
+      callOrder.indexOf('update') < callOrder.indexOf('create'),
+      'training (update) should be applied before the action is created',
+    );
   });
 
   it('sends error for stop command when socket has no authenticated player', async () => {

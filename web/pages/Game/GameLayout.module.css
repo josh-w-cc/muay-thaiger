@@ -20,7 +20,7 @@
 }
 
 .rankDisplay {
-  align-items: baseline;
+  align-items: flex-end;
   color: var(--color-fg);
   display: flex;
   gap: var(--space-xs);
@@ -28,13 +28,12 @@
 }
 
 .rankLabel {
+  font-family: var(--font-heading-accent);
   font-size: 0.875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .rankValue {
-  color: var(--color-gold);
+  color: var(--color-red);
   font-weight: 700;
 }
 

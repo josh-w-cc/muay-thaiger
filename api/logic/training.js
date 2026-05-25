@@ -1,4 +1,4 @@
-import {applyTrainingAction, getTrainedStatValue} from 'shared/training.js';
+import {applyTrainingActions, getTrainedStatValue} from 'shared/training.js';
 import {parseWholeBigInt} from 'shared/fighter-stats.js';
 import {createTrainingTimeline} from './training-timeline.js';
 
@@ -30,9 +30,7 @@ function trainStats(actions, fighter) {
   const proxy = createFighterProxy(stats, (amount) => {
     gold += parseWholeBigInt(amount) ?? 0n;
   });
-  for(const action of actions) {
-    applyTrainingAction(action, proxy);
-  }
+  applyTrainingActions(actions, proxy);
   return {gold, stats};
 }
 

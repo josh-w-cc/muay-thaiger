@@ -6,6 +6,12 @@ export function applyTrainingAction(action, fighter) {
   skill?.action(fighter);
 }
 
+export function applyTrainingActions(actions, fighter) {
+  for(const action of actions) {
+    applyTrainingAction(action, fighter);
+  }
+}
+
 export function getTrainingDurationMs(action) {
   return (getTrainingSkill(action)?.duration || 0) * 1000;
 }
