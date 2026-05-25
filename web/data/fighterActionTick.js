@@ -1,4 +1,4 @@
-import {applyTrainingActions, createTrainingTimeline, getActionWithMaxTouchedAt, getMaxTouchedAtMs} from 'shared/training.js';
+import {applyTrainingActions, createTrainingTimeline, findTouchedAtTransfer} from 'shared/training.js';
 
 import useFighterStore from '@/data/fighter.js';
 
@@ -18,21 +18,13 @@ export function runFighterActionTick(actions) {
 }
 
 export function transferLatestTouchedAt(removedActions, remainingActions) {
-  if(!remainingActions.length) {
+  const transfer = findTouchedAtTransfer(removedActions, remainingActions);
+  if(!transfer) {
     return remainingActions;
   }
-  const maxRemovedMs = getMaxTouchedAtMs(removedActions);
-  if(maxRemovedMs === null) {
-    return remainingActions;
-  }
-  const maxRemainingMs = getMaxTouchedAtMs(remainingActions);
-  if(maxRemainingMs !== null && maxRemovedMs <= maxRemainingMs) {
-    return remainingActions;
-  }
-  const targetAction = getActionWithMaxTouchedAt(remainingActions);
   return remainingActions.map((action) => (
-    action === targetAction
-      ? {...action, touched_at: new Date(maxRemovedMs).toISOString()}
+    action === transfer.targetAction
+      ? {...action, touched_at: transfer.touchedAt.toISOString()}
       : action
   ));
 }

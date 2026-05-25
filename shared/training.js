@@ -54,7 +54,27 @@ export function getTrainedStatValue(stats, stat, amount = 1) {
   return (stats[stat] || 0) + trainingMultiplier * amount;
 }
 
-export function getActionWithMaxTouchedAt(actions) {
+export function getMaxTouchedAtMs(actions) {
+  const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
+  return values.length ? Math.max(...values) : null;
+}
+
+export function findTouchedAtTransfer(removedActions, remainingActions) {
+  if(!remainingActions.length) {
+    return null;
+  }
+  const maxRemovedMs = getMaxTouchedAtMs(removedActions);
+  if(maxRemovedMs === null) {
+    return null;
+  }
+  const maxRemainingMs = getMaxTouchedAtMs(remainingActions);
+  if(maxRemainingMs !== null && maxRemovedMs <= maxRemainingMs) {
+    return null;
+  }
+  return {targetAction: getActionWithMaxTouchedAt(remainingActions), touchedAt: new Date(maxRemovedMs)};
+}
+
+function getActionWithMaxTouchedAt(actions) {
   return actions.reduce((best, action) => {
     const bestMs = getTouchedAtMs(best);
     const actionMs = getTouchedAtMs(action);
@@ -66,11 +86,6 @@ export function getActionWithMaxTouchedAt(actions) {
     }
     return actionMs >= bestMs ? action : best;
   });
-}
-
-export function getMaxTouchedAtMs(actions) {
-  const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
-  return values.length ? Math.max(...values) : null;
 }
 
 function getTrainingSkill(action) {

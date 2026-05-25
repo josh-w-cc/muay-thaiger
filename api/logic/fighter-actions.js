@@ -1,5 +1,5 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
-import {getActionWithMaxTouchedAt, getMaxTouchedAtMs} from 'shared/training.js';
+import {findTouchedAtTransfer, getMaxTouchedAtMs} from 'shared/training.js';
 import {createCommandError} from './command-errors.js';
 
 export async function registerFighterAction({fighterActions, fighters}, message, playerID) {
@@ -35,19 +35,11 @@ export async function unregisterFighterAction({fighterActions, fighters}, messag
 }
 
 async function transferLatestTouchedAt(fighterActions, removedActions, remainingActions) {
-  if(!remainingActions.length) {
+  const transfer = findTouchedAtTransfer(removedActions, remainingActions);
+  if(!transfer) {
     return;
   }
-  const maxRemovedMs = getMaxTouchedAtMs(removedActions);
-  if(maxRemovedMs === null) {
-    return;
-  }
-  const maxRemainingMs = getMaxTouchedAtMs(remainingActions);
-  if(maxRemainingMs !== null && maxRemovedMs <= maxRemainingMs) {
-    return;
-  }
-  const targetAction = getActionWithMaxTouchedAt(remainingActions);
-  await fighterActions.touch(targetAction.id, new Date(maxRemovedMs));
+  await fighterActions.touch(transfer.targetAction.id, transfer.touchedAt);
 }
 
 function isValidAction(fighter, actionID) {
