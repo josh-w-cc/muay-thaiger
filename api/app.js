@@ -1,5 +1,6 @@
 import websocket from '@fastify/websocket';
 import Fastify from 'fastify';
+import 'shared/bigInt.js';
 
 import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
