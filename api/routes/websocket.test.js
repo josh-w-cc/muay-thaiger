@@ -349,6 +349,31 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(create.calls.length, 0);
   });
 
+  it('sends player state after responding to idle commands for authenticated sockets', async () => {
+    const send = createCallTracker();
+    const created = {action_id: 1, fighter_id: 9, id: 4};
+    const fighter = {gold: '0', id: 9, player_id: 1, retired: false, stats: {}};
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+    const fighterActions = {
+      create: async () => created,
+      listByFighterID: async () => [],
+    };
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {fighterActions, fighters});
+
+    assert.equal(send.calls.length, 2);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {
+      cmd: 'ok',
+      metadata: {fighterAction: created, responded_cmd: 'idle'},
+    });
+    assert.deepEqual(JSON.parse(send.calls[1][0]), {
+      actions: [],
+      cmd: 'player_state',
+      fighter,
+    });
+  });
+
   it('sends error for stop command when socket has no authenticated player', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
@@ -362,20 +387,33 @@ describe('WebSocket /ws/connect', () => {
   it('removes fighter actions and responds to stop commands for authenticated sockets', async () => {
     const send = createCallTracker();
     const remove = createCallTracker();
+    let listCallCount = 0;
+    const fighter = {gold: '0', id: 9, player_id: 1, retired: false, stats: {}};
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
     const fighterActions = {
-      listByFighterID: async () => [{action_id: 1, id: 4}, {action_id: 2, id: 5}, {action_id: 1, id: 6}],
+      listByFighterID: async () => {
+        listCallCount += 1;
+        if(listCallCount > 1) {
+          return [];
+        }
+        return [{action_id: 1, id: 4}, {action_id: 2, id: 5}, {action_id: 1, id: 6}];
+      },
       remove,
     };
-    const fighters = {findCurrentByPlayerID: async () => ({id: 9, player_id: 1, retired: false})};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
 
     await onMessage(JSON.stringify({action_id: 1, cmd: 'stop'}), socket, {fighterActions, fighters});
 
     assert.deepEqual(remove.calls, [[4], [6]]);
-    assert.equal(send.calls.length, 1);
+    assert.equal(send.calls.length, 2);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {
       cmd: 'ok',
       metadata: {fighterAction: {action_id: 1}, responded_cmd: 'stop'},
+    });
+    assert.deepEqual(JSON.parse(send.calls[1][0]), {
+      actions: [],
+      cmd: 'player_state',
+      fighter,
     });
   });
 
