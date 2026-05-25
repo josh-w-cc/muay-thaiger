@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react';
+import {render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import Fight from './index.js';
@@ -62,8 +62,10 @@ describe('Fight', () => {
 
   it('wraps fight content in a section', () => {
     const {container} = render(<Fight />);
+    const section = container.querySelector('section');
 
-    expect(container.querySelector('section')).toBeInTheDocument();
+    expect(section).toBeInTheDocument();
+    expect(within(section).getByRole('heading', {name: 'Fight for ฿'})).toBeInTheDocument();
   });
 
   it('starts a fight for selected risk', async () => {
