@@ -1,0 +1,17 @@
+.label {
+  composes: statLabelBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
+}
+
+.rate {
+  color: var(--color-fg);
+  font-size: 0.875rem;
+}
+
+.stat {
+  composes: statRowBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
+  grid-template-columns: 1fr auto auto;
+}
+
+.value {
+  composes: statValueBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
+}

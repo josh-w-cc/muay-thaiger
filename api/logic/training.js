@@ -1,8 +1,8 @@
 import {
   applyTrainingActions,
   createTrainingTimeline,
-  getTrainedStatValue,
 } from 'shared/training.js';
+import trainStat from 'shared/trainingStat.js';
 
 export async function applyTraining({fighterActions, fighters}, fighter) {
   const actions = await fighterActions.listByFighterID(fighter.id);
@@ -41,14 +41,7 @@ function trainStats(actions, fighter) {
 
 function createFighterProxy(stats, onWin) {
   return {
-    train: (stat, amount = 1) => {
-      const trainedStatValue = getTrainedStatValue(stats, stat, amount);
-      if(trainedStatValue === null) {
-        return;
-      }
-
-      stats[stat] = trainedStatValue;
-    },
+    train: (stat, amount = 1) => trainStat(stats, stat, amount),
     win: onWin,
   };
 }

@@ -14,7 +14,7 @@
 }
 
 .section {
-  composes: insetSectionBase from '../../components/primitive/css-modules/inset-section-base.module.css';
+  composes: insetSectionBase from '../../../components/primitive/css-modules/inset-section-base.module.css';
 }
 
 .regimen {
@@ -64,5 +64,5 @@
 }
 
 .stats {
-  composes: statListBase from '../../components/primitive/css-modules/stat-list-base.module.css';
+  composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
 }
