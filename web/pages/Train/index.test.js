@@ -50,6 +50,16 @@ vi.mock('./Skills.js', () => ({
       name: '฿egging',
       requires: () => true,
     },
+    walking: {
+      action,
+      name: 'Walking',
+      requires: (currentFighter) => Boolean(currentFighter.showAllSkills),
+    },
+    yoga: {
+      action,
+      name: 'Yoga',
+      requires: (currentFighter) => Boolean(currentFighter.showAllSkills),
+    },
   },
 }));
 vi.mock('@/actions/websockets/index.js', () => ({
@@ -60,6 +70,7 @@ vi.mock('@/actions/websockets/index.js', () => ({
 describe('Train', () => {
   afterEach(() => {
     fighter.idling = null;
+    fighter.showAllSkills = false;
     fighterActions.actions = [
       {action_id: 2, id: 5, progress: 23},
     ];
@@ -99,6 +110,17 @@ describe('Train', () => {
     expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '0');
     expect(button.className).toContain('actionButton');
     expect(progressLabel.className).toContain('regimenProgressLabelDisabled');
+  });
+
+  it('shows available skills in descending skill id order', () => {
+    fighter.showAllSkills = true;
+    render(<Train />);
+
+    expect(screen.getAllByText(/^(Yoga|Walking|฿egging)$/).map((element) => element.textContent)).toEqual([
+      'Yoga',
+      'Walking',
+      '฿egging',
+    ]);
   });
 
   it('starts idling for a skill when idle is clicked', async () => {

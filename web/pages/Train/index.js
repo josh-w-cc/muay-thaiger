@@ -39,6 +39,7 @@ function RegimenRows({fighter}) {
     <div className={css.regimen}>
       {Object.keys(Skills)
         .filter((skillKey) => Skills[skillKey].requires(fighter))
+        .sort((firstSkillKey, secondSkillKey) => SKILL_IDS[secondSkillKey] - SKILL_IDS[firstSkillKey])
         .map((skillKey) => (
           <RegimenRow
             actionEnabled={isActionEnabled(actions, skillKey)}
