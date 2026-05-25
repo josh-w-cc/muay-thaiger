@@ -124,6 +124,61 @@ describe('useFighterActionsStore', () => {
     ]);
   });
 
+  it('returns empty list when removing all remaining actions', () => {
+    useFighterActionsStore.getState().setActions([
+      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+    ]);
+
+    useFighterActionsStore.getState().removeAction(2);
+
+    expect(useFighterActionsStore.getState().actions).toEqual([]);
+  });
+
+  it('transfers touched_at to the first remaining action with a valid timestamp when initial action has none', () => {
+    useFighterActionsStore.getState().setActions([
+      {action_id: 6, id: 2},
+      {action_id: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'},
+      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+    ]);
+
+    useFighterActionsStore.getState().removeAction(2);
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 6, id: 2}),
+      expect.objectContaining({action_id: 6, id: 3, touched_at: '2026-01-01T00:00:00.111Z'}),
+    ]);
+  });
+
+  it('skips remaining actions with no touched_at when selecting transfer target', () => {
+    useFighterActionsStore.getState().setActions([
+      {action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.005Z'},
+      {action_id: 6, id: 3},
+      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+    ]);
+
+    useFighterActionsStore.getState().removeAction(2);
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
+      expect.objectContaining({action_id: 6, id: 3}),
+    ]);
+  });
+
+  it('transfers touched_at to the action with the highest remaining touched_at among multiple candidates', () => {
+    useFighterActionsStore.getState().setActions([
+      {action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.050Z'},
+      {action_id: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'},
+      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+    ]);
+
+    useFighterActionsStore.getState().removeAction(2);
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
+      expect.objectContaining({action_id: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'}),
+    ]);
+  });
+
   it('ticks action progress sequentially using action durations', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
