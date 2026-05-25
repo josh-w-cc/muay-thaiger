@@ -50,7 +50,7 @@ The root `package.json` provides aggregate scripts. Subproject commands (e.g., `
 |------|---------|
 | Start all services (local dev) | `docker compose up` |
 | Install all subproject dependencies | `npm run prepare` |
-| Run all tests (API + web) | `npm test` |
+| Run all tests (API + shared + web) | `npm test` |
 | Lint all sub-projects | `npm run lint` |
 | Run Playwright E2E tests | `docker compose run --rm playwright` |
 
