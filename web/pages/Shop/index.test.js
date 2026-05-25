@@ -27,11 +27,14 @@ describe('Shop', () => {
     const {container} = render(<Shop />);
 
     const buyButtons = screen.getAllByRole('button', {name: 'Buy'});
+    const page = container.firstChild;
     const section = container.querySelector('section');
 
     expect(buyButtons).toHaveLength(2);
     expect(screen.queryByRole('heading', {name: 'SHOP'})).not.toBeInTheDocument();
+    expect(page?.tagName).toBe('DIV');
     expect(section).toBeInTheDocument();
+    expect(section?.parentElement).toBe(page);
     await user.click(buyButtons[0]);
 
     expect(buy).toHaveBeenCalledTimes(1);
