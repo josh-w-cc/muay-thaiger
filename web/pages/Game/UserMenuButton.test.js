@@ -32,5 +32,7 @@ describe('UserMenuButton', () => {
     expect(source).toMatch(/\.userMenuButton\s*{[^}]*position:\s*fixed;/s);
     expect(source).toMatch(/\.userMenuButton\s*{[^}]*right:\s*var\(--space-md\);/s);
     expect(source).toMatch(/\.userMenuButton\s*{[^}]*top:\s*var\(--space-md\);/s);
+    expect(source).toMatch(/\.userMenuButton\s*{[^}]*border:\s*0;/s);
+    expect(source).toMatch(/\.userMenuButton:hover\s+\.userMenuIcon\s*{[^}]*color:\s*var\(--color-red\);/s);
   });
 });
