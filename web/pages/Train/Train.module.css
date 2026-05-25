@@ -17,10 +17,6 @@
   composes: insetSectionBase from '../../components/primitive/css-modules/inset-section-base.module.css';
 }
 
-.page {
-  padding-top: var(--space-xl);
-}
-
 .regimen {
   display: grid;
   gap: var(--space-sm);
