@@ -1,4 +1,4 @@
-import {applyTrainingAction, getTrainingDurationMs} from 'shared/training.js';
+import {applyTrainingActions, getTrainingDurationMs} from 'shared/training.js';
 import {createTrainingTimeline} from 'shared/trainingTimeline.js';
 export {findLatestAction, getActionTime} from 'shared/trainingTimeline.js';
 
@@ -30,8 +30,5 @@ function trainFighter(actions) {
   if(!actions.length) {
     return;
   }
-  const fighter = useFighterStore.getState();
-  for(const action of actions) {
-    applyTrainingAction(action, fighter);
-  }
+  applyTrainingActions(actions, useFighterStore.getState());
 }
