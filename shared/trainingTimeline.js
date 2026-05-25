@@ -38,12 +38,12 @@ function createTimelineFromScheduledActions({getTouchedAtKey, getTouchedAtValue,
     return createEmptyTimeline();
   }
   const orderedActions = getOrderedActions(scheduledActions, nowMs);
-  const oldestActionTime = getActionTime(orderedActions[0].action, nowMs);
-  const remainingMs = nowMs - oldestActionTime;
+  const {latestActionTime} = findLatestAction(orderedActions, nowMs);
+  const remainingMs = nowMs - latestActionTime;
   if(remainingMs <= 0) {
     return createEmptyTimeline();
   }
-  return runTrainingCycle(orderedActions, oldestActionTime, remainingMs, getTouchedAtKey, getTouchedAtValue);
+  return runTrainingCycle(orderedActions, latestActionTime, remainingMs, getTouchedAtKey, getTouchedAtValue);
 }
 
 export function getActionTime(action, nowMs) {
@@ -54,7 +54,7 @@ export function getActionTime(action, nowMs) {
   return actionTime;
 }
 
-function runTrainingCycle(actions, oldestActionTime, startingRemainingMs, getTouchedAtKey, getTouchedAtValue) {
+function runTrainingCycle(actions, latestActionTime, startingRemainingMs, getTouchedAtKey, getTouchedAtValue) {
   const appliedActions = [];
   const touchedAtByActionKey = new Map();
   let actionIndex = 0;
@@ -68,7 +68,7 @@ function runTrainingCycle(actions, oldestActionTime, startingRemainingMs, getTou
     remainingMs -= action.durationMs;
     elapsedMs += action.durationMs;
     appliedActions.push(action.action);
-    const touchedAt = new Date(oldestActionTime + elapsedMs);
+    const touchedAt = new Date(latestActionTime + elapsedMs);
     touchedAtByActionKey.set(getTouchedAtKey(action.action, action.index), getTouchedAtValue(touchedAt));
     actionIndex = (actionIndex + 1) % actions.length;
   }

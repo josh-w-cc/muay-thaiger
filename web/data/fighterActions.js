@@ -1,5 +1,5 @@
 import {create} from 'zustand';
-import {getActionTime, getScheduledTrainingActions} from 'shared/training.js';
+import {findLatestAction, getActionTime, getScheduledTrainingActions} from 'shared/training.js';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {runFighterActionTick} from './fighterActionTick.js';
@@ -52,8 +52,8 @@ function setScheduledActionProgress(progressByIndex, scheduledActions, nowMs) {
     return;
   }
   const orderedActions = getOrderedScheduledActions(scheduledActions, nowMs);
-  const oldestActionTime = getActionTime(orderedActions[0].action, nowMs);
-  let remainingMs = nowMs - oldestActionTime;
+  const {latestActionTime} = findLatestAction(orderedActions, nowMs);
+  let remainingMs = nowMs - latestActionTime;
   if(remainingMs <= 0) {
     return;
   }
