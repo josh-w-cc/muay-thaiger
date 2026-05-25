@@ -1,110 +1,47 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {render, screen, waitFor} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import HubButton from './assets/HubButton.png';
-import ShopButton from './assets/ShopButton.png';
-import TrainButton from './assets/TrainButton.png';
+import {render, screen} from '@testing-library/react';
 
 
-const {navigate, scrollIntoView} = vi.hoisted(() => ({
-  navigate: vi.fn(),
-  scrollIntoView: vi.fn(),
+vi.mock('./GoldDisplay.js', () => ({
+  default: () => <div data-testid="gold-display" />,
 }));
-let pathname = '/hub';
-const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
 
-vi.mock('react-router-dom', () => ({
-  useLocation: () => ({pathname}),
-  useNavigate: () => navigate,
+vi.mock('./NavHeader.js', () => ({
+  default: () => <div data-testid="nav-header" />,
+}));
+
+vi.mock('./UserMenuButton.js', () => ({
+  default: () => <button data-testid="user-menu-button" type="button">Edit Profile</button>,
 }));
 
 describe('Header', () => {
-  beforeAll(() => {
-    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
-      configurable: true,
-      value: scrollIntoView,
-      writable: true,
-    });
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
-    pathname = '/hub';
   });
 
-  afterAll(() => {
-    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
-      configurable: true,
-      value: originalScrollIntoView,
-      writable: true,
-    });
-  });
-
-  it('renders navigation buttons and uses colocated game images', async () => {
-    const user = userEvent.setup();
+  it('renders gold and user controls inside the same wrapper above the nav header', async () => {
     const {default: Header} = await import('./Header.js');
 
     render(<Header />);
 
-    expect(screen.getByRole('img', {name: 'Hub'})).toHaveAttribute('src', expect.stringContaining(HubButton));
-    expect(screen.getByRole('img', {name: 'Shop'})).toHaveAttribute('src', expect.stringContaining(ShopButton));
-    expect(screen.getByRole('img', {name: 'Train'})).toHaveAttribute('src', expect.stringContaining(TrainButton));
-    expect(screen.getByRole('button', {name: 'Hub'})).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('button', {name: 'Fight'})).not.toHaveAttribute('aria-current');
+    const goldDisplay = screen.getByTestId('gold-display');
+    const userMenuButton = screen.getByTestId('user-menu-button');
+    const controlsWrapper = goldDisplay.parentElement;
 
-    await user.click(screen.getByRole('button', {name: 'Fight'}));
-    await user.click(screen.getByRole('button', {name: 'Hub'}));
-    await user.click(screen.getByRole('button', {name: 'Train'}));
-    await user.click(screen.getByRole('button', {name: 'Shop'}));
-
-    expect(navigate).toHaveBeenNthCalledWith(1, '/fight');
-    expect(navigate).toHaveBeenNthCalledWith(2, '/hub');
-    expect(navigate).toHaveBeenNthCalledWith(3, '/train');
-    expect(navigate).toHaveBeenNthCalledWith(4, '/shop');
+    expect(controlsWrapper).not.toBeNull();
+    expect(controlsWrapper).toBe(userMenuButton.parentElement);
+    expect(screen.getByTestId('nav-header')).toBeInTheDocument();
   });
 
-  it('keeps header navigation hover background transparent', () => {
+  it('matches desktop and mobile control layout styles', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const modulePath = path.join(directoryPath, 'Header.module.css');
     const source = fs.readFileSync(modulePath, 'utf8');
 
-    expect(source).toMatch(/\.navigationButton:hover\s*{[^}]*background-color:\s*transparent;/s);
-  });
-
-  it('defines horizontal mobile header scrolling with snap spacing', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'Header.module.css');
-    const mobileHeaderPattern = new RegExp(
-      '@media\\(max-width:\\s*768px\\)\\s*{[\\s\\S]*\\.header\\s*{[\\s\\S]*'
-      + 'overflow-x:\\s*auto;[\\s\\S]*right:\\s*var\\(--space-xl\\);[\\s\\S]*'
-      + 'scroll-snap-type:\\s*x mandatory;[\\s\\S]*width:\\s*calc\\(100% \\+ var\\(--space-xl\\) \\* 2\\);',
-      's',
-    );
-    const source = fs.readFileSync(modulePath, 'utf8');
-
-    expect(source).toMatch(mobileHeaderPattern);
-  });
-
-  it('marks the current route button as active', async () => {
-    pathname = '/train';
-    const {default: Header} = await import('./Header.js');
-
-    render(<Header />);
-
-    expect(screen.getByRole('button', {name: 'Train'})).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('button', {name: 'Hub'})).not.toHaveAttribute('aria-current');
-  });
-
-  it('scrolls the active route button into view', async () => {
-    pathname = '/shop';
-    const {default: Header} = await import('./Header.js');
-
-    render(<Header />);
-
-    await waitFor(() => {
-      expect(scrollIntoView).toHaveBeenCalledWith({block: 'nearest', inline: 'center'});
-    });
+    expect(source).toMatch(/\.headerLayout\s*{[^}]*margin:\s*0 auto;[^}]*width:\s*fit-content;/s);
+    expect(source).toMatch(/\.headerControls\s*{[^}]*justify-content:\s*space-between;[^}]*width:\s*100%;/s);
+    expect(source).toMatch(/@media\(max-width:\s*768px\)\s*{[\s\S]*\.headerControls\s*{[\s\S]*position:\s*fixed;[\s\S]*}/s);
   });
 });

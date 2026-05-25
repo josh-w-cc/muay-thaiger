@@ -1,49 +1,26 @@
-.header {
+.headerControls {
+  align-items: center;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  padding: var(--space-md);
+  width: 100%;
 }
 
-.navigationButton {
-  border-color: transparent;
-  position: relative;
-}
-
-.navigationButton:hover {
-  background-color: transparent;
-  border-color: transparent;
-}
-
-.navigationImage {
-  max-height: 120px;
-  position: relative;
-  z-index: 1;
-}
-
-.navigationMask {
-  background-color: var(--color-red);
-  inset: 0;
-  mask-image: var(--navigation-mask);
-  mask-position: center;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  opacity: 0.6;
-  pointer-events: none;
-  position: absolute;
+.headerLayout {
+  margin: 0 auto;
+  width: fit-content;
 }
 
 @media(max-width: 768px) {
-  .header {
-    gap: var(--space-md);
-    justify-content: flex-start;
-    overflow-x: auto;
-    position: relative;
-    right: var(--space-xl);
-    scroll-snap-type: x mandatory;
-    width: calc(100% + var(--space-xl) * 2);
-    padding: 20px 150px;
+  .headerControls {
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: var(--space-md);
+    z-index: 10;
   }
 
-  .navigationButton {
-    scroll-snap-align: center;
+  .headerLayout {
+    width: 100%;
   }
 }
