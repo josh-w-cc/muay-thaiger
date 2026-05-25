@@ -20,5 +20,4 @@ describe('UserMenuButton', () => {
     expect(button).toBeInTheDocument();
     expect(screen.getByTestId('user-menu-icon')).toBeInTheDocument();
   });
-
 });
