@@ -1,5 +1,4 @@
-import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
-import {getTrainedStatValue} from 'shared/training.js';
+import {applyTrainingAction, getTrainedStatValue} from 'shared/training.js';
 import {createTrainingTimeline} from './training-timeline.js';
 
 export async function applyTraining({fighterActions, fighters}, fighter) {
@@ -8,7 +7,7 @@ export async function applyTraining({fighterActions, fighters}, fighter) {
     return {actions, fighter};
   }
   const now = new Date();
-  const trainingTimeline = createTrainingTimeline(actions, SKILLS_BY_ACTION_ID, now);
+  const trainingTimeline = createTrainingTimeline(actions, now);
   const {gold, stats} = trainStats(trainingTimeline.appliedActions, fighter);
   const updatedFighter = await fighters.update(fighter.id, {gold, stats});
   await touchAppliedActions(fighterActions, actions, trainingTimeline.touchedAtByActionID);
@@ -31,7 +30,7 @@ function trainStats(actions, fighter) {
     gold = (BigInt(gold) + BigInt(amount)).toString();
   });
   for(const action of actions) {
-    action.skill.action(proxy);
+    applyTrainingAction(action, proxy);
   }
   return {gold, stats};
 }
