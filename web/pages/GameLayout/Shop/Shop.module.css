@@ -1,0 +1,3 @@
+.section {
+  composes: insetSectionBase from '../../../components/primitive/css-modules/inset-section-base.module.css';
+}

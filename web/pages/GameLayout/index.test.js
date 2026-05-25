@@ -25,7 +25,7 @@ describe('GameLayout', () => {
   });
 
   it('renders the header above the route outlet inside the shared page wrapper', async () => {
-    const {GameLayout} = await import('./GameLayout.js');
+    const {GameLayout} = await import('./index.js');
 
     render(<GameLayout />);
 
@@ -40,7 +40,7 @@ describe('GameLayout', () => {
 
   it('redirects to root when no player token exists', async () => {
     loadPlayerToken.mockReturnValue(false);
-    const {loader} = await import('./GameLayout.js');
+    const {loader} = await import('./index.js');
 
     const result = await loader();
 
@@ -51,7 +51,7 @@ describe('GameLayout', () => {
 
   it('returns null when a player token exists', async () => {
     loadPlayerToken.mockReturnValue(true);
-    const {loader} = await import('./GameLayout.js');
+    const {loader} = await import('./index.js');
 
     const result = await loader();
 
