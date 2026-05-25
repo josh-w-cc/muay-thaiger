@@ -72,6 +72,9 @@ function RegimenRow({actionEnabled, name, progress, skillKey}) {
 }
 
 function RegimenProgress({actionEnabled, name, progress}) {
+  const progressTrackClassName = cx(css.regimenProgressTrack, {[css.regimenProgressTrackDisabled]: !actionEnabled});
+  const progressLabelClassName = cx(css.regimenProgressLabel, {[css.regimenProgressLabelDisabled]: !actionEnabled});
+
   return (
     <>
       <div
@@ -79,14 +82,12 @@ function RegimenProgress({actionEnabled, name, progress}) {
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={progress}
-        className={cx(css.regimenProgressTrack, {
-          [css.regimenProgressTrackDisabled]: !actionEnabled,
-        })}
+        className={progressTrackClassName}
         role="progressbar"
       >
         <div className={css.regimenProgressFill} style={{width: `${progress}%`}} />
       </div>
-      <span className={css.regimenProgressLabel}>{`${progress}%`}</span>
+      <span className={progressLabelClassName}>{`${progress}%`}</span>
     </>
   );
 }
