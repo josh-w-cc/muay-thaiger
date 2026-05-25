@@ -47,6 +47,21 @@ describe('useFighterActionsStore', () => {
     ]);
   });
 
+  it('keeps current action progress when adding an optimistic action', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:02.000Z'));
+    useFighterActionsStore.getState().setActions([
+      {action_id: 6, created_at: '2026-01-01T00:00:00.000Z', id: 1},
+    ]);
+
+    useFighterActionsStore.getState().addAction({action_id: 2});
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 6, id: 1, progress: 50}),
+      expect.objectContaining({action_id: 2, progress: 0}),
+    ]);
+  });
+
   it('removes fighter actions by action id', () => {
     useFighterActionsStore.getState().setActions([
       {action_id: 2, id: 1},
