@@ -12,6 +12,10 @@ describe('addHugeNumber', () => {
     strictEqual(addHugeNumber('123', '77'), '200');
   });
 
+  it('adds a BigInt to an integer string', () => {
+    strictEqual(addHugeNumber('123', 77n), '200');
+  });
+
   it('carries across all digits', () => {
     strictEqual(addHugeNumber('99999', 1), '100000');
   });
