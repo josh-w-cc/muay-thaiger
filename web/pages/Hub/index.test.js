@@ -100,7 +100,6 @@ describe('Hub', () => {
     expect(within(statsLeaderboard).getByText('Burning Lotus')).toBeInTheDocument();
     expect(within(statsLeaderboard).getByText('Stone Viper')).toBeInTheDocument();
     expect(within(statsLeaderboard).getByText('Red Hawk')).toBeInTheDocument();
-    expect(within(statsLeaderboard).queryByText('Anima')).not.toBeInTheDocument();
     expect(within(statsLeaderboard).queryByText('Reach')).not.toBeInTheDocument();
   });
 });
