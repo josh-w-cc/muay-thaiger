@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {SKILL_IDS} from 'shared/skills.js';
@@ -96,6 +99,16 @@ describe('Train', () => {
 
     expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '0');
     expect(screen.getByRole('button', {name: 'IDLE'})).toBeInTheDocument();
+  });
+
+  it('wraps the train sections in a page container with extra top spacing', () => {
+    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
+    const modulePath = path.join(directoryPath, 'Train.module.css');
+    const source = fs.readFileSync(modulePath, 'utf8');
+    const {container} = render(<Train />);
+
+    expect(container.firstElementChild?.tagName).toBe('DIV');
+    expect(source).toMatch(/\.page\s*{[^}]*padding-top:\s*var\(--space-xl\);/s);
   });
 
   it('starts idling for a skill when idle is clicked', async () => {

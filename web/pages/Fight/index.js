@@ -62,7 +62,7 @@ function FightMenu() {
         {' '}
         {formatHugeNumber(them.stats.power)}
         <br />
-        Stamina:
+        Stanima:
         {' '}
         {formatHugeNumber(them.stats.stamina)}
         <br />
