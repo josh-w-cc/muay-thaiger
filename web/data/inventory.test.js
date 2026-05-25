@@ -1,8 +1,8 @@
 import useInventoryStore, {COST_MULTIPLIER, resetInventoryStore} from './inventory.js';
 
 
-const AFFORDABLE_GOLD = 600;
-const UNAFFORDABLE_GOLD = 499;
+const AFFORDABLE_GOLD = 600n;
+const UNAFFORDABLE_GOLD = 499n;
 
 
 describe('useInventoryStore', () => {

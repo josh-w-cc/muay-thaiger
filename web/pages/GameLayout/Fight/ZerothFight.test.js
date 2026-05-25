@@ -4,7 +4,7 @@ import ZerothFight, {needsZerothFight} from './ZerothFight.js';
 
 
 const {fighter} = vi.hoisted(() => ({
-  fighter: {gold: 0, spend: vi.fn(), stamina: 1, strength: 1},
+  fighter: {gold: 0n, spend: vi.fn(), stamina: 1, strength: 1},
 }));
 
 vi.mock('@/data/fighter.js', () => ({
@@ -13,7 +13,7 @@ vi.mock('@/data/fighter.js', () => ({
 
 describe('ZerothFight', () => {
   beforeEach(() => {
-    Object.assign(fighter, {gold: 0, stamina: 1, strength: 1});
+    Object.assign(fighter, {gold: 0n, stamina: 1, strength: 1});
   });
 
   afterEach(() => {
@@ -21,14 +21,14 @@ describe('ZerothFight', () => {
   });
 
   it('requires zeroth fight when stats or gold are too low', () => {
-    expect(needsZerothFight({gold: 99, stamina: 1, strength: 1})).toBe(true);
-    expect(needsZerothFight({gold: 100, stamina: 0, strength: 1})).toBe(true);
-    expect(needsZerothFight({gold: 100, stamina: 1, strength: 0})).toBe(true);
-    expect(needsZerothFight({gold: 100, stamina: 1, strength: 1})).toBe(false);
+    expect(needsZerothFight({gold: 99n, stamina: 1, strength: 1})).toBe(true);
+    expect(needsZerothFight({gold: 100n, stamina: 0, strength: 1})).toBe(true);
+    expect(needsZerothFight({gold: 100n, stamina: 1, strength: 0})).toBe(true);
+    expect(needsZerothFight({gold: 100n, stamina: 1, strength: 1})).toBe(false);
   });
 
   it('shows the gold requirement message', () => {
-    fighter.gold = 99;
+    fighter.gold = 99n;
     render(<ZerothFight />);
 
     expect(screen.getByText(/Come back when you have the/i)).toBeInTheDocument();
@@ -36,16 +36,16 @@ describe('ZerothFight', () => {
   });
 
   it('spends all gold and shows the strength branch message', () => {
-    Object.assign(fighter, {gold: 150, stamina: 1});
+    Object.assign(fighter, {gold: 150n, stamina: 1});
     render(<ZerothFight />);
 
     expect(fighter.spend).toHaveBeenCalledTimes(1);
-    expect(fighter.spend).toHaveBeenCalledWith(150);
+    expect(fighter.spend).toHaveBeenCalledWith(150n);
     expect(screen.getByText(/lack the/i)).toBeInTheDocument();
   });
 
   it('shows the stanima branch message when stamina is missing', () => {
-    Object.assign(fighter, {gold: 150, stamina: 0});
+    Object.assign(fighter, {gold: 150n, stamina: 0});
     render(<ZerothFight />);
 
     expect(screen.getByText(/You need more/i)).toBeInTheDocument();

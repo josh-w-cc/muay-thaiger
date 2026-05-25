@@ -2,11 +2,11 @@ export const RACES = Object.freeze([
   Object.freeze({
     id: 1,
     name: 'Tiger',
-    stats: Object.freeze({anima: 1, durability: 1, reach: 2, speed: 1, vigor: 2, vitality: 2}),
+    stats: Object.freeze({anima: 1n, durability: 1n, reach: 2n, speed: 1n, vigor: 2n, vitality: 2n}),
   }),
   Object.freeze({
     id: 2,
     name: 'Snow Leopard',
-    stats: Object.freeze({anima: 2, durability: 2, reach: 1, speed: 2, vigor: 1, vitality: 1}),
+    stats: Object.freeze({anima: 2n, durability: 2n, reach: 1n, speed: 2n, vigor: 1n, vitality: 1n}),
   }),
 ]);

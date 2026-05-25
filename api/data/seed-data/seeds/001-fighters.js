@@ -74,9 +74,18 @@ async function insertFighters(knex) {
 
 async function insertRaces(knex) {
   await knex('races')
-    .insert(SEED_RACES)
+    .insert(SEED_RACES.map(serializeRace))
     .onConflict('id')
     .ignore();
+}
+
+function serializeRace(race) {
+  return {
+    ...race,
+    stats: Object.fromEntries(
+      Object.entries(race.stats).map(([key, value]) => [key, Number(value)]),
+    ),
+  };
 }
 
 async function resetSequences(knex) {

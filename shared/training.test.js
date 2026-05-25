@@ -134,15 +134,15 @@ describe('getTrainingEffect', () => {
 
 describe('getTrainedStatValue', () => {
   it('returns the next trained stat value from fighter stats', () => {
-    equal(getTrainedStatValue({stamina: 3, vitality: 7}, 'stamina', 2), 17);
+    equal(getTrainedStatValue({stamina: 3, vitality: 7}, 'stamina', 2), 17n);
   });
 
   it('uses zero when the trained stat has not been initialized', () => {
-    equal(getTrainedStatValue({vitality: 7}, 'stamina', 2), 14);
+    equal(getTrainedStatValue({vitality: 7}, 'stamina', 2), 14n);
   });
 
   it('uses zero when a training multiplier stat has not been initialized', () => {
-    equal(getTrainedStatValue({stamina: 3}, 'stamina', 2), 3);
+    equal(getTrainedStatValue({stamina: 3}, 'stamina', 2), 3n);
   });
 
   it('returns null for unknown training stats', () => {

@@ -47,7 +47,13 @@ function isValidAction(fighter, actionID) {
   if(!skill) {
     return false;
   }
-  return skill.requires(fighter.stats || {});
+  return skill.requires(parseBigIntStats(fighter.stats || {}));
+}
+
+function parseBigIntStats(stats) {
+  return Object.fromEntries(
+    Object.entries(stats).map(([key, value]) => [key, BigInt(value ?? 0)]),
+  );
 }
 
 function getNextTouchedAt(actions) {

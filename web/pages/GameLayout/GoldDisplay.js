@@ -17,11 +17,12 @@ export default function GoldDisplay() {
 }
 
 function formatGold(gold) {
-  const baht = gold / 100;
+  const baht = gold / 100n;
+  const cents = gold % 100n;
 
-  if(baht < 10000) {
-    return baht.toFixed(2);
+  if(baht < 10000n) {
+    return `${baht}.${String(Number(cents)).padStart(2, '0')}`;
   }
 
-  return formatHugeNumber(Math.floor(baht));
+  return formatHugeNumber(baht);
 }

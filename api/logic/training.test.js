@@ -46,7 +46,7 @@ describe('applyTraining', () => {
     await applyTraining({fighterActions, fighters}, fighter);
 
     assert.equal(updateCalls.length, 1);
-    assert.equal(updateCalls[0].data.stats.stamina, 2);
+    assert.equal(updateCalls[0].data.stats.stamina, 2n);
   });
 
   it('updates the fighter stats for multiple active actions', async () => {
@@ -70,8 +70,8 @@ describe('applyTraining', () => {
     await applyTraining({fighterActions, fighters}, fighter);
 
     assert.equal(updateCalls.length, 1);
-    assert.equal(updateCalls[0].stats.stamina, 6);
-    assert.equal(updateCalls[0].stats.constitution, 3);
+    assert.equal(updateCalls[0].stats.stamina, 6n);
+    assert.equal(updateCalls[0].stats.constitution, 3n);
   });
 
   it('trains strength using vigor rather than current strength', async () => {
@@ -92,7 +92,7 @@ describe('applyTraining', () => {
     await applyTraining({fighterActions, fighters}, fighter);
 
     assert.equal(updateCalls.length, 1);
-    assert.equal(updateCalls[0].stats.strength, 8);
+    assert.equal(updateCalls[0].stats.strength, 8n);
   });
 
   it('touches applied actions using sequential skill timing', async () => {
@@ -209,7 +209,7 @@ describe('applyTraining', () => {
     await applyTraining({fighterActions, fighters}, fighter);
 
     assert.equal(touchCalls.length, 0);
-    assert.equal(updateCalls[0].stats.stamina, 0);
+    assert.equal(updateCalls[0].stats.stamina, 0n);
   });
 });
 
