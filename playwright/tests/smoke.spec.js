@@ -14,5 +14,5 @@ test('player token redirects root route to hub', async ({page}) => {
 
   await page.goto('/');
   await expect(page).toHaveURL(/\/hub$/);
-  await expect(page.getByRole('heading', {name: 'HUB'})).toBeVisible();
+  await expect(page.getByRole('button', {name: 'Hub'})).toHaveAttribute('aria-current', 'page');
 });
