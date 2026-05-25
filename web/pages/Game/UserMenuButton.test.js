@@ -24,15 +24,14 @@ describe('UserMenuButton', () => {
     expect(screen.getByTestId('user-menu-icon')).toBeInTheDocument();
   });
 
-  it('pins the button in the top-right corner', () => {
+  it('keeps transparent icon-button chrome and hover icon color', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const modulePath = path.join(directoryPath, 'UserMenuButton.module.css');
     const source = fs.readFileSync(modulePath, 'utf8');
 
-    expect(source).toMatch(/\.userMenuButton\s*{[^}]*position:\s*fixed;/s);
-    expect(source).toMatch(/\.userMenuButton\s*{[^}]*right:\s*var\(--space-md\);/s);
-    expect(source).toMatch(/\.userMenuButton\s*{[^}]*top:\s*var\(--space-md\);/s);
     expect(source).toMatch(/\.userMenuButton\s*{[^}]*border:\s*0;/s);
+    expect(source).toMatch(/\.userMenuButton\s*{[^}]*min-height:\s*44px;/s);
+    expect(source).toMatch(/\.userMenuButton\s*{[^}]*min-width:\s*44px;/s);
     expect(source).toMatch(/\.userMenuButton:hover\s+\.userMenuIcon\s*{[^}]*color:\s*var\(--color-red\);/s);
   });
 });
