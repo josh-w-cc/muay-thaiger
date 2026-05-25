@@ -51,7 +51,7 @@ export function getTrainedStatValue(stats, stat, amount = 1) {
     return null;
   }
 
-  return (stats[stat] || 0) + trainingMultiplier * amount;
+  return BigInt(stats[stat] ?? 0) + trainingMultiplier * BigInt(amount);
 }
 
 export function getMaxTouchedAtMs(actions) {
@@ -97,7 +97,7 @@ function getTrainingMultiplier(stats, stat) {
   if(!multiplierStat) {
     return null;
   }
-  return stats[multiplierStat] || 0;
+  return BigInt(stats[multiplierStat] ?? 0);
 }
 
 function getTouchedAtMs(action) {

@@ -13,7 +13,7 @@ const fighter = vi.hoisted(() => ({
   defense: 24,
   displayName: 'Iron Tiger',
   durability: 17,
-  gold: 2100,
+  gold: 2100n,
   health: 25,
   vigor: 14,
   power: 26,

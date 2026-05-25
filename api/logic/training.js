@@ -30,7 +30,7 @@ async function touchAppliedActions(fighterActions, actions, touchedAtByActionID)
 }
 
 function trainStats(actions, fighter) {
-  const stats = {...fighter.stats};
+  const stats = parseBigIntStats({...fighter.stats});
   let gold = fighter.gold;
   const proxy = createFighterProxy(stats, (amount) => {
     gold = (BigInt(gold) + BigInt(amount)).toString();
@@ -44,4 +44,10 @@ function createFighterProxy(stats, onWin) {
     train: (stat, amount = 1) => trainStat(stats, stat, amount),
     win: onWin,
   };
+}
+
+function parseBigIntStats(stats) {
+  return Object.fromEntries(
+    Object.entries(stats).map(([key, value]) => [key, BigInt(value ?? 0)]),
+  );
 }

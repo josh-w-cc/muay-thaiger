@@ -9,8 +9,8 @@ describe('trainStat', () => {
 
     const trainedStatValue = trainStat(stats, 'stamina', 2);
 
-    equal(trainedStatValue, 7);
-    deepEqual(stats, {stamina: 7, vitality: 2});
+    equal(trainedStatValue, 7n);
+    deepEqual(stats, {stamina: 7n, vitality: 2});
   });
 
   it('returns null and keeps stats unchanged for unknown training stats', () => {
