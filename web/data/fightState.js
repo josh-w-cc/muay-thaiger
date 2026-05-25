@@ -3,7 +3,7 @@ const {IN_PROGRESS: FIGHT_IN_PROGRESS, LOST: FIGHT_LOST, NOT_STARTED: FIGHT_NOT_
 
 
 export function getInitialState() {
-  return {bet: 0, fighters: [], messages: [], state: FIGHT_NOT_STARTED};
+  return {bet: 0n, fighters: [], messages: [], state: FIGHT_NOT_STARTED};
 }
 
 
@@ -37,15 +37,25 @@ export function generateFinishFn({get, set}) {
 
 export function generateForGoldFn({get, set}) {
   return (fighter, risk) => {
-    const riskPercentages = [0.001, 0.1, 0.25, 0.5, 1];
-    const bet = Math.max(100, Math.floor(fighter.gold * riskPercentages[risk]));
+    const riskPercentages = [
+      {denominator: 1000n, numerator: 1n},
+      {denominator: 10n, numerator: 1n},
+      {denominator: 4n, numerator: 1n},
+      {denominator: 2n, numerator: 1n},
+      {denominator: 1n, numerator: 1n},
+    ];
+    const selectedRisk = riskPercentages[risk] || riskPercentages[1];
+    const fighterGold = BigInt(fighter.gold);
+    const calculatedBet = fighterGold * selectedRisk.numerator / selectedRisk.denominator;
+    const bet = calculatedBet < 100n ? 100n : calculatedBet;
+    const betAsDouble = Number(bet);
     const enemy = {
-      apm: Math.max(4, Math.log(bet)) * (Math.random() + 0.5),
-      attack: Math.sqrt(bet) * (Math.random() + 0.5),
-      defense: Math.sqrt(bet) * (Math.random() + 0.5),
-      health: bet * 10 * (Math.random() + 0.5),
-      power: bet * (Math.random() + 0.5),
-      stamina: bet * Math.sqrt(bet) * (Math.random() + 0.5),
+      apm: Math.max(4, Math.log(betAsDouble)) * (Math.random() + 0.5),
+      attack: Math.sqrt(betAsDouble) * (Math.random() + 0.5),
+      defense: Math.sqrt(betAsDouble) * (Math.random() + 0.5),
+      health: betAsDouble * 10 * (Math.random() + 0.5),
+      power: betAsDouble * (Math.random() + 0.5),
+      stamina: betAsDouble * Math.sqrt(betAsDouble) * (Math.random() + 0.5),
     };
     set({bet});
     get().start(fighter, enemy);
@@ -57,8 +67,8 @@ export function generateStartFn({get, set}) {
   return (left, right) => {
     set({
       fighters: [
-        {currentAPM: 0, currentHealth: left.health, currentStamina: left.stamina, stats: left},
-        {currentAPM: 0, currentHealth: right.health, currentStamina: right.stamina, stats: right},
+        {currentAPM: 0, currentHealth: Number(left.health), currentStamina: Number(left.stamina), stats: left},
+        {currentAPM: 0, currentHealth: Number(right.health), currentStamina: Number(right.stamina), stats: right},
       ],
       state: FIGHT_IN_PROGRESS,
     });

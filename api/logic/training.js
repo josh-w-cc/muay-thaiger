@@ -25,9 +25,9 @@ async function touchAppliedActions(fighterActions, actions, touchedAtByActionID)
 
 function trainStats(actions, fighter) {
   const stats = {...fighter.stats};
-  let gold = fighter.gold;
+  let gold = BigInt(fighter.gold ?? 0);
   const proxy = createFighterProxy(stats, (amount) => {
-    gold = (BigInt(gold) + BigInt(amount)).toString();
+    gold += BigInt(amount);
   });
   applyTrainingActions(actions, proxy);
   return {gold, stats};

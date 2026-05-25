@@ -36,8 +36,8 @@ describe('applyOfflineTraining', () => {
 
 describe('getPlayerState', () => {
   it('returns actions and updated fighter after applying training', async () => {
-    const fighter = {gold: '0', id: 9, player_id: 5, retired: false, stats: {}};
-    const updatedFighter = {...fighter, gold: '1'};
+    const fighter = {gold: 0n, id: 9, player_id: 5, retired: false, stats: {}};
+    const updatedFighter = {...fighter, gold: 1n};
     const actions = [{action_id: 1, fighter_id: 9, id: 7, touched_at: new Date().toISOString()}];
     const fighterActions = {
       listByFighterID: async () => actions,
@@ -77,13 +77,13 @@ describe('sendPlayerState', () => {
   it('sends a player_state message with the given actions and fighter', () => {
     const send = createCallTracker();
     const socket = {send};
-    const fighter = {gold: '0', id: 9, player_id: 5, retired: false, stats: {}};
+    const fighter = {gold: 0n, id: 9, player_id: 5, retired: false, stats: {}};
     const actions = [{action_id: 1, fighter_id: 9, id: 7}];
 
     sendPlayerState(actions, fighter, socket);
 
     assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {actions, cmd: 'player_state', fighter});
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {actions, cmd: 'player_state', fighter: {...fighter, gold: '0'}});
   });
 
   it('sends player_state with an empty actions array', () => {

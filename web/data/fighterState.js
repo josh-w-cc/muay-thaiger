@@ -9,7 +9,7 @@ export function getInitialState() {
   return {
     createdAt: null,
     displayName: '',
-    gold: 0,
+    gold: 0n,
     id: null,
     idling: false,
     ...getSelectionState(initialRace),
@@ -28,27 +28,33 @@ export function getSelectionState(id) {
 
 function getBaseSelectionState({anima, durability, vigor, reach, speed, vitality}) {
   return {
-    agility: 0,
-    anima,
-    constitution: 0,
-    durability,
-    vigor,
-    reach,
-    skill: 0,
-    speed,
-    stamina: 0,
-    strength: 0,
-    vitality,
+    agility: 0n,
+    anima: toBigInt(anima),
+    constitution: 0n,
+    durability: toBigInt(durability),
+    vigor: toBigInt(vigor),
+    reach: toBigInt(reach),
+    skill: 0n,
+    speed: toBigInt(speed),
+    stamina: 0n,
+    strength: 0n,
+    vitality: toBigInt(vitality),
   };
 }
 
 function getCombatState({agility, constitution, durability, reach, skill, stamina, strength}) {
+  const agilityNumber = toDouble(agility);
+  const reachNumber = toDouble(reach);
+  const skillNumber = toDouble(skill);
+  const staminaNumber = toDouble(stamina);
+  const strengthNumber = toDouble(strength);
+
   return {
-    apm: Math.max(0, Math.log(agility)) + Math.sqrt(skill),
-    attack: Math.max(0, Math.log(stamina)) + Math.sqrt(agility) + skill + reach,
-    defense: Math.max(0, Math.log(agility)) + Math.sqrt(stamina) + skill,
-    health: stamina + constitution * constitution + durability * durability,
-    power: (strength + agility) * Math.sqrt(stamina) + skill,
+    apm: Math.max(0, Math.log(agilityNumber)) + Math.sqrt(skillNumber),
+    attack: Math.max(0, Math.log(staminaNumber)) + Math.sqrt(agilityNumber) + skillNumber + reachNumber,
+    defense: Math.max(0, Math.log(agilityNumber)) + Math.sqrt(staminaNumber) + skillNumber,
+    health: toBigInt(stamina) + toBigInt(constitution) * toBigInt(constitution) + toBigInt(durability) * toBigInt(durability),
+    power: (strengthNumber + agilityNumber) * Math.sqrt(staminaNumber) + skillNumber,
   };
 }
 
@@ -63,4 +69,24 @@ export function mergeState(state, updates) {
   };
 
   return {...nextState, ...getCombatState(nextState)};
+}
+
+function toBigInt(value) {
+  if(typeof value === 'bigint') {
+    return value;
+  }
+  if(typeof value === 'number' && Number.isInteger(value)) {
+    return BigInt(value);
+  }
+  if(typeof value === 'string' && /^-?\d+$/.test(value)) {
+    return BigInt(value);
+  }
+  return 0n;
+}
+
+function toDouble(value) {
+  if(typeof value === 'number') {
+    return value;
+  }
+  return Number(toBigInt(value));
 }

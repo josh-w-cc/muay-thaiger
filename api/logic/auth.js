@@ -3,11 +3,11 @@ import {createCommandError} from './command-errors.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
 const DEFAULT_TRAINING_STATS = {
-  agility: 0,
-  constitution: 0,
-  skill: 0,
-  stamina: 0,
-  strength: 0,
+  agility: 0n,
+  constitution: 0n,
+  skill: 0n,
+  stamina: 0n,
+  strength: 0n,
 };
 
 export async function authenticate({fighters, players, races}, message) {
@@ -49,5 +49,8 @@ async function createPlayer({fighters, players, races}, race) {
 }
 
 function getDefaultStats({stats = {}}) {
-  return {...DEFAULT_TRAINING_STATS, ...stats};
+  return {
+    ...DEFAULT_TRAINING_STATS,
+    ...Object.fromEntries(Object.entries(stats).map(([key, value]) => [key, BigInt(value)])),
+  };
 }

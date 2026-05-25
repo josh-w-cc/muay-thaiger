@@ -15,7 +15,7 @@ describe('fighterState helpers', () => {
     try {
       const state = getSelectionState(raceID);
 
-      expect(state.vigor).toBeUndefined();
+      expect(state.vigor).toBe(0n);
     }
     finally {
       BaseStats[raceID].stats = stats;

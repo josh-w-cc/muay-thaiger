@@ -34,11 +34,11 @@ function getServerDisplayName(fighter) {
 }
 
 function getServerGold(fighter) {
-  const nextGold = Number(fighter?.gold);
-  if(Number.isFinite(nextGold)) {
+  const nextGold = toBigInt(fighter?.gold);
+  if(nextGold !== null) {
     return nextGold;
   }
-  return 0;
+  return 0n;
 }
 
 function getServerID(fighter) {
@@ -56,8 +56,25 @@ function getServerRace(fighter) {
 }
 
 function getServerStats(fighter) {
-  if(fighter?.stats) {
-    return fighter.stats;
+  if(!fighter?.stats || typeof fighter.stats !== 'object') {
+    return {};
   }
-  return {};
+  return Object.fromEntries(
+    Object.entries(fighter.stats)
+      .map(([key, value]) => [key, toBigInt(value)])
+      .filter(([, value]) => value !== null),
+  );
+}
+
+function toBigInt(value) {
+  if(typeof value === 'bigint') {
+    return value;
+  }
+  if(typeof value === 'number' && Number.isInteger(value)) {
+    return BigInt(value);
+  }
+  if(typeof value === 'string' && /^-?\d+$/.test(value)) {
+    return BigInt(value);
+  }
+  return null;
 }

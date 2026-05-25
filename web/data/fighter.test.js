@@ -16,16 +16,16 @@ describe('useFighterStore', () => {
     const initialRace = `${RACES[0].id}`;
 
     expect(fighter.race).toBe(initialRace);
-    expect(fighter.anima).toBe(BaseStats[initialRace].stats.anima);
-    expect(fighter.durability).toBe(BaseStats[initialRace].stats.durability);
-    expect(fighter.vigor).toBe(BaseStats[initialRace].stats.vigor);
-    expect(fighter.reach).toBe(BaseStats[initialRace].stats.reach);
-    expect(fighter.speed).toBe(BaseStats[initialRace].stats.speed);
-    expect(fighter.vitality).toBe(BaseStats[initialRace].stats.vitality);
+    expect(fighter.anima).toBe(BigInt(BaseStats[initialRace].stats.anima));
+    expect(fighter.durability).toBe(BigInt(BaseStats[initialRace].stats.durability));
+    expect(fighter.vigor).toBe(BigInt(BaseStats[initialRace].stats.vigor));
+    expect(fighter.reach).toBe(BigInt(BaseStats[initialRace].stats.reach));
+    expect(fighter.speed).toBe(BigInt(BaseStats[initialRace].stats.speed));
+    expect(fighter.vitality).toBe(BigInt(BaseStats[initialRace].stats.vitality));
     expect(fighter.apm).toBe(0);
     expect(fighter.attack).toBe(BaseStats[initialRace].stats.reach);
     expect(fighter.defense).toBe(0);
-    expect(fighter.health).toBe(BaseStats[initialRace].stats.durability * BaseStats[initialRace].stats.durability);
+    expect(fighter.health).toBe(BigInt(BaseStats[initialRace].stats.durability * BaseStats[initialRace].stats.durability));
     expect(fighter.power).toBe(0);
   });
 
@@ -37,11 +37,11 @@ describe('useFighterStore', () => {
 
     const trainedFighter = useFighterStore.getState();
 
-    expect(trainedFighter.stamina).toBe(2);
-    expect(trainedFighter.strength).toBe(2);
+    expect(trainedFighter.stamina).toBe(2n);
+    expect(trainedFighter.strength).toBe(2n);
     expect(trainedFighter.attack).toBeCloseTo(2.6931471805599454);
     expect(trainedFighter.defense).toBeCloseTo(1.4142135623730951);
-    expect(trainedFighter.health).toBe(3);
+    expect(trainedFighter.health).toBe(3n);
     expect(trainedFighter.power).toBeCloseTo(2.8284271247461903);
   });
 
@@ -88,13 +88,13 @@ describe('useFighterStore', () => {
   it('trains while a fight is idling', () => {
     useFighterStore.setState({
       idling: {action: vi.fn(), delta: 0, key: 'FIGHT-club'},
-      strength: 0,
-      vigor: 1,
+      strength: 0n,
+      vigor: 1n,
     });
 
     useFighterStore.getState().train('strength');
 
-    expect(useFighterStore.getState().strength).toBe(1);
+    expect(useFighterStore.getState().strength).toBe(1n);
   });
 
   it('logs and ignores unknown training stats', () => {
@@ -103,7 +103,7 @@ describe('useFighterStore', () => {
     useFighterStore.getState().train('charisma');
 
     expect(error).toHaveBeenCalledWith('Tried to train unknown stat:', 'charisma');
-    expect(useFighterStore.getState().strength).toBe(0);
+    expect(useFighterStore.getState().strength).toBe(0n);
     error.mockRestore();
   });
 });

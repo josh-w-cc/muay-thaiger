@@ -128,14 +128,14 @@ describe('useFighterActionsStore', () => {
   it('skips unknown action ids when ticking', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
-    useFighterStore.setState({stamina: 0, vitality: 3});
+    useFighterStore.setState({stamina: 0n, vitality: 3n});
     useFighterActionsStore.getState().setActions([
       {action_id: 999, created_at: '2026-01-01T00:00:00.000Z', id: 1},
     ]);
 
     useFighterActionsStore.getState().tick();
 
-    expect(useFighterStore.getState().stamina).toBe(0);
+    expect(useFighterStore.getState().stamina).toBe(0n);
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({action_id: 999, id: 1, progress: 0}),
     ]);
@@ -144,14 +144,14 @@ describe('useFighterActionsStore', () => {
   it('uses now when scheduled actions are missing timestamps', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
-    useFighterStore.setState({stamina: 0, vitality: 3});
+    useFighterStore.setState({stamina: 0n, vitality: 3n});
     useFighterActionsStore.setState({
       actions: [{action_id: 2, id: 1}],
     });
 
     useFighterActionsStore.getState().tick();
 
-    expect(useFighterStore.getState().stamina).toBe(0);
+    expect(useFighterStore.getState().stamina).toBe(0n);
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({action_id: 2, id: 1, progress: 0}),
     ]);
@@ -161,10 +161,10 @@ describe('useFighterActionsStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:02.500Z'));
     useFighterStore.setState({
-      vigor: 1,
-      speed: 1,
-      stamina: 0,
-      vitality: 3,
+      vigor: 1n,
+      speed: 1n,
+      stamina: 0n,
+      vitality: 3n,
     });
     useFighterActionsStore.getState().setActions([
       {action_id: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
@@ -172,7 +172,7 @@ describe('useFighterActionsStore', () => {
 
     useFighterActionsStore.getState().tick();
 
-    expect(useFighterStore.getState().stamina).toBe(6);
+    expect(useFighterStore.getState().stamina).toBe(6n);
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({
         action_id: 2,
@@ -183,6 +183,6 @@ describe('useFighterActionsStore', () => {
 
     useFighterActionsStore.getState().tick();
 
-    expect(useFighterStore.getState().stamina).toBe(6);
+    expect(useFighterStore.getState().stamina).toBe(6n);
   });
 });
