@@ -1,0 +1,6 @@
+.userMenuButton {
+  position: fixed;
+  right: var(--space-md);
+  top: var(--space-md);
+  z-index: 10;
+}
