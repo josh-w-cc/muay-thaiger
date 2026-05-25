@@ -6,12 +6,34 @@ import {registerFighterAction, unregisterFighterAction} from './fighter-actions.
 describe('registerFighterAction', () => {
   it('creates a fighter action for the player current fighter and returns it on a valid message', async () => {
     const created = {id: 1, action_id: 2, fighter_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
-    const fighterActions = {create: async () => created};
+    const create = createCallTracker(created);
+    const fighterActions = {
+      create,
+      listByFighterID: async () => [],
+    };
     const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false})};
 
     const result = await registerFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
 
     assert.deepEqual(result, created);
+    assert.deepEqual(create.calls, [[{action_id: 2, fighter_id: 3}]]);
+  });
+
+  it('reuses the oldest touched_at value for new fighter actions when actions exist', async () => {
+    const oldestTouchedAt = '2026-01-01T00:00:00.000Z';
+    const create = createCallTracker();
+    const fighterActions = {
+      create,
+      listByFighterID: async () => [
+        {id: 5, touched_at: oldestTouchedAt},
+        {id: 7, touched_at: '2026-01-01T00:00:03.000Z'},
+      ],
+    };
+    const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false})};
+
+    await registerFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
+
+    assert.deepEqual(create.calls, [[{action_id: 2, fighter_id: 3, touched_at: oldestTouchedAt}]]);
   });
 
   describe('unregisterFighterAction', () => {
@@ -100,10 +122,12 @@ describe('registerFighterAction', () => {
   });
 });
 
-function createCallTracker() {
+function createCallTracker(returnValue) {
   const fn = (...args) => {
     fn.calls.push(args);
+    return fn.returnValue;
   };
   fn.calls = [];
+  fn.returnValue = returnValue;
   return fn;
 }
