@@ -1,4 +1,3 @@
-import addHugeNumber from 'shared/addHugeNumber.js';
 import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
 import {getTrainedStatValue} from 'shared/training.js';
 import {createTrainingTimeline} from './training-timeline.js';
@@ -29,7 +28,7 @@ function trainStats(actions, fighter) {
   const stats = {...fighter.stats};
   let gold = fighter.gold;
   const proxy = createFighterProxy(stats, (amount) => {
-    gold = addHugeNumber(gold, amount);
+    gold = (BigInt(gold) + BigInt(amount)).toString();
   });
   for(const action of actions) {
     action.skill.action(proxy);
