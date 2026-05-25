@@ -16,6 +16,4 @@ const BaseStats = Object.fromEntries(
       stats: item.stats,
     }]),
 );
-
 export default BaseStats;
-export {RACES};
