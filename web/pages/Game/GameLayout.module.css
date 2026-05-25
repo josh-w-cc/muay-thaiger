@@ -19,6 +19,14 @@
   width: fit-content;
 }
 
+.layout {
+  display: grid;
+}
+
+.page {
+  padding-top: var(--space-xl);
+}
+
 .rankDisplay {
   align-items: flex-end;
   color: var(--color-fg);

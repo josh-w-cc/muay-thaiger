@@ -10,7 +10,7 @@ import css from './GameLayout.module.css';
 
 export function GameLayout() {
   return (
-    <>
+    <div className={css.layout}>
       <div className={css.headerLayout}>
         <div className={css.headerControls}>
           <GoldDisplay />
@@ -22,8 +22,10 @@ export function GameLayout() {
         </div>
         <Header />
       </div>
-      <Outlet />
-    </>
+      <div className={css.page}>
+        <Outlet />
+      </div>
+    </div>
   );
 }
 
