@@ -24,14 +24,20 @@ describe('GameLayout', () => {
     vi.clearAllMocks();
   });
 
-  it('renders the header above the route outlet', async () => {
+  it('renders the header above the route outlet inside the shared page wrapper', async () => {
     const {GameLayout} = await import('./GameLayout.js');
 
     render(<GameLayout />);
 
-    expect(screen.getByTestId('header')).toBeInTheDocument();
-    expect(screen.getByTestId('outlet')).toBeInTheDocument();
+    const header = screen.getByTestId('header');
+    const outlet = screen.getByTestId('outlet');
+
+    expect(header).toBeInTheDocument();
+    expect(outlet).toBeInTheDocument();
+    expect(outlet.parentElement).not.toBeNull();
+    expect(header.nextElementSibling).toBe(outlet.parentElement);
   });
+
   it('redirects to root when no player token exists', async () => {
     loadPlayerToken.mockReturnValue(false);
     const {loader} = await import('./GameLayout.js');
