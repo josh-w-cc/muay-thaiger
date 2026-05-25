@@ -47,6 +47,38 @@ describe('useFighterActionsStore', () => {
     ]);
   });
 
+  it('sets touched_at to now when there are no existing actions', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+
+    useFighterActionsStore.getState().addAction({action_id: 2});
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({
+        action_id: 2,
+        touched_at: '2026-01-01T00:00:00.000Z',
+      }),
+    ]);
+  });
+
+  it('sets touched_at to now plus total duration of existing actions', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+    // action_id 2 = walking (1s), action_id 3 = shadowBoxing (2s) → total 3000ms
+    useFighterActionsStore.getState().setActions([
+      {action_id: 2, id: 1},
+      {action_id: 3, id: 2},
+    ]);
+
+    useFighterActionsStore.getState().addAction({action_id: 2});
+
+    const actions = useFighterActionsStore.getState().actions;
+    expect(actions[2]).toEqual(expect.objectContaining({
+      action_id: 2,
+      touched_at: '2026-01-01T00:00:03.000Z',
+    }));
+  });
+
   it('removes fighter actions by action id', () => {
     useFighterActionsStore.getState().setActions([
       {action_id: 2, id: 1},
