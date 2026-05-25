@@ -10,6 +10,10 @@ export default function Header() {
     <div className={css.headerLayout}>
       <div className={css.headerControls}>
         <GoldDisplay />
+        <div className={css.rankDisplay}>
+          <span className={css.rankLabel}>Rank</span>
+          <span className={css.rankValue}>ZZ</span>
+        </div>
         <UserMenuButton />
       </div>
       <NavHeader />

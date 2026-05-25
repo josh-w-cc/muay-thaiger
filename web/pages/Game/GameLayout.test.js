@@ -32,7 +32,6 @@ describe('GameLayout', () => {
     expect(screen.getByTestId('header')).toBeInTheDocument();
     expect(screen.getByTestId('outlet')).toBeInTheDocument();
   });
-
   it('redirects to root when no player token exists', async () => {
     loadPlayerToken.mockReturnValue(false);
     const {loader} = await import('./GameLayout.js');
