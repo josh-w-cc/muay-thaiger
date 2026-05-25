@@ -1,12 +1,6 @@
 import addHugeNumber from 'shared/addHugeNumber.js';
-import {SKILL_DEFINITIONS, SKILL_IDS} from 'shared/skills.js';
+import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
 import {createTrainingTimeline} from './training-timeline.js';
-
-const SKILLS_BY_ACTION_ID = Object.freeze(
-  Object.fromEntries(
-    Object.entries(SKILL_IDS).map(([key, id]) => [id, SKILL_DEFINITIONS[key]]),
-  ),
-);
 
 export async function applyTraining({fighterActions, fighters}, fighter) {
   const actions = await fighterActions.listByFighterID(fighter.id);

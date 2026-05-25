@@ -96,6 +96,8 @@ export const SKILL_DEFINITIONS = Object.freeze({
   },
 });
 
+export const SKILLS_BY_ACTION_ID = Object.freeze(Object.fromEntries(Object.entries(SKILL_IDS).map(([key, id]) => [id, SKILL_DEFINITIONS[key]])));
+
 export const SKILL_SEED_ACTIONS = Object.freeze(
   Object.entries(SKILL_DEFINITIONS).map(([key, skill]) => ({id: SKILL_IDS[key], name: skill.name, type: 'train'})),
 );
