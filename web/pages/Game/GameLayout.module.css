@@ -2,7 +2,7 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: var(--space-md);
+  padding: 0 var(--space-md);
   width: 100%;
 }
 
@@ -15,8 +15,8 @@
   .headerControls {
     left: 0;
     position: fixed;
-    right: 0;
-    top: var(--space-md);
+    top: 0;
+    width: 100vw;
     z-index: 10;
   }
 
