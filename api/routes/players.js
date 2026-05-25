@@ -1,4 +1,4 @@
-import playersModel from '../data/models/players.js';
+import playersModel from '#api/data/models/players.js';
 
 
 /**
