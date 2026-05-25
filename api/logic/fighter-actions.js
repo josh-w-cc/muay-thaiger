@@ -1,4 +1,5 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
+import {getTrainingDurationMs} from 'shared/training.js';
 import {createCommandError} from './command-errors.js';
 
 export async function registerFighterAction({fighterActions, fighters}, message, playerID) {
@@ -7,9 +8,13 @@ export async function registerFighterAction({fighterActions, fighters}, message,
   if(!currentFighter || !isValidAction(currentFighter, normalizedMessage.action_id)) {
     throw createCommandError('invalid-idle-message');
   }
+  const existingActions = await fighterActions.listByFighterID(currentFighter.id);
+  const totalDurationMs = existingActions.reduce((sum, action) => sum + getTrainingDurationMs(action), 0);
+  const touchedAt = new Date(Date.now() + totalDurationMs);
   return await fighterActions.create({
     action_id: normalizedMessage.action_id,
     fighter_id: currentFighter.id,
+    touched_at: touchedAt,
   });
 }
 
