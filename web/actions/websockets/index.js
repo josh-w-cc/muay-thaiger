@@ -1,11 +1,6 @@
 import {
   resetAuthState,
 } from '@/actions/websockets/auth.js';
-import {
-  createFighterActionCmd as onCreateFighterActionCmd,
-  removeFighterActionCmd as onRemoveFighterActionCmd,
-  selectFighterCmd as onSelectFighterCmd,
-} from '@/actions/websockets/clientCommands.js';
 import {generateOnSocketMessageFn} from '@/actions/websockets/serverCommands.js';
 import {loadPlayerToken} from '@/actions/websockets/token.js';
 import {isSocketReady} from '@/actions/websockets/websocketState.js';
@@ -22,16 +17,12 @@ export function resetSocketState() {
   socket = null;
 }
 
-export function createFighterActionCmd(actionID) {
-  onCreateFighterActionCmd(getOpenSocket(), actionID);
-}
-
-export function removeFighterActionCmd(actionID) {
-  onRemoveFighterActionCmd(getOpenSocket(), actionID);
-}
-
-export function selectFighterCmd() {
-  onSelectFighterCmd(getOpenSocket());
+export function sendCommand(command) {
+  const openSocket = getOpenSocket();
+  if(!isSocketReady(openSocket)) {
+    return;
+  }
+  openSocket.send(JSON.stringify(command));
 }
 
 function connectSocket() {

@@ -8,7 +8,7 @@ const {removeAction, removeFighterActionCmd} = vi.hoisted(() => ({
   removeFighterActionCmd: vi.fn(),
 }));
 
-vi.mock('@/actions/websockets/index.js', () => ({
+vi.mock('@/actions/websockets/clientCommands.js', () => ({
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
 }));
 

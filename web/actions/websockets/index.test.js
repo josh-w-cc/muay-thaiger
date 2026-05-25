@@ -11,11 +11,10 @@ import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './token.js';
 import {
   connectSocketOnAppLoad,
-  createFighterActionCmd,
-  removeFighterActionCmd,
   resetSocketState,
-  selectFighterCmd,
+  sendCommand,
 } from './index.js';
+import {selectFighterCmd} from './clientCommands.js';
 
 
 describe('player websocket helpers', () => {
@@ -225,48 +224,26 @@ describe('player websocket helpers', () => {
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
-  it('sends idle command with action id for fighter actions', () => {
+  it('sends websocket command when socket is ready', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
 
-    createFighterActionCmd(2);
+    sendCommand({action_id: 2, cmd: 'idle'});
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
   });
 
-  it('reconnects and sends idle command when websocket is unavailable', () => {
+  it('reconnects and sends websocket command when socket is unavailable', () => {
     const unavailableSocket = connectSocketOnAppLoad();
     unavailableSocket.readyState = 0;
 
-    createFighterActionCmd(2);
+    sendCommand({action_id: 2, cmd: 'idle'});
 
     const reconnectedSocket = globalThis.WebSocket.mock.results[1].value;
     expect(globalThis.WebSocket).toHaveBeenCalledTimes(2);
     expect(unavailableSocket.close).toHaveBeenCalledTimes(1);
     expect(reconnectedSocket.send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
-  });
-
-  it('sends stop command with action id for fighter actions', () => {
-    const socket = connectSocketOnAppLoad();
-    const send = vi.fn();
-    socket.send = send;
-
-    removeFighterActionCmd(2);
-
-    expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'stop'}));
-  });
-
-  it('reconnects and sends stop command when websocket is unavailable', () => {
-    const unavailableSocket = connectSocketOnAppLoad();
-    unavailableSocket.readyState = 0;
-
-    removeFighterActionCmd(2);
-
-    const reconnectedSocket = globalThis.WebSocket.mock.results[1].value;
-    expect(globalThis.WebSocket).toHaveBeenCalledTimes(2);
-    expect(unavailableSocket.close).toHaveBeenCalledTimes(1);
-    expect(reconnectedSocket.send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'stop'}));
   });
 
   it('reconnects when selecting fighter with unavailable websocket', () => {
