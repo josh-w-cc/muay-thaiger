@@ -1,16 +1,20 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
+import {createTrainingTimeline} from 'shared/trainingTimeline.js';
 
 import useFighterStore from '@/data/fighter.js';
 
 
 export function runFighterActionTick(actions) {
   const nowMs = Date.now();
-  const scheduledActions = getScheduledActions(actions);
-  const {appliedActions, touchedAtByActionIndex} = runTrainingCycle(scheduledActions, nowMs);
+  const {appliedActions, touchedAtByActionKey} = createTrainingTimeline(actions, {
+    getDurationMs: (action) => (SKILLS_BY_ACTION_ID[action.action_id]?.duration || 0) * 1000,
+    getTouchedAtValue: (touchedAt) => touchedAt.toISOString(),
+    now: new Date(nowMs),
+  });
   trainFighter(appliedActions);
   return actions.map((action, index) => (
-    touchedAtByActionIndex.has(index)
-      ? {...action, touched_at: touchedAtByActionIndex.get(index)}
+    touchedAtByActionKey.has(index)
+      ? {...action, touched_at: touchedAtByActionKey.get(index)}
       : action
   ));
 }
@@ -40,32 +44,6 @@ export function getScheduledActions(actions) {
   return actions
     .map((action, index) => ({action, durationMs: (SKILLS_BY_ACTION_ID[action.action_id]?.duration || 0) * 1000, index}))
     .filter((action) => action.durationMs > 0);
-}
-
-function runTrainingCycle(scheduledActions, nowMs) {
-  if(!scheduledActions.length) {
-    return {appliedActions: [], touchedAtByActionIndex: new Map()};
-  }
-  const {latestActionIndex, latestActionTime} = findLatestAction(scheduledActions, nowMs);
-  const remainingMs = nowMs - latestActionTime;
-  if(remainingMs <= 0) {
-    return {appliedActions: [], touchedAtByActionIndex: new Map()};
-  }
-  return collectCompletedActions(scheduledActions, nowMs, remainingMs, latestActionIndex);
-}
-
-function collectCompletedActions(scheduledActions, nowMs, startingRemainingMs, latestActionIndex) {
-  const appliedActions = [];
-  const touchedAtByActionIndex = new Map();
-  let remainingMs = startingRemainingMs;
-  let actionIndex = (latestActionIndex + 1) % scheduledActions.length;
-  while(remainingMs >= scheduledActions[actionIndex].durationMs) {
-    remainingMs -= scheduledActions[actionIndex].durationMs;
-    appliedActions.push(scheduledActions[actionIndex].action);
-    touchedAtByActionIndex.set(scheduledActions[actionIndex].index, new Date(nowMs - remainingMs).toISOString());
-    actionIndex = (actionIndex + 1) % scheduledActions.length;
-  }
-  return {appliedActions, touchedAtByActionIndex};
 }
 
 function trainFighter(actions) {
