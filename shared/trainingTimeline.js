@@ -20,6 +20,19 @@ export function getScheduledActions(actions, getDurationMs) {
     .filter((action) => action.durationMs > 0);
 }
 
+export function findLatestAction(actions, nowMs) {
+  let latestActionIndex = 0;
+  let latestActionTime = getActionTime(actions[latestActionIndex].action, nowMs);
+  for(let index = 1; index < actions.length; index += 1) {
+    const actionTime = getActionTime(actions[index].action, nowMs);
+    if(actionTime >= latestActionTime) {
+      latestActionIndex = index;
+      latestActionTime = actionTime;
+    }
+  }
+  return {latestActionIndex, latestActionTime};
+}
+
 function createTimelineFromScheduledActions({getTouchedAtKey, getTouchedAtValue, nowMs, scheduledActions}) {
   if(!scheduledActions.length) {
     return createEmptyTimeline();
