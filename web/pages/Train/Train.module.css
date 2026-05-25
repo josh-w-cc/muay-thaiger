@@ -13,6 +13,10 @@
   composes: insetSectionBase from '../../components/primitive/css-modules/inset-section-base.module.css';
 }
 
+.page {
+  padding-top: var(--space-xl);
+}
+
 .regimen {
   display: grid;
   gap: var(--space-sm);
@@ -57,8 +61,4 @@
 
 .stats {
   composes: statListBase from '../../components/primitive/css-modules/stat-list-base.module.css';
-}
-
-.topSection {
-  margin-top: var(--space-md);
 }

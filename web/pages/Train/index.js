@@ -21,14 +21,14 @@ export default function Train() {
   const fighter = useFighterStore();
 
   return (
-    <>
-      <section className={`${css.section} ${css.topSection}`}>
+    <div className={css.page}>
+      <section className={css.section}>
         <div className={css.stats}>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</div>
       </section>
       <section className={css.section}>
         <RegimenRows fighter={fighter} />
       </section>
-    </>
+    </div>
   );
 }
 
