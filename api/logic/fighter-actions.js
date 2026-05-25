@@ -27,8 +27,40 @@ export async function unregisterFighterAction({fighterActions, fighters}, messag
   }
   const actions = await fighterActions.listByFighterID(currentFighter.id);
   const matchingActions = actions.filter((action) => action.action_id === normalizedMessage.action_id);
+  const remainingActions = actions.filter((action) => action.action_id !== normalizedMessage.action_id);
   await Promise.all(matchingActions.map((action) => fighterActions.remove(action.id)));
+  await transferLatestTouchedAt(fighterActions, matchingActions, remainingActions);
   return {action_id: normalizedMessage.action_id};
+}
+
+async function transferLatestTouchedAt(fighterActions, removedActions, remainingActions) {
+  if(!remainingActions.length) {
+    return;
+  }
+  const maxRemovedMs = getMaxTouchedAtMs(removedActions);
+  if(maxRemovedMs === null) {
+    return;
+  }
+  const maxRemainingMs = getMaxTouchedAtMs(remainingActions);
+  if(maxRemainingMs !== null && maxRemovedMs <= maxRemainingMs) {
+    return;
+  }
+  const targetAction = getActionWithMaxTouchedAt(remainingActions);
+  await fighterActions.touch(targetAction.id, new Date(maxRemovedMs));
+}
+
+function getActionWithMaxTouchedAt(actions) {
+  return actions.reduce((best, action) => {
+    const bestMs = getTouchedAtMs(best);
+    const actionMs = getTouchedAtMs(action);
+    if(bestMs === null) {
+      return action;
+    }
+    if(actionMs === null) {
+      return best;
+    }
+    return actionMs >= bestMs ? action : best;
+  });
 }
 
 function isValidAction(fighter, actionID) {
@@ -39,14 +71,17 @@ function isValidAction(fighter, actionID) {
   return skill.requires(fighter.stats || {});
 }
 
-function getNextTouchedAt(actions) {
-  const touchedAtValues = actions
-    .map(getTouchedAtMs)
-    .filter((touchedAtMs) => touchedAtMs !== null);
-  if(!touchedAtValues.length) {
+function getMaxTouchedAtMs(actions) {
+  const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
+  if(!values.length) {
     return null;
   }
-  return new Date(Math.max(...touchedAtValues) + 1);
+  return Math.max(...values);
+}
+
+function getNextTouchedAt(actions) {
+  const maxMs = getMaxTouchedAtMs(actions);
+  return maxMs !== null ? new Date(maxMs + 1) : null;
 }
 
 function getTouchedAtMs(action) {

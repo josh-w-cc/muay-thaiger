@@ -22,6 +22,50 @@ export function getScheduledActions(actions) {
   return getScheduledTrainingActions(actions);
 }
 
+export function transferLatestTouchedAt(removedActions, remainingActions) {
+  if(!remainingActions.length) {
+    return remainingActions;
+  }
+  const maxRemovedMs = getMaxTouchedAtMs(removedActions);
+  if(maxRemovedMs === null) {
+    return remainingActions;
+  }
+  const maxRemainingMs = getMaxTouchedAtMs(remainingActions);
+  if(maxRemainingMs !== null && maxRemovedMs <= maxRemainingMs) {
+    return remainingActions;
+  }
+  const targetAction = getActionWithMaxTouchedAt(remainingActions);
+  return remainingActions.map((action) => (
+    action === targetAction
+      ? {...action, touched_at: new Date(maxRemovedMs).toISOString()}
+      : action
+  ));
+}
+
+function getActionWithMaxTouchedAt(actions) {
+  return actions.reduce((best, action) => {
+    const bestMs = getTouchedAtMs(best);
+    const actionMs = getTouchedAtMs(action);
+    if(bestMs === null) {
+      return action;
+    }
+    if(actionMs === null) {
+      return best;
+    }
+    return actionMs >= bestMs ? action : best;
+  });
+}
+
+function getMaxTouchedAtMs(actions) {
+  const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
+  return values.length ? Math.max(...values) : null;
+}
+
+function getTouchedAtMs(action) {
+  const ms = Date.parse(action.touched_at);
+  return Number.isNaN(ms) ? null : ms;
+}
+
 function trainFighter(actions) {
   if(!actions.length) {
     return;
