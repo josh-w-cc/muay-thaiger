@@ -17,11 +17,11 @@ function isIntegerString(value) {
 }
 
 function normalizeAddend(value) {
-  if(typeof value === 'bigint' && value >= 0n) {
+  if(isNonNegativeBigInt(value)) {
     return value;
   }
 
-  if(typeof value === 'number' && Number.isSafeInteger(value) && value >= 0) {
+  if(isNonNegativeSafeInteger(value)) {
     return BigInt(value);
   }
 
@@ -30,4 +30,12 @@ function normalizeAddend(value) {
   }
 
   return null;
+}
+
+function isNonNegativeBigInt(value) {
+  return typeof value === 'bigint' && value >= 0n;
+}
+
+function isNonNegativeSafeInteger(value) {
+  return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;
 }
