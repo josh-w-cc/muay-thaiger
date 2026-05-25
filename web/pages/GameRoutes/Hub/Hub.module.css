@@ -21,29 +21,29 @@
 }
 
 .section {
-  composes: insetSectionBase from '../../components/primitive/css-modules/inset-section-base.module.css';
+  composes: insetSectionBase from '../../../components/primitive/css-modules/inset-section-base.module.css';
 }
 
 .details {
-  composes: statListBase from '../../components/primitive/css-modules/stat-list-base.module.css';
+  composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
 }
 
 .stats {
-  composes: statListBase from '../../components/primitive/css-modules/stat-list-base.module.css';
+  composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
 }
 
 .stat {
-  composes: statRowBase from '../../components/primitive/css-modules/stat-row-base.module.css';
+  composes: statRowBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
 
   margin: 0;
 }
 
 .label {
-  composes: statLabelBase from '../../components/primitive/css-modules/stat-row-base.module.css';
+  composes: statLabelBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
 }
 
 .value {
-  composes: statValueBase from '../../components/primitive/css-modules/stat-row-base.module.css';
+  composes: statValueBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
 
   margin: 0;
 }
