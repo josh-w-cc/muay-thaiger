@@ -12,12 +12,9 @@ function Shop() {
   const fighter = useFighterStore();
 
   return (
-    <>
-      <h1>SHOP</h1>
-      <section className={css.section}>
-        <ShopRows buy={buy} fighter={fighter} />
-      </section>
-    </>
+    <section className={css.section}>
+      <ShopRows buy={buy} fighter={fighter} />
+    </section>
   );
 }
 
