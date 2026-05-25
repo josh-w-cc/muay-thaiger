@@ -11,58 +11,24 @@ export const SKILL_IDS = Object.freeze({
 });
 
 export const SKILL_DEFINITIONS = Object.freeze({
-  begging: {
-    action: (fighter) => {
-      fighter.win(1);
-    },
-    name: '฿egging',
-    requires: () => true,
-    duration: 1,
-  },
-  walking: {
-    action: (fighter) => {
-      fighter.train('stamina');
-    },
-    name: 'Walking',
-    requires: () => true,
-    duration: 1,
-  },
-  shadowBoxing: {
-    action: (fighter) => {
-      fighter.train('stamina', 3);
-    },
-    name: 'Shadow Boxing',
-    requires: (fighter) => fighter.stamina > 25,
-    duration: 2,
-  },
-  breathwork: {
-    action: (fighter) => {
-      fighter.train('constitution');
-      fighter.train('stamina');
-    },
-    name: 'Breathwork',
-    requires: (fighter) => fighter.stamina > 50,
-    duration: 2,
-  },
-  yoga: {
-    action: (fighter) => {
-      fighter.train('agility');
-      fighter.train('strength');
-      fighter.train('constitution');
-    },
-    name: 'Yoga',
-    requires: (fighter) => fighter.stamina > 100,
-    duration: 2,
-  },
-  calisthenics: {
+  gymnastics: {
     action: (fighter) => {
       fighter.train('stamina', 5);
-      fighter.train('strength', 3);
+      fighter.train('strength', 5);
       fighter.train('constitution', 1);
+      fighter.train('agility', 15);
     },
-    name: 'Calisthenics',
-    requires: (fighter) => fighter.stamina > 250 && fighter.constitution > 10 && fighter.strength > 25,
-    duration: 4,
+    name: 'Gymnastics',
+    requires: (fighter) => fighter.stamina > 2500 && fighter.strength > 250 && fighter.agility > 500,
+    duration: 8,
+  },
+  running: {
+    action: (fighter) => {
+      fighter.train('stamina', 25);
+    },
+    name: 'Running',
+    requires: (fighter) => fighter.stamina > 1000 && fighter.constitution > 250,
+    duration: 8,
   },
   laboring: {
     action: (fighter) => {
@@ -75,24 +41,58 @@ export const SKILL_DEFINITIONS = Object.freeze({
     requires: (fighter) => fighter.stamina > 500 && fighter.constitution > 100 && fighter.strength > 100,
     duration: 4,
   },
-  running: {
-    action: (fighter) => {
-      fighter.train('stamina', 25);
-    },
-    name: 'Running',
-    requires: (fighter) => fighter.stamina > 1000 && fighter.constitution > 250,
-    duration: 8,
-  },
-  gymnastics: {
+  calisthenics: {
     action: (fighter) => {
       fighter.train('stamina', 5);
-      fighter.train('strength', 5);
+      fighter.train('strength', 3);
       fighter.train('constitution', 1);
-      fighter.train('agility', 15);
     },
-    name: 'Gymnastics',
-    requires: (fighter) => fighter.stamina > 2500 && fighter.strength > 250 && fighter.agility > 500,
-    duration: 8,
+    name: 'Calisthenics',
+    requires: (fighter) => fighter.stamina > 250 && fighter.constitution > 10 && fighter.strength > 25,
+    duration: 4,
+  },
+  yoga: {
+    action: (fighter) => {
+      fighter.train('agility');
+      fighter.train('strength');
+      fighter.train('constitution');
+    },
+    name: 'Yoga',
+    requires: (fighter) => fighter.stamina > 100,
+    duration: 2,
+  },
+  breathwork: {
+    action: (fighter) => {
+      fighter.train('constitution');
+      fighter.train('stamina');
+    },
+    name: 'Breathwork',
+    requires: (fighter) => fighter.stamina > 50,
+    duration: 2,
+  },
+  shadowBoxing: {
+    action: (fighter) => {
+      fighter.train('stamina', 3);
+    },
+    name: 'Shadow Boxing',
+    requires: (fighter) => fighter.stamina > 25,
+    duration: 2,
+  },
+  walking: {
+    action: (fighter) => {
+      fighter.train('stamina');
+    },
+    name: 'Walking',
+    requires: () => true,
+    duration: 1,
+  },
+  begging: {
+    action: (fighter) => {
+      fighter.win(1);
+    },
+    name: '฿egging',
+    requires: () => true,
+    duration: 1,
   },
 });
 
