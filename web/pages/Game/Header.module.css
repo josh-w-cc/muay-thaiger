@@ -36,7 +36,7 @@
     gap: var(--space-md);
     justify-content: flex-start;
     overflow-x: auto;
-    padding-inline: var(--space-md);
+    padding-inline: var(--space-sm);
     position: relative;
     right: var(--space-xl);
     scroll-snap-type: x mandatory;
@@ -44,7 +44,7 @@
   }
 
   .navigationButton {
-    flex: 0 0 calc(100% - var(--space-md) * 2);
+    flex: 0 0 calc(100% - var(--space-sm) * 2);
     scroll-snap-align: center;
   }
 }

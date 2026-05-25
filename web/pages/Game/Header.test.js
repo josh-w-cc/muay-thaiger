@@ -78,13 +78,14 @@ describe('Header', () => {
     const modulePath = path.join(directoryPath, 'Header.module.css');
     const mobileHeaderPattern = new RegExp(
       '@media\\(max-width:\\s*768px\\)\\s*{[\\s\\S]*\\.header\\s*{[\\s\\S]*'
-      + 'overflow-x:\\s*auto;[\\s\\S]*right:\\s*var\\(--space-xl\\);[\\s\\S]*'
+      + 'overflow-x:\\s*auto;[\\s\\S]*padding-inline:\\s*var\\(--space-sm\\);[\\s\\S]*'
+      + 'right:\\s*var\\(--space-xl\\);[\\s\\S]*'
       + 'scroll-snap-type:\\s*x mandatory;[\\s\\S]*width:\\s*calc\\(100% \\+ var\\(--space-xl\\) \\* 2\\);',
       's',
     );
     const mobileNavigationButtonPattern = new RegExp(
       '@media\\(max-width:\\s*768px\\)\\s*{[\\s\\S]*\\.navigationButton\\s*{[\\s\\S]*'
-      + 'flex:\\s*0 0 calc\\(100% - var\\(--space-md\\) \\* 2\\);[\\s\\S]*scroll-snap-align:\\s*center;',
+      + 'flex:\\s*0 0 calc\\(100% - var\\(--space-sm\\) \\* 2\\);[\\s\\S]*scroll-snap-align:\\s*center;',
       's',
     );
     const source = fs.readFileSync(modulePath, 'utf8');
