@@ -5,12 +5,15 @@ import {render, screen} from '@testing-library/react';
 
 
 describe('UserMenuButton', () => {
-  it('renders an edit profile button', async () => {
+  it('renders an edit profile icon button', async () => {
     const {default: UserMenuButton} = await import('./UserMenuButton.js');
 
     render(<UserMenuButton />);
 
-    expect(screen.getByRole('button', {name: 'Edit Profile'})).toBeInTheDocument();
+    const button = screen.getByRole('button', {name: 'Edit Profile'});
+
+    expect(button).toBeInTheDocument();
+    expect(button.querySelector('svg')).toBeInTheDocument();
   });
 
   it('pins the button in the top-right corner', () => {

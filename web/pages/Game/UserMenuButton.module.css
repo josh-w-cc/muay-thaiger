@@ -1,6 +1,16 @@
 .userMenuButton {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--space-xs);
   position: fixed;
   right: var(--space-md);
   top: var(--space-md);
   z-index: 10;
+}
+
+.userMenuIcon {
+  display: block;
 }
