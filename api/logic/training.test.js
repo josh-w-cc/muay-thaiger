@@ -139,6 +139,26 @@ describe('applyTraining', () => {
     assert.equal(updateCalls[0].gold, '1');
   });
 
+  it('uses BigInt arithmetic for large gold values', async () => {
+    const fighter = {id: 1, gold: '9007199254740993', stats: BASE_STATS};
+    const actions = [{action_id: 1, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
+    const updateCalls = [];
+    const fighterActions = {
+      listByFighterID: async () => actions,
+      touch: async () => null,
+    };
+    const fighters = {
+      update: async (id, data) => {
+        updateCalls.push(data);
+        return {...fighter, ...data};
+      },
+    };
+
+    await applyTraining({fighterActions, fighters}, fighter);
+
+    assert.equal(updateCalls[0].gold, '9007199254740994');
+  });
+
   it('returns the updated fighter and actions from the fighters model', async () => {
     const fighter = {id: 1, gold: '0', stats: BASE_STATS};
     const updatedFighter = {id: 1, gold: '0', stats: {...BASE_STATS, stamina: 1}};
