@@ -6,8 +6,7 @@ import {findLatestAction, getScheduledActions, runFighterActionTick} from './fig
 const useFighterActionsStore = create((set) => ({
   ...getInitialState(),
   addAction: (action) => set((state) => {
-    const nextActions = [...state.actions, normalizeAction(action)];
-    return {actions: setActionProgress(nextActions)};
+    return {actions: [...state.actions, normalizeAction(action)]};
   }),
   removeAction: (actionID) => set((state) => ({
     actions: setActionProgress(state.actions.filter((action) => action.action_id !== actionID)),
