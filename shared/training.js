@@ -37,14 +37,10 @@ export function getScheduledTrainingActions(actions) {
   return getScheduledActions(actions, getTrainingDurationMs);
 }
 
-export function getTrainingEffect({anima = 0, speed = 0, vigor = 0, vitality = 0}) {
-  return {
-    agility: speed,
-    constitution: vitality,
-    skill: anima,
-    stamina: vitality,
-    strength: vigor,
-  };
+export function getTrainingEffect(stats) {
+  return Object.fromEntries(
+    Object.entries(TRAINING_MULTIPLIER_BY_STAT).map(([stat, multiplierStat]) => [stat, stats[multiplierStat] || 0]),
+  );
 }
 
 export function getTrainedStatValue(stats, stat, amount = 1) {
