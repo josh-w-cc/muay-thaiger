@@ -14,7 +14,7 @@ function ZerothFight() {
   if(event) {
     return event;
   }
-  if(fighter.gold < 100) {
+  if(fighter.gold < 100n) {
     setEvent(
       <div className={css.message}>
         Come back when you have the
@@ -53,5 +53,5 @@ export default ZerothFight;
 
 
 export function needsZerothFight(fighter) {
-  return (fighter.gold < 100 || !fighter.strength || !fighter.stamina);
+  return (fighter.gold < 100n || !fighter.strength || !fighter.stamina);
 }

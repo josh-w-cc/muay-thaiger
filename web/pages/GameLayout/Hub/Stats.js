@@ -40,7 +40,7 @@ export default function Stats() {
 
 function getStatValue({fighter, key}) {
   if(key === 'gold') {
-    return fighter.gold / 100;
+    return fighter.gold / 100n;
   }
   return fighter[key];
 }

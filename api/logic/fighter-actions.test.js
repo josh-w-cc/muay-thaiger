@@ -167,7 +167,7 @@ describe('registerFighterAction', () => {
     const create = createCallTracker();
     const fighterActions = {create, listByFighterID: createCallTracker()};
     const fighters = {
-      findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {stamina: 25}}),
+      findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {stamina: 25n}}),
     };
 
     await assert.rejects(

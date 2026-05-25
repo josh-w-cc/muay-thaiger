@@ -9,7 +9,7 @@ export function getInitialState() {
   return {
     createdAt: null,
     displayName: '',
-    gold: 0,
+    gold: 0n,
     id: null,
     idling: false,
     ...getSelectionState(initialRace),
@@ -28,27 +28,28 @@ export function getSelectionState(id) {
 
 function getBaseSelectionState({anima, durability, vigor, reach, speed, vitality}) {
   return {
-    agility: 0,
+    agility: 0n,
     anima,
-    constitution: 0,
+    constitution: 0n,
     durability,
     vigor,
     reach,
-    skill: 0,
+    skill: 0n,
     speed,
-    stamina: 0,
-    strength: 0,
+    stamina: 0n,
+    strength: 0n,
     vitality,
   };
 }
 
 function getCombatState({agility, constitution, durability, reach, skill, stamina, strength}) {
+  const [a, co, du, re, sk, st, str] = [agility, constitution, durability, reach, skill, stamina, strength].map(Number);
   return {
-    apm: Math.max(0, Math.log(agility)) + Math.sqrt(skill),
-    attack: Math.max(0, Math.log(stamina)) + Math.sqrt(agility) + skill + reach,
-    defense: Math.max(0, Math.log(agility)) + Math.sqrt(stamina) + skill,
-    health: stamina + constitution * constitution + durability * durability,
-    power: (strength + agility) * Math.sqrt(stamina) + skill,
+    apm: Math.max(0, Math.log(a)) + Math.sqrt(sk),
+    attack: Math.max(0, Math.log(st)) + Math.sqrt(a) + sk + re,
+    defense: Math.max(0, Math.log(a)) + Math.sqrt(st) + sk,
+    health: st + co * co + du * du,
+    power: (str + a) * Math.sqrt(st) + sk,
   };
 }
 
