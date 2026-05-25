@@ -7,10 +7,16 @@ export async function registerFighterAction({fighterActions, fighters}, message,
   if(!currentFighter || !isValidAction(currentFighter, normalizedMessage.action_id)) {
     throw createCommandError('invalid-idle-message');
   }
-  return await fighterActions.create({
+  const currentActions = await fighterActions.listByFighterID(currentFighter.id);
+  const touchedAt = getNextTouchedAt(currentActions);
+  const action = {
     action_id: normalizedMessage.action_id,
     fighter_id: currentFighter.id,
-  });
+  };
+  if(touchedAt) {
+    action.touched_at = touchedAt;
+  }
+  return await fighterActions.create(action);
 }
 
 export async function unregisterFighterAction({fighterActions, fighters}, message, playerID) {
@@ -31,6 +37,24 @@ function isValidAction(fighter, actionID) {
     return false;
   }
   return skill.requires(fighter.stats || {});
+}
+
+function getNextTouchedAt(actions) {
+  const touchedAtValues = actions
+    .map(getTouchedAtMs)
+    .filter((touchedAtMs) => touchedAtMs !== null);
+  if(!touchedAtValues.length) {
+    return null;
+  }
+  return new Date(Math.max(...touchedAtValues) + 1);
+}
+
+function getTouchedAtMs(action) {
+  const touchedAtMs = Date.parse(action.touched_at);
+  if(Number.isNaN(touchedAtMs)) {
+    return null;
+  }
+  return touchedAtMs;
 }
 
 function normalizeMessage(message, errorCode) {
