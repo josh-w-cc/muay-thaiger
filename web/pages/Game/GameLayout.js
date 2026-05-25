@@ -5,13 +5,19 @@ import GoldDisplay from './GoldDisplay.js';
 import Header from './Header.js';
 import UserMenuButton from './UserMenuButton.js';
 
+import css from './GameLayout.module.css';
+
 
 export function GameLayout() {
   return (
     <>
-      <GoldDisplay />
-      <UserMenuButton />
-      <Header />
+      <div className={css.headerLayout}>
+        <div className={css.headerControls}>
+          <GoldDisplay />
+          <UserMenuButton />
+        </div>
+        <Header />
+      </div>
       <Outlet />
     </>
   );
