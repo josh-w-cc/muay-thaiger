@@ -13,6 +13,10 @@
   composes: insetSectionBase from '../../components/primitive/css-modules/inset-section-base.module.css';
 }
 
+.page {
+  padding-top: var(--space-xl);
+}
+
 .regimen {
   display: grid;
   gap: var(--space-sm);
@@ -60,8 +64,4 @@
   flex-direction: column;
   gap: var(--space-xs);
   margin: 0;
-}
-
-.topSection {
-  margin-top: var(--space-md);
 }

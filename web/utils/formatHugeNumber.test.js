@@ -7,13 +7,13 @@ describe('formatHugeNumber', () => {
   });
 
   it('formats positive integers above five digits in scientific notation', () => {
-    expect(formatHugeNumber(100000)).toBe('1.00e+5');
+    expect(formatHugeNumber(100000)).toBe('1.00e5');
   });
 
   it('supports positive integer strings without using number precision', () => {
     expect(formatHugeNumber('99999')).toBe('99999');
-    expect(formatHugeNumber('100000')).toBe('1.00e+5');
-    expect(formatHugeNumber('12345678901234567890')).toBe('1.23e+19');
+    expect(formatHugeNumber('100000')).toBe('1.00e5');
+    expect(formatHugeNumber('12345678901234567890')).toBe('1.23e19');
     expect(formatHugeNumber('+00123')).toBe('123');
   });
 
