@@ -1,4 +1,5 @@
 import {SKILLS_BY_ACTION_ID} from './skills.js';
+import {createTrainingTimeline as createSharedTrainingTimeline, getScheduledActions} from './trainingTimeline.js';
 
 export function applyTrainingAction(action, fighter) {
   const skill = getTrainingSkill(action);
@@ -13,6 +14,17 @@ export function applyTrainingActions(actions, fighter) {
 
 export function getTrainingDurationMs(action) {
   return (getTrainingSkill(action)?.duration || 0) * 1000;
+}
+
+export function createTrainingTimeline(actions, options = {}) {
+  return createSharedTrainingTimeline(actions, {
+    ...options,
+    getDurationMs: getTrainingDurationMs,
+  });
+}
+
+export function getScheduledTrainingActions(actions) {
+  return getScheduledActions(actions, getTrainingDurationMs);
 }
 
 export function getTrainingEffect({anima, speed, vigor, vitality}) {

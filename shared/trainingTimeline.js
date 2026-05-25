@@ -5,15 +5,19 @@ export function createTrainingTimeline(actions, {
   now = new Date(),
 }) {
   const nowMs = now.getTime();
-  const scheduledActions = actions
-    .map((action, index) => ({action, durationMs: getDurationMs(action), index}))
-    .filter((action) => action.durationMs > 0);
+  const scheduledActions = getScheduledActions(actions, getDurationMs);
   return createTimelineFromScheduledActions({
     getTouchedAtKey,
     getTouchedAtValue,
     nowMs,
     scheduledActions,
   });
+}
+
+export function getScheduledActions(actions, getDurationMs) {
+  return actions
+    .map((action, index) => ({action, durationMs: getDurationMs(action), index}))
+    .filter((action) => action.durationMs > 0);
 }
 
 function createTimelineFromScheduledActions({getTouchedAtKey, getTouchedAtValue, nowMs, scheduledActions}) {
