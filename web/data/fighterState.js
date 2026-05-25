@@ -50,16 +50,6 @@ function getCombatState({agility, constitution, durability, reach, skill, stamin
   };
 }
 
-export function getTrainingEffect({anima, vigor, speed, vitality}) {
-  return {
-    agility: speed,
-    constitution: vitality,
-    skill: anima,
-    stamina: vitality,
-    strength: vigor,
-  };
-}
-
 export function isFightIdling(idling) {
   return idling?.key?.substring(0, 5).toUpperCase() === 'FIGHT';
 }
