@@ -45,20 +45,20 @@ vi.mock('@/data/fighter.js', () => {
 
 vi.mock('./Skills.js', () => ({
   default: {
-    begging: {
+    yoga: {
       action,
-      name: '฿egging',
-      requires: () => true,
+      name: 'Yoga',
+      requires: (currentFighter) => Boolean(currentFighter.showAllSkills),
     },
     walking: {
       action,
       name: 'Walking',
       requires: (currentFighter) => Boolean(currentFighter.showAllSkills),
     },
-    yoga: {
+    begging: {
       action,
-      name: 'Yoga',
-      requires: (currentFighter) => Boolean(currentFighter.showAllSkills),
+      name: '฿egging',
+      requires: () => true,
     },
   },
 }));
@@ -112,7 +112,7 @@ describe('Train', () => {
     expect(progressLabel.className).toContain('regimenProgressLabelDisabled');
   });
 
-  it('shows available skills in descending skill id order', () => {
+  it('shows available skills in object key order', () => {
     fighter.showAllSkills = true;
     render(<Train />);
 
