@@ -41,8 +41,8 @@ function trainStats(actions, fighter) {
 
 function createFighterProxy(stats, onWin) {
   return {
-    train: (stat, multiplier = 1) => {
-      const trainedStatValue = getTrainedStatValue(stats, stat, multiplier);
+    train: (stat, amount = 1) => {
+      const trainedStatValue = getTrainedStatValue(stats, stat, amount);
       if(trainedStatValue === null) {
         return;
       }
