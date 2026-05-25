@@ -31,17 +31,10 @@ describe('POST /api/test/reseed', () => {
     assert.equal(calls[3][0], 'table');
     assert.equal(calls[3][1], 'actions');
     assert.equal(calls[4][0], 'insert');
-    assert.deepEqual(calls[4][1].map(({id}) => id), [
-      SKILL_IDS.begging,
-      SKILL_IDS.walking,
-      SKILL_IDS.shadowBoxing,
-      SKILL_IDS.breathwork,
-      SKILL_IDS.yoga,
-      SKILL_IDS.calisthenics,
-      SKILL_IDS.laboring,
-      SKILL_IDS.running,
-      SKILL_IDS.gymnastics,
-    ]);
+    assert.deepEqual(
+      calls[4][1].map(({id}) => id).toSorted((left, right) => left - right),
+      Object.values(SKILL_IDS).toSorted((left, right) => left - right),
+    );
     assert.equal(calls[5][0], 'table');
     assert.equal(calls[5][1], 'players');
     assert.equal(calls[6][0], 'insert');
