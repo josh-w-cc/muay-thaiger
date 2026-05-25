@@ -71,7 +71,7 @@ describe('getTrainingDurationMs', () => {
 
 describe('getTrainingEffect', () => {
   it('maps base stats to training multipliers', () => {
-    deepEqual(getTrainingEffect({anima: 2, speed: 3, vigor: 5, vitality: 7}), {
+    deepEqual(getTrainingEffect({anima: 2n, speed: 3n, vigor: 5n, vitality: 7n}), {
       agility: 3n,
       constitution: 7n,
       skill: 2n,
@@ -83,11 +83,11 @@ describe('getTrainingEffect', () => {
 
 describe('getTrainedStatValue', () => {
   it('returns the next trained stat value from fighter stats', () => {
-    equal(getTrainedStatValue({stamina: 3, vitality: 7}, 'stamina', 2), 17n);
+    equal(getTrainedStatValue({stamina: 3n, vitality: 7n}, 'stamina', 2), 17n);
   });
 
   it('uses zero when the trained stat has not been initialized', () => {
-    equal(getTrainedStatValue({vitality: 7}, 'stamina', 2), 14n);
+    equal(getTrainedStatValue({vitality: 7n}, 'stamina', 2), 14n);
   });
 
   it('returns null for unknown training stats', () => {

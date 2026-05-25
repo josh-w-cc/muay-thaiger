@@ -17,11 +17,11 @@ export function getTrainingDurationMs(action) {
 
 export function getTrainingEffect({anima, speed, vigor, vitality}) {
   return {
-    agility: toBigInt(speed),
-    constitution: toBigInt(vitality),
-    skill: toBigInt(anima),
-    stamina: toBigInt(vitality),
-    strength: toBigInt(vigor),
+    agility: speed,
+    constitution: vitality,
+    skill: anima,
+    stamina: vitality,
+    strength: vigor,
   };
 }
 
