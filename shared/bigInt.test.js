@@ -1,7 +1,7 @@
 import {strictEqual} from 'node:assert';
 import {describe, it} from 'node:test';
 
-import './bigInt.js';
+import patchBigIntPrototype from './bigInt.js';
 
 
 describe('BigInt prototype patch', () => {
@@ -22,5 +22,15 @@ describe('BigInt prototype patch', () => {
     const jsonDescriptor = Object.getOwnPropertyDescriptor(BigInt.prototype, 'toJSON');
     strictEqual(formatDescriptor?.writable, false);
     strictEqual(jsonDescriptor?.writable, false);
+  });
+
+  it('reapplying the patch keeps existing methods intact', () => {
+    const existingFormatMethod = BigInt.prototype.toFormattedNumber;
+    const existingJsonMethod = BigInt.prototype.toJSON;
+
+    patchBigIntPrototype();
+
+    strictEqual(BigInt.prototype.toFormattedNumber, existingFormatMethod);
+    strictEqual(BigInt.prototype.toJSON, existingJsonMethod);
   });
 });

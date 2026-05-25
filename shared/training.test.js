@@ -21,6 +21,10 @@ describe('getTrainedStatValue', () => {
     equal(getTrainedStatValue({stamina: 3, vitality: 7}, 'stamina', 2), 17);
   });
 
+  it('uses zero when the trained stat has not been initialized', () => {
+    equal(getTrainedStatValue({vitality: 7}, 'stamina', 2), 14);
+  });
+
   it('returns null for unknown training stats', () => {
     equal(getTrainedStatValue({vitality: 7}, 'charisma'), null);
   });
