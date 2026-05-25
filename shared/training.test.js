@@ -1,8 +1,50 @@
 import {deepEqual, equal} from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {getTrainedStatValue, getTrainingEffect} from './training.js';
+import {applyTrainingAction, getTrainedStatValue, getTrainingDurationMs, getTrainingEffect} from './training.js';
 
+
+describe('applyTrainingAction', () => {
+  it('applies the shared skill definition for the given action', () => {
+    const calls = [];
+    const fighter = {
+      train: (stat, multiplier = 1) => calls.push(['train', stat, multiplier]),
+      win: (amount) => calls.push(['win', amount]),
+    };
+
+    applyTrainingAction({action_id: 7}, fighter);
+
+    deepEqual(calls, [
+      ['win', 100],
+      ['train', 'stamina', 1],
+      ['train', 'strength', 1],
+      ['train', 'constitution', 1],
+    ]);
+  });
+
+  it('ignores unknown action ids', () => {
+    const fighter = {
+      train: () => {
+        throw new Error('should not train');
+      },
+      win: () => {
+        throw new Error('should not win');
+      },
+    };
+
+    applyTrainingAction({action_id: 999}, fighter);
+  });
+});
+
+describe('getTrainingDurationMs', () => {
+  it('returns the shared skill duration in milliseconds', () => {
+    equal(getTrainingDurationMs({action_id: 6}), 4000);
+  });
+
+  it('returns zero for unknown action ids', () => {
+    equal(getTrainingDurationMs({action_id: 999}), 0);
+  });
+});
 
 describe('getTrainingEffect', () => {
   it('maps base stats to training multipliers', () => {
