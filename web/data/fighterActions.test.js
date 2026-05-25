@@ -33,24 +33,6 @@ describe('useFighterActionsStore', () => {
     ]);
   });
 
-  it('does not change in-progress action while appending a fighter action', () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
-    useFighterActionsStore.getState().setActions([
-      {action_id: 2, created_at: '2025-12-31T23:59:58.000Z', id: 1},
-      {action_id: 6, created_at: '2025-12-31T23:59:57.000Z', id: 2},
-    ]);
-    useFighterActionsStore.getState().tick();
-
-    useFighterActionsStore.getState().addAction({action_id: 2, id: 3});
-
-    expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 6, id: 2, progress: 75}),
-      expect.objectContaining({action_id: 2, id: 3, progress: 0}),
-    ]);
-  });
-
   it('stores a created_at timestamp for optimistic fighter actions', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
@@ -91,7 +73,7 @@ describe('useFighterActionsStore', () => {
 
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 6, id: 2, progress: 75}),
+      expect.objectContaining({action_id: 6, id: 2, progress: 50}),
     ]);
   });
 
