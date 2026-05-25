@@ -94,6 +94,7 @@ describe('Fight', () => {
 
     expect(attack).toHaveBeenCalledWith(0);
     expect(screen.getByRole('heading', {name: 'POW!'})).toBeInTheDocument();
+    expect(document.body).toHaveTextContent('Stanima:');
     expect(document.body).toHaveTextContent('msg-a');
     expect(document.body).toHaveTextContent('msg-b');
   });
