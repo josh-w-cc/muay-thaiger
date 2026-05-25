@@ -41,7 +41,11 @@ describe('Header', () => {
     const source = fs.readFileSync(modulePath, 'utf8');
 
     expect(source).toMatch(/\.headerLayout\s*{[^}]*margin:\s*0 auto;[^}]*width:\s*fit-content;/s);
-    expect(source).toMatch(/\.headerControls\s*{[^}]*justify-content:\s*space-between;[^}]*width:\s*100%;/s);
-    expect(source).toMatch(/@media\(max-width:\s*768px\)\s*{[\s\S]*\.headerControls\s*{[\s\S]*position:\s*fixed;[\s\S]*}/s);
+    expect(source).toMatch(
+      /\.headerControls\s*{[^}]*justify-content:\s*space-between;[^}]*padding:\s*0 var\(--space-md\);[^}]*width:\s*100%;/s,
+    );
+    expect(source).toMatch(
+      /@media\(max-width:\s*768px\)\s*{[\s\S]*\.headerControls\s*{[\s\S]*position:\s*fixed;[\s\S]*top:\s*0;[\s\S]*width:\s*100vw;[\s\S]*}/s,
+    );
   });
 });

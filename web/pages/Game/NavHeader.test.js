@@ -78,8 +78,9 @@ describe('NavHeader', () => {
     const modulePath = path.join(directoryPath, 'NavHeader.module.css');
     const mobileHeaderPattern = new RegExp(
       '@media\\(max-width:\\s*768px\\)\\s*{[\\s\\S]*\\.header\\s*{[\\s\\S]*'
-      + 'overflow-x:\\s*auto;[\\s\\S]*right:\\s*var\\(--space-xl\\);[\\s\\S]*'
-      + 'scroll-snap-type:\\s*x mandatory;[\\s\\S]*width:\\s*calc\\(100% \\+ var\\(--space-xl\\) \\* 2\\);',
+      + 'overflow-x:\\s*auto;[\\s\\S]*padding:\\s*40px 150px 0;[\\s\\S]*'
+      + 'right:\\s*var\\(--space-xl\\);[\\s\\S]*scroll-snap-type:\\s*x mandatory;[\\s\\S]*'
+      + 'width:\\s*calc\\(100% \\+ var\\(--space-xl\\) \\* 2\\);',
       's',
     );
     const source = fs.readFileSync(modulePath, 'utf8');

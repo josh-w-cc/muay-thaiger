@@ -36,11 +36,11 @@
     gap: var(--space-md);
     justify-content: flex-start;
     overflow-x: auto;
+    padding: 40px 150px 0;
     position: relative;
     right: var(--space-xl);
     scroll-snap-type: x mandatory;
     width: calc(100% + var(--space-xl) * 2);
-    padding: 20px 150px;
   }
 
   .navigationButton {
