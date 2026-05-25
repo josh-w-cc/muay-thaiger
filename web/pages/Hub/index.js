@@ -24,7 +24,6 @@ const EVENTS = [
 export default function Hub() {
   return (
     <>
-      <h1>HUB</h1>
       <section className={css.section}>
         <FighterDetails />
       </section>

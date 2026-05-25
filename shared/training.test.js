@@ -1,7 +1,7 @@
 import {deepEqual, equal} from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {applyTrainingAction, getTrainedStatValue, getTrainingDurationMs, getTrainingEffect} from './training.js';
+import {applyTrainingAction, applyTrainingActions, getTrainedStatValue, getTrainingDurationMs, getTrainingEffect} from './training.js';
 
 
 describe('applyTrainingAction', () => {
@@ -33,6 +33,29 @@ describe('applyTrainingAction', () => {
     };
 
     applyTrainingAction({action_id: 999}, fighter);
+  });
+});
+
+describe('applyTrainingActions', () => {
+  it('applies each action in sequence', () => {
+    const calls = [];
+    const fighter = {
+      train: (stat, multiplier = 1) => calls.push(['train', stat, multiplier]),
+      win: (amount) => calls.push(['win', amount]),
+    };
+
+    applyTrainingActions([
+      {action_id: 2},
+      {action_id: 7},
+    ], fighter);
+
+    deepEqual(calls, [
+      ['train', 'stamina', 1],
+      ['win', 100],
+      ['train', 'stamina', 1],
+      ['train', 'strength', 1],
+      ['train', 'constitution', 1],
+    ]);
   });
 });
 

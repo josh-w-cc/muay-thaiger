@@ -2,6 +2,7 @@ import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
 import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
+import {applyTraining} from './training.js';
 
 export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
@@ -14,6 +15,17 @@ export async function processMessageCommand(models, message, socket) {
     default:
       socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
   }
+}
+
+async function applyCurrentTraining(models, playerID) {
+  if(!canSendPlayerState(models)) {
+    return;
+  }
+  const fighter = await models.fighters.findCurrentByPlayerID(playerID);
+  if(!fighter) {
+    return;
+  }
+  await applyTraining(models, fighter);
 }
 
 function canSendPlayerState({fighterActions, fighters}) {
@@ -31,6 +43,7 @@ async function handleIdle(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-idle-message');
   }
+  await applyCurrentTraining(models, socket.player.id);
   const fighterAction = await registerFighterAction(models, message, socket.player.id);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'idle'}}));
   await sendCurrentPlayerState(models, socket);
