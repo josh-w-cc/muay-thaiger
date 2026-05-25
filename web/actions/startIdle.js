@@ -1,6 +1,6 @@
 import {SKILL_IDS} from 'shared/skills.js';
 
-import {createFighterActionCmd} from '@/actions/websockets/index.js';
+import {createFighterActionCmd} from '@/actions/websockets/clientCommands.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
 
 
