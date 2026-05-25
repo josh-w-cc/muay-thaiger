@@ -1,4 +1,4 @@
-import {applyTrainingAction, getTrainedStatValue} from 'shared/training.js';
+import {applyTrainingActions, getTrainedStatValue} from 'shared/training.js';
 import {createTrainingTimeline} from './training-timeline.js';
 
 export async function applyTraining({fighterActions, fighters}, fighter) {
@@ -29,9 +29,7 @@ function trainStats(actions, fighter) {
   const proxy = createFighterProxy(stats, (amount) => {
     gold = (BigInt(gold) + BigInt(amount)).toString();
   });
-  for(const action of actions) {
-    applyTrainingAction(action, proxy);
-  }
+  applyTrainingActions(actions, proxy);
   return {gold, stats};
 }
 
