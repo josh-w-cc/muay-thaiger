@@ -1,7 +1,8 @@
-const {isSocketReady, respondToAuth, routeToHubIfAuthorized} = vi.hoisted(() => ({
-  isSocketReady: vi.fn(),
+const {connectSocketOnAppLoad, respondToAuth, routeToHubIfAuthorized, sendCommand} = vi.hoisted(() => ({
+  connectSocketOnAppLoad: vi.fn(),
   respondToAuth: vi.fn(),
   routeToHubIfAuthorized: vi.fn(),
+  sendCommand: vi.fn(),
 }));
 
 vi.mock('@/actions/websockets/auth.js', () => ({
@@ -9,8 +10,9 @@ vi.mock('@/actions/websockets/auth.js', () => ({
   routeToHubIfAuthorized,
 }));
 
-vi.mock('@/actions/websockets/websocketState.js', () => ({
-  isSocketReady,
+vi.mock('@/actions/websockets/index.js', () => ({
+  connectSocketOnAppLoad,
+  sendCommand,
 }));
 
 describe('client websocket commands', () => {
@@ -20,54 +22,27 @@ describe('client websocket commands', () => {
   });
 
   it('sends an idle command', async () => {
-    isSocketReady.mockReturnValue(true);
     const {createFighterActionCmd} = await import('./clientCommands.js');
-    const send = vi.fn();
-    const socket = {send};
 
-    createFighterActionCmd(socket, 2);
+    createFighterActionCmd(2);
 
-    expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
-  });
-
-  it('does not send an idle command when the socket is unavailable', async () => {
-    isSocketReady.mockReturnValue(false);
-    const {createFighterActionCmd} = await import('./clientCommands.js');
-    const send = vi.fn();
-    const socket = {send};
-
-    createFighterActionCmd(socket, 2);
-
-    expect(send).not.toHaveBeenCalled();
+    expect(sendCommand).toHaveBeenCalledWith({action_id: 2, cmd: 'idle'});
   });
 
   it('sends a stop command', async () => {
-    isSocketReady.mockReturnValue(true);
     const {removeFighterActionCmd} = await import('./clientCommands.js');
-    const send = vi.fn();
-    const socket = {send};
 
-    removeFighterActionCmd(socket, 2);
+    removeFighterActionCmd(2);
 
-    expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'stop'}));
-  });
-
-  it('does not send a stop command when the socket is unavailable', async () => {
-    isSocketReady.mockReturnValue(false);
-    const {removeFighterActionCmd} = await import('./clientCommands.js');
-    const send = vi.fn();
-    const socket = {send};
-
-    removeFighterActionCmd(socket, 2);
-
-    expect(send).not.toHaveBeenCalled();
+    expect(sendCommand).toHaveBeenCalledWith({action_id: 2, cmd: 'stop'});
   });
 
   it('responds to pending auth and routes to the hub for fighter selection', async () => {
     const {selectFighterCmd} = await import('./clientCommands.js');
     const socket = {};
+    connectSocketOnAppLoad.mockReturnValue(socket);
 
-    selectFighterCmd(socket);
+    selectFighterCmd();
 
     expect(respondToAuth).toHaveBeenCalledWith(socket);
     expect(routeToHubIfAuthorized).toHaveBeenCalledTimes(1);

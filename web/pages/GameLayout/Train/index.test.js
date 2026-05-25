@@ -52,7 +52,7 @@ vi.mock('./Skills.js', () => ({
     },
   },
 }));
-vi.mock('@/actions/websockets/index.js', () => ({
+vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFighterActionCmd: (...args) => createFighterActionCmd(...args),
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
 }));
