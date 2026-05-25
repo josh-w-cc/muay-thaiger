@@ -2,6 +2,7 @@ import {getTrainedStatValue} from 'shared/training.js';
 import {create} from 'zustand';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
+import {parseGold} from '@/utils/gold.js';
 import {
   getInitialState,
   getSelectionState,
@@ -45,7 +46,7 @@ function generateSelectFn(set) {
 }
 
 function generateSpendFn(set) {
-  return (gold) => set((state) => mergeState(state, {gold: state.gold - gold}));
+  return (gold) => set((state) => mergeState(state, {gold: parseGold(state.gold) - parseGold(gold)}));
 }
 
 function generateTickFn({get, set}) {
@@ -74,7 +75,7 @@ function generateTrainFn({get, set}) {
 }
 
 function generateWinFn(set) {
-  return (gold) => set((state) => mergeState(state, {gold: state.gold + gold}));
+  return (gold) => set((state) => mergeState(state, {gold: parseGold(state.gold) + parseGold(gold)}));
 }
 
 TickerState.addListener((delta) => useFighterStore.getState().tick(delta));

@@ -1,9 +1,11 @@
+import {getFightBet} from '@/utils/gold.js';
+
 export const FIGHT_STATES = {IN_PROGRESS: 1, LOST: 2, NOT_STARTED: 0, WON: 3};
 const {IN_PROGRESS: FIGHT_IN_PROGRESS, LOST: FIGHT_LOST, NOT_STARTED: FIGHT_NOT_STARTED, WON: FIGHT_WON} = FIGHT_STATES;
 
 
 export function getInitialState() {
-  return {bet: 0, fighters: [], messages: [], state: FIGHT_NOT_STARTED};
+  return {bet: 0n, fighters: [], messages: [], state: FIGHT_NOT_STARTED};
 }
 
 
@@ -37,15 +39,15 @@ export function generateFinishFn({get, set}) {
 
 export function generateForGoldFn({get, set}) {
   return (fighter, risk) => {
-    const riskPercentages = [0.001, 0.1, 0.25, 0.5, 1];
-    const bet = Math.max(100, Math.floor(fighter.gold * riskPercentages[risk]));
+    const bet = getFightBet(fighter.gold, risk);
+    const betAmount = Number(bet);
     const enemy = {
-      apm: Math.max(4, Math.log(bet)) * (Math.random() + 0.5),
-      attack: Math.sqrt(bet) * (Math.random() + 0.5),
-      defense: Math.sqrt(bet) * (Math.random() + 0.5),
-      health: bet * 10 * (Math.random() + 0.5),
-      power: bet * (Math.random() + 0.5),
-      stamina: bet * Math.sqrt(bet) * (Math.random() + 0.5),
+      apm: Math.max(4, Math.log(betAmount)) * (Math.random() + 0.5),
+      attack: Math.sqrt(betAmount) * (Math.random() + 0.5),
+      defense: Math.sqrt(betAmount) * (Math.random() + 0.5),
+      health: betAmount * 10 * (Math.random() + 0.5),
+      power: betAmount * (Math.random() + 0.5),
+      stamina: betAmount * Math.sqrt(betAmount) * (Math.random() + 0.5),
     };
     set({bet});
     get().start(fighter, enemy);

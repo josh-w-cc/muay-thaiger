@@ -13,7 +13,7 @@ describe('buildStateFromServerFighter', () => {
 
     const defaultRace = `${RACES[0].id}`;
 
-    expect(state.gold).toBe(0);
+    expect(state.gold).toBe(0n);
     expect(state.id).toBeNull();
     expect(state.race).toBe(defaultRace);
     expect(state.anima).toBe(BaseStats[defaultRace].stats.anima);
@@ -32,7 +32,7 @@ describe('buildStateFromServerFighter', () => {
       stats: {agility: 7, stamina: 8, strength: 9},
     });
 
-    expect(state.gold).toBe(250);
+    expect(state.gold).toBe(250n);
     expect(state.id).toBe(5);
     expect(state.race).toBe('2');
     expect(state.agility).toBe(7);

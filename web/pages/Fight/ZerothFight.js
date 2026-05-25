@@ -1,7 +1,7 @@
 import React from 'react';
 
 import useFighterStore from '@/data/fighter.js';
-
+import {parseGold} from '@/utils/gold.js';
 
 import css from './ZerothFight.module.css';
 
@@ -14,7 +14,7 @@ function ZerothFight() {
   if(event) {
     return event;
   }
-  if(fighter.gold < 100) {
+  if(parseGold(fighter.gold) < 100n) {
     setEvent(
       <div className={css.message}>
         Come back when you have the
@@ -24,7 +24,7 @@ function ZerothFight() {
     );
     return;
   }
-  fighter.spend(fighter.gold);
+  fighter.spend(parseGold(fighter.gold));
   setEvent(
     <div className={css.message}>
       He takes your ฿ and pushes you down.  He runs off.
@@ -53,5 +53,5 @@ export default ZerothFight;
 
 
 export function needsZerothFight(fighter) {
-  return (fighter.gold < 100 || !fighter.strength || !fighter.stamina);
+  return (parseGold(fighter.gold) < 100n || !fighter.strength || !fighter.stamina);
 }

@@ -7,7 +7,7 @@ export function getInitialState() {
   return {
     createdAt: null,
     displayName: '',
-    gold: 0,
+    gold: 0n,
     id: null,
     idling: false,
     ...getSelectionState(initialRace),

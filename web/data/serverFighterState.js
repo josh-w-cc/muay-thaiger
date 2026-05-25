@@ -1,3 +1,5 @@
+import {parseGold} from '@/utils/gold.js';
+
 import {RACES} from './baseStats.js';
 import {getSelectionState} from './fighterState.js';
 
@@ -33,11 +35,7 @@ function getServerDisplayName(fighter) {
 }
 
 function getServerGold(fighter) {
-  const nextGold = Number(fighter?.gold);
-  if(Number.isFinite(nextGold)) {
-    return nextGold;
-  }
-  return 0;
+  return parseGold(fighter?.gold);
 }
 
 function getServerID(fighter) {
