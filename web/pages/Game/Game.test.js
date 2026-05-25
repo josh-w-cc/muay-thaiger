@@ -204,6 +204,7 @@ describe('Game', () => {
     });
 
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Edit Profile'})).toBeInTheDocument();
     await user.click(screen.getByRole('button', {name: /^fight$/i}));
     expect(await screen.findByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
 
