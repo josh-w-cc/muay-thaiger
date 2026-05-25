@@ -1,4 +1,4 @@
-import {applyTrainingActions, createTrainingTimeline} from 'shared/training.js';
+import {applyTrainingActions, createTrainingTimeline, findTouchedAtTransfer} from 'shared/training.js';
 
 import useFighterStore from '@/data/fighter.js';
 
@@ -13,6 +13,18 @@ export function runFighterActionTick(actions) {
   return actions.map((action, index) => (
     touchedAtByActionKey.has(index)
       ? {...action, touched_at: touchedAtByActionKey.get(index)}
+      : action
+  ));
+}
+
+export function transferLatestTouchedAt(removedActions, remainingActions) {
+  const transfer = findTouchedAtTransfer(removedActions, remainingActions);
+  if(!transfer) {
+    return remainingActions;
+  }
+  return remainingActions.map((action) => (
+    action === transfer.targetAction
+      ? {...action, touched_at: transfer.touchedAt.toISOString()}
       : action
   ));
 }
