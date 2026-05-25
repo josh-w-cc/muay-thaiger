@@ -56,18 +56,7 @@ describe('WebSocket /ws/connect', () => {
     const created = {id: 1, action_id: 2, fighter_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const currentFighter = {id: 3, player_id: 8, retired: false};
     const player = {id: 8, token: 'player-token'};
-    const {knex} = mockKnexMulti([
-      player,
-      currentFighter,
-      [],
-      currentFighter,
-      [],
-      currentFighter,
-      [],
-      [created],
-      currentFighter,
-      [],
-    ]);
+    const {knex} = mockKnexMulti([player, currentFighter, [], currentFighter, [], currentFighter, [created]]);
     const app = Fastify();
     app.decorate('db', knex);
     app.decorate('websocketConnections', new Set());
