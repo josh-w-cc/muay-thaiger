@@ -25,12 +25,12 @@ function formatIntegerString(value) {
     return digits;
   }
 
-  return `${digits[0]}.${digits.slice(1, 3).padEnd(2, '0')}e+${digits.length - 1}`;
+  return `${digits[0]}.${digits.slice(1, 3).padEnd(2, '0')}e${digits.length - 1}`;
 }
 
 function formatNumber(value) {
   if(Math.abs(value) > 99999) {
-    return value.toExponential(2);
+    return value.toExponential(2).replace('e+', 'e');
   }
 
   return value;
