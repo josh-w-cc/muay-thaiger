@@ -38,6 +38,7 @@ async function handleIdle(models, message, socket) {
   }
   const fighterAction = await registerFighterAction(models, message, socket.player.id);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'idle'}}));
+  await sendCurrentPlayerState(models, socket);
 }
 
 async function handleStop(models, message, socket) {
@@ -46,4 +47,16 @@ async function handleStop(models, message, socket) {
   }
   const fighterAction = await unregisterFighterAction(models, message, socket.player.id);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'stop'}}));
+  await sendCurrentPlayerState(models, socket);
+}
+
+async function sendCurrentPlayerState(models, socket) {
+  if(!canSendPlayerState(models)) {
+    return;
+  }
+  const state = await getPlayerState(models, socket.player.id);
+  if(!state) {
+    return;
+  }
+  sendPlayerState(state.actions, state.fighter, socket);
 }
