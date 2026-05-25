@@ -25,34 +25,26 @@
 }
 
 .details {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  margin: 0;
+  composes: statListBase from '../../components/primitive/css-modules/stat-list-base.module.css';
 }
 
 .stats {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  margin: 0;
+  composes: statListBase from '../../components/primitive/css-modules/stat-list-base.module.css';
 }
 
 .stat {
-  align-items: baseline;
-  display: grid;
-  gap: var(--space-md);
-  grid-template-columns: 1fr auto;
+  composes: statRowBase from '../../components/primitive/css-modules/stat-row-base.module.css';
+
   margin: 0;
 }
 
 .label {
-  color: var(--color-fg);
-  font-weight: 600;
+  composes: statLabelBase from '../../components/primitive/css-modules/stat-row-base.module.css';
 }
 
 .value {
-  color: var(--color-gold);
+  composes: statValueBase from '../../components/primitive/css-modules/stat-row-base.module.css';
+
   margin: 0;
 }
 
