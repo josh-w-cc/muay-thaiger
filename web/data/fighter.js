@@ -1,10 +1,10 @@
+import {getTrainingEffect} from 'shared/training.js';
 import {create} from 'zustand';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {
   getInitialState,
   getSelectionState,
-  getTrainingEffect,
   isFightIdling,
   mergeState,
 } from './fighterState.js';

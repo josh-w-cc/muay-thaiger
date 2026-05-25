@@ -1,5 +1,6 @@
 import addHugeNumber from 'shared/addHugeNumber.js';
 import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
+import {getTrainingEffect} from 'shared/training.js';
 import {createTrainingTimeline} from './training-timeline.js';
 
 export async function applyTraining({fighterActions, fighters}, fighter) {
@@ -37,13 +38,7 @@ function trainStats(actions, fighter) {
 }
 
 function createFighterProxy(stats, onWin) {
-  const trainingEffect = {
-    agility: stats.speed,
-    constitution: stats.vitality,
-    skill: stats.anima,
-    stamina: stats.vitality,
-    strength: stats.vigor,
-  };
+  const trainingEffect = getTrainingEffect(stats);
   return {
     train: (stat, amount = 1) => {
       if(!Object.hasOwn(trainingEffect, stat)) {
