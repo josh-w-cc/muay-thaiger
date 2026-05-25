@@ -37,13 +37,13 @@ export function getTrainingEffect({anima, speed, vigor, vitality}) {
   };
 }
 
-export function getTrainedStatValue(stats, stat, multiplier = 1) {
+export function getTrainedStatValue(stats, stat, multiplier = 1n) {
   const trainingEffect = getTrainingEffect(stats);
   if(!Object.hasOwn(trainingEffect, stat)) {
     return null;
   }
 
-  return getStatValue(stats, stat) + trainingEffect[stat] * toBigInt(multiplier);
+  return getStatValue(stats, stat) + trainingEffect[stat] * multiplier;
 }
 
 function getTrainingSkill(action) {

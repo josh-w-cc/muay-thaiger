@@ -51,7 +51,7 @@ describe('SKILL_DEFINITIONS', () => {
   it('applies each skill action to fighter stats and gold', () => {
     const calls = [];
     const fighter = {
-      train: (stat, amount = 1) => calls.push(['train', stat, amount]),
+      train: (stat, amount = 1n) => calls.push(['train', stat, amount]),
       win: (amount) => calls.push(['win', amount]),
     };
 
@@ -61,25 +61,25 @@ describe('SKILL_DEFINITIONS', () => {
 
     deepEqual(calls, [
       ['win', 1],
-      ['train', 'stamina', 1],
-      ['train', 'stamina', 3],
-      ['train', 'constitution', 1],
-      ['train', 'stamina', 1],
-      ['train', 'agility', 1],
-      ['train', 'strength', 1],
-      ['train', 'constitution', 1],
-      ['train', 'stamina', 5],
-      ['train', 'strength', 3],
-      ['train', 'constitution', 1],
+      ['train', 'stamina', 1n],
+      ['train', 'stamina', 3n],
+      ['train', 'constitution', 1n],
+      ['train', 'stamina', 1n],
+      ['train', 'agility', 1n],
+      ['train', 'strength', 1n],
+      ['train', 'constitution', 1n],
+      ['train', 'stamina', 5n],
+      ['train', 'strength', 3n],
+      ['train', 'constitution', 1n],
       ['win', 100],
-      ['train', 'stamina', 1],
-      ['train', 'strength', 1],
-      ['train', 'constitution', 1],
-      ['train', 'stamina', 25],
-      ['train', 'stamina', 5],
-      ['train', 'strength', 5],
-      ['train', 'constitution', 1],
-      ['train', 'agility', 15],
+      ['train', 'stamina', 1n],
+      ['train', 'strength', 1n],
+      ['train', 'constitution', 1n],
+      ['train', 'stamina', 25n],
+      ['train', 'stamina', 5n],
+      ['train', 'strength', 5n],
+      ['train', 'constitution', 1n],
+      ['train', 'agility', 15n],
     ]);
   });
 

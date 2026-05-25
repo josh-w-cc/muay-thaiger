@@ -16,7 +16,7 @@ describe('applyTrainingAction', () => {
   it('applies the shared skill definition for the given action', () => {
     const calls = [];
     const fighter = {
-      train: (stat, multiplier = 1) => calls.push(['train', stat, multiplier]),
+      train: (stat, multiplier = 1n) => calls.push(['train', stat, multiplier]),
       win: (amount) => calls.push(['win', amount]),
     };
 
@@ -24,9 +24,9 @@ describe('applyTrainingAction', () => {
 
     deepEqual(calls, [
       ['win', 100],
-      ['train', 'stamina', 1],
-      ['train', 'strength', 1],
-      ['train', 'constitution', 1],
+      ['train', 'stamina', 1n],
+      ['train', 'strength', 1n],
+      ['train', 'constitution', 1n],
     ]);
   });
 
@@ -48,7 +48,7 @@ describe('applyTrainingActions', () => {
   it('applies each action in sequence', () => {
     const calls = [];
     const fighter = {
-      train: (stat, multiplier = 1) => calls.push(['train', stat, multiplier]),
+      train: (stat, multiplier = 1n) => calls.push(['train', stat, multiplier]),
       win: (amount) => calls.push(['win', amount]),
     };
 
@@ -58,11 +58,11 @@ describe('applyTrainingActions', () => {
     ], fighter);
 
     deepEqual(calls, [
-      ['train', 'stamina', 1],
+      ['train', 'stamina', 1n],
       ['win', 100],
-      ['train', 'stamina', 1],
-      ['train', 'strength', 1],
-      ['train', 'constitution', 1],
+      ['train', 'stamina', 1n],
+      ['train', 'strength', 1n],
+      ['train', 'constitution', 1n],
     ]);
   });
 });
@@ -122,11 +122,11 @@ describe('getTrainingEffect', () => {
 
 describe('getTrainedStatValue', () => {
   it('returns the next trained stat value from fighter stats', () => {
-    equal(getTrainedStatValue({stamina: 3n, vitality: 7n}, 'stamina', 2), 17n);
+    equal(getTrainedStatValue({stamina: 3n, vitality: 7n}, 'stamina', 2n), 17n);
   });
 
   it('uses zero when the trained stat has not been initialized', () => {
-    equal(getTrainedStatValue({vitality: 7n}, 'stamina', 2), 14n);
+    equal(getTrainedStatValue({vitality: 7n}, 'stamina', 2n), 14n);
   });
 
   it('returns null for unknown training stats', () => {

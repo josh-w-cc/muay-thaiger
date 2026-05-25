@@ -26,7 +26,7 @@ export function generateFinishFn({get, set}) {
       return;
     }
     fighters[0].stats[state === FIGHT_WON ? 'win' : 'spend'](bet);
-    fighters[0].stats.train('skill', 1);
+    fighters[0].stats.train('skill', 1n);
     set(getInitialState());
   };
 }
