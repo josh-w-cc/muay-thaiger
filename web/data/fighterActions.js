@@ -1,5 +1,6 @@
 import {create} from 'zustand';
-import {findLatestAction, getActionTime, getScheduledTrainingActions} from 'shared/training.js';
+import {getScheduledTrainingActions} from 'shared/training.js';
+import {findLatestAction, getActionTime} from 'shared/trainingTimeline.js';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {runFighterActionTick, transferLatestTouchedAt} from './fighterActionTick.js';

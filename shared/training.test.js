@@ -5,8 +5,8 @@ import {
   applyTrainingAction,
   applyTrainingActions,
   createTrainingTimeline,
-  findLatestAction,
-  getActionTime,
+  getActionWithMaxTouchedAt,
+  getMaxTouchedAtMs,
   getScheduledTrainingActions,
   getTrainedStatValue,
   getTrainingDurationMs,
@@ -150,20 +150,54 @@ describe('getTrainedStatValue', () => {
   });
 });
 
-describe('timeline helper exports', () => {
-  it('exposes findLatestAction from the shared training module', () => {
-    const actions = [
-      {action: {touched_at: '2026-01-01T00:00:00.000Z'}, durationMs: 1000, index: 0},
-      {action: {touched_at: '2026-01-01T00:00:01.000Z'}, durationMs: 1000, index: 1},
-    ];
-
-    deepEqual(findLatestAction(actions, Date.parse('2026-01-01T00:00:03.000Z')), {
-      latestActionIndex: 1,
-      latestActionTime: Date.parse('2026-01-01T00:00:01.000Z'),
-    });
+describe('getMaxTouchedAtMs', () => {
+  it('returns the max touched_at value in milliseconds', () => {
+    equal(getMaxTouchedAtMs([
+      {touched_at: '2026-01-01T00:00:00.005Z'},
+      {touched_at: '2026-01-01T00:00:00.111Z'},
+      {touched_at: '2026-01-01T00:00:00.050Z'},
+    ]), Date.parse('2026-01-01T00:00:00.111Z'));
   });
 
-  it('exposes getActionTime from the shared training module', () => {
-    equal(getActionTime({created_at: 'invalid-date'}, 12345), 12345);
+  it('ignores actions without a valid touched_at', () => {
+    equal(getMaxTouchedAtMs([
+      {touched_at: '2026-01-01T00:00:00.005Z'},
+      {},
+    ]), Date.parse('2026-01-01T00:00:00.005Z'));
+  });
+
+  it('returns null when no actions have a valid touched_at', () => {
+    equal(getMaxTouchedAtMs([{}, {}]), null);
+  });
+});
+
+describe('getActionWithMaxTouchedAt', () => {
+  it('returns the action with the latest touched_at', () => {
+    const expected = {touched_at: '2026-01-01T00:00:00.111Z'};
+    const result = getActionWithMaxTouchedAt([
+      {touched_at: '2026-01-01T00:00:00.005Z'},
+      expected,
+      {touched_at: '2026-01-01T00:00:00.050Z'},
+    ]);
+
+    deepEqual(result, expected);
+  });
+
+  it('skips actions without a valid touched_at when selecting the target', () => {
+    const expected = {touched_at: '2026-01-01T00:00:00.050Z'};
+    const result = getActionWithMaxTouchedAt([
+      {},
+      expected,
+      {touched_at: '2026-01-01T00:00:00.005Z'},
+    ]);
+
+    deepEqual(result, expected);
+  });
+
+  it('returns the first action when none have a valid touched_at', () => {
+    const first = {};
+    const result = getActionWithMaxTouchedAt([first, {}]);
+
+    deepEqual(result, first);
   });
 });

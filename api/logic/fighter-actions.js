@@ -1,4 +1,5 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
+import {getActionWithMaxTouchedAt, getMaxTouchedAtMs} from 'shared/training.js';
 import {createCommandError} from './command-errors.js';
 
 export async function registerFighterAction({fighterActions, fighters}, message, playerID) {
@@ -49,20 +50,6 @@ async function transferLatestTouchedAt(fighterActions, removedActions, remaining
   await fighterActions.touch(targetAction.id, new Date(maxRemovedMs));
 }
 
-function getActionWithMaxTouchedAt(actions) {
-  return actions.reduce((best, action) => {
-    const bestMs = getTouchedAtMs(best);
-    const actionMs = getTouchedAtMs(action);
-    if(bestMs === null) {
-      return action;
-    }
-    if(actionMs === null) {
-      return best;
-    }
-    return actionMs >= bestMs ? action : best;
-  });
-}
-
 function isValidAction(fighter, actionID) {
   const skill = SKILLS_BY_ACTION_ID[actionID];
   if(!skill) {
@@ -71,25 +58,9 @@ function isValidAction(fighter, actionID) {
   return skill.requires(fighter.stats || {});
 }
 
-function getMaxTouchedAtMs(actions) {
-  const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
-  if(!values.length) {
-    return null;
-  }
-  return Math.max(...values);
-}
-
 function getNextTouchedAt(actions) {
   const maxMs = getMaxTouchedAtMs(actions);
   return maxMs !== null ? new Date(maxMs + 1) : null;
-}
-
-function getTouchedAtMs(action) {
-  const touchedAtMs = Date.parse(action.touched_at);
-  if(Number.isNaN(touchedAtMs)) {
-    return null;
-  }
-  return touchedAtMs;
 }
 
 function normalizeMessage(message, errorCode) {

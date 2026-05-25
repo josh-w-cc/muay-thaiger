@@ -1,8 +1,6 @@
 import {SKILLS_BY_ACTION_ID} from './skills.js';
 import {createTrainingTimeline as createSharedTrainingTimeline, getScheduledActions} from './trainingTimeline.js';
 
-export {findLatestAction, getActionTime} from './trainingTimeline.js';
-
 const TRAINING_MULTIPLIER_BY_STAT = Object.freeze({
   agility: 'speed',
   constitution: 'vitality',
@@ -56,6 +54,25 @@ export function getTrainedStatValue(stats, stat, amount = 1) {
   return (stats[stat] || 0) + trainingMultiplier * amount;
 }
 
+export function getActionWithMaxTouchedAt(actions) {
+  return actions.reduce((best, action) => {
+    const bestMs = getTouchedAtMs(best);
+    const actionMs = getTouchedAtMs(action);
+    if(bestMs === null) {
+      return action;
+    }
+    if(actionMs === null) {
+      return best;
+    }
+    return actionMs >= bestMs ? action : best;
+  });
+}
+
+export function getMaxTouchedAtMs(actions) {
+  const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
+  return values.length ? Math.max(...values) : null;
+}
+
 function getTrainingSkill(action) {
   return SKILLS_BY_ACTION_ID[action?.action_id];
 }
@@ -66,4 +83,9 @@ function getTrainingMultiplier(stats, stat) {
     return null;
   }
   return stats[multiplierStat] || 0;
+}
+
+function getTouchedAtMs(action) {
+  const ms = Date.parse(action.touched_at);
+  return Number.isNaN(ms) ? null : ms;
 }

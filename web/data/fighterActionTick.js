@@ -1,4 +1,4 @@
-import {applyTrainingActions, createTrainingTimeline} from 'shared/training.js';
+import {applyTrainingActions, createTrainingTimeline, getActionWithMaxTouchedAt, getMaxTouchedAtMs} from 'shared/training.js';
 
 import useFighterStore from '@/data/fighter.js';
 
@@ -35,30 +35,6 @@ export function transferLatestTouchedAt(removedActions, remainingActions) {
       ? {...action, touched_at: new Date(maxRemovedMs).toISOString()}
       : action
   ));
-}
-
-function getActionWithMaxTouchedAt(actions) {
-  return actions.reduce((best, action) => {
-    const bestMs = getTouchedAtMs(best);
-    const actionMs = getTouchedAtMs(action);
-    if(bestMs === null) {
-      return action;
-    }
-    if(actionMs === null) {
-      return best;
-    }
-    return actionMs >= bestMs ? action : best;
-  });
-}
-
-function getMaxTouchedAtMs(actions) {
-  const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
-  return values.length ? Math.max(...values) : null;
-}
-
-function getTouchedAtMs(action) {
-  const ms = Date.parse(action.touched_at);
-  return Number.isNaN(ms) ? null : ms;
 }
 
 function trainFighter(actions) {
