@@ -5,6 +5,8 @@ import {
   applyTrainingAction,
   applyTrainingActions,
   createTrainingTimeline,
+  findLatestAction,
+  getActionTime,
   getScheduledTrainingActions,
   getTrainedStatValue,
   getTrainingDurationMs,
@@ -131,5 +133,23 @@ describe('getTrainedStatValue', () => {
 
   it('returns null for unknown training stats', () => {
     equal(getTrainedStatValue({vitality: 7}, 'charisma'), null);
+  });
+});
+
+describe('timeline helper exports', () => {
+  it('exposes findLatestAction from the shared training module', () => {
+    const actions = [
+      {action: {touched_at: '2026-01-01T00:00:00.000Z'}, durationMs: 1000, index: 0},
+      {action: {touched_at: '2026-01-01T00:00:01.000Z'}, durationMs: 1000, index: 1},
+    ];
+
+    deepEqual(findLatestAction(actions, Date.parse('2026-01-01T00:00:03.000Z')), {
+      latestActionIndex: 1,
+      latestActionTime: Date.parse('2026-01-01T00:00:01.000Z'),
+    });
+  });
+
+  it('exposes getActionTime from the shared training module', () => {
+    equal(getActionTime({created_at: 'invalid-date'}, 12345), 12345);
   });
 });

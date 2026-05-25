@@ -1,7 +1,8 @@
 import {create} from 'zustand';
+import {findLatestAction, getScheduledTrainingActions} from 'shared/training.js';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
-import {findLatestAction, getScheduledActions, runFighterActionTick, transferLatestTouchedAt} from './fighterActionTick.js';
+import {runFighterActionTick, transferLatestTouchedAt} from './fighterActionTick.js';
 
 const useFighterActionsStore = create((set) => ({
   ...getInitialState(),
@@ -43,7 +44,7 @@ function normalizeAction(action) {
 function setActionProgress(actions) {
   const nowMs = Date.now();
   const progressByIndex = new Map(actions.map((_, index) => [index, 0]));
-  const scheduledActions = getScheduledActions(actions);
+  const scheduledActions = getScheduledTrainingActions(actions);
   setScheduledActionProgress(progressByIndex, scheduledActions, nowMs);
   return actions.map((action, index) => ({...action, progress: progressByIndex.get(index) || 0}));
 }
