@@ -1,7 +1,7 @@
 import {createBrowserRouter} from 'react-router-dom';
 
 import Game, {fighterSelectLoader} from './pages/Game/index.js';
-import gameLayoutRoute from './pages/GameLayout/router.js';
+import gameLayoutRoutes from './pages/GameLayout/router.js';
 import RootLayout from './pages/RootLayout/index.js';
 import NotFound from './pages/NotFound.js';
 
@@ -11,7 +11,7 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {element: <Game />, index: true, loader: fighterSelectLoader},
-      gameLayoutRoute,
+      gameLayoutRoutes,
       {path: '*', element: <NotFound />},
     ],
   },
