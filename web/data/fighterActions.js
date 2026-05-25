@@ -6,7 +6,10 @@ import {findLatestAction, getScheduledActions, runFighterActionTick} from './fig
 const useFighterActionsStore = create((set) => ({
   ...getInitialState(),
   addAction: (action) => set((state) => {
-    const nextActions = [...state.actions, normalizeAction(action)];
+    const nextActions = [...state.actions, normalizeAction({
+      ...action,
+      created_at: getOptimisticCreatedAt(state.actions),
+    })];
     return {actions: setActionProgress(nextActions)};
   }),
   removeAction: (actionID) => set((state) => ({
@@ -36,6 +39,20 @@ function normalizeAction(action) {
     created_at: action?.created_at || new Date().toISOString(),
     progress: Number.isFinite(action?.progress) ? action.progress : 0,
   };
+}
+
+function getOptimisticCreatedAt(actions) {
+  const nowMs = Date.now();
+  const scheduledActions = getScheduledActions(actions);
+  if(!scheduledActions.length) {
+    return new Date(nowMs).toISOString();
+  }
+  const {latestActionIndex, latestActionTime} = findLatestAction(scheduledActions, nowMs);
+  const currentActionIndex = (latestActionIndex + 1) % scheduledActions.length;
+  if(currentActionIndex === 0) {
+    return new Date(latestActionTime).toISOString();
+  }
+  return new Date(latestActionTime - 1).toISOString();
 }
 
 function setActionProgress(actions) {
