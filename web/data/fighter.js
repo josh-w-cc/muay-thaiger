@@ -1,4 +1,4 @@
-import {getTrainingEffect} from 'shared/training.js';
+import {getTrainedStatValue} from 'shared/training.js';
 import {create} from 'zustand';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
@@ -62,14 +62,14 @@ function generateTickFn({get, set}) {
 }
 
 function generateTrainFn({get, set}) {
-  return (stat, amount = 1) => {
-    const trainingEffect = getTrainingEffect(get());
-    if(!Object.hasOwn(trainingEffect, stat)) {
+  return (stat, multiplier = 1) => {
+    const trainedStatValue = getTrainedStatValue(get(), stat, multiplier);
+    if(trainedStatValue === null) {
       console.error('Tried to train unknown stat:', stat);
       return;
     }
 
-    set((state) => mergeState(state, {[stat]: state[stat] + trainingEffect[stat] * amount}));
+    set((state) => mergeState(state, {[stat]: trainedStatValue}));
   };
 }
 
