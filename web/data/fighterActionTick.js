@@ -1,5 +1,4 @@
-import {applyTrainingActions, createTrainingTimeline, getScheduledTrainingActions} from 'shared/training.js';
-export {findLatestAction, getActionTime} from 'shared/trainingTimeline.js';
+import {applyTrainingActions, createTrainingTimeline} from 'shared/training.js';
 
 import useFighterStore from '@/data/fighter.js';
 
@@ -16,10 +15,6 @@ export function runFighterActionTick(actions) {
       ? {...action, touched_at: touchedAtByActionKey.get(index)}
       : action
   ));
-}
-
-export function getScheduledActions(actions) {
-  return getScheduledTrainingActions(actions);
 }
 
 function trainFighter(actions) {
