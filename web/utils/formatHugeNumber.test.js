@@ -17,10 +17,16 @@ describe('formatHugeNumber', () => {
     expect(formatHugeNumber('+00123')).toBe('123');
   });
 
+  it('formats positive BigInt values', () => {
+    expect(formatHugeNumber(99999n)).toBe('99999');
+    expect(formatHugeNumber(100000n)).toBe('1.00e5');
+  });
+
   it('returns non-positive-integer values as-is', () => {
     expect(formatHugeNumber(-100000)).toBe(-100000);
     expect(formatHugeNumber('-100000')).toBe('-100000');
     expect(formatHugeNumber(100000.1)).toBe(100000.1);
+    expect(formatHugeNumber(-100000n)).toBe(-100000n);
   });
 
   it('returns non-integer strings as-is', () => {
