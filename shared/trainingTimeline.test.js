@@ -46,6 +46,21 @@ describe('createTrainingTimeline', () => {
 
     equal(result.touchedAtByActionKey.get(0), '2026-01-01T00:00:02.000Z');
   });
+
+  it('orders scheduled actions from oldest to newest before running the timeline', () => {
+    const oldestAction = {action_id: 2, id: 5, touched_at: '2026-01-01T00:00:00.000Z'};
+    const newestAction = {action_id: 4, id: 6, touched_at: '2026-01-01T00:00:01.000Z'};
+
+    const result = createTrainingTimeline([newestAction, oldestAction], {
+      getDurationMs: () => 1000,
+      getTouchedAtKey: (action) => action.id,
+      now: new Date('2026-01-01T00:00:02.500Z'),
+    });
+
+    deepEqual(result.appliedActions, [oldestAction, newestAction]);
+    equal(result.touchedAtByActionKey.get(5).toISOString(), '2026-01-01T00:00:01.000Z');
+    equal(result.touchedAtByActionKey.get(6).toISOString(), '2026-01-01T00:00:02.000Z');
+  });
 });
 
 describe('getActionTime', () => {
