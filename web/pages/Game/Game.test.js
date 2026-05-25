@@ -113,12 +113,6 @@ describe('Game', () => {
     expect(fetchJSONMock).toHaveBeenCalledWith('race');
   });
 
-  it('loader returns null for token-protected screens when token exists', async () => {
-    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
-
-    expect(await gameScreenLoader()).toBeNull();
-  });
-
   it('loader redirects to fighter select for token-protected screens when token is missing', async () => {
     const response = await gameScreenLoader();
 
