@@ -119,6 +119,21 @@ describe('applyTraining', () => {
     assert.ok(Math.abs(touchCalls[1].touchedAt.getTime() - (now - 4000)) < 500);
   });
 
+  it('touches applied actions by database id after building the shared timeline', async () => {
+    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, vitality: 2}};
+    const actions = [{action_id: 2, fighter_id: 1, id: 99, touched_at: getOffsetDate(-1000)}];
+    const touchCalls = [];
+    const fighterActions = {
+      listByFighterID: async () => actions,
+      touch: async (id) => touchCalls.push(id),
+    };
+    const fighters = {update: async () => ({...fighter})};
+
+    await applyTraining({fighterActions, fighters}, fighter);
+
+    assert.deepEqual(touchCalls, [99]);
+  });
+
   it('increases gold for win-type actions', async () => {
     const fighter = {id: 1, gold: 0n, stats: BASE_STATS};
     const actions = [{action_id: 1, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];

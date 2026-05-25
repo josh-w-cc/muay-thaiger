@@ -1,4 +1,4 @@
-import css from './Hub.module.css';
+import css from './Leaderboard.module.css';
 
 const LEADERBOARD = [
   {name: 'Iron Cobra', race: 'Tiger', wins: 47},
