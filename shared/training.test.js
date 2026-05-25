@@ -120,6 +120,16 @@ describe('getTrainingEffect', () => {
       strength: 5,
     });
   });
+
+  it('defaults missing base stats to zero', () => {
+    deepEqual(getTrainingEffect({}), {
+      agility: 0,
+      constitution: 0,
+      skill: 0,
+      stamina: 0,
+      strength: 0,
+    });
+  });
 });
 
 describe('getTrainedStatValue', () => {
@@ -129,6 +139,10 @@ describe('getTrainedStatValue', () => {
 
   it('uses zero when the trained stat has not been initialized', () => {
     equal(getTrainedStatValue({vitality: 7}, 'stamina', 2), 14);
+  });
+
+  it('uses zero when a training multiplier stat has not been initialized', () => {
+    equal(getTrainedStatValue({stamina: 3}, 'stamina', 2), 3);
   });
 
   it('returns null for unknown training stats', () => {
