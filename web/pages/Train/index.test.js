@@ -96,9 +96,10 @@ describe('Train', () => {
   it('shows gray progress bar for inactive skills', () => {
     fighterActions.actions = [];
     render(<Train />);
+    const button = screen.getByRole('button', {name: 'IDLE'});
 
     expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '0');
-    expect(screen.getByRole('button', {name: 'IDLE'})).toBeInTheDocument();
+    expect(button.className).toContain('actionButton');
   });
 
   it('wraps the train sections in a page container with extra top spacing', () => {
@@ -127,8 +128,11 @@ describe('Train', () => {
     const user = userEvent.setup();
     render(<Train />);
 
-    await user.click(screen.getByRole('button', {name: 'STOP'}));
+    const button = screen.getByRole('button', {name: 'STOP'});
 
+    await user.click(button);
+
+    expect(button.className).toContain('actionButton');
     expect(removeAction).toHaveBeenCalledWith(SKILL_IDS.begging);
     expect(removeFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
