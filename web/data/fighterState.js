@@ -14,6 +14,8 @@ export function getInitialState() {
   };
 }
 
+export {getTrainingEffect} from 'shared/training.js';
+
 export function getSelectionState(id) {
   const baseSelectionState = getBaseSelectionState(BaseStats[id].stats);
   const nextState = {race: id, ...baseSelectionState};
@@ -47,16 +49,6 @@ function getCombatState({agility, constitution, durability, reach, skill, stamin
     defense: Math.max(0, Math.log(agility)) + Math.sqrt(stamina) + skill,
     health: stamina + constitution * constitution + durability * durability,
     power: (strength + agility) * Math.sqrt(stamina) + skill,
-  };
-}
-
-export function getTrainingEffect({anima, vigor, speed, vitality}) {
-  return {
-    agility: speed,
-    constitution: vitality,
-    skill: anima,
-    stamina: vitality,
-    strength: vigor,
   };
 }
 
