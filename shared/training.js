@@ -46,14 +46,13 @@ function getStatValue(stats, stat) {
 }
 
 function toBigInt(value) {
-  if(typeof value === 'bigint') {
-    return value;
+  if(value === null || value === undefined || value === '') {
+    return 0n;
   }
-  if(typeof value === 'number' && Number.isInteger(value)) {
+  try {
     return BigInt(value);
   }
-  if(typeof value === 'string' && /^-?\d+$/.test(value)) {
-    return BigInt(value);
+  catch {
+    return 0n;
   }
-  return 0n;
 }

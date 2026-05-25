@@ -1,12 +1,11 @@
+import {calculateBet, createEnemyStats} from './fightMath.js';
+
 export const FIGHT_STATES = {IN_PROGRESS: 1, LOST: 2, NOT_STARTED: 0, WON: 3};
 const {IN_PROGRESS: FIGHT_IN_PROGRESS, LOST: FIGHT_LOST, NOT_STARTED: FIGHT_NOT_STARTED, WON: FIGHT_WON} = FIGHT_STATES;
-
 
 export function getInitialState() {
   return {bet: 0n, fighters: [], messages: [], state: FIGHT_NOT_STARTED};
 }
-
-
 export function generateAttackFn({get, set}) {
   return (who) => {
     const {fighters} = get();
@@ -20,8 +19,6 @@ export function generateAttackFn({get, set}) {
     return result.message;
   };
 }
-
-
 export function generateFinishFn({get, set}) {
   return () => {
     const {bet, fighters, state} = get();
@@ -33,36 +30,14 @@ export function generateFinishFn({get, set}) {
     set(getInitialState());
   };
 }
-
-
 export function generateForGoldFn({get, set}) {
   return (fighter, risk) => {
-    const riskPercentages = [
-      {denominator: 1000n, numerator: 1n},
-      {denominator: 10n, numerator: 1n},
-      {denominator: 4n, numerator: 1n},
-      {denominator: 2n, numerator: 1n},
-      {denominator: 1n, numerator: 1n},
-    ];
-    const selectedRisk = riskPercentages[risk] || riskPercentages[1];
-    const fighterGold = BigInt(fighter.gold);
-    const calculatedBet = fighterGold * selectedRisk.numerator / selectedRisk.denominator;
-    const bet = calculatedBet < 100n ? 100n : calculatedBet;
-    const betAsDouble = Number(bet);
-    const enemy = {
-      apm: Math.max(4, Math.log(betAsDouble)) * (Math.random() + 0.5),
-      attack: Math.sqrt(betAsDouble) * (Math.random() + 0.5),
-      defense: Math.sqrt(betAsDouble) * (Math.random() + 0.5),
-      health: betAsDouble * 10 * (Math.random() + 0.5),
-      power: betAsDouble * (Math.random() + 0.5),
-      stamina: betAsDouble * Math.sqrt(betAsDouble) * (Math.random() + 0.5),
-    };
+    const bet = calculateBet(fighter, risk);
+    const enemy = createEnemyStats(bet);
     set({bet});
     get().start(fighter, enemy);
   };
 }
-
-
 export function generateStartFn({get, set}) {
   return (left, right) => {
     set({
@@ -75,8 +50,6 @@ export function generateStartFn({get, set}) {
     left.idle('FIGHT', (delta) => get().tick(delta));
   };
 }
-
-
 export function generateTickFn({get, set}) {
   return (amount) => {
     const {fighters, messages} = get();
@@ -96,7 +69,6 @@ export function generateTickFn({get, set}) {
   };
 }
 
-
 function runFightCycles({fighters, messages, state}) {
   while(fighters[0].currentAPM > 1 || fighters[1].currentAPM > 1) {
     [0, 1].filter((fighterIndex) => fighters[fighterIndex].currentAPM > 1).forEach((fighterIndex) => {
@@ -109,7 +81,6 @@ function runFightCycles({fighters, messages, state}) {
   return state;
 }
 
-
 function attackFighter({fighters, state, who}) {
   const [you, them] = who ? [fighters[1], fighters[0]] : [fighters[0], fighters[1]];
   if(you.stats.attack * Math.random() <= them.stats.defense * Math.random()) {
@@ -117,7 +88,6 @@ function attackFighter({fighters, state, who}) {
   }
   return resolveHit({damage: you.stats.power * (Math.random() + 0.5), state, them, who});
 }
-
 
 function resolveHit({damage, state, them, who}) {
   them.currentHealth -= damage;

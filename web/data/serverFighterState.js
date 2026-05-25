@@ -67,14 +67,13 @@ function getServerStats(fighter) {
 }
 
 function toBigInt(value) {
-  if(typeof value === 'bigint') {
-    return value;
+  if(value === null || value === undefined || value === '') {
+    return null;
   }
-  if(typeof value === 'number' && Number.isInteger(value)) {
+  try {
     return BigInt(value);
   }
-  if(typeof value === 'string' && /^-?\d+$/.test(value)) {
-    return BigInt(value);
+  catch {
+    return null;
   }
-  return null;
 }
