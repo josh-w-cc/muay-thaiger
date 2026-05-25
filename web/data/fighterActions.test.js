@@ -33,7 +33,7 @@ describe('useFighterActionsStore', () => {
     ]);
   });
 
-  it('does not change in-progress action while appending a fighter action', () => {
+  it('keeps oldest action active while appending a fighter action', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
     useFighterActionsStore.getState().setActions([
@@ -46,7 +46,26 @@ describe('useFighterActionsStore', () => {
 
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 6, id: 2, progress: 75}),
+      expect.objectContaining({action_id: 6, id: 2, progress: 0}),
+      expect.objectContaining({action_id: 2, id: 3, progress: 0}),
+    ]);
+  });
+
+  it('continues the oldest queued action after appending a new fighter action', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
+    useFighterActionsStore.getState().setActions([
+      {action_id: 2, created_at: '2026-01-01T00:00:04.500Z', id: 2},
+      {action_id: 2, created_at: '2026-01-01T00:00:04.000Z', id: 1},
+    ]);
+
+    useFighterActionsStore.getState().addAction({action_id: 2, id: 3});
+    vi.setSystemTime(new Date('2026-01-01T00:00:05.500Z'));
+    useFighterActionsStore.getState().tick();
+
+    expect(useFighterActionsStore.getState().actions).toEqual([
+      expect.objectContaining({action_id: 2, id: 2, progress: 0}),
+      expect.objectContaining({action_id: 2, id: 1, progress: 50}),
       expect.objectContaining({action_id: 2, id: 3, progress: 0}),
     ]);
   });
@@ -91,7 +110,7 @@ describe('useFighterActionsStore', () => {
 
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 6, id: 2, progress: 75}),
+      expect.objectContaining({action_id: 6, id: 2, progress: 50}),
     ]);
   });
 
