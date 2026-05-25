@@ -44,6 +44,6 @@ function onPlayerState(message) {
   }
   useFighterActionsStore.getState().setActions(Array.isArray(message.actions) ? message.actions : []);
   useFighterStore.getState().overwrite(message.fighter);
-  usePlayerStore.getState().setPlayerID(message.fighter.player_id ?? null);
+  usePlayerStore.getState().setPlayerID(message.fighter.player ?? null);
   usePlayerStore.getState().selectFighter(`${message.fighter.race}`);
 }

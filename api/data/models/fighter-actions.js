@@ -21,7 +21,7 @@ export default function fighterActions(db) {
 
 function generateListByFighterIDFn(db) {
   return (fighterId) => db('fighter_actions')
-    .where({fighter_id: fighterId})
+    .where({fighter: fighterId})
     .orderBy('created_at');
 }
 
@@ -32,14 +32,14 @@ function generateListFighterActionsFn(db, fighters) {
       return [];
     }
     return db('fighter_actions')
-      .where({fighter_id: currentFighter.id})
+      .where({fighter: currentFighter.id})
       .orderBy('created_at');
   };
 }
 
 function generateListStaleBeforeFn(db) {
   return (staleBefore) => db('fighter_actions')
-    .select('fighter_id')
+    .select('fighter')
     .where('touched_at', '<=', staleBefore)
     .orderBy('touched_at');
 }

@@ -29,7 +29,7 @@ describe('applyTraining', () => {
 
   it('applies stamina training for the walking action', async () => {
     const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, vitality: 2}};
-    const actions = [{action_id: 2, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
+    const actions = [{action: 2, fighter: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const touchCalls = [];
     const updateCalls = [];
     const fighterActions = {
@@ -52,8 +52,8 @@ describe('applyTraining', () => {
   it('updates the fighter stats for multiple active actions', async () => {
     const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, anima: 2, vitality: 3}};
     const actions = [
-      {action_id: 2, fighter_id: 1, id: 5, touched_at: getOffsetDate(-3000)},
-      {action_id: 4, fighter_id: 1, id: 6, touched_at: getOffsetDate(-3000)},
+      {action: 2, fighter: 1, id: 5, touched_at: getOffsetDate(-3000)},
+      {action: 4, fighter: 1, id: 6, touched_at: getOffsetDate(-3000)},
     ];
     const updateCalls = [];
     const fighterActions = {
@@ -76,7 +76,7 @@ describe('applyTraining', () => {
 
   it('trains strength using vigor rather than current strength', async () => {
     const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, vigor: 3, stamina: 120, strength: 5}};
-    const actions = [{action_id: 5, fighter_id: 1, id: 5, touched_at: getOffsetDate(-3000)}];
+    const actions = [{action: 5, fighter: 1, id: 5, touched_at: getOffsetDate(-3000)}];
     const updateCalls = [];
     const fighterActions = {
       listByFighterID: async () => actions,
@@ -99,8 +99,8 @@ describe('applyTraining', () => {
     const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, strength: 2, vitality: 2}};
     const now = Date.now();
     const actions = [
-      {action_id: 3, fighter_id: 1, id: 5, touched_at: new Date(now - 10000).toISOString()},
-      {action_id: 6, fighter_id: 1, id: 6, touched_at: new Date(now - 10000).toISOString()},
+      {action: 3, fighter: 1, id: 5, touched_at: new Date(now - 10000).toISOString()},
+      {action: 6, fighter: 1, id: 6, touched_at: new Date(now - 10000).toISOString()},
     ];
     const touchCalls = [];
     const fighterActions = {
@@ -121,7 +121,7 @@ describe('applyTraining', () => {
 
   it('touches applied actions by database id after building the shared timeline', async () => {
     const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, vitality: 2}};
-    const actions = [{action_id: 2, fighter_id: 1, id: 99, touched_at: getOffsetDate(-1000)}];
+    const actions = [{action: 2, fighter: 1, id: 99, touched_at: getOffsetDate(-1000)}];
     const touchCalls = [];
     const fighterActions = {
       listByFighterID: async () => actions,
@@ -136,7 +136,7 @@ describe('applyTraining', () => {
 
   it('increases gold for win-type actions', async () => {
     const fighter = {id: 1, gold: '0', stats: BASE_STATS};
-    const actions = [{action_id: 1, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
+    const actions = [{action: 1, fighter: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const updateCalls = [];
     const fighterActions = {
       listByFighterID: async () => actions,
@@ -156,7 +156,7 @@ describe('applyTraining', () => {
 
   it('uses BigInt arithmetic for large gold values', async () => {
     const fighter = {id: 1, gold: '9007199254740993', stats: BASE_STATS};
-    const actions = [{action_id: 1, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
+    const actions = [{action: 1, fighter: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const updateCalls = [];
     const fighterActions = {
       listByFighterID: async () => actions,
@@ -177,7 +177,7 @@ describe('applyTraining', () => {
   it('returns the updated fighter and actions from the fighters model', async () => {
     const fighter = {id: 1, gold: '0', stats: BASE_STATS};
     const updatedFighter = {id: 1, gold: '0', stats: {...BASE_STATS, stamina: 1}};
-    const actions = [{action_id: 2, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
+    const actions = [{action: 2, fighter: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const fighterActions = {
       listByFighterID: async () => actions,
       touch: async () => null,
@@ -192,7 +192,7 @@ describe('applyTraining', () => {
 
   it('skips unknown action IDs without error', async () => {
     const fighter = {id: 1, gold: '0', stats: BASE_STATS};
-    const actions = [{action_id: 999, fighter_id: 1, id: 5, touched_at: getOffsetDate(-1000)}];
+    const actions = [{action: 999, fighter: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const updateCalls = [];
     const touchCalls = [];
     const fighterActions = {

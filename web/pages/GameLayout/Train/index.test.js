@@ -27,7 +27,7 @@ const {action, addAction, createFighterActionCmd, fighter, removeAction, removeF
 
 const fighterActions = vi.hoisted(() => ({
   actions: [
-    {action_id: 2, id: 5, progress: 23},
+    {action: 2, id: 5, progress: 23},
   ],
 }));
 
@@ -61,7 +61,7 @@ describe('Train', () => {
   afterEach(() => {
     fighter.idling = null;
     fighterActions.actions = [
-      {action_id: 2, id: 5, progress: 23},
+      {action: 2, id: 5, progress: 23},
     ];
     vi.clearAllMocks();
   });
@@ -79,7 +79,7 @@ describe('Train', () => {
   });
 
   it('shows training regimen with progress bar and button for each skill', () => {
-    fighterActions.actions = [{action_id: SKILL_IDS.begging, id: 6, progress: 77}];
+    fighterActions.actions = [{action: SKILL_IDS.begging, id: 6, progress: 77}];
     render(<Train />);
 
     expect(screen.queryByRole('heading', {name: 'Training Regimen:'})).not.toBeInTheDocument();
@@ -107,12 +107,12 @@ describe('Train', () => {
 
     await user.click(screen.getByRole('button', {name: 'IDLE'}));
 
-    expect(addAction).toHaveBeenCalledWith({action_id: SKILL_IDS.begging});
+    expect(addAction).toHaveBeenCalledWith({action: SKILL_IDS.begging});
     expect(createFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
 
   it('shows stop control for enabled actions and sends stop command when clicked', async () => {
-    fighterActions.actions = [{action_id: SKILL_IDS.begging, id: 6, progress: 77}];
+    fighterActions.actions = [{action: SKILL_IDS.begging, id: 6, progress: 77}];
     fighter.idling = {key: 'train-begging'};
     const user = userEvent.setup();
     render(<Train />);

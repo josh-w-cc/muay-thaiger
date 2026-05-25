@@ -26,7 +26,7 @@ describe('startIdle', () => {
   it('starts idle training and sends a fighter action command', () => {
     startIdle({skillKey: 'begging'});
 
-    expect(addAction).toHaveBeenCalledWith({action_id: SKILL_IDS.begging});
+    expect(addAction).toHaveBeenCalledWith({action: SKILL_IDS.begging});
     expect(createFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
 

@@ -57,7 +57,7 @@ export function getTrainedStatValue(stats, stat, amount = 1) {
 }
 
 function getTrainingSkill(action) {
-  return SKILLS_BY_ACTION_ID[action?.action_id];
+  return SKILLS_BY_ACTION_ID[action?.action];
 }
 
 function getTrainingMultiplier(stats, stat) {

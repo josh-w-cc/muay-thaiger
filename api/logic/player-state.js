@@ -8,7 +8,7 @@ export async function applyOfflineTraining(db, models = null) {
   const {fighterActions, fighters} = getOfflineTrainingModels(db, models);
   const staleBefore = new Date(Date.now() - HOUR_IN_MILLISECONDS);
   const staleActions = await fighterActions.listStaleBefore(staleBefore);
-  const fighterIDs = [...new Set(staleActions.map(({fighter_id: fighterID}) => fighterID))];
+  const fighterIDs = [...new Set(staleActions.map(({fighter: fighterID}) => fighterID))];
   for(const fighterID of fighterIDs) {
     const fighter = await fighters.find(fighterID);
     if(!shouldSyncOfflineFighter(fighter)) {

@@ -9,6 +9,6 @@ export default function startIdle({skillKey}) {
   if(!Number.isInteger(actionID)) {
     return;
   }
-  useFighterActionsStore.getState().addAction({action_id: actionID});
+  useFighterActionsStore.getState().addAction({action: actionID});
   createFighterActionCmd(actionID);
 }

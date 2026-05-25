@@ -5,12 +5,12 @@ import {registerFighterAction, unregisterFighterAction} from './fighter-actions.
 
 describe('registerFighterAction', () => {
   it('creates a fighter action for the player current fighter and returns it on a valid message', async () => {
-    const created = {id: 1, action_id: 2, fighter_id: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
+    const created = {id: 1, action: 2, fighter: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const fighterActions = {
       create: async () => created,
       listByFighterID: async () => [],
     };
-    const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false})};
+    const fighters = {findCurrentByPlayerID: async () => ({id: 3, player: 8, retired: false})};
 
     const result = await registerFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
 
@@ -27,14 +27,14 @@ describe('registerFighterAction', () => {
         {id: 3, touched_at: '2026-01-01T00:00:00.005Z'},
       ],
     };
-    const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false})};
+    const fighters = {findCurrentByPlayerID: async () => ({id: 3, player: 8, retired: false})};
 
     await registerFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
 
     assert.equal(create.calls.length, 1);
     assert.deepEqual(create.calls[0], [{
-      action_id: 2,
-      fighter_id: 3,
+      action: 2,
+      fighter: 3,
       touched_at: new Date('2026-01-01T00:00:00.112Z'),
     }]);
   });
@@ -43,10 +43,10 @@ describe('registerFighterAction', () => {
     it('removes matching fighter actions for the player current fighter and returns metadata', async () => {
       const remove = createCallTracker();
       const fighterActions = {
-        listByFighterID: async () => [{action_id: 2, id: 8}, {action_id: 6, id: 9}, {action_id: 2, id: 10}],
+        listByFighterID: async () => [{action: 2, id: 8}, {action: 6, id: 9}, {action: 2, id: 10}],
         remove,
       };
-      const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false})};
+      const fighters = {findCurrentByPlayerID: async () => ({id: 3, player: 8, retired: false})};
 
       const result = await unregisterFighterAction({fighterActions, fighters}, {action_id: 2}, 8);
 
@@ -99,7 +99,7 @@ describe('registerFighterAction', () => {
   it('throws invalid-idle-message when action_id does not map to a valid skill', async () => {
     const create = createCallTracker();
     const fighterActions = {create, listByFighterID: createCallTracker()};
-    const fighters = {findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {}})};
+    const fighters = {findCurrentByPlayerID: async () => ({id: 3, player: 8, retired: false, stats: {}})};
 
     await assert.rejects(
       registerFighterAction({fighterActions, fighters}, {action_id: 999}, 8),
@@ -113,7 +113,7 @@ describe('registerFighterAction', () => {
     const create = createCallTracker();
     const fighterActions = {create, listByFighterID: createCallTracker()};
     const fighters = {
-      findCurrentByPlayerID: async () => ({id: 3, player_id: 8, retired: false, stats: {stamina: 25}}),
+      findCurrentByPlayerID: async () => ({id: 3, player: 8, retired: false, stats: {stamina: 25}}),
     };
 
     await assert.rejects(

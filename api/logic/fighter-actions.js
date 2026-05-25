@@ -10,8 +10,8 @@ export async function registerFighterAction({fighterActions, fighters}, message,
   const currentActions = await fighterActions.listByFighterID(currentFighter.id);
   const touchedAt = getNextTouchedAt(currentActions);
   const action = {
-    action_id: normalizedMessage.action_id,
-    fighter_id: currentFighter.id,
+    action: normalizedMessage.action_id,
+    fighter: currentFighter.id,
   };
   if(touchedAt) {
     action.touched_at = touchedAt;
@@ -26,7 +26,7 @@ export async function unregisterFighterAction({fighterActions, fighters}, messag
     throw createCommandError('invalid-stop-message');
   }
   const actions = await fighterActions.listByFighterID(currentFighter.id);
-  const matchingActions = actions.filter((action) => action.action_id === normalizedMessage.action_id);
+  const matchingActions = actions.filter((action) => action.action === normalizedMessage.action_id);
   await Promise.all(matchingActions.map((action) => fighterActions.remove(action.id)));
   return {action_id: normalizedMessage.action_id};
 }

@@ -156,11 +156,11 @@ describe('player websocket helpers', () => {
     socket.onmessage({
       data: JSON.stringify({
         cmd: 'player_state',
-        actions: [{action_id: 2, id: 11}],
+        actions: [{action: 2, id: 11}],
         fighter: {
           gold: '250',
           id: 9,
-          player_id: 77,
+          player: 77,
           race: 2,
           stats: {agility: 6, stamina: 7, strength: 8},
         },
@@ -170,7 +170,7 @@ describe('player websocket helpers', () => {
     expect(usePlayerStore.getState().playerID).toBe(77);
     expect(usePlayerStore.getState().selectedRace).toBe('2');
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2, id: 11}),
+      expect.objectContaining({action: 2, id: 11}),
     ]);
     expect(useFighterStore.getState().gold).toBe(250);
     expect(useFighterStore.getState().id).toBe(9);
@@ -192,7 +192,7 @@ describe('player websocket helpers', () => {
         fighter: {
           gold: '250',
           id: 9,
-          player_id: null,
+          player: null,
           race: 2,
           stats: {agility: 6, stamina: 7, strength: 8},
         },
@@ -214,7 +214,7 @@ describe('player websocket helpers', () => {
         fighter: {
           gold: '250',
           id: 9,
-          player_id: 77,
+          player: 77,
           race: 2,
           stats: {agility: 6, stamina: 7, strength: 8},
         },
@@ -292,7 +292,7 @@ describe('player websocket helpers', () => {
     const socket = connectSocketOnAppLoad();
     const send = vi.fn();
     socket.send = send;
-    const fighterAction = {action_id: 2, id: 15};
+    const fighterAction = {action: 2, id: 15};
 
     socket.onmessage({data: JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'idle'}})});
 
