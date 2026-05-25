@@ -30,17 +30,20 @@ describe('SKILLS_BY_ACTION_ID', () => {
 
 describe('SKILL_SEED_ACTIONS', () => {
   it('creates action seed data from the shared skill definitions', () => {
-    deepEqual(SKILL_SEED_ACTIONS, [
-      {id: SKILL_IDS.begging, name: '฿egging', type: 'train'},
-      {id: SKILL_IDS.walking, name: 'Walking', type: 'train'},
-      {id: SKILL_IDS.shadowBoxing, name: 'Shadow Boxing', type: 'train'},
-      {id: SKILL_IDS.breathwork, name: 'Breathwork', type: 'train'},
-      {id: SKILL_IDS.yoga, name: 'Yoga', type: 'train'},
-      {id: SKILL_IDS.calisthenics, name: 'Calisthenics', type: 'train'},
-      {id: SKILL_IDS.laboring, name: 'La฿oring', type: 'train'},
-      {id: SKILL_IDS.running, name: 'Running', type: 'train'},
-      {id: SKILL_IDS.gymnastics, name: 'Gymnastics', type: 'train'},
-    ]);
+    deepEqual(
+      SKILL_SEED_ACTIONS.toSorted((left, right) => left.id - right.id),
+      [
+        {id: SKILL_IDS.begging, name: '฿egging', type: 'train'},
+        {id: SKILL_IDS.walking, name: 'Walking', type: 'train'},
+        {id: SKILL_IDS.shadowBoxing, name: 'Shadow Boxing', type: 'train'},
+        {id: SKILL_IDS.breathwork, name: 'Breathwork', type: 'train'},
+        {id: SKILL_IDS.yoga, name: 'Yoga', type: 'train'},
+        {id: SKILL_IDS.calisthenics, name: 'Calisthenics', type: 'train'},
+        {id: SKILL_IDS.laboring, name: 'La฿oring', type: 'train'},
+        {id: SKILL_IDS.running, name: 'Running', type: 'train'},
+        {id: SKILL_IDS.gymnastics, name: 'Gymnastics', type: 'train'},
+      ],
+    );
   });
 });
 
@@ -52,8 +55,8 @@ describe('SKILL_DEFINITIONS', () => {
       win: (amount) => calls.push(['win', amount]),
     };
 
-    for(const skill of Object.values(SKILL_DEFINITIONS)) {
-      skill.action(fighter);
+    for(const skillID of Object.values(SKILL_IDS).toSorted((left, right) => left - right)) {
+      SKILLS_BY_ACTION_ID[skillID].action(fighter);
     }
 
     deepEqual(calls, [

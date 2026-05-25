@@ -1,7 +1,15 @@
 import {deepEqual, equal} from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {applyTrainingAction, applyTrainingActions, getTrainedStatValue, getTrainingDurationMs, getTrainingEffect} from './training.js';
+import {
+  applyTrainingAction,
+  applyTrainingActions,
+  createTrainingTimeline,
+  getScheduledTrainingActions,
+  getTrainedStatValue,
+  getTrainingDurationMs,
+  getTrainingEffect,
+} from './training.js';
 
 
 describe('applyTrainingAction', () => {
@@ -66,6 +74,37 @@ describe('getTrainingDurationMs', () => {
 
   it('returns zero for unknown action ids', () => {
     equal(getTrainingDurationMs({action_id: 999}), 0);
+  });
+});
+
+describe('createTrainingTimeline', () => {
+  it('uses shared training durations for queued actions', () => {
+    const actions = [
+      {action_id: 2, id: 5, touched_at: '2026-01-01T00:00:00.000Z'},
+      {action_id: 4, id: 6, touched_at: '2026-01-01T00:00:00.000Z'},
+    ];
+
+    const result = createTrainingTimeline(actions, {
+      getTouchedAtKey: (action) => action.id,
+      now: new Date('2026-01-01T00:00:03.000Z'),
+    });
+
+    deepEqual(result.appliedActions, [actions[0], actions[1]]);
+    equal(result.touchedAtByActionKey.get(5).toISOString(), '2026-01-01T00:00:01.000Z');
+    equal(result.touchedAtByActionKey.get(6).toISOString(), '2026-01-01T00:00:03.000Z');
+  });
+});
+
+describe('getScheduledTrainingActions', () => {
+  it('returns scheduled actions using shared training durations', () => {
+    deepEqual(getScheduledTrainingActions([
+      {action_id: 2},
+      {action_id: 999},
+      {action_id: 6},
+    ]), [
+      {action: {action_id: 2}, durationMs: 1000, index: 0},
+      {action: {action_id: 6}, durationMs: 4000, index: 2},
+    ]);
   });
 });
 
