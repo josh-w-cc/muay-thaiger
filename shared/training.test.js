@@ -1,7 +1,7 @@
-import {deepEqual} from 'node:assert/strict';
+import {deepEqual, equal} from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {getTrainingEffect} from './training.js';
+import {getTrainedStatValue, getTrainingEffect} from './training.js';
 
 
 describe('getTrainingEffect', () => {
@@ -13,5 +13,15 @@ describe('getTrainingEffect', () => {
       stamina: 7,
       strength: 5,
     });
+  });
+});
+
+describe('getTrainedStatValue', () => {
+  it('returns the next trained stat value from fighter stats', () => {
+    equal(getTrainedStatValue({stamina: 3, vitality: 7}, 'stamina', 2), 17);
+  });
+
+  it('returns null for unknown training stats', () => {
+    equal(getTrainedStatValue({vitality: 7}, 'charisma'), null);
   });
 });
