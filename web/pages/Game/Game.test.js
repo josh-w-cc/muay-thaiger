@@ -6,10 +6,10 @@ import selectFighter from '@/actions/selectFighter.js';
 import {connectSocketOnAppLoad, resetSocketState} from '@/actions/websockets/index.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '@/actions/websockets/token.js';
 import {resetPlayerStore} from '@/data/player.js';
-import Fight from '../Fight';
-import Hub from '../Hub';
-import Shop from '../Shop';
-import Train from '../Train';
+import Fight from '../GameRoutes/Fight';
+import Hub from '../GameRoutes/Hub';
+import Shop from '../GameRoutes/Shop';
+import Train from '../GameRoutes/Train';
 import Fallback from './Fallback.js';
 import {GameLayout, loader as gameScreenLoader} from './GameLayout.js';
 
@@ -34,13 +34,13 @@ vi.mock('../FighterSelect', () => ({
   },
 }));
 
-vi.mock('../Fight', () => ({
+vi.mock('../GameRoutes/Fight', () => ({
   default: function MockFight() {
     return <h2>Fight Screen</h2>;
   },
 }));
 
-vi.mock('../Hub', () => ({
+vi.mock('../GameRoutes/Hub', () => ({
   default: function MockHub() {
     const navigate = useNavigate();
 
@@ -54,13 +54,13 @@ vi.mock('../Hub', () => ({
   },
 }));
 
-vi.mock('../Shop', () => ({
+vi.mock('../GameRoutes/Shop', () => ({
   default: function MockShop() {
     return <h2>Shop Screen</h2>;
   },
 }));
 
-vi.mock('../Train', () => ({
+vi.mock('../GameRoutes/Train', () => ({
   default: function MockTrain() {
     return <h2>Train Screen</h2>;
   },
