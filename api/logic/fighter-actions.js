@@ -7,9 +7,12 @@ export async function registerFighterAction({fighterActions, fighters}, message,
   if(!currentFighter || !isValidAction(currentFighter, normalizedMessage.action_id)) {
     throw createCommandError('invalid-idle-message');
   }
+  const existingActions = await fighterActions.listByFighterID(currentFighter.id);
+  const oldestAction = existingActions[0];
   return await fighterActions.create({
     action_id: normalizedMessage.action_id,
     fighter_id: currentFighter.id,
+    ...(oldestAction ? {touched_at: oldestAction.touched_at} : {}),
   });
 }
 
