@@ -47,13 +47,13 @@ export function getTrainingEffect({anima = 0, speed = 0, vigor = 0, vitality = 0
   };
 }
 
-export function getTrainedStatValue(stats, stat, multiplier = 1) {
+export function getTrainedStatValue(stats, stat, amount = 1) {
   const trainingMultiplier = getTrainingMultiplier(stats, stat);
   if(trainingMultiplier === null) {
     return null;
   }
 
-  return (stats[stat] || 0) + trainingMultiplier * multiplier;
+  return (stats[stat] || 0) + trainingMultiplier * amount;
 }
 
 function getTrainingSkill(action) {
