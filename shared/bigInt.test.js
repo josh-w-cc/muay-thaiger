@@ -16,4 +16,11 @@ describe('BigInt prototype patch', () => {
   it('returns plain digits when BigInt has five digits or fewer', () => {
     strictEqual((99999n).toFormattedNumber(), '99999');
   });
+
+  it('defines prototype methods as non-writable', () => {
+    const formatDescriptor = Object.getOwnPropertyDescriptor(BigInt.prototype, 'toFormattedNumber');
+    const jsonDescriptor = Object.getOwnPropertyDescriptor(BigInt.prototype, 'toJSON');
+    strictEqual(formatDescriptor?.writable, false);
+    strictEqual(jsonDescriptor?.writable, false);
+  });
 });

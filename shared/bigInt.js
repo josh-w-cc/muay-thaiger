@@ -13,7 +13,7 @@ function defineMethod(name, value) {
   Object.defineProperty(BigInt.prototype, name, {
     configurable: true,
     value,
-    writable: true,
+    writable: false,
   });
 }
 
