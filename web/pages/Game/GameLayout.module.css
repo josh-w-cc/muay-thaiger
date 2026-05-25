@@ -1,14 +1,41 @@
 .headerControls {
   align-items: center;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   padding: var(--space-md);
   width: 100%;
+}
+
+.headerControls > :first-child {
+  justify-self: start;
+}
+
+.headerControls > :last-child {
+  justify-self: end;
 }
 
 .headerLayout {
   margin: 0 auto;
   width: fit-content;
+}
+
+.rankDisplay {
+  align-items: baseline;
+  color: var(--color-fg);
+  display: flex;
+  gap: var(--space-xs);
+  justify-self: center;
+}
+
+.rankLabel {
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rankValue {
+  color: var(--color-gold);
+  font-weight: 700;
 }
 
 @media(max-width: 768px) {
