@@ -100,16 +100,11 @@ function FightForGloryHealthBar({current, label, max}) {
 }
 
 function FightForGloryLoadout() {
-  const loadoutItems = [
-    `Strategy: ${FIGHT_FOR_GLORY_LOADOUT.strategy}`,
-    ...FIGHT_FOR_GLORY_LOADOUT.moves,
-  ];
-
   return (
     <div className={css.gloryLoadout}>
       <h3>Loadout</h3>
       <div className={css.gloryLoadoutButtons}>
-        {loadoutItems.map((item) => (
+        {[`Strategy: ${FIGHT_FOR_GLORY_LOADOUT.strategy}`, ...FIGHT_FOR_GLORY_LOADOUT.moves].map((item) => (
           <Button className={css.gloryLoadoutButton} key={item}>{item}</Button>
         ))}
       </div>
