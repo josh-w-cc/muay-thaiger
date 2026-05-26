@@ -8,7 +8,7 @@ import Section from '@/components/primitive/Section.js';
 
 import FightForGlory from './FightForGlory.js';
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
-import css from './Fight.module.css';
+
 
 export default function FightMenu() {
   const fight = useFightStore();
@@ -92,7 +92,7 @@ export default function FightMenu() {
   }
   return (
     <>
-      <Section className={css.section}>
+      <Section>
         <h1>Fight for ฿</h1>
         <h2>{announcer}</h2>
         {content}
