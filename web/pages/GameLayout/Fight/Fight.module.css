@@ -12,6 +12,14 @@
   padding-top: var(--space-md);
 }
 
+.gloryFeedList {
+  list-style: none;
+  margin: var(--space-sm) 0 0;
+  max-height: 10rem;
+  overflow-y: auto;
+  padding-left: 0;
+}
+
 .gloryFighterImage {
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);

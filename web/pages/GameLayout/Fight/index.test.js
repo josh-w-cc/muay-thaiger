@@ -76,8 +76,12 @@ describe('Fight', () => {
     expect(within(section).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
     expect(within(section).getByRole('heading', {name: 'Completed Moves'})).toBeInTheDocument();
+    expect(section).toHaveTextContent('Tiger throws Jab');
     expect(section).toHaveTextContent('Lands for 18 damage!');
+    expect(section).toHaveTextContent('Snow Leopard throws Roundhouse');
     expect(section).toHaveTextContent('Misses clean.');
+    const feedItems = within(section).getAllByRole('listitem');
+    expect(feedItems.length).toBeGreaterThanOrEqual(12);
   });
 
   it('starts a fight for selected risk', async () => {

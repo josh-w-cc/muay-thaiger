@@ -7,10 +7,18 @@ import css from './Fight.module.css';
 
 
 const FIGHT_FOR_GLORY_FEED = [
-  {move: 'Jab', result: 'Lands for 18 damage!'},
-  {move: 'Roundhouse', result: 'Misses clean.'},
-  {move: 'Elbow', result: 'Lands for 24 damage!'},
-  {move: 'Knee', result: 'Lands for 15 damage!'},
+  {attacker: 'Tiger', move: 'Jab', result: 'Lands for 18 damage!'},
+  {attacker: 'Snow Leopard', move: 'Roundhouse', result: 'Misses clean.'},
+  {attacker: 'Tiger', move: 'Elbow', result: 'Lands for 24 damage!'},
+  {attacker: 'Snow Leopard', move: 'Knee', result: 'Lands for 15 damage!'},
+  {attacker: 'Tiger', move: 'Teep', result: 'Pushes back for 8 damage.'},
+  {attacker: 'Snow Leopard', move: 'Left Hook', result: 'Blocked!'},
+  {attacker: 'Tiger', move: 'Flying Knee', result: 'Lands for 31 damage!'},
+  {attacker: 'Snow Leopard', move: 'Body Kick', result: 'Grazes for 7 damage.'},
+  {attacker: 'Tiger', move: 'Uppercut', result: 'Misses wide.'},
+  {attacker: 'Snow Leopard', move: 'Spinning Elbow', result: 'Lands for 29 damage!'},
+  {attacker: 'Tiger', move: 'Clinch Knee', result: 'Lands for 22 damage!'},
+  {attacker: 'Snow Leopard', move: 'Low Kick', result: 'Buckles the knee for 11 damage.'},
 ];
 
 const FIGHT_FOR_GLORY_LOADOUT = {moves: ['Jab', 'Roundhouse', 'Elbow', 'Knee'], strategy: 'Pressure Counter'};
@@ -32,7 +40,9 @@ function FightForGloryFeed() {
   return (
     <div className={css.gloryFeed}>
       <h3>Completed Moves</h3>
-      <ul>{FIGHT_FOR_GLORY_FEED.map((item) => <FightForGloryFeedItem item={item} key={item.move} />)}</ul>
+      <ul className={css.gloryFeedList}>
+        {FIGHT_FOR_GLORY_FEED.map((item, index) => <FightForGloryFeedItem item={item} key={index} />)}
+      </ul>
     </div>
   );
 }
@@ -40,9 +50,10 @@ function FightForGloryFeed() {
 function FightForGloryFeedItem({item}) {
   return (
     <li>
+      <strong>{item.attacker}</strong>
+      {' throws '}
       <strong>{item.move}</strong>
-      :
-      {' '}
+      {' — '}
       {item.result}
     </li>
   );
