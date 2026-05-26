@@ -5,3 +5,40 @@
     margin-top: 0;
   }
 }
+
+.gloryFeed {
+  border-top: 1px solid var(--color-border-default);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+}
+
+.gloryFighterImage {
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  display: block;
+  max-width: 190px;
+  width: 45%;
+}
+
+.gloryFighterImageMirror {
+  transform: scaleX(-1);
+}
+
+.gloryFighters {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+  margin-top: var(--space-sm);
+}
+
+.gloryLoadout {
+  margin-top: var(--space-sm);
+}
+
+.glorySection {
+  background: rgb(from var(--color-brand-primary) r g b / 8%);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+}

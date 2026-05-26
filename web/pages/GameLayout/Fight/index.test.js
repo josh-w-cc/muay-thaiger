@@ -1,6 +1,8 @@
 import {render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
+import TigerMuayThai from './assets/TigerMuayThai.png';
 import Fight from './index.js';
 
 
@@ -62,10 +64,25 @@ describe('Fight', () => {
 
   it('wraps fight content in a section', () => {
     const {container} = render(<Fight />);
-    const section = container.querySelector('section');
+    const sections = container.querySelectorAll('section');
+    const fightSection = sections[0];
+    const glorySection = sections[1];
 
-    expect(section).toBeInTheDocument();
-    expect(within(section).getByRole('heading', {name: 'Fight for ฿'})).toBeInTheDocument();
+    expect(fightSection).toBeInTheDocument();
+    expect(within(fightSection).getByRole('heading', {name: 'Fight for ฿'})).toBeInTheDocument();
+    expect(fightSection).not.toHaveTextContent('Fight for Glory');
+
+    expect(glorySection).toBeInTheDocument();
+    expect(within(glorySection).getByRole('heading', {name: 'Fight for Glory'})).toBeInTheDocument();
+    expect(within(glorySection).getByRole('heading', {name: 'Loadout'})).toBeInTheDocument();
+    expect(within(glorySection).getByText('Strategy: Pressure Counter')).toBeInTheDocument();
+    expect(within(glorySection).getByRole('img', {name: 'Tiger Muay Thai fighter'}))
+      .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
+    expect(within(glorySection).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
+      .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
+    expect(within(glorySection).getByRole('heading', {name: 'Completed Moves'})).toBeInTheDocument();
+    expect(glorySection).toHaveTextContent('Lands for 18 damage!');
+    expect(glorySection).toHaveTextContent('Misses clean.');
   });
 
   it('starts a fight for selected risk', async () => {
