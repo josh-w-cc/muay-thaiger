@@ -13,13 +13,11 @@ export function createTrainingTimeline(actions, {
     scheduledActions,
   });
 }
-
 export function getScheduledActions(actions, getDurationMs) {
   return actions
     .map((action, index) => ({action, durationMs: getDurationMs(action), index}))
     .filter((action) => action.durationMs > 0);
 }
-
 export function findLatestAction(actions, nowMs) {
   let latestActionIndex = 0;
   let latestActionTime = getActionTime(actions[latestActionIndex].action, nowMs);
@@ -32,7 +30,6 @@ export function findLatestAction(actions, nowMs) {
   }
   return {latestActionIndex, latestActionTime};
 }
-
 function createTimelineFromScheduledActions({getTouchedAtKey, getTouchedAtValue, nowMs, scheduledActions}) {
   if(!scheduledActions.length) {
     return createEmptyTimeline();
@@ -45,7 +42,6 @@ function createTimelineFromScheduledActions({getTouchedAtKey, getTouchedAtValue,
   }
   return runTrainingCycle(orderedActions, latestActionTime, remainingMs, getTouchedAtKey, getTouchedAtValue);
 }
-
 export function getActionTime(action, nowMs) {
   const actionTime = Date.parse(action.touched_at || action.created_at || '');
   if(Number.isNaN(actionTime)) {
@@ -53,7 +49,6 @@ export function getActionTime(action, nowMs) {
   }
   return actionTime;
 }
-
 function runTrainingCycle(actions, latestActionTime, startingRemainingMs, getTouchedAtKey, getTouchedAtValue) {
   const appliedActions = [];
   const touchedAtByActionKey = new Map();
@@ -74,7 +69,6 @@ function runTrainingCycle(actions, latestActionTime, startingRemainingMs, getTou
   }
   return {appliedActions, touchedAtByActionKey};
 }
-
 function getOrderedActions(actions, nowMs) {
   return [...actions].sort((leftAction, rightAction) => {
     const leftTime = getActionTime(leftAction.action, nowMs);
@@ -85,8 +79,6 @@ function getOrderedActions(actions, nowMs) {
     return leftTime - rightTime;
   });
 }
-
 function createEmptyTimeline() {
   return {appliedActions: [], touchedAtByActionKey: new Map()};
 }
-

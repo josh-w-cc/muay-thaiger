@@ -9,6 +9,7 @@ import {
   getMaxTouchedAtMs,
   getScheduledTrainingActions,
   getTrainingDurationMs,
+  getTrainingProgressByActionKey,
 } from './training.js';
 
 
@@ -74,6 +75,21 @@ describe('getTrainingDurationMs', () => {
 
   it('returns zero for unknown action ids', () => {
     equal(getTrainingDurationMs({action: 999}), 0);
+  });
+});
+
+describe('getTrainingProgressByActionKey', () => {
+  it('returns progress for the active training action using shared durations', () => {
+    const progressByActionKey = getTrainingProgressByActionKey([
+      {action: 2, id: 5, touched_at: '2026-01-01T00:00:00.000Z'},
+      {action: 4, id: 6, touched_at: '2026-01-01T00:00:00.000Z'},
+    ], {
+      getActionKey: (action) => action.id,
+      now: new Date('2026-01-01T00:00:02.500Z'),
+    });
+
+    equal(progressByActionKey.get(5), 0);
+    equal(progressByActionKey.get(6), 75);
   });
 });
 

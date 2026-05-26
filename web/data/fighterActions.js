@@ -1,6 +1,5 @@
 import {create} from 'zustand';
-import {getScheduledTrainingActions} from 'shared/training.js';
-import {findLatestAction, getActionTime} from 'shared/trainingTimeline.js';
+import {getTrainingProgressByActionKey} from 'shared/training.js';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {runFighterActionTick, transferLatestTouchedAt} from './fighterActionTick.js';
@@ -43,47 +42,12 @@ function normalizeAction(action) {
 }
 
 function setActionProgress(actions) {
-  const nowMs = Date.now();
-  const progressByIndex = new Map(actions.map((_, index) => [index, 0]));
-  const scheduledActions = getScheduledTrainingActions(actions);
-  setScheduledActionProgress(progressByIndex, scheduledActions, nowMs);
+  const progressByIndex = getTrainingProgressByActionKey(actions);
   return actions.map((action, index) => ({...action, progress: progressByIndex.get(index) || 0}));
-}
-
-function setScheduledActionProgress(progressByIndex, scheduledActions, nowMs) {
-  if(!scheduledActions.length) {
-    return;
-  }
-  const orderedActions = getOrderedScheduledActions(scheduledActions, nowMs);
-  const {latestActionTime} = findLatestAction(orderedActions, nowMs);
-  let remainingMs = nowMs - latestActionTime;
-  if(remainingMs <= 0) {
-    return;
-  }
-  let actionIndex = 0;
-  while(remainingMs >= orderedActions[actionIndex].durationMs) {
-    remainingMs -= orderedActions[actionIndex].durationMs;
-    actionIndex = (actionIndex + 1) % scheduledActions.length;
-  }
-  progressByIndex.set(
-    orderedActions[actionIndex].index,
-    Math.floor(remainingMs / orderedActions[actionIndex].durationMs * 100),
-  );
 }
 
 function tickActions(actions) {
   return setActionProgress(runFighterActionTick(actions));
-}
-
-function getOrderedScheduledActions(actions, nowMs) {
-  return [...actions].sort((leftAction, rightAction) => {
-    const leftTime = getActionTime(leftAction.action, nowMs);
-    const rightTime = getActionTime(rightAction.action, nowMs);
-    if(leftTime === rightTime) {
-      return leftAction.index - rightAction.index;
-    }
-    return leftTime - rightTime;
-  });
 }
 
 TickerState.addListener(() => useFighterActionsStore.getState().tick());
