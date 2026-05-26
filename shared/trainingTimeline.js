@@ -89,3 +89,4 @@ function getOrderedActions(actions, nowMs) {
 function createEmptyTimeline() {
   return {appliedActions: [], touchedAtByActionKey: new Map()};
 }
+
