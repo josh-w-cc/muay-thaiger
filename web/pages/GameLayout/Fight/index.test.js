@@ -1,6 +1,7 @@
 import {render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import sectionCss from '@/components/primitive/Section.module.css';
 import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
 import TigerMuayThai from './assets/TigerMuayThai.png';
 import Fight from './index.js';
@@ -73,6 +74,7 @@ describe('Fight', () => {
     expect(fightSection).not.toHaveTextContent('Fight for Glory');
 
     expect(glorySection).toBeInTheDocument();
+    expect(glorySection).toHaveClass(sectionCss.section);
     expect(within(glorySection).getByRole('heading', {name: 'Fight for Glory'})).toBeInTheDocument();
     expect(within(glorySection).getByRole('heading', {name: 'Loadout'})).toBeInTheDocument();
     expect(within(glorySection).getByText('Strategy: Pressure Counter')).toBeInTheDocument();
