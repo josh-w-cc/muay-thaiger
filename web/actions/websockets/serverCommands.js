@@ -34,8 +34,8 @@ function onAuth(message, socket) {
   onAuthMessage({message, socket});
 }
 
-function onAuthInvalidToken(message, socket) {
-  onAuthInvalidTokenMessage(socket);
+function onAuthInvalidToken() {
+  onAuthInvalidTokenMessage();
 }
 
 function onPlayerState(message) {
