@@ -12,12 +12,18 @@
   padding-top: var(--space-md);
 }
 
+.gloryFighter {
+  display: flex;
+  flex-direction: column;
+  max-width: 190px;
+  width: 45%;
+}
+
 .gloryFighterImage {
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);
   display: block;
-  max-width: 190px;
-  width: 45%;
+  width: 100%;
 }
 
 .gloryFighterImageMirror {
@@ -29,6 +35,17 @@
   gap: var(--space-sm);
   justify-content: center;
   margin-top: var(--space-sm);
+}
+
+.gloryHealthBar {
+  background-color: var(--color-muted);
+  height: 8px;
+  overflow: hidden;
+}
+
+.gloryHealthBarFill {
+  background-color: var(--color-red);
+  height: 100%;
 }
 
 .gloryLoadout {

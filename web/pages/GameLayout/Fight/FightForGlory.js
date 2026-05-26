@@ -13,7 +13,9 @@ const FIGHT_FOR_GLORY_FEED = [
   {move: 'Knee', result: 'Lands for 15 damage!'},
 ];
 
+const FIGHT_FOR_GLORY_FIGHTER_HP = {current: 170, max: 200};
 const FIGHT_FOR_GLORY_LOADOUT = {moves: ['Jab', 'Roundhouse', 'Elbow', 'Knee'], strategy: 'Pressure Counter'};
+const FIGHT_FOR_GLORY_OPPONENT_HP = {current: 143, max: 200};
 
 function FightForGlory() {
   return (
@@ -51,12 +53,47 @@ function FightForGloryFeedItem({item}) {
 function FightForGloryFighters() {
   return (
     <div className={css.gloryFighters}>
-      <img alt="Tiger Muay Thai fighter" className={css.gloryFighterImage} src={TigerMuayThai} />
-      <img
+      <FightForGloryFighterCard
+        alt="Tiger Muay Thai fighter"
+        hp={FIGHT_FOR_GLORY_FIGHTER_HP}
+        label="Tiger fighter health"
+        src={TigerMuayThai}
+      />
+      <FightForGloryFighterCard
         alt="Snow leopard Muay Thai fighter"
-        className={classnames(css.gloryFighterImage, css.gloryFighterImageMirror)}
+        hp={FIGHT_FOR_GLORY_OPPONENT_HP}
+        label="Snow leopard fighter health"
+        mirror
         src={SnowLeopardMuayThaiReady}
       />
+    </div>
+  );
+}
+
+function FightForGloryFighterCard({alt, hp, label, mirror, src}) {
+  return (
+    <div className={css.gloryFighter}>
+      <img
+        alt={alt}
+        className={classnames(css.gloryFighterImage, {[css.gloryFighterImageMirror]: mirror})}
+        src={src}
+      />
+      <FightForGloryHealthBar current={hp.current} label={label} max={hp.max} />
+    </div>
+  );
+}
+
+function FightForGloryHealthBar({current, label, max}) {
+  return (
+    <div
+      aria-label={label}
+      aria-valuemax={max}
+      aria-valuemin={0}
+      aria-valuenow={current}
+      className={css.gloryHealthBar}
+      role="progressbar"
+    >
+      <div className={css.gloryHealthBarFill} style={{width: `${Math.round((current / max) * 100)}%`}} />
     </div>
   );
 }
