@@ -1,14 +1,6 @@
 import {SKILLS_BY_ACTION_ID} from './skills.js';
 import {createTrainingTimeline as createSharedTrainingTimeline, getScheduledActions} from './trainingTimeline.js';
 
-const TRAINING_MULTIPLIER_BY_STAT = Object.freeze({
-  agility: 'speed',
-  constitution: 'vitality',
-  skill: 'anima',
-  stamina: 'vitality',
-  strength: 'vigor',
-});
-
 export function applyTrainingAction(action, fighter) {
   const skill = getTrainingSkill(action);
   skill?.action(fighter);
@@ -20,43 +12,11 @@ export function applyTrainingActions(actions, fighter) {
   }
 }
 
-export function getTrainingDurationMs(action) {
-  return (getTrainingSkill(action)?.duration || 0) * 1000;
-}
-
 export function createTrainingTimeline(actions, options = {}) {
   return createSharedTrainingTimeline(actions, {
     ...options,
     getDurationMs: getTrainingDurationMs,
   });
-}
-
-export function getScheduledTrainingActions(actions) {
-  return getScheduledActions(actions, getTrainingDurationMs);
-}
-
-export function getTrainingEffect({anima = 0, speed = 0, vigor = 0, vitality = 0}) {
-  return {
-    agility: speed,
-    constitution: vitality,
-    skill: anima,
-    stamina: vitality,
-    strength: vigor,
-  };
-}
-
-export function getTrainedStatValue(stats, stat, amount = 1) {
-  const trainingMultiplier = getTrainingMultiplier(stats, stat);
-  if(trainingMultiplier === null) {
-    return null;
-  }
-
-  return BigInt(stats[stat] ?? 0) + trainingMultiplier * BigInt(amount);
-}
-
-export function getMaxTouchedAtMs(actions) {
-  const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
-  return values.length ? Math.max(...values) : null;
 }
 
 export function findTouchedAtTransfer(removedActions, remainingActions) {
@@ -72,6 +32,19 @@ export function findTouchedAtTransfer(removedActions, remainingActions) {
     return null;
   }
   return {targetAction: getActionWithMaxTouchedAt(remainingActions), touchedAt: new Date(maxRemovedMs)};
+}
+
+export function getMaxTouchedAtMs(actions) {
+  const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
+  return values.length ? Math.max(...values) : null;
+}
+
+export function getScheduledTrainingActions(actions) {
+  return getScheduledActions(actions, getTrainingDurationMs);
+}
+
+export function getTrainingDurationMs(action) {
+  return (getTrainingSkill(action)?.duration || 0) * 1000;
 }
 
 function getActionWithMaxTouchedAt(actions) {
@@ -90,14 +63,6 @@ function getActionWithMaxTouchedAt(actions) {
 
 function getTrainingSkill(action) {
   return SKILLS_BY_ACTION_ID[action?.action];
-}
-
-function getTrainingMultiplier(stats, stat) {
-  const multiplierStat = TRAINING_MULTIPLIER_BY_STAT[stat];
-  if(!multiplierStat) {
-    return null;
-  }
-  return BigInt(stats[multiplierStat] ?? 0);
 }
 
 function getTouchedAtMs(action) {
