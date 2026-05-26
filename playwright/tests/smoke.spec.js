@@ -7,10 +7,8 @@ test('homepage loads', async ({page}) => {
 
 test('player token redirects root route to hub', async ({page}) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', {name: 'Choose your fighter:'})).toBeVisible();
-  await page.evaluate(() => {
-    localStorage.setItem('mt-player-token', 'smoke-test-token');
-  });
+  await page.getByRole('button', {name: 'CHOOSE'}).first().click();
+  await expect(page).toHaveURL(/\/hub$/);
 
   await page.goto('/');
   await expect(page).toHaveURL(/\/hub$/);
