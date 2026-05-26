@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import {SKILL_IDS} from 'shared/skills.js';
 import Button from '@/components/Button.js';
+import Section from '@/components/primitive/Section.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 
@@ -23,12 +24,12 @@ export default function Train() {
 
   return (
     <>
-      <section className={css.section}>
+      <Section>
         <div className={css.stats}>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</div>
-      </section>
-      <section className={css.section}>
+      </Section>
+      <Section>
         <RegimenRows fighter={fighter} />
-      </section>
+      </Section>
     </>
   );
 }
