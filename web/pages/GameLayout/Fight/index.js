@@ -90,13 +90,15 @@ function FightMenu() {
     );
   }
   return (
-    <section className={css.section}>
-      <h1>Fight for ฿</h1>
-      <h2>{announcer}</h2>
-      {content}
-      {fight.messages.slice().reverse()}
+    <>
+      <section className={css.section}>
+        <h1>Fight for ฿</h1>
+        <h2>{announcer}</h2>
+        {content}
+        {fight.messages.slice().reverse()}
+      </section>
       <FightForGlory />
-    </section>
+    </>
   );
 }
 
