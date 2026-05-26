@@ -20,14 +20,14 @@ export default function fighterActions(db) {
 }
 
 function generateListByFighterIDFn(db) {
-  return (fighterId) => db('fighter_actions')
-    .where({fighter: fighterId})
+  return (fighterID) => db('fighter_actions')
+    .where({fighter: fighterID})
     .orderBy('created_at');
 }
 
 function generateListFighterActionsFn(db, fighters) {
-  return async (playerId) => {
-    const currentFighter = await fighters.findCurrentByPlayerID(playerId);
+  return async (playerID) => {
+    const currentFighter = await fighters.findCurrentByPlayerID(playerID);
     if(!currentFighter) {
       return [];
     }
