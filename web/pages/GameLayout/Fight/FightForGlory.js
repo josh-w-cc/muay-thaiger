@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 
+import Button from '@/components/Button.js';
 import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
 import TigerMuayThai from './assets/TigerMuayThai.png';
 
@@ -62,15 +63,19 @@ function FightForGloryFighters() {
 }
 
 function FightForGloryLoadout() {
+  const loadoutItems = [
+    `Strategy: ${FIGHT_FOR_GLORY_LOADOUT.strategy}`,
+    ...FIGHT_FOR_GLORY_LOADOUT.moves,
+  ];
+
   return (
     <div className={css.gloryLoadout}>
       <h3>Loadout</h3>
-      <div>
-        Strategy:
-        {' '}
-        {FIGHT_FOR_GLORY_LOADOUT.strategy}
+      <div className={css.gloryLoadoutButtons}>
+        {loadoutItems.map((item) => (
+          <Button className={css.gloryLoadoutButton} key={item}>{item}</Button>
+        ))}
       </div>
-      <ul>{FIGHT_FOR_GLORY_LOADOUT.moves.map((move) => <li key={move}>{move}</li>)}</ul>
     </div>
   );
 }
