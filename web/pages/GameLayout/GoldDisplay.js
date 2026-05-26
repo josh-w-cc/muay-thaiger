@@ -20,7 +20,7 @@ function formatGold(gold) {
   const cents = gold % 100n;
 
   if(baht < 10000n) {
-    return `${baht}.${String(Number(cents)).padStart(2, '0')}`;
+    return `${baht}.${String(cents).padStart(2, '0')}`;
   }
 
   return baht.toFormattedNumber();
