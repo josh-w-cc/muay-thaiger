@@ -1,9 +1,8 @@
 import Button from '@/components/Button.js';
+import Section from '@/components/primitive/Section.js';
 import useFighterStore from '@/data/fighter.js';
 import useInventoryStore from '@/data/inventory.js';
 import Items from './Items.js';
-
-import css from './Shop.module.css';
 
 
 function Shop() {
@@ -11,9 +10,9 @@ function Shop() {
   const fighter = useFighterStore();
 
   return (
-    <section className={css.section}>
+    <Section>
       <ShopRows buy={buy} fighter={fighter} />
-    </section>
+    </Section>
   );
 }
 

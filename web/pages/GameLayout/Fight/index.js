@@ -4,10 +4,11 @@ import React from 'react';
 import useFighterStore from '@/data/fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '@/data/fight.js';
 import Button from '@/components/Button.js';
+import Section from '@/components/primitive/Section.js';
 
 import FightForGlory from './FightForGlory.js';
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
-import css from './Fight.module.css';
+
 
 export default function FightMenu() {
   const fight = useFightStore();
@@ -91,12 +92,12 @@ export default function FightMenu() {
   }
   return (
     <>
-      <section className={css.section}>
+      <Section>
         <h1>Fight for ฿</h1>
         <h2>{announcer}</h2>
         {content}
         {fight.messages.slice().reverse()}
-      </section>
+      </Section>
       <FightForGlory />
     </>
   );
