@@ -47,6 +47,15 @@ describe('GoldDisplay', () => {
     expect(screen.getByText('1.99')).toBeInTheDocument();
   });
 
+  it('pads single-digit cents with a leading zero', async () => {
+    fighter.gold = 101n;
+    const {default: GoldDisplay} = await import('./GoldDisplay.js');
+
+    render(<GoldDisplay />);
+
+    expect(screen.getByText('1.01')).toBeInTheDocument();
+  });
+
   it('hides cents when baht has at least five digits', async () => {
     fighter.gold = 1000099n;
     const {default: GoldDisplay} = await import('./GoldDisplay.js');
