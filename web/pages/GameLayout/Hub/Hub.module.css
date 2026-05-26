@@ -20,10 +20,6 @@
   padding-bottom: 0;
 }
 
-.section {
-  composes: insetSectionBase from '../../../components/primitive/css-modules/inset-section-base.module.css';
-}
-
 .details {
   composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
 }
