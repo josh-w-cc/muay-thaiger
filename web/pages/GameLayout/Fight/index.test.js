@@ -1,6 +1,8 @@
 import {render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
+import TigerMuayThai from './assets/TigerMuayThai.png';
 import Fight from './index.js';
 
 
@@ -69,8 +71,10 @@ describe('Fight', () => {
     expect(within(section).getByRole('heading', {name: 'Fight for Glory'})).toBeInTheDocument();
     expect(within(section).getByRole('heading', {name: 'Loadout'})).toBeInTheDocument();
     expect(within(section).getByText('Strategy: Pressure Counter')).toBeInTheDocument();
-    expect(within(section).getByRole('img', {name: 'Tiger Muay Thai fighter'})).toBeInTheDocument();
-    expect(within(section).getByRole('img', {name: 'Snow leopard Muay Thai fighter'})).toBeInTheDocument();
+    expect(within(section).getByRole('img', {name: 'Tiger Muay Thai fighter'}))
+      .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
+    expect(within(section).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
+      .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
     expect(within(section).getByRole('heading', {name: 'Completed Moves'})).toBeInTheDocument();
     expect(section).toHaveTextContent('Lands for 18 damage!');
     expect(section).toHaveTextContent('Misses clean.');
