@@ -41,7 +41,11 @@ function getStatValue({fighter, key}) {
   if(key === 'gold') {
     return fighter.gold / 100n;
   }
-  return fighter[key];
+  const value = fighter[key];
+  if(typeof value === 'bigint') {
+    return value;
+  }
+  return Math.floor(value ?? 0);
 }
 
 function Stat({label, value}) {
