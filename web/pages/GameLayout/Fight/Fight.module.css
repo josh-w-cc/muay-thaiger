@@ -13,11 +13,8 @@
 }
 
 .gloryFighterImage {
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-md);
   display: block;
-  max-width: 190px;
-  width: 45%;
+  width: 50%;
 }
 
 .gloryFighterImageMirror {
@@ -26,12 +23,26 @@
 
 .gloryFighters {
   display: flex;
-  gap: var(--space-sm);
-  justify-content: center;
+  justify-content: space-between;
+  margin-left: calc(-1 * var(--space-md));
+  margin-right: calc(-1 * var(--space-md));
   margin-top: var(--space-sm);
 }
 
 .gloryLoadout {
+  margin-top: var(--space-sm);
+}
+
+.gloryLoadoutButton {
+  min-height: 4rem;
+  padding: var(--space-md) var(--space-sm);
+  width: 100%;
+}
+
+.gloryLoadoutButtons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
   margin-top: var(--space-sm);
 }
 
@@ -40,5 +51,6 @@
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);
   margin-top: var(--space-lg);
+  overflow: hidden;
   padding: var(--space-md);
 }
