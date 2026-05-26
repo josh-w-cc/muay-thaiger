@@ -1,4 +1,5 @@
 import {RACES} from 'shared/races.js';
+import {parseBigIntStats} from 'shared/stats.js';
 
 import {getSelectionState} from './fighterState.js';
 
@@ -58,9 +59,7 @@ function getServerRace(fighter) {
 
 function getServerStats(fighter) {
   if(fighter?.stats) {
-    return Object.fromEntries(
-      Object.entries(fighter.stats).map(([key, value]) => [key, BigInt(value ?? 0)]),
-    );
+    return parseBigIntStats(fighter.stats);
   }
   return {};
 }
