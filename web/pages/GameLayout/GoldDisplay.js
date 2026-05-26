@@ -1,5 +1,4 @@
 import useFighterStore from '@/data/fighter.js';
-import formatHugeNumber from '@/utils/formatHugeNumber.js';
 
 import css from './GoldDisplay.module.css';
 
@@ -24,5 +23,5 @@ function formatGold(gold) {
     return `${baht}.${String(Number(cents)).padStart(2, '0')}`;
   }
 
-  return formatHugeNumber(baht);
+  return baht.toFormattedNumber();
 }

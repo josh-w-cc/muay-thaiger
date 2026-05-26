@@ -1,6 +1,7 @@
 import {beforeEach, vi} from 'vitest';
 
 import '@testing-library/jest-dom/vitest';
+import 'shared/bigInt.js';
 
 
 globalThis.ResizeObserver = class {

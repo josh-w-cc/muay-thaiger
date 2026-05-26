@@ -1,4 +1,3 @@
-import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import selectFighter from '@/actions/selectFighter.js';
 import Button from '@/components/Button.js';
 import SnowLeopard from './assets/SnowLeopard.png';
@@ -73,7 +72,15 @@ function renderStats(stats) {
       {label}
       :
       {' '}
-      {formatHugeNumber(value)}
+      {formatStatValue(value)}
     </div>
   ));
+}
+
+function formatStatValue(value) {
+  if(value === null || value === undefined) {
+    return value;
+  }
+
+  return BigInt(value).toFormattedNumber();
 }
