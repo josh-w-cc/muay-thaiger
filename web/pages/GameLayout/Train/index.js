@@ -44,7 +44,7 @@ function RegimenRows({fighter}) {
             actionEnabled={isActionEnabled(actions, skillKey)}
             key={skillKey}
             name={Skills[skillKey].name}
-            progress={actions.find((a) => a.action_id === SKILL_IDS[skillKey])?.progress || 0}
+            progress={actions.find((a) => a.action === SKILL_IDS[skillKey])?.progress || 0}
             skillKey={skillKey}
           />
         ))}

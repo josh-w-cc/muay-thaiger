@@ -8,7 +8,7 @@ import fightersRoutes from '../routes/fighters.js';
 
 describe('GET /fighters', () => {
   it('returns list of fighters', async () => {
-    const {knex} = mockKnex([{display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1, stats: {}}]);
+    const {knex} = mockKnex([{display_name: 'TestChar', gold: '0', id: 1, player: 1, race: 1, stats: {}}]);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(fightersRoutes);
@@ -16,14 +16,14 @@ describe('GET /fighters', () => {
     const response = await app.inject({method: 'GET', url: '/fighters'});
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), [{display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1, stats: {}}]);
+    assert.deepEqual(response.json(), [{display_name: 'TestChar', gold: '0', id: 1, player: 1, race: 1, stats: {}}]);
     await app.close();
   });
 });
 
 describe('GET /fighters/:id', () => {
   it('returns fighter when found', async () => {
-    const {knex} = mockKnex({display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1, stats: {}});
+    const {knex} = mockKnex({display_name: 'TestChar', gold: '0', id: 1, player: 1, race: 1, stats: {}});
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(fightersRoutes);
@@ -31,7 +31,7 @@ describe('GET /fighters/:id', () => {
     const response = await app.inject({method: 'GET', url: '/fighters/1'});
 
     assert.equal(response.statusCode, 200);
-    assert.deepEqual(response.json(), {display_name: 'TestChar', gold: '0', id: 1, player_id: 1, race: 1, stats: {}});
+    assert.deepEqual(response.json(), {display_name: 'TestChar', gold: '0', id: 1, player: 1, race: 1, stats: {}});
     await app.close();
   });
 
@@ -58,7 +58,7 @@ describe('POST /fighters', () => {
 
     const response = await app.inject({
       method: 'POST',
-      payload: {display_name: 'NewChar', player_id: 1, race: 1},
+      payload: {display_name: 'NewChar', player: 1, race: 1},
       url: '/fighters',
     });
 

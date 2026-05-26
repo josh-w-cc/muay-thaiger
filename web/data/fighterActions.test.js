@@ -37,17 +37,17 @@ describe('useFighterActionsStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, created_at: '2025-12-31T23:59:58.000Z', id: 1},
-      {action_id: 6, created_at: '2025-12-31T23:59:57.000Z', id: 2},
+      {action: 2, created_at: '2025-12-31T23:59:58.000Z', id: 1},
+      {action: 6, created_at: '2025-12-31T23:59:57.000Z', id: 2},
     ]);
     useFighterActionsStore.getState().tick();
 
-    useFighterActionsStore.getState().addAction({action_id: 2, id: 3});
+    useFighterActionsStore.getState().addAction({action: 2, id: 3});
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 6, id: 2, progress: 0}),
-      expect.objectContaining({action_id: 2, id: 3, progress: 0}),
+      expect.objectContaining({action: 2, id: 1, progress: 0}),
+      expect.objectContaining({action: 6, id: 2, progress: 0}),
+      expect.objectContaining({action: 2, id: 3, progress: 0}),
     ]);
   });
 
@@ -55,18 +55,18 @@ describe('useFighterActionsStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, created_at: '2026-01-01T00:00:04.500Z', id: 2},
-      {action_id: 2, created_at: '2026-01-01T00:00:04.000Z', id: 1},
+      {action: 2, created_at: '2026-01-01T00:00:04.500Z', id: 2},
+      {action: 2, created_at: '2026-01-01T00:00:04.000Z', id: 1},
     ]);
 
-    useFighterActionsStore.getState().addAction({action_id: 2, id: 3});
+    useFighterActionsStore.getState().addAction({action: 2, id: 3});
     vi.setSystemTime(new Date('2026-01-01T00:00:05.500Z'));
     useFighterActionsStore.getState().tick();
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2, id: 2, progress: 0}),
-      expect.objectContaining({action_id: 2, id: 1, progress: 50}),
-      expect.objectContaining({action_id: 2, id: 3, progress: 0}),
+      expect.objectContaining({action: 2, id: 2, progress: 0}),
+      expect.objectContaining({action: 2, id: 1, progress: 50}),
+      expect.objectContaining({action: 2, id: 3, progress: 0}),
     ]);
   });
 
@@ -74,11 +74,11 @@ describe('useFighterActionsStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
 
-    useFighterActionsStore.getState().addAction({action_id: 2});
+    useFighterActionsStore.getState().addAction({action: 2});
 
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({
-        action_id: 2,
+        action: 2,
         created_at: '2026-01-01T00:00:00.000Z',
       }),
     ]);
@@ -86,47 +86,47 @@ describe('useFighterActionsStore', () => {
 
   it('removes fighter actions by action id', () => {
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, id: 1},
-      {action_id: 6, id: 2},
-      {action_id: 2, id: 3},
+      {action: 2, id: 1},
+      {action: 6, id: 2},
+      {action: 2, id: 3},
     ]);
 
     useFighterActionsStore.getState().removeAction(2);
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 6, id: 2}),
+      expect.objectContaining({action: 6, id: 2}),
     ]);
   });
 
   it('transfers touched_at to next remaining action when removing the action with the latest touched_at', () => {
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
-      {action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.005Z'},
+      {action: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+      {action: 6, id: 2, touched_at: '2026-01-01T00:00:00.005Z'},
     ]);
 
     useFighterActionsStore.getState().removeAction(2);
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
+      expect.objectContaining({action: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
     ]);
   });
 
   it('does not change touched_at when removed action does not have the latest touched_at', () => {
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.005Z'},
-      {action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'},
+      {action: 2, id: 1, touched_at: '2026-01-01T00:00:00.005Z'},
+      {action: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'},
     ]);
 
     useFighterActionsStore.getState().removeAction(2);
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
+      expect.objectContaining({action: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
     ]);
   });
 
   it('returns empty list when removing all remaining actions', () => {
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+      {action: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
     ]);
 
     useFighterActionsStore.getState().removeAction(2);
@@ -136,46 +136,46 @@ describe('useFighterActionsStore', () => {
 
   it('transfers touched_at to the first remaining action with a valid timestamp when initial action has none', () => {
     useFighterActionsStore.getState().setActions([
-      {action_id: 6, id: 2},
-      {action_id: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'},
-      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+      {action: 6, id: 2},
+      {action: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'},
+      {action: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
     ]);
 
     useFighterActionsStore.getState().removeAction(2);
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 6, id: 2}),
-      expect.objectContaining({action_id: 6, id: 3, touched_at: '2026-01-01T00:00:00.111Z'}),
+      expect.objectContaining({action: 6, id: 2}),
+      expect.objectContaining({action: 6, id: 3, touched_at: '2026-01-01T00:00:00.111Z'}),
     ]);
   });
 
   it('skips remaining actions with no touched_at when selecting transfer target', () => {
     useFighterActionsStore.getState().setActions([
-      {action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.005Z'},
-      {action_id: 6, id: 3},
-      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+      {action: 6, id: 2, touched_at: '2026-01-01T00:00:00.005Z'},
+      {action: 6, id: 3},
+      {action: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
     ]);
 
     useFighterActionsStore.getState().removeAction(2);
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
-      expect.objectContaining({action_id: 6, id: 3}),
+      expect.objectContaining({action: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
+      expect.objectContaining({action: 6, id: 3}),
     ]);
   });
 
   it('transfers touched_at to the action with the highest remaining touched_at among multiple candidates', () => {
     useFighterActionsStore.getState().setActions([
-      {action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.050Z'},
-      {action_id: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'},
-      {action_id: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+      {action: 6, id: 2, touched_at: '2026-01-01T00:00:00.050Z'},
+      {action: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'},
+      {action: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
     ]);
 
     useFighterActionsStore.getState().removeAction(2);
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
-      expect.objectContaining({action_id: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'}),
+      expect.objectContaining({action: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
+      expect.objectContaining({action: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'}),
     ]);
   });
 
@@ -183,15 +183,15 @@ describe('useFighterActionsStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, created_at: '2025-12-31T23:59:58.000Z', id: 1},
-      {action_id: 6, created_at: '2025-12-31T23:59:57.000Z', id: 2},
+      {action: 2, created_at: '2025-12-31T23:59:58.000Z', id: 1},
+      {action: 6, created_at: '2025-12-31T23:59:57.000Z', id: 2},
     ]);
 
     useFighterActionsStore.getState().tick();
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 6, id: 2, progress: 50}),
+      expect.objectContaining({action: 2, id: 1, progress: 0}),
+      expect.objectContaining({action: 6, id: 2, progress: 50}),
     ]);
   });
 
@@ -199,15 +199,15 @@ describe('useFighterActionsStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
-      {action_id: 2, created_at: 'not-a-date', id: 2},
+      {action: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
+      {action: 2, created_at: 'not-a-date', id: 2},
     ]);
 
     useFighterActionsStore.getState().tick();
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 2, id: 2, progress: 0}),
+      expect.objectContaining({action: 2, id: 1, progress: 0}),
+      expect.objectContaining({action: 2, id: 2, progress: 0}),
     ]);
   });
 
@@ -215,15 +215,15 @@ describe('useFighterActionsStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
-      {action_id: 2, created_at: '2026-01-01T00:00:01.000Z', id: 2},
+      {action: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
+      {action: 2, created_at: '2026-01-01T00:00:01.000Z', id: 2},
     ]);
 
     useFighterActionsStore.getState().tick();
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 2, id: 2, progress: 0}),
+      expect.objectContaining({action: 2, id: 1, progress: 0}),
+      expect.objectContaining({action: 2, id: 2, progress: 0}),
     ]);
   });
 
@@ -231,15 +231,15 @@ describe('useFighterActionsStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
-      {action_id: 2, created_at: 'not-a-date', id: 2, progress: 25, touched_at: '2026-01-01T00:00:04.000Z'},
+      {action: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
+      {action: 2, created_at: 'not-a-date', id: 2, progress: 25, touched_at: '2026-01-01T00:00:04.000Z'},
     ]);
 
     useFighterActionsStore.getState().tick();
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
-      expect.objectContaining({action_id: 2, id: 2, progress: 0}),
+      expect.objectContaining({action: 2, id: 1, progress: 0}),
+      expect.objectContaining({action: 2, id: 2, progress: 0}),
     ]);
   });
 
@@ -248,14 +248,14 @@ describe('useFighterActionsStore', () => {
     vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
     useFighterStore.setState({stamina: 0n, vitality: 3n});
     useFighterActionsStore.getState().setActions([
-      {action_id: 999, created_at: '2026-01-01T00:00:00.000Z', id: 1},
+      {action: 999, created_at: '2026-01-01T00:00:00.000Z', id: 1},
     ]);
 
     useFighterActionsStore.getState().tick();
 
     expect(useFighterStore.getState().stamina).toBe(0n);
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 999, id: 1, progress: 0}),
+      expect.objectContaining({action: 999, id: 1, progress: 0}),
     ]);
   });
 
@@ -264,14 +264,14 @@ describe('useFighterActionsStore', () => {
     vi.setSystemTime(new Date('2026-01-01T00:00:05.000Z'));
     useFighterStore.setState({stamina: 0n, vitality: 3n});
     useFighterActionsStore.setState({
-      actions: [{action_id: 2, id: 1}],
+      actions: [{action: 2, id: 1}],
     });
 
     useFighterActionsStore.getState().tick();
 
     expect(useFighterStore.getState().stamina).toBe(0n);
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action_id: 2, id: 1, progress: 0}),
+      expect.objectContaining({action: 2, id: 1, progress: 0}),
     ]);
   });
 
@@ -285,7 +285,7 @@ describe('useFighterActionsStore', () => {
       vitality: 3n,
     });
     useFighterActionsStore.getState().setActions([
-      {action_id: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
+      {action: 2, created_at: '2026-01-01T00:00:00.000Z', id: 1},
     ]);
 
     useFighterActionsStore.getState().tick();
@@ -293,7 +293,7 @@ describe('useFighterActionsStore', () => {
     expect(useFighterStore.getState().stamina).toBe(6n);
     expect(useFighterActionsStore.getState().actions).toEqual([
       expect.objectContaining({
-        action_id: 2,
+        action: 2,
         id: 1,
         touched_at: '2026-01-01T00:00:02.000Z',
       }),

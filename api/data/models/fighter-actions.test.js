@@ -7,8 +7,8 @@ import {mockKnex, mockKnexMulti} from '../utils/mock-knex.js';
 
 describe('fighterActions.list', () => {
   it('lists actions for the player current non-retired fighter', async () => {
-    const currentFighter = {id: 7, player_id: 3, retired: false};
-    const actions = [{action_id: 2, fighter_id: 7, id: 1}];
+    const currentFighter = {id: 7, player: 3, retired: false};
+    const actions = [{action: 2, fighter: 7, id: 1}];
     const {calls, knex} = mockKnexMulti([currentFighter, actions]);
     const fighterActions = fighterActionsModel(knex);
 
@@ -16,11 +16,11 @@ describe('fighterActions.list', () => {
 
     assert.deepEqual(result, actions);
     assert.deepEqual(calls[0], ['table', 'fighters']);
-    assert.deepEqual(calls[1], ['where', {player_id: 3, retired: false}]);
+    assert.deepEqual(calls[1], ['where', {player: 3, retired: false}]);
     assert.deepEqual(calls[2], ['orderBy', 'created_at', 'desc']);
     assert.deepEqual(calls[3], ['first']);
     assert.deepEqual(calls[4], ['table', 'fighter_actions']);
-    assert.deepEqual(calls[5], ['where', {fighter_id: 7}]);
+    assert.deepEqual(calls[5], ['where', {fighter: 7}]);
     assert.deepEqual(calls[6], ['orderBy', 'created_at']);
   });
 
@@ -32,7 +32,7 @@ describe('fighterActions.list', () => {
 
     assert.deepEqual(result, []);
     assert.deepEqual(calls[0], ['table', 'fighters']);
-    assert.deepEqual(calls[1], ['where', {player_id: 3, retired: false}]);
+    assert.deepEqual(calls[1], ['where', {player: 3, retired: false}]);
     assert.deepEqual(calls[2], ['orderBy', 'created_at', 'desc']);
     assert.deepEqual(calls[3], ['first']);
   });
@@ -40,7 +40,7 @@ describe('fighterActions.list', () => {
 
 describe('fighterActions.listByFighterID', () => {
   it('lists actions for a fighter by id', async () => {
-    const actions = [{action_id: 2, fighter_id: 7, id: 1}];
+    const actions = [{action: 2, fighter: 7, id: 1}];
     const {calls, knex} = mockKnex(actions);
     const fighterActions = fighterActionsModel(knex);
 
@@ -48,7 +48,7 @@ describe('fighterActions.listByFighterID', () => {
 
     assert.deepEqual(result, actions);
     assert.deepEqual(calls[0], ['table', 'fighter_actions']);
-    assert.deepEqual(calls[1], ['where', {fighter_id: 7}]);
+    assert.deepEqual(calls[1], ['where', {fighter: 7}]);
     assert.deepEqual(calls[2], ['orderBy', 'created_at']);
   });
 });
@@ -56,7 +56,7 @@ describe('fighterActions.listByFighterID', () => {
 describe('fighterActions.listStaleBefore', () => {
   it('lists stale fighter action rows by touched time', async () => {
     const staleBefore = new Date('2026-05-20T01:00:00.000Z');
-    const actions = [{fighter_id: 7}, {fighter_id: 7}, {fighter_id: 8}];
+    const actions = [{fighter: 7}, {fighter: 7}, {fighter: 8}];
     const {calls, knex} = mockKnex(actions);
     const fighterActions = fighterActionsModel(knex);
 
@@ -64,7 +64,7 @@ describe('fighterActions.listStaleBefore', () => {
 
     assert.deepEqual(result, actions);
     assert.deepEqual(calls[0], ['table', 'fighter_actions']);
-    assert.deepEqual(calls[1], ['select', 'fighter_id']);
+    assert.deepEqual(calls[1], ['select', 'fighter']);
     assert.deepEqual(calls[2], ['where', 'touched_at', '<=', staleBefore]);
     assert.deepEqual(calls[3], ['orderBy', 'touched_at']);
   });
@@ -72,7 +72,7 @@ describe('fighterActions.listStaleBefore', () => {
 
 describe('fighterActions.touch', () => {
   it('updates touched_at for the given fighter action ID', async () => {
-    const updated = {id: 5, action_id: 2, fighter_id: 7, touched_at: '2026-05-20T00:00:00.000Z'};
+    const updated = {id: 5, action: 2, fighter: 7, touched_at: '2026-05-20T00:00:00.000Z'};
     const {calls, knex} = mockKnex([updated]);
     knex.fn = {now: () => 'NOW()'};
     const fighterActions = fighterActionsModel(knex);
@@ -88,7 +88,7 @@ describe('fighterActions.touch', () => {
 
   it('updates touched_at with the provided time when given', async () => {
     const touchedAt = new Date('2026-05-20T00:00:00.000Z');
-    const updated = {id: 5, action_id: 2, fighter_id: 7, touched_at: touchedAt.toISOString()};
+    const updated = {id: 5, action: 2, fighter: 7, touched_at: touchedAt.toISOString()};
     const {calls, knex} = mockKnex([updated]);
     knex.fn = {now: () => 'NOW()'};
     const fighterActions = fighterActionsModel(knex);

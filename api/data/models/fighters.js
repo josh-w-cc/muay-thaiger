@@ -20,7 +20,7 @@ export default function fighters(db) {
 
 function generateFindCurrentByPlayerIDFn(db) {
   return (playerId) => db('fighters')
-    .where({player_id: playerId, retired: false})
+    .where({player: playerId, retired: false})
     .orderBy('created_at', 'desc')
     .first();
 }

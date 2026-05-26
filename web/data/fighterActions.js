@@ -12,8 +12,8 @@ const useFighterActionsStore = create((set) => ({
     return {actions: setActionProgress(nextActions)};
   }),
   removeAction: (actionID) => set((state) => {
-    const removedActions = state.actions.filter((action) => action.action_id === actionID);
-    const remainingActions = state.actions.filter((action) => action.action_id !== actionID);
+    const removedActions = state.actions.filter((action) => action.action === actionID);
+    const remainingActions = state.actions.filter((action) => action.action !== actionID);
     return {actions: setActionProgress(transferLatestTouchedAt(removedActions, remainingActions))};
   }),
   setActions: (actions) => set({actions: setActionProgress(actions.map((action) => normalizeAction(action)))}),

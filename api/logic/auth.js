@@ -41,7 +41,7 @@ async function createPlayer({fighters, players, races}, race) {
   const player = await players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
   await fighters.create({
     display_name: player.display_name,
-    player_id: player.id,
+    player: player.id,
     race: raceID,
     stats: getDefaultStats(raceData),
   });

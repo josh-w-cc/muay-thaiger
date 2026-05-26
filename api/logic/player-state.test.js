@@ -5,26 +5,26 @@ import {applyOfflineTraining, getPlayerState, sendPlayerState} from './player-st
 
 describe('applyOfflineTraining', () => {
   it('applies training for stale non-retired fighters only once per fighter', async () => {
-    const staleRows = [{fighter_id: 1}, {fighter_id: 1}, {fighter_id: 2}, {fighter_id: 3}];
+    const staleRows = [{fighter: 1}, {fighter: 1}, {fighter: 2}, {fighter: 3}];
     const updatedFighterIDs = [];
     const fighterActions = {
-      listByFighterID: async () => [{action_id: 1, fighter_id: 1, id: 10, touched_at: new Date().toISOString()}],
+      listByFighterID: async () => [{action: 1, fighter: 1, id: 10, touched_at: new Date().toISOString()}],
       listStaleBefore: async () => staleRows,
       touch: async () => null,
     };
     const fighters = {
       find: async (fighterID) => {
         if(fighterID === 1) {
-          return {id: 1, player_id: 11, retired: false, stats: {}};
+          return {id: 1, player: 11, retired: false, stats: {}};
         }
         if(fighterID === 2) {
-          return {id: 2, player_id: 22, retired: true, stats: {}};
+          return {id: 2, player: 22, retired: true, stats: {}};
         }
         return null;
       },
       update: async (fighterID, data) => {
         updatedFighterIDs.push(fighterID);
-        return {id: fighterID, player_id: 11, retired: false, ...data};
+        return {id: fighterID, player: 11, retired: false, ...data};
       },
     };
 
@@ -36,9 +36,9 @@ describe('applyOfflineTraining', () => {
 
 describe('getPlayerState', () => {
   it('returns actions and updated fighter after applying training', async () => {
-    const fighter = {gold: '0', id: 9, player_id: 5, retired: false, stats: {}};
+    const fighter = {gold: '0', id: 9, player: 5, retired: false, stats: {}};
     const updatedFighter = {...fighter, gold: '1'};
-    const actions = [{action_id: 1, fighter_id: 9, id: 7, touched_at: new Date().toISOString()}];
+    const actions = [{action: 1, fighter: 9, id: 7, touched_at: new Date().toISOString()}];
     const fighterActions = {
       listByFighterID: async () => actions,
       touch: async () => null,
@@ -55,7 +55,7 @@ describe('getPlayerState', () => {
   });
 
   it('returns actions and original fighter when no actions are present', async () => {
-    const fighter = {id: 9, player_id: 5, retired: false, stats: {}};
+    const fighter = {id: 9, player: 5, retired: false, stats: {}};
     const fighterActions = {listByFighterID: async () => []};
     const fighters = {findCurrentByPlayerID: async () => fighter};
 
@@ -77,8 +77,8 @@ describe('sendPlayerState', () => {
   it('sends a player_state message with the given actions and fighter', () => {
     const send = createCallTracker();
     const socket = {send};
-    const fighter = {gold: '0', id: 9, player_id: 5, retired: false, stats: {}};
-    const actions = [{action_id: 1, fighter_id: 9, id: 7}];
+    const fighter = {gold: '0', id: 9, player: 5, retired: false, stats: {}};
+    const actions = [{action: 1, fighter: 9, id: 7}];
 
     sendPlayerState(actions, fighter, socket);
 
@@ -89,7 +89,7 @@ describe('sendPlayerState', () => {
   it('sends player_state with an empty actions array', () => {
     const send = createCallTracker();
     const socket = {send};
-    const fighter = {id: 3, player_id: 2, retired: false, stats: {}};
+    const fighter = {id: 3, player: 2, retired: false, stats: {}};
 
     sendPlayerState([], fighter, socket);
 

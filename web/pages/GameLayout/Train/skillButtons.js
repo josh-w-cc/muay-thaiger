@@ -6,7 +6,7 @@ import stopIdle from '@/actions/stopIdle.js';
 
 export function isActionEnabled(actions, skillKey) {
   const actionID = SKILL_IDS[skillKey];
-  return actions.some((action) => action.action_id === actionID);
+  return actions.some((action) => action.action === actionID);
 }
 
 export function onActionButtonClick({actionEnabled, skillKey}) {
