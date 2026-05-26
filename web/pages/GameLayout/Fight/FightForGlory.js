@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 
 import Button from '@/components/Button.js';
+import Section from '@/components/primitive/Section.js';
 import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
 import TigerMuayThai from './assets/TigerMuayThai.png';
 
@@ -26,12 +27,12 @@ const FIGHT_FOR_GLORY_LOADOUT = {moves: ['Jab', 'Roundhouse', 'Elbow', 'Knee'], 
 
 function FightForGlory() {
   return (
-    <section className={css.glorySection}>
+    <Section className={css.glorySection}>
       <h2>Fight for Glory</h2>
       <FightForGloryLoadout />
       <FightForGloryFighters />
       <FightForGloryFeed />
-    </section>
+    </Section>
   );
 }
 
