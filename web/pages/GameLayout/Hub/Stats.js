@@ -30,7 +30,7 @@ export default function Stats() {
       <h3>Stats:</h3>
       <dl className={css.stats}>
         {STAT_FIELDS.map(({key, label}) => (
-          <Stat key={key} label={label} value={BigInt(getStatValue({fighter, key})).toFormattedNumber()} />
+          <Stat key={key} label={label} value={BigInt(Math.trunc(Number(getStatValue({fighter, key})))).toFormattedNumber()} />
         ))}
       </dl>
     </>

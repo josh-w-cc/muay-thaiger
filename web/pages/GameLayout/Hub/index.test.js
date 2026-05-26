@@ -102,4 +102,20 @@ describe('Hub', () => {
     expect(within(statsLeaderboard).getByText('Red Hawk')).toBeInTheDocument();
     expect(within(statsLeaderboard).queryByText('Reach')).not.toBeInTheDocument();
   });
+
+  it('renders stats without crashing when combat stats are non-integer floats', () => {
+    const original = {attack: fighter.attack, defense: fighter.defense, power: fighter.power};
+
+    fighter.attack = 2.6931471805599454;
+    fighter.defense = 1.4142135623730951;
+    fighter.power = 2.8284271247461903;
+
+    render(<Hub />);
+
+    const attackRow = screen.getByText('Attack', {selector: 'dt'}).closest('div');
+
+    expect(within(attackRow).getByText('2')).toBeInTheDocument();
+
+    Object.assign(fighter, original);
+  });
 });
