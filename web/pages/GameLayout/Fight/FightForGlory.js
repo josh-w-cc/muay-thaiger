@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 
-import SnowLeopardMuayThaiReady from '../../../../zassets/SnowLeopardMuayThaiReady.png';
-import TigerMuayThai from '../../../../zassets/TigerMuayThai.png';
+import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
+import TigerMuayThai from './assets/TigerMuayThai.png';
 
 import css from './Fight.module.css';
 
