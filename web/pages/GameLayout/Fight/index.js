@@ -3,7 +3,6 @@ import React from 'react';
 
 import useFighterStore from '@/data/fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '@/data/fight.js';
-import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import Button from '@/components/Button.js';
 
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
@@ -44,37 +43,37 @@ function FightMenu() {
         <h3>Enemy Stats:</h3>
         APM:
         {' '}
-        {formatHugeNumber(them.stats.apm)}
+        {BigInt(them.stats.apm).toFormattedNumber()}
         <br />
         Attack:
         {' '}
-        {formatHugeNumber(them.stats.attack)}
+        {BigInt(them.stats.attack).toFormattedNumber()}
         <br />
         Defense:
         {' '}
-        {formatHugeNumber(them.stats.defense)}
+        {BigInt(them.stats.defense).toFormattedNumber()}
         <br />
         Health:
         {' '}
-        {formatHugeNumber(them.stats.health)}
+        {BigInt(them.stats.health).toFormattedNumber()}
         <br />
         Power:
         {' '}
-        {formatHugeNumber(them.stats.power)}
+        {BigInt(them.stats.power).toFormattedNumber()}
         <br />
         Stanima:
         {' '}
-        {formatHugeNumber(them.stats.stamina)}
+        {BigInt(them.stats.stamina).toFormattedNumber()}
         <br />
         Health:
         {' '}
-        {formatHugeNumber(them.currentHealth)}
+        {BigInt(them.currentHealth).toFormattedNumber()}
         <br />
         <Button onClick={() => setAnnouncer(fight.attack(0))}>Attack!</Button>
         <h3>Stats:</h3>
         Health:
         {' '}
-        {formatHugeNumber(you.currentHealth)}
+        {BigInt(you.currentHealth).toFormattedNumber()}
         <h3>MSG</h3>
       </>
     );

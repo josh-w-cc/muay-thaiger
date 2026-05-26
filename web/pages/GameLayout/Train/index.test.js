@@ -7,12 +7,12 @@ import Train from './index.js';
 
 const {action, addAction, createFighterActionCmd, fighter, removeAction, removeFighterActionCmd} = vi.hoisted(() => {
   const fighter = {
-    agility: 1,
-    constitution: 1,
+    agility: 1n,
+    constitution: 1n,
     idling: null,
-    skill: 1,
-    stamina: 1,
-    strength: 1,
+    skill: 1n,
+    stamina: 1n,
+    strength: 1n,
   };
 
   return {

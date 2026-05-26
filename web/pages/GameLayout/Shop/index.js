@@ -1,5 +1,4 @@
 import Button from '@/components/Button.js';
-import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import useFighterStore from '@/data/fighter.js';
 import useInventoryStore from '@/data/inventory.js';
 import Items from './Items.js';
@@ -23,7 +22,7 @@ function ShopRows({buy, fighter}) {
     <div key={itemKey}>
       {Items[itemKey].name}
       {' '}
-      {formatHugeNumber(Items[itemKey].cost)}
+      {BigInt(Items[itemKey].cost).toFormattedNumber()}
       ฿
       <Button onClick={() => buy(fighter, Items[itemKey])}>Buy</Button>
       <br />

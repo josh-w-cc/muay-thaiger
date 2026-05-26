@@ -1,4 +1,3 @@
-import formatHugeNumber from '@/utils/formatHugeNumber.js';
 import useFighterStore from '@/data/fighter.js';
 
 import css from './Hub.module.css';
@@ -31,7 +30,7 @@ export default function Stats() {
       <h3>Stats:</h3>
       <dl className={css.stats}>
         {STAT_FIELDS.map(({key, label}) => (
-          <Stat key={key} label={label} value={formatHugeNumber(getStatValue({fighter, key}))} />
+          <Stat key={key} label={label} value={BigInt(getStatValue({fighter, key})).toFormattedNumber()} />
         ))}
       </dl>
     </>

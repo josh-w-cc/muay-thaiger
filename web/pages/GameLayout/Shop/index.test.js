@@ -30,6 +30,7 @@ describe('Shop', () => {
     const section = container.querySelector('section');
 
     expect(buyButtons).toHaveLength(2);
+    expect(screen.getByText(/1\.00e6/)).toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: 'SHOP'})).not.toBeInTheDocument();
     expect(section).toBeInTheDocument();
     await user.click(buyButtons[0]);
