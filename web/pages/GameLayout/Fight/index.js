@@ -5,9 +5,9 @@ import useFighterStore from '@/data/fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '@/data/fight.js';
 import Button from '@/components/Button.js';
 
+import FightForGlory from './FightForGlory.js';
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
 import css from './Fight.module.css';
-
 
 function FightMenu() {
   const fight = useFightStore();
@@ -95,6 +95,7 @@ function FightMenu() {
       <h2>{announcer}</h2>
       {content}
       {fight.messages.slice().reverse()}
+      <FightForGlory />
     </section>
   );
 }
