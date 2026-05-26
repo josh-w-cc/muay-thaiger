@@ -37,8 +37,10 @@ export function generateFinishFn({get, set}) {
 
 export function generateForGoldFn({get, set}) {
   return (fighter, risk) => {
-    const riskPercentages = [0.001, 0.1, 0.25, 0.5, 1];
-    const bet = Math.max(100, Math.floor(Number(fighter.gold) * riskPercentages[risk]));
+    const riskPercentages = [1n, 100n, 250n, 500n, 1000n];
+    const fighterGold = BigInt(fighter.gold ?? 0);
+    const proportionalBet = fighterGold * (riskPercentages[risk] ?? 0n) / 1000n;
+    const bet = Number(proportionalBet < 100n ? 100n : proportionalBet);
     const enemy = {
       apm: Math.max(4, Math.log(bet)) * (Math.random() + 0.5),
       attack: Math.sqrt(bet) * (Math.random() + 0.5),

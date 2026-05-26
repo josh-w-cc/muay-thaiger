@@ -13,7 +13,7 @@ describe('useFightStore', () => {
       apm: 10,
       attack: 8,
       defense: 7,
-      gold: 1000,
+      gold: 1000n,
       health: 100,
       idle: vi.fn(),
       power: 9,
@@ -31,6 +31,21 @@ describe('useFightStore', () => {
     expect(fight.state).toBe(FIGHT_IN_PROGRESS);
     expect(fighter.idle).toHaveBeenCalledTimes(1);
     expect(fighter.idle).toHaveBeenCalledWith('FIGHT', expect.any(Function));
+  });
+
+  it('keeps bet precision when fighter gold is a large bigint', () => {
+    const fighter = {
+      gold: 9007199254740993n,
+      health: 100,
+      idle: vi.fn(),
+      spend: vi.fn(),
+      train: vi.fn(),
+      win: vi.fn(),
+    };
+
+    useFightStore.getState().forGold(fighter, 1);
+
+    expect(useFightStore.getState().bet).toBe(900719925474099);
   });
 
   it('finishes a won fight by paying out and resetting state', () => {
