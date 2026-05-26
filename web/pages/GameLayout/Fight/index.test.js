@@ -69,13 +69,11 @@ describe('Fight', () => {
     expect(section).toBeInTheDocument();
     expect(within(section).getByRole('heading', {name: 'Fight for ฿'})).toBeInTheDocument();
     expect(within(section).getByRole('heading', {name: 'Fight for Glory'})).toBeInTheDocument();
-    expect(within(section).getByRole('heading', {name: 'Loadout'})).toBeInTheDocument();
     expect(within(section).getByText('Strategy: Pressure Counter')).toBeInTheDocument();
     expect(within(section).getByRole('img', {name: 'Tiger Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
     expect(within(section).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
-    expect(within(section).getByRole('heading', {name: 'Completed Moves'})).toBeInTheDocument();
     expect(section).toHaveTextContent('Lands for 18 damage!');
     expect(section).toHaveTextContent('Misses clean.');
   });

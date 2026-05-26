@@ -31,7 +31,6 @@ export default FightForGlory;
 function FightForGloryFeed() {
   return (
     <div className={css.gloryFeed}>
-      <h3>Completed Moves</h3>
       <ul>{FIGHT_FOR_GLORY_FEED.map((item) => <FightForGloryFeedItem item={item} key={item.move} />)}</ul>
     </div>
   );
@@ -64,7 +63,6 @@ function FightForGloryFighters() {
 function FightForGloryLoadout() {
   return (
     <div className={css.gloryLoadout}>
-      <h3>Loadout</h3>
       <div>
         Strategy:
         {' '}
