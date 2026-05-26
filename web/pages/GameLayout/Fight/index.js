@@ -9,7 +9,7 @@ import FightForGlory from './FightForGlory.js';
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
 import css from './Fight.module.css';
 
-function FightMenu() {
+export default function FightMenu() {
   const fight = useFightStore();
   const fighter = useFighterStore();
   const [announcer, setAnnouncer] = React.useState('');
@@ -99,5 +99,3 @@ function FightMenu() {
     </section>
   );
 }
-
-export default FightMenu;
