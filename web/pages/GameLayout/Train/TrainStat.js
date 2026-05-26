@@ -8,7 +8,7 @@ export default function TrainStat({name, stat}) {
   return (
     <div className={css.stat}>
       <span className={css.label}>{name}</span>
-      <span className={css.value}>{BigInt(fighter[stat]).toFormattedNumber()}</span>
+      <span className={css.value}>{fighter[stat].toFormattedNumber()}</span>
     </div>
   );
 }
