@@ -82,6 +82,10 @@ describe('Fight', () => {
       .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
     expect(within(glorySection).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
+    const healthBars = within(glorySection).getAllByRole('progressbar');
+    expect(healthBars).toHaveLength(2);
+    expect(within(glorySection).getByRole('progressbar', {name: 'Tiger fighter health'})).toBeInTheDocument();
+    expect(within(glorySection).getByRole('progressbar', {name: 'Snow leopard fighter health'})).toBeInTheDocument();
     expect(within(glorySection).getByRole('heading', {name: 'Completed Moves'})).toBeInTheDocument();
     expect(glorySection).toHaveTextContent('Tiger throws Jab');
     expect(glorySection).toHaveTextContent('Lands for 18 damage!');

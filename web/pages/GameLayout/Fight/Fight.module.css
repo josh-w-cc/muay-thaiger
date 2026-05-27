@@ -12,9 +12,15 @@
   padding-left: 0;
 }
 
+.gloryFighter {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
 .gloryFighterImage {
   display: block;
-  width: 50%;
+  width: 100%;
 }
 
 .gloryFighterImageMirror {
@@ -27,6 +33,17 @@
   margin-left: calc(-1 * var(--space-md));
   margin-right: calc(-1 * var(--space-md));
   margin-top: var(--space-sm);
+}
+
+.gloryHealthBar {
+  background-color: var(--color-muted);
+  height: 8px;
+  overflow: hidden;
+}
+
+.gloryHealthBarFill {
+  background-color: var(--color-red);
+  height: 100%;
 }
 
 .gloryLoadout {
