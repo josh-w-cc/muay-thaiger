@@ -28,7 +28,6 @@ export default FightForGlory;
 function FightForGloryFeed() {
   return (
     <div className={css.gloryFeed}>
-      <h3>Completed Moves</h3>
       <ul className={css.gloryFeedList}>
         {FIGHT_FOR_GLORY_FEED.map((item, index) => <FightForGloryFeedItem item={item} key={index} />)}
       </ul>
@@ -38,7 +37,7 @@ function FightForGloryFeed() {
 
 function FightForGloryFeedItem({item}) {
   return (
-    <li>
+    <li className={css.gloryFeedItem}>
       <strong>{item.attacker}</strong>
       {' throws '}
       <strong>{item.move}</strong>
@@ -97,7 +96,6 @@ function FightForGloryHealthBar({current, label, max}) {
 function FightForGloryLoadout() {
   return (
     <div className={css.gloryLoadout}>
-      <h3>Loadout</h3>
       <div className={css.gloryLoadoutButtons}>
         {[`Strategy: ${FIGHT_FOR_GLORY_LOADOUT.strategy}`, ...FIGHT_FOR_GLORY_LOADOUT.moves].map((item) => (
           <Button className={css.gloryLoadoutButton} key={item}>{item}</Button>
