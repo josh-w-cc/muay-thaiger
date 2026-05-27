@@ -11,6 +11,7 @@ import css from './Fight.module.css';
 const FIGHT_FOR_GLORY_FIGHTER_HP = {current: 170, max: 200};
 const FIGHT_FOR_GLORY_LOADOUT = {moves: ['Jab', 'Roundhouse', 'Elbow', 'Knee'], strategy: 'Pressure Counter'};
 const FIGHT_FOR_GLORY_OPPONENT_HP = {current: 143, max: 200};
+const TAPPER_FILL_DURATIONS = [4, 2, 3, 2.5, 3.5];
 
 function FightForGlory() {
   return (
@@ -94,13 +95,30 @@ function FightForGloryHealthBar({current, label, max}) {
 }
 
 function FightForGloryLoadout() {
+  const buttons = [
+    `Strategy: ${FIGHT_FOR_GLORY_LOADOUT.strategy}`,
+    ...FIGHT_FOR_GLORY_LOADOUT.moves,
+  ];
   return (
     <div className={css.gloryLoadout}>
       <div className={css.gloryLoadoutButtons}>
-        {[`Strategy: ${FIGHT_FOR_GLORY_LOADOUT.strategy}`, ...FIGHT_FOR_GLORY_LOADOUT.moves].map((item) => (
-          <Button className={css.tapperButton} key={item}>{item}</Button>
+        {buttons.map((label, buttonIndex) => (
+          <TapperButton delay={buttonIndex * 0.4} duration={TAPPER_FILL_DURATIONS[buttonIndex]} key={label}>{label}</TapperButton>
         ))}
       </div>
     </div>
+  );
+}
+
+function TapperButton({children, delay, duration}) {
+  return (
+    <Button className={css.tapperButton}>
+      <span
+        aria-hidden="true"
+        className={css.tapperButtonFill}
+        style={{animationDelay: `${delay}s`, animationDuration: `${duration}s`}}
+      />
+      <span className={css.tapperButtonLabel}>{children}</span>
+    </Button>
   );
 }
