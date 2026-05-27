@@ -1,9 +1,17 @@
 export const FIGHT_STATES = {IN_PROGRESS: 1, LOST: 2, NOT_STARTED: 0, WON: 3};
 const {IN_PROGRESS: FIGHT_IN_PROGRESS, LOST: FIGHT_LOST, NOT_STARTED: FIGHT_NOT_STARTED, WON: FIGHT_WON} = FIGHT_STATES;
+const MIN_BET = 100n;
+const RISK_PERCENTAGES = [
+  {denominator: 1000n, numerator: 1n},
+  {denominator: 10n, numerator: 1n},
+  {denominator: 4n, numerator: 1n},
+  {denominator: 2n, numerator: 1n},
+  {denominator: 1n, numerator: 1n},
+];
 
 
 export function getInitialState() {
-  return {bet: 0, fighters: [], messages: [], state: FIGHT_NOT_STARTED};
+  return {bet: 0n, fighters: [], messages: [], state: FIGHT_NOT_STARTED};
 }
 
 
@@ -37,15 +45,15 @@ export function generateFinishFn({get, set}) {
 
 export function generateForGoldFn({get, set}) {
   return (fighter, risk) => {
-    const riskPercentages = [0.001, 0.1, 0.25, 0.5, 1];
-    const bet = Math.max(100, Math.floor(Number(fighter.gold) * riskPercentages[risk]));
+    const bet = getBetAmount({gold: fighter.gold, risk});
+    const fightBet = Number(bet);
     const enemy = {
-      apm: Math.max(4, Math.log(bet)) * (Math.random() + 0.5),
-      attack: Math.sqrt(bet) * (Math.random() + 0.5),
-      defense: Math.sqrt(bet) * (Math.random() + 0.5),
-      health: bet * 10 * (Math.random() + 0.5),
-      power: bet * (Math.random() + 0.5),
-      stamina: bet * Math.sqrt(bet) * (Math.random() + 0.5),
+      apm: Math.max(4, Math.log(fightBet)) * (Math.random() + 0.5),
+      attack: Math.sqrt(fightBet) * (Math.random() + 0.5),
+      defense: Math.sqrt(fightBet) * (Math.random() + 0.5),
+      health: fightBet * 10 * (Math.random() + 0.5),
+      power: fightBet * (Math.random() + 0.5),
+      stamina: fightBet * Math.sqrt(fightBet) * (Math.random() + 0.5),
     };
     set({bet});
     get().start(fighter, enemy);
@@ -115,4 +123,27 @@ function resolveHit({damage, state, them, who}) {
     return {message: who ? 'You lost!!!!' : 'You win!!!!', state: who ? FIGHT_LOST : FIGHT_WON};
   }
   return {message: who ? `He hit you for ${damage}. (What a jerk)` : `You hit 'im for ${damage}`, state};
+}
+
+function getBetAmount({gold, risk}) {
+  const percentage = RISK_PERCENTAGES[risk];
+  if(!percentage) {
+    return MIN_BET;
+  }
+
+  const normalizedGold = normalizeGold(gold);
+  const percentageBet = normalizedGold * percentage.numerator / percentage.denominator;
+  return percentageBet > MIN_BET ? percentageBet : MIN_BET;
+}
+
+function normalizeGold(gold) {
+  if(typeof gold === 'bigint') {
+    return gold;
+  }
+
+  if(typeof gold !== 'number' || !Number.isFinite(gold)) {
+    return 0n;
+  }
+
+  return BigInt(Math.max(0, Math.floor(gold)));
 }
