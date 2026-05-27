@@ -13,7 +13,7 @@ describe('useFightStore', () => {
       apm: 10,
       attack: 8,
       defense: 7,
-      gold: 1000n,
+      gold: 1000,
       health: 100,
       idle: vi.fn(),
       power: 9,
@@ -26,7 +26,7 @@ describe('useFightStore', () => {
     useFightStore.getState().forGold(fighter, 1);
 
     const fight = useFightStore.getState();
-    expect(fight.bet).toBe(100n);
+    expect(fight.bet).toBe(100);
     expect(fight.fighters).toHaveLength(2);
     expect(fight.state).toBe(FIGHT_IN_PROGRESS);
     expect(fighter.idle).toHaveBeenCalledTimes(1);
@@ -40,7 +40,7 @@ describe('useFightStore', () => {
       win: vi.fn(),
     };
     useFightStore.setState({
-      bet: 250n,
+      bet: 250,
       fighters: [{stats: fighter}],
       messages: ['ready'],
       state: FIGHT_WON,
@@ -49,10 +49,10 @@ describe('useFightStore', () => {
     useFightStore.getState().finish();
 
     const fight = useFightStore.getState();
-    expect(fighter.win).toHaveBeenCalledWith(250n);
+    expect(fighter.win).toHaveBeenCalledWith(250);
     expect(fighter.spend).not.toHaveBeenCalled();
     expect(fighter.train).toHaveBeenCalledWith('skill', 1);
-    expect(fight.bet).toBe(0n);
+    expect(fight.bet).toBe(0);
     expect(fight.fighters).toEqual([]);
     expect(fight.messages).toEqual([]);
     expect(fight.state).toBe(FIGHT_NOT_STARTED);
@@ -65,7 +65,7 @@ describe('useFightStore', () => {
       win: vi.fn(),
     };
     useFightStore.setState({
-      bet: 100n,
+      bet: 100,
       fighters: [{stats: fighter}],
       messages: [],
       state: FIGHT_LOST,
@@ -74,7 +74,7 @@ describe('useFightStore', () => {
     useFightStore.getState().finish();
 
     const fight = useFightStore.getState();
-    expect(fighter.spend).toHaveBeenCalledWith(100n);
+    expect(fighter.spend).toHaveBeenCalledWith(100);
     expect(fighter.win).not.toHaveBeenCalled();
     expect(fighter.train).toHaveBeenCalledWith('skill', 1);
     expect(fight.state).toBe(FIGHT_NOT_STARTED);
@@ -82,7 +82,7 @@ describe('useFightStore', () => {
 
   it('does nothing when finish is called while fight is still in progress', () => {
     const fighter = {spend: vi.fn(), train: vi.fn(), win: vi.fn()};
-    useFightStore.setState({bet: 250n, fighters: [{stats: fighter}], state: FIGHT_IN_PROGRESS});
+    useFightStore.setState({bet: 250, fighters: [{stats: fighter}], state: FIGHT_IN_PROGRESS});
 
     useFightStore.getState().finish();
 
