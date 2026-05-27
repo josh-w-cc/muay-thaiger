@@ -65,10 +65,25 @@
   margin-top: var(--space-sm);
 }
 
-.gloryLoadoutButton {
+.tapperButton {
+  background: linear-gradient(225deg, var(--color-white), var(--color-gold));
+  border-color: var(--color-gold);
+  box-shadow: -2px 2px 0 var(--color-red-hover);
+  color: var(--color-on-gold);
   min-height: 4rem;
   padding: var(--space-md) var(--space-sm);
   width: 100%;
+}
+
+.tapperButton:hover {
+  background: linear-gradient(45deg, var(--color-white), var(--color-gold));
+  border-color: var(--color-gold);
+  color: var(--color-on-gold);
+}
+
+.tapperButton:active {
+  box-shadow: 0 2px 0 var(--color-red-hover);
+  transform: translateY(2px);
 }
 
 .gloryLoadoutButtons {

@@ -98,7 +98,7 @@ function FightForGloryLoadout() {
     <div className={css.gloryLoadout}>
       <div className={css.gloryLoadoutButtons}>
         {[`Strategy: ${FIGHT_FOR_GLORY_LOADOUT.strategy}`, ...FIGHT_FOR_GLORY_LOADOUT.moves].map((item) => (
-          <Button className={css.gloryLoadoutButton} key={item}>{item}</Button>
+          <Button className={css.tapperButton} key={item}>{item}</Button>
         ))}
       </div>
     </div>
