@@ -1,4 +1,5 @@
 import {randomUUID} from 'node:crypto';
+import {parseBigIntStats} from 'shared/stats.js';
 import {createCommandError} from './command-errors.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
@@ -50,10 +51,4 @@ async function createPlayer({fighters, players, races}, race) {
 
 function getDefaultStats({stats = {}}) {
   return parseBigIntStats({...DEFAULT_TRAINING_STATS, ...stats});
-}
-
-function parseBigIntStats(stats) {
-  return Object.fromEntries(
-    Object.entries(stats).map(([key, value]) => [key, BigInt(value ?? 0)]),
-  );
 }
