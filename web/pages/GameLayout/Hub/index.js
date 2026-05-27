@@ -2,7 +2,6 @@ import Section from '@/components/primitive/Section.js';
 
 import FighterDetails from './FighterDetails.js';
 import Leaderboard from './Leaderboard.js';
-import Stats from './Stats.js';
 import css from './Hub.module.css';
 
 const EVENTS = [
@@ -28,9 +27,6 @@ export default function Hub() {
     <>
       <Section>
         <FighterDetails />
-      </Section>
-      <Section>
-        <Stats />
       </Section>
       <Section>
         <Events />
