@@ -30,7 +30,7 @@ export default function Stats() {
       <h3>Stats:</h3>
       <dl className={css.stats}>
         {STAT_FIELDS.map(({key, label}) => (
-          <Stat key={key} label={label} value={BigInt(getStatValue({fighter, key})).toFormattedNumber()} />
+          <Stat key={key} label={label} value={getStatValue({fighter, key}).toFormattedNumber()} />
         ))}
       </dl>
     </>
@@ -45,7 +45,7 @@ function getStatValue({fighter, key}) {
   if(typeof value === 'bigint') {
     return value;
   }
-  return Math.floor(value ?? 0);
+  return BigInt(Math.floor(value ?? 0));
 }
 
 function Stat({label, value}) {

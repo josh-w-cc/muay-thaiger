@@ -7,11 +7,11 @@ import Hub from './index.js';
 
 
 const fighter = vi.hoisted(() => ({
-  agility: 11,
+  agility: 11n,
   anima: 16,
   apm: 22,
   attack: 23,
-  constitution: 19,
+  constitution: 19n,
   createdAt: '2026-01-01T00:00:00.000Z',
   defense: 24,
   displayName: 'Iron Tiger',
@@ -22,10 +22,10 @@ const fighter = vi.hoisted(() => ({
   power: 26,
   race: '1',
   reach: 18,
-  skill: 20,
+  skill: 20n,
   speed: 12,
-  stamina: 21,
-  strength: 13,
+  stamina: 21n,
+  strength: 13n,
   vitality: 15,
 }));
 
@@ -56,9 +56,12 @@ describe('Hub', () => {
     expect(container.querySelectorAll('dl > div')).toHaveLength(20);
     expect(container.querySelector('br')).not.toBeInTheDocument();
     const staminaRow = screen.getByText('Stanima', {selector: 'dt'}).closest('div');
+    const apmRow = screen.getByText('APM', {selector: 'dt'}).closest('div');
 
     expect(staminaRow).toBeInTheDocument();
     expect(within(staminaRow).getByText('21')).toBeInTheDocument();
+    expect(apmRow).toBeInTheDocument();
+    expect(within(apmRow).getByText('22')).toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: 'Events:'})).not.toBeInTheDocument();
     expect(screen.getByRole('list')).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
