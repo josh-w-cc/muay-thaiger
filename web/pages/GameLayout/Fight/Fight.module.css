@@ -27,17 +27,6 @@
   width: 50%;
 }
 
-.gloryFighterName {
-  color: var(--color-gold);
-  font-weight: 700;
-  margin-bottom: var(--space-xs);
-  text-align: center;
-}
-
-.gloryFighterNameEnemy {
-  color: var(--color-red);
-}
-
 .gloryFighterImage {
   display: block;
   width: 100%;

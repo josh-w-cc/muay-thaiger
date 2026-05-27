@@ -78,10 +78,6 @@ describe('Fight', () => {
     expect(glorySection).toHaveClass(sectionCss.section);
     expect(within(glorySection).getByRole('heading', {name: 'Fight for Glory'})).toBeInTheDocument();
     expect(within(glorySection).getByText('Strategy: Pressure Counter')).toBeInTheDocument();
-    expect(within(glorySection).getByText('Tiger', {selector: `.${css.gloryFighterName}`}))
-      .toHaveClass(css.gloryFighterName);
-    expect(within(glorySection).getByText('Snow Leopard', {selector: `.${css.gloryFighterName}`}))
-      .toHaveClass(css.gloryFighterName, css.gloryFighterNameEnemy);
     expect(within(glorySection).getByRole('img', {name: 'Tiger Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
     expect(within(glorySection).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))

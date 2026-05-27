@@ -9,21 +9,8 @@ import {FIGHT_FOR_GLORY_FEED} from './FightForGloryFeedData.js';
 import css from './Fight.module.css';
 
 const FIGHT_FOR_GLORY_FIGHTER_HP = {current: 170, max: 200};
-const FIGHT_FOR_GLORY_OPPONENT_HP = {current: 143, max: 200};
 const FIGHT_FOR_GLORY_LOADOUT = {moves: ['Jab', 'Roundhouse', 'Elbow', 'Knee'], strategy: 'Pressure Counter'};
-const FIGHT_FOR_GLORY_SELF = {
-  alt: 'Tiger Muay Thai fighter',
-  hp: FIGHT_FOR_GLORY_FIGHTER_HP,
-  label: 'Tiger fighter health', name: 'Tiger',
-  src: TigerMuayThai,
-};
-const FIGHT_FOR_GLORY_ENEMY = {
-  alt: 'Snow leopard Muay Thai fighter',
-  hp: FIGHT_FOR_GLORY_OPPONENT_HP,
-  label: 'Snow leopard fighter health',
-  mirror: true, name: 'Snow Leopard',
-  src: SnowLeopardMuayThaiReady,
-};
+const FIGHT_FOR_GLORY_OPPONENT_HP = {current: 143, max: 200};
 
 function FightForGlory() {
   return (
@@ -63,16 +50,26 @@ function FightForGloryFeedItem({item}) {
 function FightForGloryFighters() {
   return (
     <div className={css.gloryFighters}>
-      <FightForGloryFighterCard {...FIGHT_FOR_GLORY_SELF} />
-      <FightForGloryFighterCard {...FIGHT_FOR_GLORY_ENEMY} />
+      <FightForGloryFighterCard
+        alt="Tiger Muay Thai fighter"
+        hp={FIGHT_FOR_GLORY_FIGHTER_HP}
+        label="Tiger fighter health"
+        src={TigerMuayThai}
+      />
+      <FightForGloryFighterCard
+        alt="Snow leopard Muay Thai fighter"
+        hp={FIGHT_FOR_GLORY_OPPONENT_HP}
+        label="Snow leopard fighter health"
+        mirror
+        src={SnowLeopardMuayThaiReady}
+      />
     </div>
   );
 }
 
-function FightForGloryFighterCard({alt, hp, label, mirror, name, src}) {
+function FightForGloryFighterCard({alt, hp, label, mirror, src}) {
   return (
     <div className={css.gloryFighter}>
-      <strong className={classnames(css.gloryFighterName, {[css.gloryFighterNameEnemy]: mirror})}>{name}</strong>
       <img
         alt={alt}
         className={classnames(css.gloryFighterImage, {[css.gloryFighterImageMirror]: mirror})}
