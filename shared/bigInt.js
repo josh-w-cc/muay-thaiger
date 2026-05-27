@@ -20,7 +20,7 @@ function defineMethod(name, value) {
 
 function logApprox() {
   const digits = this < 0n ? (-this).toString() : this.toString();
-  return (digits.length - 1) + Math.log10(Number(`${digits[0]}.${digits.slice(1)}`));
+  return BigInt(digits === '0' ? 0 : digits.length);
 }
 
 function toFormattedNumber() {
