@@ -35,7 +35,7 @@ Subprojects have additional details in local `AGENTS.md` files.
 ## Tech stack
 
 - **Language:** JavaScript (not TypeScript)
-- **Runtime:** Node.js 25 with ESM (`"type": "module"` — use `import`/`export`, not `require`)
+- **Runtime:** Node.js 26 with ESM (`"type": "module"` — use `import`/`export`, not `require`)
 - **Database:** PostgreSQL 18
 
 ## Developer commands
