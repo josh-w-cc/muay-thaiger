@@ -50,28 +50,26 @@ function FightForGloryFeedItem({item}) {
 }
 
 function FightForGloryFighters() {
+  const tigerFighterCard = {
+    alt: 'Tiger Muay Thai fighter', className: css.gloryFighterLeft,
+    hp: FIGHT_FOR_GLORY_FIGHTER_HP, label: 'Tiger fighter health', src: TigerMuayThai,
+  };
+  const snowLeopardFighterCard = {
+    alt: 'Snow leopard Muay Thai fighter', className: css.gloryFighterRight,
+    hp: FIGHT_FOR_GLORY_OPPONENT_HP, label: 'Snow leopard fighter health', mirror: true, src: SnowLeopardMuayThaiReady,
+  };
   return (
     <div className={css.gloryFighters}>
-      <FightForGloryFighterCard
-        alt="Tiger Muay Thai fighter"
-        hp={FIGHT_FOR_GLORY_FIGHTER_HP}
-        label="Tiger fighter health"
-        src={TigerMuayThai}
-      />
-      <FightForGloryFighterCard
-        alt="Snow leopard Muay Thai fighter"
-        hp={FIGHT_FOR_GLORY_OPPONENT_HP}
-        label="Snow leopard fighter health"
-        mirror
-        src={SnowLeopardMuayThaiReady}
-      />
+      <FightForGloryFighterCard {...tigerFighterCard} />
+      <div aria-orientation="vertical" className={css.gloryFighterDivider} role="separator" />
+      <FightForGloryFighterCard {...snowLeopardFighterCard} />
     </div>
   );
 }
 
-function FightForGloryFighterCard({alt, hp, label, mirror, src}) {
+function FightForGloryFighterCard({alt, className, hp, label, mirror, src}) {
   return (
-    <div className={css.gloryFighter}>
+    <div className={classnames(css.gloryFighter, className)}>
       <img
         alt={alt}
         className={classnames(css.gloryFighterImage, {[css.gloryFighterImageMirror]: mirror})}

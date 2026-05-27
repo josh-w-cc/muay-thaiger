@@ -31,8 +31,14 @@
 
 .gloryFighter {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  width: 50%;
+  min-width: 0;
+}
+
+.gloryFighterDivider {
+  background: linear-gradient(180deg, black 0 33%, var(--color-gold) 50%, black 66% 100%);
+  width: var(--space-sm);
 }
 
 .gloryFighterImage {
@@ -45,8 +51,8 @@
 }
 
 .gloryFighters {
+  align-items: stretch;
   display: flex;
-  justify-content: space-between;
   margin-left: calc(-1 * var(--space-md));
   margin-right: calc(-1 * var(--space-md));
   margin-top: var(--space-sm);
@@ -79,8 +85,6 @@
 
 .tapperButton:hover {
   background: linear-gradient(45deg, var(--color-white), var(--color-gold));
-  border-color: var(--color-gold);
-  color: var(--color-on-gold);
 }
 
 .tapperButton:active {
