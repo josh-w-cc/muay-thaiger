@@ -36,10 +36,6 @@ export default function NavHeader() {
   );
 }
 
-function getIsCurrentPage(pathname, route) {
-  return pathname === route || pathname.startsWith(`${route}/`);
-}
-
 function NavigationButton({item, navigate, pathname}) {
   const isCurrentPage = getIsCurrentPage(pathname, item.route);
 
@@ -49,4 +45,8 @@ function NavigationButton({item, navigate, pathname}) {
       <img alt={item.label} className={css.navigationImage} src={item.icon} />
     </Button>
   );
+}
+
+function getIsCurrentPage(pathname, route) {
+  return pathname === route || pathname.startsWith(`${route}/`);
 }
