@@ -1,4 +1,5 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
+import {parseBigIntStats} from 'shared/stats.js';
 import {findTouchedAtTransfer, getMaxTouchedAtMs} from 'shared/training.js';
 import {createCommandError} from './command-errors.js';
 
@@ -48,12 +49,6 @@ function isValidAction(fighter, actionID) {
     return false;
   }
   return skill.requires(parseBigIntStats(fighter.stats || {}));
-}
-
-function parseBigIntStats(stats) {
-  return Object.fromEntries(
-    Object.entries(stats).map(([key, value]) => [key, BigInt(value ?? 0)]),
-  );
 }
 
 function getNextTouchedAt(actions) {
