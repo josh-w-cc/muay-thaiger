@@ -36,7 +36,8 @@
     gap: var(--space-md);
     justify-content: flex-start;
     overflow-x: auto;
-    padding: 40px 150px 0;
+    padding-left: 60px;
+    padding-right: 140px;
     position: relative;
     right: var(--space-xl);
     scroll-snap-type: x mandatory;

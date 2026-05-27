@@ -36,9 +36,11 @@ function FightForGloryFeed() {
 }
 
 function FightForGloryFeedItem({item}) {
+  const attackerClassName = item.isSelf ? css.gloryFeedAttackerSelf : css.gloryFeedAttackerEnemy;
+
   return (
     <li className={css.gloryFeedItem}>
-      <strong>{item.attacker}</strong>
+      <strong className={attackerClassName}>{item.attacker}</strong>
       {' throws '}
       <strong>{item.move}</strong>
       {' — '}
