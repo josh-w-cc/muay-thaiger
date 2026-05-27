@@ -96,6 +96,10 @@ describe('Fight', () => {
     expect(glorySection).toHaveTextContent('Lands for 18 damage!');
     expect(glorySection).toHaveTextContent('Snow Leopard throws Roundhouse');
     expect(glorySection).toHaveTextContent('Misses clean.');
+    within(glorySection).getAllByText('Tiger', {selector: 'strong'})
+      .forEach((element) => expect(element).toHaveClass(css.gloryFeedAttackerSelf));
+    within(glorySection).getAllByText('Snow Leopard', {selector: 'strong'})
+      .forEach((element) => expect(element).toHaveClass(css.gloryFeedAttackerEnemy));
     const feedItems = within(glorySection).getAllByRole('listitem');
     expect(feedItems.length).toBeGreaterThanOrEqual(12);
     expect(feedItems[0]).toHaveClass(css.gloryFeedItem);
