@@ -52,7 +52,11 @@ describe('Header', () => {
     expect(source).toMatch(/\.headerControls > :last-child\s*{[^}]*justify-self:\s*end;/s);
     expect(source).toMatch(/\.rankDisplay\s*{[^}]*justify-self:\s*center;/s);
     expect(source).toMatch(
-      /@media\(max-width:\s*768px\)\s*{[\s\S]*\.headerControls\s*{[\s\S]*position:\s*fixed;[\s\S]*top:\s*0;[\s\S]*width:\s*100vw;[\s\S]*}/s,
+      /@media\(max-width:\s*768px\)\s*{[\s\S]*\.headerLayout\s*{[\s\S]*width:\s*100%;[\s\S]*}/s,
     );
+    expect(source).toMatch(
+      /\.headerControls\s*{[\s\S]*display:\s*grid;[\s\S]*grid-template-columns:\s*1fr auto 1fr;[\s\S]*width:\s*100%;/s,
+    );
+    expect(source).not.toMatch(/\.headerControls\s*{[\s\S]*position:\s*fixed;/s);
   });
 });
