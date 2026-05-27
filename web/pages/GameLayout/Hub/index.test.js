@@ -53,9 +53,10 @@ describe('Hub', () => {
 
   it('renders hub layout without the stats section', () => {
     const {container} = render(<Hub />);
+    const detailFieldCount = 3;
 
     expect(container.querySelector('dl')).toBeInTheDocument();
-    expect(container.querySelectorAll('dl > div')).toHaveLength(3);
+    expect(container.querySelectorAll('dl > div')).toHaveLength(detailFieldCount);
     expect(container.querySelector('br')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: 'Events:'})).not.toBeInTheDocument();
     expect(screen.getByRole('list')).toBeInTheDocument();
