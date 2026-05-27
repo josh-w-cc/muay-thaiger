@@ -7,7 +7,7 @@
     "lint": "eslint --config config/eslint.config.js --fix .",
     "lint:ci": "eslint --config config/eslint.config.js .",
     "test": "node --test",
-    "test:coverage": "node --test --experimental-test-coverage --test-coverage-lines=95 --test-coverage-functions=95 --test-coverage-branches=95 --test-coverage-include=bigInt.js --test-coverage-include=moves.js --test-coverage-include=races.js --test-coverage-include=skills.js --test-coverage-include=stats.js --test-coverage-include=training.js --test-coverage-include=trainingStat.js --test-coverage-include=trainingTimeline.js --test-coverage-exclude=**/*.test.js"
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-lines=95 --test-coverage-functions=95 --test-coverage-branches=95 --test-coverage-include=*.js --test-coverage-exclude=**/*.test.js --test-coverage-exclude=config/**"
   },
   "devDependencies": {
     "@eslint/js": "^10",
