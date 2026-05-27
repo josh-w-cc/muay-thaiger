@@ -16,7 +16,7 @@
     "migrate:seed": "knex seed:run --knexfile data/knexfile.js",
     "start": "node index.js",
     "test": "node --test",
-    "test:coverage": "c8 node --test"
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-lines=95 --test-coverage-functions=95 --test-coverage-branches=95 --test-coverage-include=app.js --test-coverage-include=index.js --test-coverage-include=data/**/*.js --test-coverage-include=logic/**/*.js --test-coverage-include=routes/**/*.js --test-coverage-include=plugins/**/*.js --test-coverage-include=services/**/*.js --test-coverage-exclude=**/*.test.js --test-coverage-exclude=data/seed-data/** --test-coverage-exclude=data/utils/mock-knex.js"
   },
   "dependencies": {
     "@fastify/static": "^9.1.3",
