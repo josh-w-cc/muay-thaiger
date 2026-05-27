@@ -38,7 +38,7 @@ function FightForGloryFeed() {
 
 function FightForGloryFeedItem({item}) {
   return (
-    <li>
+    <li className={css.gloryFeedItem}>
       <strong>{item.attacker}</strong>
       {' throws '}
       <strong>{item.move}</strong>
