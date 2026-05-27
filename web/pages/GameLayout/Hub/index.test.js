@@ -53,9 +53,12 @@ describe('Hub', () => {
     expect(container.querySelectorAll('dl > div')).toHaveLength(20);
     expect(container.querySelector('br')).not.toBeInTheDocument();
     const staminaRow = screen.getByText('Stanima', {selector: 'dt'}).closest('div');
+    const goldRow = screen.getByText('฿', {selector: 'dt'}).closest('div');
 
     expect(staminaRow).toBeInTheDocument();
     expect(within(staminaRow).getByText('21')).toBeInTheDocument();
+    expect(goldRow).toBeInTheDocument();
+    expect(within(goldRow).getByText('21')).toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: 'Events:'})).not.toBeInTheDocument();
     expect(screen.getByRole('list')).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
