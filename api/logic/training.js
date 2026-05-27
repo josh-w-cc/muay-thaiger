@@ -1,3 +1,4 @@
+import {parseBigIntStats} from 'shared/stats.js';
 import {
   applyTrainingActions,
   createTrainingTimeline,
@@ -44,10 +45,4 @@ function createFighterProxy(stats, onWin) {
     train: (stat, amount = 1) => trainStat(stats, stat, amount),
     win: onWin,
   };
-}
-
-function parseBigIntStats(stats) {
-  return Object.fromEntries(
-    Object.entries(stats).map(([key, value]) => [key, BigInt(value ?? 0)]),
-  );
 }
