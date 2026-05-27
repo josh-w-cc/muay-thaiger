@@ -14,16 +14,16 @@
 
 .gloryFighter {
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   min-width: 0;
 }
 
-.gloryFighter:first-child {
+.gloryFighterLeft {
   padding-right: var(--space-sm);
 }
 
-.gloryFighter:last-child {
+.gloryFighterRight {
   padding-left: var(--space-sm);
 }
 
