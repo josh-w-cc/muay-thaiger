@@ -51,7 +51,7 @@ describe('Hub', () => {
     expect(screen.queryByText('Stanima', {selector: 'dt'})).not.toBeInTheDocument();
   });
 
-  it('renders events without the stats section', () => {
+  it('renders hub layout without the stats section', () => {
     const {container} = render(<Hub />);
 
     expect(container.querySelector('dl')).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe('Hub', () => {
 
     const detailsStatListPattern = new RegExp(
       [
-        String.raw`\.details\s*,?\s*(?:\.stats\s*,?\s*)?{[^}]*`,
+        String.raw`\.details\s*{[^}]*`,
         String.raw`composes:\s*statListBase\s*from\s*`,
         String.raw`'..\/..\/..\/components\/primitive\/css-modules\/stat-list-base\.module\.css';`,
       ].join(''),
