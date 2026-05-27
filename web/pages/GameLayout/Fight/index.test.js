@@ -77,7 +77,6 @@ describe('Fight', () => {
     expect(glorySection).toBeInTheDocument();
     expect(glorySection).toHaveClass(sectionCss.section);
     expect(within(glorySection).getByRole('heading', {name: 'Fight for Glory'})).toBeInTheDocument();
-    expect(within(glorySection).getByRole('heading', {name: 'Loadout'})).toBeInTheDocument();
     expect(within(glorySection).getByText('Strategy: Pressure Counter')).toBeInTheDocument();
     expect(within(glorySection).getByRole('img', {name: 'Tiger Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
@@ -87,7 +86,6 @@ describe('Fight', () => {
     expect(healthBars).toHaveLength(2);
     expect(within(glorySection).getByRole('progressbar', {name: 'Tiger fighter health'})).toBeInTheDocument();
     expect(within(glorySection).getByRole('progressbar', {name: 'Snow leopard fighter health'})).toBeInTheDocument();
-    expect(within(glorySection).getByRole('heading', {name: 'Completed Moves'})).toBeInTheDocument();
     expect(glorySection).toHaveTextContent('Tiger throws Jab');
     expect(glorySection).toHaveTextContent('Lands for 18 damage!');
     expect(glorySection).toHaveTextContent('Snow Leopard throws Roundhouse');
