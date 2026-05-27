@@ -11,6 +11,7 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {element: <Game />, index: true, loader: fighterSelectLoader},
+      {path: 'edit-user', lazy: lazyPage(() => import('./pages/EditUser/index.js'))},
       gameLayoutRoutes,
       {path: '*', element: <NotFound />},
     ],
@@ -18,3 +19,10 @@ const router = createBrowserRouter([
 ]);
 
 export default router;
+
+function lazyPage(importFn) {
+  return async () => {
+    const mod = await importFn();
+    return {Component: mod.default, loader: mod.loader};
+  };
+}
