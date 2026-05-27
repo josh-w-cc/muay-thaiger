@@ -15,7 +15,22 @@
 .gloryFighter {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  flex: 1;
+  min-width: 0;
+}
+
+.gloryFighter:first-child {
+  padding-right: var(--space-sm);
+}
+
+.gloryFighter:last-child {
+  padding-left: var(--space-sm);
+}
+
+.gloryFighterDivider {
+  background: linear-gradient(180deg, var(--color-red), var(--color-gold), var(--color-red));
+  border-radius: var(--radius-sm);
+  width: var(--space-sm);
 }
 
 .gloryFighterImage {
@@ -28,8 +43,8 @@
 }
 
 .gloryFighters {
+  align-items: stretch;
   display: flex;
-  justify-content: space-between;
   margin-left: calc(-1 * var(--space-md));
   margin-right: calc(-1 * var(--space-md));
   margin-top: var(--space-sm);

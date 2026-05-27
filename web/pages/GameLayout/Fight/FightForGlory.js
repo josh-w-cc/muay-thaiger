@@ -57,6 +57,7 @@ function FightForGloryFighters() {
         label="Tiger fighter health"
         src={TigerMuayThai}
       />
+      <div aria-orientation="vertical" className={css.gloryFighterDivider} role="separator" />
       <FightForGloryFighterCard
         alt="Snow leopard Muay Thai fighter"
         hp={FIGHT_FOR_GLORY_OPPONENT_HP}

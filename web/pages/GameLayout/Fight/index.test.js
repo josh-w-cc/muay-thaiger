@@ -86,6 +86,7 @@ describe('Fight', () => {
     expect(healthBars).toHaveLength(2);
     expect(within(glorySection).getByRole('progressbar', {name: 'Tiger fighter health'})).toBeInTheDocument();
     expect(within(glorySection).getByRole('progressbar', {name: 'Snow leopard fighter health'})).toBeInTheDocument();
+    expect(within(glorySection).getAllByRole('separator')).toHaveLength(1);
     expect(within(glorySection).getByRole('heading', {name: 'Completed Moves'})).toBeInTheDocument();
     expect(glorySection).toHaveTextContent('Tiger throws Jab');
     expect(glorySection).toHaveTextContent('Lands for 18 damage!');
