@@ -102,7 +102,7 @@
   right: 0;
   top: 0;
   transform: scaleY(0);
-  transform-origin: left;
+  transform-origin: right;
 }
 
 .tapperButtonLabel {
@@ -110,10 +110,10 @@
 }
 
 @keyframes tapperFill {
-  0% { transform: scaleX(0); }
-  75% { transform: scaleX(1); }
-  90% { transform: scaleX(1); }
-  100% { transform: scaleX(0); }
+  0% { transform: scaleX(1); }
+  75% { transform: scaleX(0); }
+  90% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
 }
 
 .tapperButton:hover {
