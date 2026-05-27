@@ -19,17 +19,8 @@
   min-width: 0;
 }
 
-.gloryFighterLeft {
-  padding-right: var(--space-sm);
-}
-
-.gloryFighterRight {
-  padding-left: var(--space-sm);
-}
-
 .gloryFighterDivider {
-  background: linear-gradient(180deg, var(--color-red), var(--color-gold), var(--color-red));
-  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, black, black, var(--color-gold), black, black);
   width: var(--space-sm);
 }
 
