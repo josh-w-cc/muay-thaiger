@@ -79,6 +79,10 @@ function FightForGloryFighterCard({alt, className, hp, label, mirror, src}) {
 }
 
 function FightForGloryHealthBar({current, label, max}) {
+  const widthPercentage = max > 0
+    ? Math.max(0, Math.min(100, Math.round((current / max) * 100)))
+    : 0;
+
   return (
     <div
       aria-label={label}
@@ -88,7 +92,7 @@ function FightForGloryHealthBar({current, label, max}) {
       className={css.gloryHealthBar}
       role="progressbar"
     >
-      <div className={css.gloryHealthBarFill} style={{width: `${Math.round((current / max) * 100)}%`}} />
+      <div className={css.gloryHealthBarFill} style={{width: `${widthPercentage}%`}} />
     </div>
   );
 }

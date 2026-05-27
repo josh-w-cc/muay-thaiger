@@ -84,8 +84,12 @@ describe('Fight', () => {
       .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
     const healthBars = within(glorySection).getAllByRole('progressbar');
     expect(healthBars).toHaveLength(2);
-    expect(within(glorySection).getByRole('progressbar', {name: 'Tiger fighter health'})).toBeInTheDocument();
-    expect(within(glorySection).getByRole('progressbar', {name: 'Snow leopard fighter health'})).toBeInTheDocument();
+    const tigerHealthBar = within(glorySection).getByRole('progressbar', {name: 'Tiger fighter health'});
+    const snowLeopardHealthBar = within(glorySection).getByRole('progressbar', {name: 'Snow leopard fighter health'});
+    expect(tigerHealthBar).toBeInTheDocument();
+    expect(snowLeopardHealthBar).toBeInTheDocument();
+    expect(tigerHealthBar.querySelector(`.${css.gloryHealthBarFill}`)).toHaveStyle({width: '85%'});
+    expect(snowLeopardHealthBar.querySelector(`.${css.gloryHealthBarFill}`)).toHaveStyle({width: '72%'});
     expect(within(glorySection).getAllByRole('separator')).toHaveLength(1);
     expect(within(glorySection).getByRole('button', {name: 'Strategy: Pressure Counter'})).toHaveClass(css.tapperButton);
     expect(glorySection).toHaveTextContent('Tiger throws Jab');
