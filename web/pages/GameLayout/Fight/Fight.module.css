@@ -12,6 +12,15 @@
   padding-left: 0;
 }
 
+.gloryFeedItem {
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding: var(--space-xs) 0;
+}
+
+.gloryFeedItem:last-child {
+  border-bottom: 0;
+}
+
 .gloryFighter {
   display: flex;
   flex-direction: column;

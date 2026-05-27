@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import sectionCss from '@/components/primitive/Section.module.css';
 import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
 import TigerMuayThai from './assets/TigerMuayThai.png';
+import css from './Fight.module.css';
 import Fight from './index.js';
 
 
@@ -93,6 +94,7 @@ describe('Fight', () => {
     expect(glorySection).toHaveTextContent('Misses clean.');
     const feedItems = within(glorySection).getAllByRole('listitem');
     expect(feedItems.length).toBeGreaterThanOrEqual(12);
+    expect(feedItems[0]).toHaveClass(css.gloryFeedItem);
   });
 
   it('starts a fight for selected risk', async () => {
