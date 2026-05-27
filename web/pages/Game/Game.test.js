@@ -10,6 +10,7 @@ import Fight from '../GameLayout/Fight';
 import Hub from '../GameLayout/Hub';
 import Shop from '../GameLayout/Shop';
 import Train from '../GameLayout/Train';
+import EditUser from '../GameLayout/EditUser';
 import Fallback from '../GameLayout/Fallback.js';
 import {GameLayout, loader as gameScreenLoader} from '../GameLayout/index.js';
 
@@ -57,6 +58,12 @@ vi.mock('../GameLayout/Hub', () => ({
 vi.mock('../GameLayout/Shop', () => ({
   default: function MockShop() {
     return <h2>Shop Screen</h2>;
+  },
+}));
+
+vi.mock('../GameLayout/EditUser', () => ({
+  default: function MockEditUser() {
+    return <h2>Edit User Screen</h2>;
   },
 }));
 
@@ -199,6 +206,12 @@ describe('Game', () => {
 
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Edit Profile'})).toBeInTheDocument();
+    await user.click(screen.getByRole('button', {name: 'Edit Profile'}));
+    expect(await screen.findByRole('heading', {name: 'Edit User Screen'})).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', {name: /hub/i}));
+    expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
+
     await user.click(screen.getByRole('button', {name: /^fight$/i}));
     expect(await screen.findByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
 
@@ -433,6 +446,7 @@ function renderGame({gameModule, initialPath = '/'}) {
             children: [
               {element: <Fight />, path: 'fight'},
               {element: <Hub />, path: 'hub'},
+              {element: <EditUser />, path: 'edit-user'},
               {element: <Shop />, path: 'shop'},
               {element: <Train />, path: 'train'},
               {element: <Fallback />, path: '*'},

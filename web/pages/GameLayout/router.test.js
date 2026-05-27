@@ -23,6 +23,7 @@ describe('GameLayout router', () => {
     expect(gameLayoutRoute.Component).toBe(gameLayoutComponent);
     expect(gameLayoutRoute.loader).toBe(gameLayoutLoader);
     expect(gameLayoutRoute.children.map(({path}) => path)).toEqual([
+      'edit-user',
       'fight',
       'hub',
       'shop',
