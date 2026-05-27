@@ -1,6 +1,7 @@
 import {render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import sectionCss from '@/components/primitive/Section.module.css';
 import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
 import TigerMuayThai from './assets/TigerMuayThai.png';
 import Fight from './index.js';
@@ -73,14 +74,19 @@ describe('Fight', () => {
     expect(fightSection).not.toHaveTextContent('Fight for Glory');
 
     expect(glorySection).toBeInTheDocument();
+    expect(glorySection).toHaveClass(sectionCss.section);
     expect(within(glorySection).getByRole('heading', {name: 'Fight for Glory'})).toBeInTheDocument();
     expect(within(glorySection).getByText('Strategy: Pressure Counter')).toBeInTheDocument();
     expect(within(glorySection).getByRole('img', {name: 'Tiger Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
     expect(within(glorySection).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
+    expect(glorySection).toHaveTextContent('Tiger throws Jab');
     expect(glorySection).toHaveTextContent('Lands for 18 damage!');
+    expect(glorySection).toHaveTextContent('Snow Leopard throws Roundhouse');
     expect(glorySection).toHaveTextContent('Misses clean.');
+    const feedItems = within(glorySection).getAllByRole('listitem');
+    expect(feedItems.length).toBeGreaterThanOrEqual(12);
   });
 
   it('starts a fight for selected risk', async () => {
