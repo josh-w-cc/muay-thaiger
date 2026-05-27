@@ -60,9 +60,9 @@
 }
 
 .tapperButton {
-  background: linear-gradient(180deg, #e9bf61, var(--color-gold));
-  border-color: #8e681f;
-  box-shadow: 0 4px 0 #6a4d16;
+  background: linear-gradient(180deg, var(--color-white), var(--color-gold));
+  border-color: var(--color-gold);
+  box-shadow: 0 4px 0 var(--color-red-hover);
   color: var(--color-on-gold);
   min-height: 4rem;
   padding: var(--space-md) var(--space-sm);
@@ -70,13 +70,13 @@
 }
 
 .tapperButton:hover {
-  background: linear-gradient(180deg, #f0cd7d, #d6a53f);
-  border-color: #b17f25;
+  background: var(--color-gold);
+  border-color: var(--color-gold);
   color: var(--color-on-gold);
 }
 
 .tapperButton:active {
-  box-shadow: 0 2px 0 #6a4d16;
+  box-shadow: 0 2px 0 var(--color-red-hover);
   transform: translateY(2px);
 }
 
