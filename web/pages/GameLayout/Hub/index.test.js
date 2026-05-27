@@ -38,7 +38,7 @@ describe('Hub', () => {
     vi.clearAllMocks();
   });
 
-  it('renders fighter details section with name, age, and race', () => {
+  it('renders fighter details section with name, age, and race without stats', () => {
     render(<Hub />);
 
     expect(screen.queryByRole('heading', {name: 'Fighter Details:'})).not.toBeInTheDocument();
@@ -104,7 +104,7 @@ describe('Hub', () => {
     expect(within(statsLeaderboard).queryByText('Reach')).not.toBeInTheDocument();
   });
 
-  it('keeps fighter details composed from the shared stat-list base', () => {
+  it('verifies fighter details compose from the shared stat-list base', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const modulePath = path.join(directoryPath, 'Hub.module.css');
     const source = fs.readFileSync(modulePath, 'utf8');
