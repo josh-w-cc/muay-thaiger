@@ -1,3 +1,4 @@
+import statListCss from '@/components/primitive/css-modules/stat-list-base.module.css';
 import useFighterStore from '@/data/fighter.js';
 
 import css from './Hub.module.css';
@@ -28,7 +29,7 @@ export default function Stats() {
   return (
     <>
       <h3>Stats:</h3>
-      <dl className={css.stats}>
+      <dl className={statListCss.statListBase}>
         {STAT_FIELDS.map(({key, label}) => (
           <Stat key={key} label={label} value={BigInt(getStatValue({fighter, key})).toFormattedNumber()} />
         ))}

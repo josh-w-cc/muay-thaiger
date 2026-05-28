@@ -20,11 +20,6 @@
   padding-bottom: 0;
 }
 
-.details,
-.stats {
-  composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
-}
-
 .stat {
   composes: statRowBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
 

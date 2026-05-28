@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {SKILL_IDS} from 'shared/skills.js';
+import statListCss from '@/components/primitive/css-modules/stat-list-base.module.css';
 
 import Train from './index.js';
 
@@ -76,6 +77,7 @@ describe('Train', () => {
     expect(container.querySelector('br')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Once'})).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: 'Skills:'})).not.toBeInTheDocument();
+    expect(container.querySelectorAll('section > div')[0]).toHaveClass(statListCss.statListBase);
   });
 
   it('shows training regimen with progress bar and button for each skill', () => {

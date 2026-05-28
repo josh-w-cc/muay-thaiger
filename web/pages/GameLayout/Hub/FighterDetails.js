@@ -1,3 +1,4 @@
+import statListCss from '@/components/primitive/css-modules/stat-list-base.module.css';
 import BaseStats from '@/data/baseStats.js';
 import useFighterStore from '@/data/fighter.js';
 
@@ -14,7 +15,7 @@ export default function FighterDetails() {
   ];
 
   return (
-    <dl className={css.details}>
+    <dl className={statListCss.statListBase}>
       {fields.map(({label, value}) => (
         <div className={css.stat} key={label}>
           <dt className={css.label}>{label}</dt>
