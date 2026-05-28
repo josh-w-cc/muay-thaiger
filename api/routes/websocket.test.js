@@ -3,6 +3,7 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
+import createCallTracker from '../test-utils/createCallTracker.js';
 import {syncPlayerState} from '../logic/player-state.js';
 import websocketRoutes, {onConnect, onMessage} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
@@ -489,14 +490,6 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(sockets.has(closedSocket), false);
   });
 });
-
-function createCallTracker() {
-  const fn = (...args) => {
-    fn.calls.push(args);
-  };
-  fn.calls = [];
-  return fn;
-}
 
 async function readMessage(socket) {
   return new Promise((resolve, reject) => {
