@@ -33,4 +33,29 @@ describe('BigInt prototype patch', () => {
     strictEqual(BigInt.prototype.toFormattedNumber, existingFormatMethod);
     strictEqual(BigInt.prototype.toJSON, existingJsonMethod);
   });
+
+  it('returns the digit count as a BigInt for a power of ten', () => {
+    strictEqual((1000000n).logApprox(), 7n);
+  });
+
+  it('returns the digit count as a BigInt for a non-power of ten', () => {
+    strictEqual((500000n).logApprox(), 6n);
+  });
+
+  it('returns the digit count as a BigInt for a single-digit number', () => {
+    strictEqual((5n).logApprox(), 1n);
+  });
+
+  it('defines logApprox as non-writable', () => {
+    const descriptor = Object.getOwnPropertyDescriptor(BigInt.prototype, 'logApprox');
+    strictEqual(descriptor?.writable, false);
+  });
+
+  it('returns the same digit count for a negative BigInt as its absolute value', () => {
+    strictEqual((-1000000n).logApprox(), (1000000n).logApprox());
+  });
+
+  it('returns 0n for zero', () => {
+    strictEqual((0n).logApprox(), 0n);
+  });
 });

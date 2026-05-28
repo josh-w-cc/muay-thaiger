@@ -1,6 +1,7 @@
 patchBigIntPrototype();
 
 export default function patchBigIntPrototype() {
+  defineMethod('logApprox', logApprox);
   defineMethod('toFormattedNumber', toFormattedNumber);
   defineMethod('toJSON', toJSON);
 }
@@ -15,6 +16,11 @@ function defineMethod(name, value) {
     value,
     writable: false,
   });
+}
+
+function logApprox() {
+  const digits = this < 0n ? (-this).toString() : this.toString();
+  return BigInt(digits === '0' ? 0 : digits.length);
 }
 
 function toFormattedNumber() {
