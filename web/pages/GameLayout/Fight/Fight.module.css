@@ -99,12 +99,41 @@
   box-shadow: -2px 2px 0 var(--color-red-hover);
   color: var(--color-on-gold);
   min-height: 4rem;
+  overflow: hidden;
   padding: var(--space-md) var(--space-sm);
+  position: relative;
   width: 100%;
+}
+
+.tapperButtonFill {
+  animation-iteration-count: infinite;
+  animation-name: tapperFill;
+  animation-timing-function: linear;
+  background-color: color-mix(in srgb, var(--color-red) 25%, transparent);
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: scaleY(0);
+  transform-origin: right;
+}
+
+.tapperButtonLabel {
+  position: relative;
+}
+
+@keyframes tapperFill {
+  0% { transform: scaleX(1); }
+  75% { transform: scaleX(0); }
+  90% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
 }
 
 .tapperButton:hover {
   background: linear-gradient(45deg, var(--color-white), var(--color-gold));
+  color: var(--color-red-hover);
 }
 
 .tapperButton:active {
