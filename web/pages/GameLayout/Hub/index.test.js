@@ -38,7 +38,7 @@ describe('Hub', () => {
     vi.clearAllMocks();
   });
 
-  it('renders fighter details section with name, age, and race', () => {
+  it('renders fighter details section with name, age, and race without stats', () => {
     render(<Hub />);
 
     expect(screen.queryByRole('heading', {name: 'Fighter Details:'})).not.toBeInTheDocument();
@@ -47,18 +47,17 @@ describe('Hub', () => {
     expect(screen.getByText('Race', {selector: 'dt'}).closest('div')).toBeInTheDocument();
     expect(within(screen.getByText('Race', {selector: 'dt'}).closest('div')).getByText('Tiger')).toBeInTheDocument();
     expect(screen.getByText('Age').closest('div')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: 'Stats:'})).not.toBeInTheDocument();
+    expect(screen.queryByText('Stanima', {selector: 'dt'})).not.toBeInTheDocument();
   });
 
-  it('renders stats in a readable list layout', () => {
+  it('renders hub layout without the stats section', () => {
     const {container} = render(<Hub />);
+    const detailFieldCount = 3;
 
     expect(container.querySelector('dl')).toBeInTheDocument();
-    expect(container.querySelectorAll('dl > div')).toHaveLength(20);
+    expect(container.querySelectorAll('dl > div')).toHaveLength(detailFieldCount);
     expect(container.querySelector('br')).not.toBeInTheDocument();
-    const staminaRow = screen.getByText('Stanima', {selector: 'dt'}).closest('div');
-
-    expect(staminaRow).toBeInTheDocument();
-    expect(within(staminaRow).getByText('21')).toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: 'Events:'})).not.toBeInTheDocument();
     expect(screen.getByRole('list')).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
@@ -106,13 +105,22 @@ describe('Hub', () => {
     expect(within(statsLeaderboard).queryByText('Reach')).not.toBeInTheDocument();
   });
 
-  it('shares stat-list base composition between details and stats classes', () => {
+  it('verifies fighter details compose from the shared stat-list base', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const modulePath = path.join(directoryPath, 'Hub.module.css');
     const source = fs.readFileSync(modulePath, 'utf8');
 
+    const detailsStatListPattern = new RegExp(
+      [
+        String.raw`\.details\s*{[^}]*`,
+        String.raw`composes:\s*statListBase\s*from\s*`,
+        String.raw`'..\/..\/..\/components\/primitive\/css-modules\/stat-list-base\.module\.css';`,
+      ].join(''),
+      's',
+    );
+
     expect(source).toMatch(
-      /\.details,\s*\.stats\s*{[^}]*composes:\s*statListBase\s*from\s*'..\/..\/..\/components\/primitive\/css-modules\/stat-list-base\.module\.css';/s,
+      detailsStatListPattern,
     );
   });
 });
