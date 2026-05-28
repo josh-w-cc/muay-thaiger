@@ -17,21 +17,6 @@ export async function processMessageCommand(models, message, socket) {
   }
 }
 
-async function applyCurrentTraining(models, playerID) {
-  if(!canSendPlayerState(models)) {
-    return;
-  }
-  const fighter = await models.fighters.findCurrentByPlayerID(playerID);
-  if(!fighter) {
-    return;
-  }
-  await applyTraining(models, fighter);
-}
-
-function canSendPlayerState({fighterActions, fighters}) {
-  return Boolean(fighterActions?.listByFighterID && fighters?.findCurrentByPlayerID);
-}
-
 async function handleAuth(models, message, socket) {
   const player = await authenticate(models, message);
   socket.player = player;
@@ -58,6 +43,17 @@ async function handleStop(models, message, socket) {
   await sendCurrentPlayerState(models, socket);
 }
 
+async function applyCurrentTraining(models, playerID) {
+  if(!canSendPlayerState(models)) {
+    return;
+  }
+  const fighter = await models.fighters.findCurrentByPlayerID(playerID);
+  if(!fighter) {
+    return;
+  }
+  await applyTraining(models, fighter);
+}
+
 async function sendCurrentPlayerState(models, socket) {
   if(!canSendPlayerState(models)) {
     return;
@@ -67,4 +63,8 @@ async function sendCurrentPlayerState(models, socket) {
     return;
   }
   sendPlayerState(state.actions, state.fighter, socket);
+}
+
+function canSendPlayerState({fighterActions, fighters}) {
+  return Boolean(fighterActions?.listByFighterID && fighters?.findCurrentByPlayerID);
 }
