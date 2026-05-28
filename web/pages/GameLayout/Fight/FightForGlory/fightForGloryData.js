@@ -1,0 +1,10 @@
+export const FIGHT_FOR_GLORY_FIGHTER_ATTACK = 75;
+export const FIGHT_FOR_GLORY_FIGHTER_DEFENSE = 60;
+export const FIGHT_FOR_GLORY_FIGHTER_HP = {current: 170, label: 'Tiger fighter health', max: 200};
+export const FIGHT_FOR_GLORY_FIGHTER_STAMINA = {current: 150, label: 'Tiger fighter stamina', max: 200};
+export const FIGHT_FOR_GLORY_LOADOUT = {moves: ['Jab', 'Roundhouse', 'Elbow', 'Knee'], strategy: 'Pressure Counter'};
+export const FIGHT_FOR_GLORY_OPPONENT_ATTACK = 65;
+export const FIGHT_FOR_GLORY_OPPONENT_DEFENSE = 80;
+export const FIGHT_FOR_GLORY_OPPONENT_HP = {current: 143, label: 'Snow leopard fighter health', max: 200};
+export const FIGHT_FOR_GLORY_OPPONENT_STAMINA = {current: 180, label: 'Snow leopard fighter stamina', max: 200};
+export const TAPPER_FILL_DURATIONS = [4, 2, 3, 2.5, 3.5];
