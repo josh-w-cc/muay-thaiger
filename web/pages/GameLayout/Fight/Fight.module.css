@@ -118,6 +118,7 @@
 
 .tapperButton:hover {
   background: linear-gradient(45deg, var(--color-white), var(--color-gold));
+  color: var(--color-red-hover);
 }
 
 .tapperButton:active {
