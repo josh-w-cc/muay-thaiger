@@ -6,7 +6,7 @@ import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_W
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';
 
-import FightForGlory from './FightForGlory.js';
+import FightForGlory from './FightForGlory/index.js';
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
 
 
