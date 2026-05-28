@@ -17,39 +17,24 @@ import css from '../Fight.module.css';
 
 
 export default function FightForGloryFighters() {
-  const [tigerFighterCard, snowLeopardFighterCard] = getFighterCards();
-
+  const tigerCard = {
+    alt: 'Tiger Muay Thai fighter', attack: FIGHT_FOR_GLORY_FIGHTER_ATTACK,
+    className: css.gloryFighterLeft, defense: FIGHT_FOR_GLORY_FIGHTER_DEFENSE,
+    hp: FIGHT_FOR_GLORY_FIGHTER_HP, src: TigerMuayThai, stamina: FIGHT_FOR_GLORY_FIGHTER_STAMINA,
+  };
+  const opponentCard = {
+    alt: 'Snow leopard Muay Thai fighter', attack: FIGHT_FOR_GLORY_OPPONENT_ATTACK,
+    className: css.gloryFighterRight, defense: FIGHT_FOR_GLORY_OPPONENT_DEFENSE,
+    hp: FIGHT_FOR_GLORY_OPPONENT_HP, mirror: true, src: SnowLeopardMuayThaiReady,
+    stamina: FIGHT_FOR_GLORY_OPPONENT_STAMINA,
+  };
   return (
     <div className={css.gloryFighters}>
-      <FightForGloryFighterCard {...tigerFighterCard} />
+      <FightForGloryFighterCard {...tigerCard} />
       <div aria-orientation="vertical" className={css.gloryFighterDivider} role="separator" />
-      <FightForGloryFighterCard {...snowLeopardFighterCard} />
+      <FightForGloryFighterCard {...opponentCard} />
     </div>
   );
-}
-
-function getFighterCards() {
-  return [
-    {
-      alt: 'Tiger Muay Thai fighter',
-      attack: FIGHT_FOR_GLORY_FIGHTER_ATTACK,
-      className: css.gloryFighterLeft,
-      defense: FIGHT_FOR_GLORY_FIGHTER_DEFENSE,
-      hp: FIGHT_FOR_GLORY_FIGHTER_HP,
-      src: TigerMuayThai,
-      stamina: FIGHT_FOR_GLORY_FIGHTER_STAMINA,
-    },
-    {
-      alt: 'Snow leopard Muay Thai fighter',
-      attack: FIGHT_FOR_GLORY_OPPONENT_ATTACK,
-      className: css.gloryFighterRight,
-      defense: FIGHT_FOR_GLORY_OPPONENT_DEFENSE,
-      hp: FIGHT_FOR_GLORY_OPPONENT_HP,
-      mirror: true,
-      src: SnowLeopardMuayThaiReady,
-      stamina: FIGHT_FOR_GLORY_OPPONENT_STAMINA,
-    },
-  ];
 }
 
 function FightForGloryFighterCard({alt, attack, className, defense, hp, mirror, src, stamina}) {
