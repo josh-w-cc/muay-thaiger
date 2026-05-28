@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import createCallTracker from '../test-utils/createCallTracker.js';
+import createCallTracker from '../utils/test/createCallTracker.js';
 import {applyOfflineTraining, getPlayerState, sendPlayerState} from './player-state.js';
 
 describe('applyOfflineTraining', () => {

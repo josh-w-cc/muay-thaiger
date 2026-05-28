@@ -3,7 +3,7 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 
-import createCallTracker from '../test-utils/createCallTracker.js';
+import createCallTracker from '../utils/test/createCallTracker.js';
 import {syncPlayerState} from '../logic/player-state.js';
 import websocketRoutes, {onConnect, onMessage} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
