@@ -8,8 +8,12 @@ import TigerMuayThai from './assets/TigerMuayThai.png';
 import {FIGHT_FOR_GLORY_FEED} from './FightForGloryFeedData.js';
 import css from './Fight.module.css';
 
+const FIGHT_FOR_GLORY_FIGHTER_ATTACK = 75;
+const FIGHT_FOR_GLORY_FIGHTER_DEFENSE = 60;
 const FIGHT_FOR_GLORY_FIGHTER_HP = {current: 170, max: 200};
 const FIGHT_FOR_GLORY_LOADOUT = {moves: ['Jab', 'Roundhouse', 'Elbow', 'Knee'], strategy: 'Pressure Counter'};
+const FIGHT_FOR_GLORY_OPPONENT_ATTACK = 65;
+const FIGHT_FOR_GLORY_OPPONENT_DEFENSE = 80;
 const FIGHT_FOR_GLORY_OPPONENT_HP = {current: 143, max: 200};
 
 function FightForGlory() {
@@ -51,12 +55,14 @@ function FightForGloryFeedItem({item}) {
 
 function FightForGloryFighters() {
   const tigerFighterCard = {
-    alt: 'Tiger Muay Thai fighter', className: css.gloryFighterLeft,
-    hp: FIGHT_FOR_GLORY_FIGHTER_HP, label: 'Tiger fighter health', src: TigerMuayThai,
+    alt: 'Tiger Muay Thai fighter', attack: FIGHT_FOR_GLORY_FIGHTER_ATTACK, className: css.gloryFighterLeft,
+    defense: FIGHT_FOR_GLORY_FIGHTER_DEFENSE, hp: FIGHT_FOR_GLORY_FIGHTER_HP,
+    label: 'Tiger fighter health', src: TigerMuayThai,
   };
   const snowLeopardFighterCard = {
-    alt: 'Snow leopard Muay Thai fighter', className: css.gloryFighterRight,
-    hp: FIGHT_FOR_GLORY_OPPONENT_HP, label: 'Snow leopard fighter health', mirror: true, src: SnowLeopardMuayThaiReady,
+    alt: 'Snow leopard Muay Thai fighter', attack: FIGHT_FOR_GLORY_OPPONENT_ATTACK, className: css.gloryFighterRight,
+    defense: FIGHT_FOR_GLORY_OPPONENT_DEFENSE, hp: FIGHT_FOR_GLORY_OPPONENT_HP,
+    label: 'Snow leopard fighter health', mirror: true, src: SnowLeopardMuayThaiReady,
   };
   return (
     <div className={css.gloryFighters}>
@@ -67,7 +73,7 @@ function FightForGloryFighters() {
   );
 }
 
-function FightForGloryFighterCard({alt, className, hp, label, mirror, src}) {
+function FightForGloryFighterCard({alt, attack, className, defense, hp, label, mirror, src}) {
   return (
     <div className={classnames(css.gloryFighter, className)}>
       <img
@@ -76,6 +82,10 @@ function FightForGloryFighterCard({alt, className, hp, label, mirror, src}) {
         src={src}
       />
       <FightForGloryHealthBar current={hp.current} label={label} max={hp.max} />
+      <div className={css.gloryFighterStats}>
+        <span>{`A: ${attack}`}</span>
+        <span>{`D: ${defense}`}</span>
+      </div>
     </div>
   );
 }
