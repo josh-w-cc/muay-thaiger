@@ -153,8 +153,8 @@
 }
 
 .gloryFighterStats {
-  display: flex;
   flex: 1;
+  display: flex;
   font-size: 0.75rem;
   gap: var(--space-sm);
   justify-content: center;
