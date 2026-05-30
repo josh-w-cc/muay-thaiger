@@ -60,25 +60,25 @@
 }
 
 .gloryHealthBar {
-  composes: statBarBase from '../../../../components/primitive/css-modules/stat-bar-base.module.css';
+  composes: statBarBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   box-shadow: inset 0 -3px 6px -3px var(--color-red-hover), inset 0 3px 6px -3px var(--color-red-hover);
 }
 
 .gloryHealthBarFill {
-  composes: statBarFillBase from '../../../../components/primitive/css-modules/stat-bar-base.module.css';
+  composes: statBarFillBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   background: linear-gradient(180deg, #ff7f7f 0%, var(--color-red) 25%, var(--color-red-hover) 75%, black 100%);
 }
 
 .gloryStaminaBar {
-  composes: statBarBase from '../../../../components/primitive/css-modules/stat-bar-base.module.css';
+  composes: statBarBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   box-shadow: inset 0 -3px 6px -3px var(--color-green-hover), inset 0 3px 6px -3px var(--color-green-hover);
 }
 
 .gloryStaminaBarFill {
-  composes: statBarFillBase from '../../../../components/primitive/css-modules/stat-bar-base.module.css';
+  composes: statBarFillBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   background: linear-gradient(180deg, #7fff7f 0%, var(--color-green) 25%, var(--color-green-hover) 75%, black 100%);
 }
