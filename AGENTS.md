@@ -60,20 +60,20 @@ The root `package.json` provides aggregate scripts. Subproject commands (e.g., `
 
 | Service      | Technology        | Host Port | Container Port | Notes                                 |
 |--------------|-------------------|-----------|----------------|---------------------------------------|
-| `postgres`   | PostgreSQL 18     | 5333      | 5432           | Data persisted in a named volume      |
-| `api`        | Fastify / Node.js | 3334      | 3000           | Waits for postgres healthcheck        |
-| `web`        | Vite / React 18   | 3333      | 5173           | Dev server; waits for api healthcheck |
+| `postgres`   | PostgreSQL 18     | 5777      | 5432           | Data persisted in `postgres-data` volume |
+| `api`        | Fastify / Node.js | 3778      | 3000           | Runs migrations/seeds on startup; waits for postgres healthcheck |
+| `web`        | Vite / React 18   | 3777      | 5173           | Dev server; waits for api healthcheck |
 | `playwright` | Playwright        | –         | –              | Profile: `playwright`; depends on web |
 
 - **Service connections:**
-  - `api → postgres`: `DATABASE_URL` env var uses Docker's internal DNS (`postgres:5432`). Default DB is `tiger`.
-  - `web → api`: Vite dev server proxies `/api` requests and `/ws` websocket connections to `http://api:3000` (via `VITE_API_URL`).
+  - `api → postgres`: `DATABASE_URL` uses Docker's internal DNS (`postgres:5432`). Default DB is `tiger`.
+  - `web → api`: `VITE_API_URL` is `http://api:3000` in Docker.
   - `playwright → web`: Playwright uses `BASE_URL` (`http://web:5173`) to reach the frontend.
 - **Environment variables:**
   - `DATABASE_URL` — Postgres connection string (knexfile default: `localhost:5333`)
   - `VITE_API_URL` — API base URL for Vite dev proxy (default: `http://localhost:3334`)
   - `NODE_ENV` — when not `production`, the `/api/test/reseed` endpoint is registered
-- **`.env.example`** — Copy to `.env` for local dev. Note: its `DATABASE_URL` uses `postgres:5432` (Docker internal); the knexfile default uses `localhost:5333` (host-mapped port).
+- **`.env.example`** — Copy to `.env` for local dev. Note: its `DATABASE_URL` uses `postgres:5432` (Docker internal); the knexfile default uses `localhost:5333`, while Docker publish maps Postgres to `localhost:5777`.
 - **SPA serving:** In production, Fastify serves the Vite build via `plugins/serve-spa.js` with a catch-all for client-side routing.
 
 ## Style conventions
