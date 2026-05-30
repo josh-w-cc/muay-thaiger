@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {down, up} from './20260523120001_create_fighter_moves.js';
+import {down, up} from '../migrations/20260523120001_create_fighter_moves.js';
 
 
 describe('20260523120001_create_fighter_moves migration', () => {
