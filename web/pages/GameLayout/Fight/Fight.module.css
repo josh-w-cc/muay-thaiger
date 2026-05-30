@@ -148,6 +148,14 @@
   margin-top: var(--space-sm);
 }
 
+.gloryFighterStats {
+  display: flex;
+  font-size: 0.75rem;
+  gap: var(--space-sm);
+  justify-content: center;
+  padding: var(--space-xs) 0;
+}
+
 .glorySection {
   overflow: hidden;
 }
