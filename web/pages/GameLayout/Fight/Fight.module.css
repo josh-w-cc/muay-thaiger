@@ -60,33 +60,27 @@
 }
 
 .gloryHealthBar {
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
+  composes: statBarBase from '../../../../components/primitive/css-modules/stat-bar-base.module.css';
+
   box-shadow: inset 0 -3px 6px -3px var(--color-red-hover), inset 0 3px 6px -3px var(--color-red-hover);
-  height: 8px;
-  overflow: hidden;
 }
 
 .gloryHealthBarFill {
-  border-right: 1px solid black;
-  border-top-right-radius: var(--space-xl);
+  composes: statBarFillBase from '../../../../components/primitive/css-modules/stat-bar-base.module.css';
+
   background: linear-gradient(180deg, #ff7f7f 0%, var(--color-red) 25%, var(--color-red-hover) 75%, black 100%);
-  height: 100%;
 }
 
 .gloryStaminaBar {
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
+  composes: statBarBase from '../../../../components/primitive/css-modules/stat-bar-base.module.css';
+
   box-shadow: inset 0 -3px 6px -3px var(--color-gold-hover), inset 0 3px 6px -3px var(--color-gold-hover);
-  height: 8px;
-  overflow: hidden;
 }
 
 .gloryStaminaBarFill {
-  border-right: 1px solid black;
-  border-top-right-radius: var(--space-xl);
+  composes: statBarFillBase from '../../../../components/primitive/css-modules/stat-bar-base.module.css';
+
   background: linear-gradient(180deg, #ffd97f 0%, var(--color-gold) 25%, var(--color-gold-hover) 75%, black 100%);
-  height: 100%;
 }
 
 .gloryLoadout {
@@ -146,6 +140,14 @@
   flex-direction: column;
   gap: var(--space-sm);
   margin-top: var(--space-sm);
+}
+
+.gloryFighterStats {
+  display: flex;
+  font-size: 0.75rem;
+  gap: var(--space-sm);
+  justify-content: center;
+  padding: var(--space-xs) 0;
 }
 
 .glorySection {

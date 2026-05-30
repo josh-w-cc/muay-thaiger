@@ -35,27 +35,6 @@ export async function unregisterFighterAction({fighterActions, fighters}, messag
   return {action_id: normalizedMessage.action_id};
 }
 
-async function transferLatestTouchedAt(fighterActions, removedActions, remainingActions) {
-  const transfer = findTouchedAtTransfer(removedActions, remainingActions);
-  if(!transfer) {
-    return;
-  }
-  await fighterActions.touch(transfer.targetAction.id, transfer.touchedAt);
-}
-
-function isValidAction(fighter, actionID) {
-  const skill = SKILLS_BY_ACTION_ID[actionID];
-  if(!skill) {
-    return false;
-  }
-  return skill.requires(parseBigIntStats(fighter.stats || {}));
-}
-
-function getNextTouchedAt(actions) {
-  const maxMs = getMaxTouchedAtMs(actions);
-  return maxMs !== null ? new Date(maxMs + 1) : null;
-}
-
 function normalizeMessage(message, errorCode) {
   if(!message) {
     throw createCommandError(errorCode);
@@ -67,4 +46,25 @@ function normalizeMessage(message, errorCode) {
   return {
     action_id: actionID,
   };
+}
+
+function getNextTouchedAt(actions) {
+  const maxMs = getMaxTouchedAtMs(actions);
+  return maxMs !== null ? new Date(maxMs + 1) : null;
+}
+
+function isValidAction(fighter, actionID) {
+  const skill = SKILLS_BY_ACTION_ID[actionID];
+  if(!skill) {
+    return false;
+  }
+  return skill.requires(parseBigIntStats(fighter.stats || {}));
+}
+
+async function transferLatestTouchedAt(fighterActions, removedActions, remainingActions) {
+  const transfer = findTouchedAtTransfer(removedActions, remainingActions);
+  if(!transfer) {
+    return;
+  }
+  await fighterActions.touch(transfer.targetAction.id, transfer.touchedAt);
 }
