@@ -8,6 +8,7 @@ on:
       - 'docker-compose.yml'
       - 'api/Dockerfile'
       - 'playwright/Dockerfile'
+      - 'shared/**'
       - 'web/Dockerfile'
   pull_request:
     paths:
@@ -17,6 +18,8 @@ on:
       - 'docker-compose.yml'
       - 'playwright/**'
       - '!playwright/AGENTS.md'
+      - 'shared/**'
+      - '!shared/AGENTS.md'
       - 'web/**'
       - '!web/AGENTS.md'
 
