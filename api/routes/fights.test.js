@@ -98,7 +98,7 @@ describe('POST /fights', () => {
 
 describe('PATCH /fights/:id', () => {
   it('updates fight victor and returns updated fight', async () => {
-    const updatedFight = {...sampleFight, victor: 1};
+    const updatedFight = {...sampleFight, victor: true};
     const {knex} = mockKnexMulti([sampleFight, [updatedFight]]);
     const app = Fastify();
     app.decorate('db', knex);
@@ -106,7 +106,7 @@ describe('PATCH /fights/:id', () => {
 
     const response = await app.inject({
       method: 'PATCH',
-      payload: {victor: 1},
+      payload: {victor: true},
       url: '/fights/1',
     });
 

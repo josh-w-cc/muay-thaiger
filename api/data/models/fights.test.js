@@ -46,14 +46,14 @@ describe('fights.create', () => {
 
 describe('fights.update', () => {
   it('updates a fight by id and returns the updated row', async () => {
-    const {calls, knex} = mockKnex({id: 1, attacker: 1, defender: 2, victor: 1, details: {}});
+    const {calls, knex} = mockKnex({id: 1, attacker: 1, defender: 2, victor: true, details: {}});
     const fights = fightsModel(knex);
 
-    await fights.update(1, {victor: 1});
+    await fights.update(1, {victor: true});
 
     assert.deepEqual(calls[0], ['table', 'fights']);
     assert.deepEqual(calls[1], ['where', {id: 1}]);
-    assert.deepEqual(calls[2], ['update', {victor: 1}]);
+    assert.deepEqual(calls[2], ['update', {victor: true}]);
     assert.deepEqual(calls[3], ['returning', '*']);
   });
 });
