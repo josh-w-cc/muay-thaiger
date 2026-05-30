@@ -48,11 +48,20 @@ function FightForGloryFighterCard({alt, attack, className, defense, hp, mirror, 
       />
       <FightForGloryHealthBar current={hp.current} label={hp.label} max={hp.max} />
       <div className={css.gloryFighterStats}>
-        <span>{`A: ${BigInt(attack).toFormattedNumber()}`}</span>
-        <span>{`D: ${BigInt(defense).toFormattedNumber()}`}</span>
+        <span>{`A: ${formatFightStat(attack)}`}</span>
+        <span>{`D: ${formatFightStat(defense)}`}</span>
       </div>
     </div>
   );
+}
+
+function formatFightStat(value) {
+  try {
+    return BigInt(value).toFormattedNumber();
+  }
+  catch {
+    return String(value);
+  }
 }
 
 function FightForGloryHealthBar({current, label, max}) {
