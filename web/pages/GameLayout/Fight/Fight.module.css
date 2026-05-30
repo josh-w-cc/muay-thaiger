@@ -39,6 +39,7 @@
 .gloryFighterDivider {
   background: linear-gradient(180deg, black 0 20%, var(--color-gold) 50%, black 80% 100%);
   border: 1px solid black;
+  height: calc(100% - var(--glory-fighter-stats-height));
   width: var(--space-sm);
 }
 
@@ -52,6 +53,8 @@
 }
 
 .gloryFighters {
+  --glory-fighter-stats-height: calc((0.75rem * 1.2) + (2 * var(--space-xs)));
+
   align-items: stretch;
   display: flex;
   margin-left: calc(-1 * var(--space-md));
@@ -147,6 +150,7 @@
   font-size: 0.75rem;
   gap: var(--space-sm);
   justify-content: center;
+  line-height: 1.2;
   padding: var(--space-xs) 0;
 }
 
