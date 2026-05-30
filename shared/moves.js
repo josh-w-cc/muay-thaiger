@@ -1,3 +1,5 @@
+import {createSeedEntries} from './seedData.js';
+
 export const MOVE_IDS = Object.freeze({
   wildPunch: 1,
   wildKick: 2,
@@ -20,9 +22,4 @@ export const MOVE_DEFINITIONS = Object.freeze({
   },
 });
 
-export const MOVE_SEED_MOVES = Object.freeze(
-  Object.entries(MOVE_DEFINITIONS).map(([key, move]) => ({
-    id: MOVE_IDS[key],
-    name: move.name,
-  })),
-);
+export const MOVE_SEED_MOVES = createSeedEntries(MOVE_DEFINITIONS, MOVE_IDS);
