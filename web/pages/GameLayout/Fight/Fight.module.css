@@ -158,6 +158,7 @@
   font-size: 0.75rem;
   gap: var(--space-sm);
   justify-content: center;
+  line-height: 1.2;
   padding: var(--space-xs) 0;
 }
 
