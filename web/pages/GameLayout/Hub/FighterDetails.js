@@ -1,4 +1,5 @@
 import BaseStats from '@/data/baseStats.js';
+import StatList from '@/components/primitive/StatList.js';
 import useFighterStore from '@/data/fighter.js';
 
 import css from './Hub.module.css';
@@ -14,14 +15,14 @@ export default function FighterDetails() {
   ];
 
   return (
-    <dl className={css.details}>
+    <StatList as="dl">
       {fields.map(({label, value}) => (
         <div className={css.stat} key={label}>
           <dt className={css.label}>{label}</dt>
           <dd className={css.value}>{value}</dd>
         </div>
       ))}
-    </dl>
+    </StatList>
   );
 }
 

@@ -2,6 +2,7 @@ import cx from 'classnames';
 import {SKILL_IDS} from 'shared/skills.js';
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';
+import StatList from '@/components/primitive/StatList.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 
@@ -25,7 +26,7 @@ export default function Train() {
   return (
     <>
       <Section>
-        <div className={css.stats}>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</div>
+        <StatList>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</StatList>
       </Section>
       <Section>
         <RegimenRows fighter={fighter} />

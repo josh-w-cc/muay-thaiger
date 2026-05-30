@@ -1,7 +1,5 @@
 import {render, screen, within} from '@testing-library/react';
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import statListBaseCSS from '@/components/primitive/css-modules/stat-list-base.module.css';
 
 import Hub from './index.js';
 
@@ -105,22 +103,9 @@ describe('Hub', () => {
     expect(within(statsLeaderboard).queryByText('Reach')).not.toBeInTheDocument();
   });
 
-  it('verifies fighter details compose from the shared stat-list base', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'Hub.module.css');
-    const source = fs.readFileSync(modulePath, 'utf8');
+  it('renders fighter details with shared stat-list styling', () => {
+    const {container} = render(<Hub />);
 
-    const detailsStatListPattern = new RegExp(
-      [
-        String.raw`\.details\s*{[^}]*`,
-        String.raw`composes:\s*statListBase\s*from\s*`,
-        String.raw`'..\/..\/..\/components\/primitive\/css-modules\/stat-list-base\.module\.css';`,
-      ].join(''),
-      's',
-    );
-
-    expect(source).toMatch(
-      detailsStatListPattern,
-    );
+    expect(container.querySelector('dl')).toHaveClass(statListBaseCSS.statListBase);
   });
 });
