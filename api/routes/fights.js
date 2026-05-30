@@ -25,8 +25,8 @@ function handleGetFight(fights) {
 
 function handlePostFight(fights) {
   return async (req, reply) => {
-    const {attacker, defender = null, details = {}} = req.body;
-    const fight = await fights.create({attacker, defender, details});
+    const {attacker, defender = null, reason, details = {}} = req.body;
+    const fight = await fights.create({attacker, defender, reason, details});
     return reply.code(201).send(fight);
   };
 }
