@@ -104,8 +104,9 @@ describe('Hub', () => {
   });
 
   it('renders fighter details with shared stat-list styling', () => {
-    const {container} = render(<Hub />);
+    render(<Hub />);
+    const detailsList = screen.getByText('Name', {selector: 'dt'}).closest('dl');
 
-    expect(container.querySelector('dl')).toHaveClass(statListBaseCSS.statListBase);
+    expect(detailsList).toHaveClass(statListBaseCSS.statListBase);
   });
 });
