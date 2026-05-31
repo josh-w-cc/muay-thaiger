@@ -8,6 +8,8 @@ export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
     case 'auth':
       return handleAuth(models, message, socket);
+    case 'fight':
+      return handleFight(models, socket);
     case 'idle':
       return handleIdle(models, message, socket);
     case 'stop':
@@ -22,6 +24,23 @@ async function handleAuth(models, message, socket) {
   socket.player = player;
   socket.send(JSON.stringify({cmd: 'auth', display_name: player.display_name, player_id: player.id, token: player.token}));
   await sendCurrentPlayerState(models, socket);
+}
+
+async function handleFight(models, socket) {
+  if(!socket.player) {
+    throw createCommandError('invalid-fight-message');
+  }
+  const fighter = await models.fighters.findCurrentByPlayerID(socket.player.id);
+  if(!fighter) {
+    throw createCommandError('invalid-fight-message');
+  }
+  const fight = await models.fights.create({
+    attacker: fighter.id,
+    defender: null,
+    details: {},
+    reason: 'gold',
+  });
+  socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }
 
 async function handleIdle(models, message, socket) {

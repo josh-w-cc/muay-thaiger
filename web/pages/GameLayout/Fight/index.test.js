@@ -8,12 +8,12 @@ import css from './Fight.module.css';
 import Fight from './index.js';
 
 
-const {fighter, fightState, forGold, attack, finish, needsZerothFight} = vi.hoisted(() => ({
+const {fighter, fightState, createFightCmd, attack, finish, needsZerothFight} = vi.hoisted(() => ({
   attack: vi.fn(),
+  createFightCmd: vi.fn(),
   fighter: {gold: 500, id: 1, stamina: 1, strength: 1},
   fightState: {},
   finish: vi.fn(),
-  forGold: vi.fn(),
   needsZerothFight: vi.fn(),
 }));
 
@@ -27,6 +27,10 @@ vi.mock('@/data/fight.js', () => ({
   FIGHT_NOT_STARTED: 'not-started',
   FIGHT_WON: 'won',
   default: () => fightState,
+}));
+
+vi.mock('@/actions/websockets/clientCommands.js', () => ({
+  createFightCmd,
 }));
 
 vi.mock('./ZerothFight.js', () => ({
@@ -47,7 +51,6 @@ describe('Fight', () => {
         {currentHealth: '100', stats: {}},
       ],
       finish,
-      forGold,
       messages: [],
       state: 'not-started',
     });
@@ -113,15 +116,13 @@ describe('Fight', () => {
     expect(feedItems[0]).toHaveClass(css.fightFeedItem);
   });
 
-  it('starts a fight for selected risk', async () => {
+  it('sends a fight command when clicking Fight', async () => {
     const user = userEvent.setup();
     render(<Fight />);
 
-    await user.selectOptions(screen.getByRole('combobox'), '4');
     await user.click(screen.getByRole('button', {name: 'Fight!'}));
 
-    expect(forGold).toHaveBeenCalledTimes(1);
-    expect(forGold).toHaveBeenCalledWith(fighter, '4');
+    expect(createFightCmd).toHaveBeenCalledTimes(1);
   });
 
   it('shows in-progress stats and attack message', async () => {
