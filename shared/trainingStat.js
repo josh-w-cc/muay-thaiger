@@ -6,16 +6,7 @@ const TRAINING_MULTIPLIER_BY_STAT = Object.freeze({
   strength: 'vigor',
 });
 
-export function getTrainedStatValue(stats, stat, amount = 1) {
-  const trainingMultiplier = getTrainingMultiplier(stats, stat);
-  if(trainingMultiplier === null) {
-    return null;
-  }
-
-  return BigInt(stats[stat] ?? 0) + trainingMultiplier * BigInt(amount);
-}
-
-export function getTrainingEffect({anima = 0, speed = 0, vigor = 0, vitality = 0}) {
+export function getTrainingEffect({anima = 0n, speed = 0n, vigor = 0n, vitality = 0n}) {
   return {
     agility: speed,
     constitution: vitality,
@@ -25,20 +16,16 @@ export function getTrainingEffect({anima = 0, speed = 0, vigor = 0, vitality = 0
   };
 }
 
-export default function trainStat(stats, stat, amount = 1) {
-  const trainedStatValue = getTrainedStatValue(stats, stat, amount);
-  if(trainedStatValue === null) {
-    return null;
-  }
-
-  stats[stat] = trainedStatValue;
-  return trainedStatValue;
+export default function trainStat(stats, stat, amount = 1n) {
+  const trainingMultiplier = getTrainingMultiplier(stats, stat);
+  stats[stat] = stats[stat] + trainingMultiplier * BigInt(amount);
+  return stats[stat];
 }
 
 function getTrainingMultiplier(stats, stat) {
   const multiplierStat = TRAINING_MULTIPLIER_BY_STAT[stat];
   if(!multiplierStat) {
-    return null;
+    return 1n;
   }
-  return BigInt(stats[multiplierStat] ?? 0);
+  return stats[multiplierStat];
 }
