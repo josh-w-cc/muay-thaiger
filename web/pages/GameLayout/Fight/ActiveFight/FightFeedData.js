@@ -1,4 +1,4 @@
-export const FIGHT_FOR_GLORY_FEED = [
+export const FIGHT_FEED = [
   {attacker: 'Tiger', isSelf: true, move: 'Jab', result: 'Lands for 18 damage!'},
   {attacker: 'Snow Leopard', isSelf: false, move: 'Roundhouse', result: 'Misses clean.'},
   {attacker: 'Tiger', isSelf: true, move: 'Elbow', result: 'Lands for 24 damage!'},
