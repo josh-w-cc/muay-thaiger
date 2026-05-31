@@ -69,8 +69,8 @@ function FightForGloryFighterCard({alt, className, hp, mirror, src, stamina}) {
 function FightForGloryFighterStats({attack, defense}) {
   return (
     <div className={css.gloryFighterStats}>
-      <span>{`A: ${attack}`}</span>
-      <span>{`D: ${defense}`}</span>
+      <span>{`A: ${attack.toFormattedNumber()}`}</span>
+      <span>{`D: ${defense.toFormattedNumber()}`}</span>
     </div>
   );
 }
