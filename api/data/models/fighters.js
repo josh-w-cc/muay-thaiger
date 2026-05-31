@@ -5,7 +5,7 @@ import {
   generateRemoveFn,
   generateUpdateFn,
 } from '../utils/crud.js';
-import {parseBigIntStats} from 'shared/stats.js';
+import {castStats, castStatsRows} from '../utils/stats.js';
 
 
 export default function fighters(db) {
@@ -30,24 +30,5 @@ function generateFindCurrentByPlayerIDFn(db) {
       .first();
 
     return castStats(fighter);
-  };
-}
-
-function castStatsRows(rows) {
-  if(Array.isArray(rows)) {
-    return rows.map(castStats);
-  }
-
-  return castStats(rows);
-}
-
-function castStats(row) {
-  if(!row?.stats) {
-    return row ?? null;
-  }
-
-  return {
-    ...row,
-    stats: parseBigIntStats(row.stats),
   };
 }
