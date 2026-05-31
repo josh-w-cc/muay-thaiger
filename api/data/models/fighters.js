@@ -43,7 +43,7 @@ function serializeFighterStats(data) {
   return {
     ...data,
     stats: Object.fromEntries(
-      Object.entries(data.stats).map(([key, value]) => [key, typeof value === 'bigint' ? value.toString() : value]),
+      Object.entries(data.stats).map(([key, value]) => [key, value.toString()]),
     ),
   };
 }
