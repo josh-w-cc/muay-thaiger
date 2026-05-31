@@ -38,13 +38,14 @@ async function handleFight(models, socket) {
     throw createCommandError('invalid-fight-message');
   }
   const reason = 'gold';
+  const details = {
+    starting_stats: captureStartingStats(fighter),
+    ...(reason === 'gold' ? {bot: generateGoldBotStats(fighter.stats)} : {}),
+  };
   const fight = await models.fights.create({
     attacker: fighter.id,
     defender: null,
-    details: {
-      bot: generateGoldBotStats(fighter.stats),
-      starting_stats: captureStartingStats(fighter),
-    },
+    details,
     reason,
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
