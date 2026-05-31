@@ -361,7 +361,7 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-fight-message'});
   });
 
-  it('creates a fight and responds to fight commands for authenticated sockets', async () => {
+  it('creates a fight and responds to fight command for authenticated socket', async () => {
     const send = createCallTracker();
     const createFight = createCallTracker();
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
@@ -369,8 +369,8 @@ describe('WebSocket /ws/connect', () => {
     const createdFight = {attacker: 9, defender: null, details: {}, id: 4, reason: 'gold'};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {
-      create: async (...args) => {
-        createFight(...args);
+      create: async (fightData) => {
+        createFight(fightData);
         return createdFight;
       },
     };
