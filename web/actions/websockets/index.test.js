@@ -94,7 +94,12 @@ describe('player websocket helpers', () => {
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
-  it('clears invalid token and retries auth with a new token', () => {
+  it('clears invalid token and redirects to / with hard reload', () => {
+    Object.defineProperty(globalThis.window, 'location', {
+      configurable: true,
+      value: {href: 'http://localhost/'},
+      writable: true,
+    });
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'existing-token');
     setPlayerToken('existing-token');
     usePlayerStore.getState().selectFighter('1');
@@ -105,7 +110,7 @@ describe('player websocket helpers', () => {
     socket.onmessage({data: JSON.stringify({cmd: 'auth-invalid-token'})});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
-    expect(send).toHaveBeenCalledWith(JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
+    expect(globalThis.window.location.href).toBe('/');
   });
 
   it('stores auth token and routes to hub when fighter is selected', () => {
