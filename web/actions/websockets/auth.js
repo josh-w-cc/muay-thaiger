@@ -21,10 +21,9 @@ export function onAuth({message, socket}) {
   respondToAuth(socket);
 }
 
-export function onAuthInvalidToken(socket) {
+export function onAuthInvalidToken() {
   clearPlayerToken();
-  hasRespondedToAuth = false;
-  respondToAuth(socket);
+  window.location.href = '/';
 }
 
 export function resetAuthState() {

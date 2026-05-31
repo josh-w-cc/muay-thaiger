@@ -45,7 +45,7 @@ function generateSelectFn(set) {
 }
 
 function generateSpendFn(set) {
-  return (gold) => set((state) => mergeState(state, {gold: state.gold - BigInt(gold)}));
+  return (gold) => set((state) => mergeState(state, {gold: state.gold - gold}));
 }
 
 function generateTickFn({get, set}) {
@@ -62,7 +62,7 @@ function generateTickFn({get, set}) {
 }
 
 function generateTrainFn({get, set}) {
-  return (stat, amount = 1) => {
+  return (stat, amount = 1n) => {
     const nextStats = {...get()};
     const trainedStatValue = trainStat(nextStats, stat, amount);
     if(trainedStatValue === null) {
@@ -75,7 +75,7 @@ function generateTrainFn({get, set}) {
 }
 
 function generateWinFn(set) {
-  return (gold) => set((state) => mergeState(state, {gold: state.gold + BigInt(gold)}));
+  return (gold) => set((state) => mergeState(state, {gold: state.gold + gold}));
 }
 
 TickerState.addListener((delta) => useFighterStore.getState().tick(delta));

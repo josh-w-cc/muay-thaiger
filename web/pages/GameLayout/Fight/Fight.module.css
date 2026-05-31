@@ -59,22 +59,20 @@
   align-items: flex-end;
 }
 
-.fightFighters {
-  align-items: stretch;
-  display: flex;
-  margin-left: calc(-1 * var(--space-md));
-  margin-right: calc(-1 * var(--space-md));
-  margin-top: var(--space-sm);
-}
-
 .fightFighterStatsDividerSpacer {
   width: var(--space-sm);
 }
 
+.fightFighters,
 .fightFighterStatsRow {
   display: flex;
   margin-left: calc(-1 * var(--space-md));
   margin-right: calc(-1 * var(--space-md));
+}
+
+.fightFighters {
+  align-items: stretch;
+  margin-top: var(--space-sm);
 }
 
 .fightHealthBar {
