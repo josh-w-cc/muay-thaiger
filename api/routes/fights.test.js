@@ -12,6 +12,7 @@ const sampleFight = {
   defender: 2,
   details: {},
   id: 1,
+  rank: null,
   reason: 'gold',
   updated_at: '2026-01-01T00:00:00.000Z',
   victory: null,
@@ -79,7 +80,7 @@ describe('POST /fights', () => {
   });
 
   it('creates a fight with no defender (robot)', async () => {
-    const fightNoDefender = {...sampleFight, defender: null};
+    const fightNoDefender = {...sampleFight, defender: null, reason: 'rank'};
     const {knex} = mockKnex([fightNoDefender]);
     const app = Fastify();
     app.decorate('db', knex);
@@ -93,6 +94,24 @@ describe('POST /fights', () => {
 
     assert.equal(response.statusCode, 201);
     assert.deepEqual(response.json(), fightNoDefender);
+    await app.close();
+  });
+
+  it('creates a fight with rank when provided', async () => {
+    const rankedFight = {...sampleFight, rank: 'bronze'};
+    const {knex} = mockKnex([rankedFight]);
+    const app = Fastify();
+    app.decorate('db', knex);
+    await app.register(fightsRoutes);
+
+    const response = await app.inject({
+      method: 'POST',
+      payload: {attacker: 1, defender: 2, reason: 'rank', details: {}, rank: 'bronze'},
+      url: '/fights',
+    });
+
+    assert.equal(response.statusCode, 201);
+    assert.deepEqual(response.json(), rankedFight);
     await app.close();
   });
 });
