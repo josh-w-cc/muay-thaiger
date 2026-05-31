@@ -32,6 +32,13 @@ export async function getPlayerState({fighterActions, fights, fighters}, playerI
   return state;
 }
 
+async function getActiveFight(fights, fighterID) {
+  if(!fights || !fighterID) {
+    return null;
+  }
+  return fights.findActiveByFighterID(fighterID);
+}
+
 export function sendPlayerState(actions, fighter, socket, fight = null) {
   const payload = {actions, cmd: 'player_state', fighter};
   if(fight) {
@@ -76,11 +83,4 @@ function shouldSyncOfflineFighter(fighter) {
     return false;
   }
   return !fighter.retired;
-}
-
-async function getActiveFight(fights, fighterID) {
-  if(!fighterID || !fights?.findActiveByFighterID) {
-    return null;
-  }
-  return fights.findActiveByFighterID(fighterID);
 }

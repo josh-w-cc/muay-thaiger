@@ -11,7 +11,7 @@ export default function fights(db) {
   return {
     create: generateCreateFn(db, 'fights'),
     find: generateFindFn(db, 'fights'),
-    findActiveByFighterID: async (fighterID) => findActiveFightByFighterID(db, fighterID),
+    findActiveByFighterID: (fighterID) => findActiveFightByFighterID(db, fighterID),
     list: generateListFn(db, 'fights', 'created_at'),
     remove: generateRemoveFn(db, 'fights'),
     update: generateUpdateFn(db, 'fights'),
