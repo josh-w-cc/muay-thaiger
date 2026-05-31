@@ -6,6 +6,7 @@ import selectFighter from '@/actions/selectFighter.js';
 import {connectSocketOnAppLoad, resetSocketState} from '@/actions/websockets/index.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '@/actions/websockets/token.js';
 import {resetPlayerStore} from '@/data/player.js';
+import useRacesStore, {resetRacesStore} from '@/data/races.js';
 import Fight from '../GameLayout/Fight';
 import Hub from '../GameLayout/Hub';
 import Shop from '../GameLayout/Shop';
@@ -105,6 +106,7 @@ describe('Game', () => {
     }
     resetSocketState();
     resetPlayerStore();
+    resetRacesStore();
     setLocalStorage(originalLocalStorage);
     globalThis.WebSocket = originalWebSocket;
     try {
@@ -130,12 +132,15 @@ describe('Game', () => {
   });
 
   it('loader fetches races for fighter select', async () => {
-    const races = [{id: 1, name: 'Tiger', stats: {}}];
+    const races = [{id: 1, name: 'Tiger', stats: {speed: '4'}}];
     fetchJSONMock.mockResolvedValue(races);
     const {fighterSelectLoader} = await import('./index.js');
 
     expect(await fighterSelectLoader()).toEqual(races);
     expect(fetchJSONMock).toHaveBeenCalledWith('race');
+    expect(useRacesStore.getState().races).toEqual([
+      {id: 1, name: 'Tiger', stats: {speed: 4n}},
+    ]);
   });
 
   it('loader redirects to fighter select for token-protected screens when token is missing', async () => {
@@ -155,6 +160,7 @@ describe('Game', () => {
   });
 
   it('loader returns an empty list when races request fails', async () => {
+    useRacesStore.getState().setRaces([{id: 99, name: 'Old', stats: {speed: 4}}]);
     const {fighterSelectLoader} = await import('./index.js');
     const error = new Error('network failure');
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -163,6 +169,7 @@ describe('Game', () => {
     expect(await fighterSelectLoader()).toEqual([]);
     expect(fetchJSONMock).toHaveBeenCalledWith('race');
     expect(consoleError).toHaveBeenCalledWith('Failed to load races', error);
+    expect(useRacesStore.getState().races).toEqual([]);
     consoleError.mockRestore();
   });
 
