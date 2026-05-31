@@ -33,7 +33,7 @@ export async function getPlayerState({fighterActions, fights, fighters}, playerI
 }
 
 async function getActiveFight(fights, fighterID) {
-  if(!fights || !fighterID) {
+  if(!fighterID) {
     return null;
   }
   return fights.findActiveByFighterID(fighterID);

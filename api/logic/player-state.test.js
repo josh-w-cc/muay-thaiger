@@ -44,12 +44,13 @@ describe('getPlayerState', () => {
       listByFighterID: async () => actions,
       touch: async () => null,
     };
+    const fights = {findActiveByFighterID: async () => null};
     const fighters = {
       findCurrentByPlayerID: async () => fighter,
       update: async () => updatedFighter,
     };
 
-    const result = await getPlayerState({fighterActions, fighters}, 5);
+    const result = await getPlayerState({fighterActions, fights, fighters}, 5);
 
     assert.equal(result.fighter, updatedFighter);
     assert.deepEqual(result.actions, actions);
@@ -58,9 +59,10 @@ describe('getPlayerState', () => {
   it('returns actions and original fighter when no actions are present', async () => {
     const fighter = {id: 9, player: 5, retired: false, stats: {}};
     const fighterActions = {listByFighterID: async () => []};
+    const fights = {findActiveByFighterID: async () => null};
     const fighters = {findCurrentByPlayerID: async () => fighter};
 
-    const result = await getPlayerState({fighterActions, fighters}, 5);
+    const result = await getPlayerState({fighterActions, fights, fighters}, 5);
 
     assert.deepEqual(result, {actions: [], fighter});
   });
