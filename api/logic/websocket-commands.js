@@ -3,9 +3,8 @@ import {createCommandError} from './command-errors.js';
 import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
-
 const FIGHT_REASONS = ['gold', 'rank'];
-const FIGHTER_STAT_KEYS = ['anima', 'constitution', 'durability', 'reach', 'skill', 'speed', 'stamina', 'vigor', 'vitality'];
+import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
 
 export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
@@ -93,7 +92,7 @@ async function sendCurrentPlayerState(models, socket) {
   if(!state) {
     return;
   }
-  sendPlayerState(state.actions, state.fighter, socket);
+  sendPlayerState(state.actions, state.fighter, socket, state.fight);
 }
 
 function canSendPlayerState({fighterActions, fighters}) {
