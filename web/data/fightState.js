@@ -57,8 +57,8 @@ export function generateStartFn({get, set}) {
   return (left, right) => {
     set({
       fighters: [
-        {currentAPM: 0, currentHealth: left.health, currentStamina: left.stamina, stats: left},
-        {currentAPM: 0, currentHealth: right.health, currentStamina: right.stamina, stats: right},
+        {currentAPM: 0, currentHealth: Number(left.health), currentStamina: Number(left.stamina), stats: left},
+        {currentAPM: 0, currentHealth: Number(right.health), currentStamina: Number(right.stamina), stats: right},
       ],
       state: FIGHT_IN_PROGRESS,
     });
@@ -75,8 +75,8 @@ export function generateTickFn({get, set}) {
     }
 
     const nextFighters = fighters.map((fighter) => ({...fighter}));
-    nextFighters[0].currentAPM += nextFighters[0].stats.apm / 60000 * amount;
-    nextFighters[1].currentAPM += nextFighters[1].stats.apm / 60000 * amount;
+    nextFighters[0].currentAPM += Number(nextFighters[0].stats.apm) / 60000 * amount;
+    nextFighters[1].currentAPM += Number(nextFighters[1].stats.apm) / 60000 * amount;
     const nextMessages = [...messages];
     const nextState = runFightCycles({fighters: nextFighters, messages: nextMessages, state: get().state});
     set({fighters: nextFighters, messages: nextMessages, state: nextState});
@@ -102,10 +102,10 @@ function runFightCycles({fighters, messages, state}) {
 
 function attackFighter({fighters, state, who}) {
   const [you, them] = who ? [fighters[1], fighters[0]] : [fighters[0], fighters[1]];
-  if(you.stats.attack * Math.random() <= them.stats.defense * Math.random()) {
+  if(Number(you.stats.attack) * Math.random() <= Number(them.stats.defense) * Math.random()) {
     return {message: who ? 'Je missed :D' : 'You missed :(', state};
   }
-  return resolveHit({damage: you.stats.power * (Math.random() + 0.5), state, them, who});
+  return resolveHit({damage: Number(you.stats.power) * (Math.random() + 0.5), state, them, who});
 }
 
 
