@@ -7,5 +7,5 @@ export async function up(knex) {
 
 export async function down(knex) {
   await knex.raw('DROP TABLE IF EXISTS fights');
-  await knex.raw('DROP TYPE IF EXISTS fight_reason');
+  await knex.raw('DROP TYPE IF EXISTS fight_prize');
 }

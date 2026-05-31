@@ -12,7 +12,7 @@ const sampleFight = {
   defender: 2,
   details: {},
   id: 1,
-  reason: 'gold',
+  prize: 'gold',
   updated_at: '2026-01-01T00:00:00.000Z',
   victory: null,
 };
@@ -69,7 +69,7 @@ describe('POST /fights', () => {
 
     const response = await app.inject({
       method: 'POST',
-      payload: {attacker: 1, defender: 2, reason: 'gold', details: {}},
+      payload: {attacker: 1, defender: 2, prize: 'gold', details: {}},
       url: '/fights',
     });
 
@@ -87,7 +87,7 @@ describe('POST /fights', () => {
 
     const response = await app.inject({
       method: 'POST',
-      payload: {attacker: 1, reason: 'rank', details: {}},
+      payload: {attacker: 1, prize: 'rank', details: {}},
       url: '/fights',
     });
 

@@ -38,7 +38,7 @@ async function handleFight(models, socket) {
     attacker: fighter.id,
     defender: null,
     details: {},
-    reason: 'gold',
+    prize: 'gold',
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }

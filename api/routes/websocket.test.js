@@ -366,7 +366,7 @@ describe('WebSocket /ws/connect', () => {
     const createFight = createCallTracker();
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
     const fighter = {id: 9, player: 1, retired: false};
-    const createdFight = {attacker: 9, defender: null, details: {}, id: 4, reason: 'gold'};
+    const createdFight = {attacker: 9, defender: null, details: {}, id: 4, prize: 'gold'};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {
       create: async (fightData) => {
@@ -377,7 +377,7 @@ describe('WebSocket /ws/connect', () => {
 
     await onMessage(JSON.stringify({cmd: 'fight'}), socket, {fighters, fights});
 
-    assert.deepEqual(createFight.calls, [[{attacker: 9, defender: null, details: {}, reason: 'gold'}]]);
+    assert.deepEqual(createFight.calls, [[{attacker: 9, defender: null, details: {}, prize: 'gold'}]]);
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {
       cmd: 'ok',

@@ -1,6 +1,6 @@
 DO $$
 BEGIN
-  CREATE TYPE fight_reason AS ENUM ('gold', 'rank');
+  CREATE TYPE fight_prize AS ENUM ('gold', 'rank');
 EXCEPTION
   WHEN duplicate_object THEN NULL;
 END $$;
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS fights (
   attacker BIGINT NOT NULL REFERENCES fighters(id),
   defender BIGINT REFERENCES fighters(id),
   victory BOOLEAN DEFAULT NULL,
-  reason fight_reason NOT NULL,
+  prize fight_prize NOT NULL,
   details JSONB NOT NULL DEFAULT '{}'::JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
