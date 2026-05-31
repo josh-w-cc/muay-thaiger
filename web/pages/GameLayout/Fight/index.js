@@ -35,37 +35,37 @@ export default function FightMenu() {
         <h3>Enemy Stats:</h3>
         APM:
         {' '}
-        {BigInt(them.stats.apm).toFormattedNumber()}
+        {them.stats.apm.toFormattedNumber()}
         <br />
         Attack:
         {' '}
-        {BigInt(them.stats.attack).toFormattedNumber()}
+        {them.stats.attack.toFormattedNumber()}
         <br />
         Defense:
         {' '}
-        {BigInt(them.stats.defense).toFormattedNumber()}
+        {them.stats.defense.toFormattedNumber()}
         <br />
         Health:
         {' '}
-        {BigInt(them.stats.health).toFormattedNumber()}
+        {them.stats.health.toFormattedNumber()}
         <br />
         Power:
         {' '}
-        {BigInt(them.stats.power).toFormattedNumber()}
+        {them.stats.power.toFormattedNumber()}
         <br />
         Stanima:
         {' '}
-        {BigInt(them.stats.stamina).toFormattedNumber()}
+        {them.stats.stamina.toFormattedNumber()}
         <br />
         Health:
         {' '}
-        {BigInt(them.currentHealth).toFormattedNumber()}
+        {them.currentHealth.toFormattedNumber()}
         <br />
         <Button onClick={() => setAnnouncer(fight.attack(0))}>Attack!</Button>
         <h3>Stats:</h3>
         Health:
         {' '}
-        {BigInt(you.currentHealth).toFormattedNumber()}
+        {you.currentHealth.toFormattedNumber()}
         <h3>MSG</h3>
       </>
     );
