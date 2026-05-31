@@ -6,6 +6,7 @@ import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
 import actionsRoutes from './routes/actions.js';
 import fightersRoutes from './routes/fighters.js';
+import fightsRoutes from './routes/fights.js';
 import healthRoutes from './routes/health.js';
 import playersRoutes from './routes/players.js';
 import raceRoutes from './routes/race.js';
@@ -22,6 +23,7 @@ export default async function build(opts = {}) {
   attachScheduler(app);
   await app.register(actionsRoutes, {prefix: '/api'});
   await app.register(fightersRoutes, {prefix: '/api'});
+  await app.register(fightsRoutes, {prefix: '/api'});
   await app.register(healthRoutes);
   await app.register(websocketRoutes, {prefix: '/ws'});
   await app.register(playersRoutes, {prefix: '/api'});
