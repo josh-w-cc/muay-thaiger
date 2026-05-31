@@ -1,5 +1,6 @@
 /* eslint-disable complexity, max-lines-per-function */
 import React from 'react';
+import 'shared/bigInt.js';
 
 import useFighterStore from '@/data/fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '@/data/fight.js';
