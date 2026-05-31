@@ -22,11 +22,11 @@ describe('useFighterStore', () => {
     expect(fighter.reach).toBe(BaseStats[initialRace].stats.reach);
     expect(fighter.speed).toBe(BaseStats[initialRace].stats.speed);
     expect(fighter.vitality).toBe(BaseStats[initialRace].stats.vitality);
-    expect(fighter.apm).toBe(0);
-    expect(fighter.attack).toBe(Number(BaseStats[initialRace].stats.reach));
-    expect(fighter.defense).toBe(0);
-    expect(fighter.health).toBe(Number(BaseStats[initialRace].stats.durability) ** 2);
-    expect(fighter.power).toBe(0);
+    expect(fighter.apm).toBe(0n);
+    expect(fighter.attack).toBe(BaseStats[initialRace].stats.reach);
+    expect(fighter.defense).toBe(0n);
+    expect(fighter.health).toBe(1n);
+    expect(fighter.power).toBe(0n);
   });
 
   it('recomputes derived combat stats after training', () => {
@@ -39,10 +39,10 @@ describe('useFighterStore', () => {
 
     expect(trainedFighter.stamina).toBe(2n);
     expect(trainedFighter.strength).toBe(2n);
-    expect(trainedFighter.attack).toBeCloseTo(2.6931471805599454);
-    expect(trainedFighter.defense).toBeCloseTo(1.4142135623730951);
-    expect(trainedFighter.health).toBe(3);
-    expect(trainedFighter.power).toBeCloseTo(2.8284271247461903);
+    expect(trainedFighter.attack).toBe(3n);
+    expect(trainedFighter.defense).toBe(1n);
+    expect(trainedFighter.health).toBe(3n);
+    expect(trainedFighter.power).toBe(2n);
   });
 
   it('does not replace fight idling with a new idle action', () => {

@@ -43,13 +43,12 @@ function getBaseSelectionState({anima, durability, vigor, reach, speed, vitality
 }
 
 function getCombatState({agility, constitution, durability, reach, skill, stamina, strength}) {
-  const [a, co, du, re, sk, st, str] = [agility, constitution, durability, reach, skill, stamina, strength].map(Number);
   return {
-    apm: Math.max(0, Math.log(a)) + Math.sqrt(sk),
-    attack: Math.max(0, Math.log(st)) + Math.sqrt(a) + sk + re,
-    defense: Math.max(0, Math.log(a)) + Math.sqrt(st) + sk,
-    health: st + co * co + du * du,
-    power: (str + a) * Math.sqrt(st) + sk,
+    apm: agility.logApprox() + skill.logApprox(),
+    attack: stamina.logApprox() + agility.logApprox() + skill + reach,
+    defense: agility.logApprox() + stamina.logApprox() + skill,
+    health: stamina + constitution * constitution + durability * durability,
+    power: (strength + agility) * stamina.logApprox() + skill,
   };
 }
 
