@@ -1,10 +1,8 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
 import {render, screen} from '@testing-library/react';
 import {describe, expect, it} from 'vitest';
 
 import FightFighters from './FightFighters.js';
+import css from '../Fight.module.css';
 
 describe('FightFighters', () => {
   it('renders stamina progress bars for both fighters', () => {
@@ -16,12 +14,17 @@ describe('FightFighters', () => {
     expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter stamina'})).toHaveAttribute('aria-valuemax', '200');
   });
 
-  it('defines gold as the primary stamina bar color in Fight.module.css', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, '..', 'Fight.module.css');
-    const source = fs.readFileSync(modulePath, 'utf8');
+  it('uses stamina bar classes for the rendered stamina progress bars', () => {
+    render(<FightFighters />);
 
-    expect(source).toContain('box-shadow: inset 0 -3px 6px -3px var(--color-gold-hover), inset 0 3px 6px -3px var(--color-gold-hover);');
-    expect(source).toContain('background: linear-gradient(180deg, #ffec9a 0%, var(--color-gold) 25%, var(--color-gold-hover) 75%, black 100%);');
+    const tigerStaminaBar = screen.getByRole('progressbar', {name: 'Tiger fighter stamina'});
+    const tigerStaminaBarFill = tigerStaminaBar.querySelector('div');
+    const snowLeopardStaminaBar = screen.getByRole('progressbar', {name: 'Snow leopard fighter stamina'});
+    const snowLeopardStaminaBarFill = snowLeopardStaminaBar.querySelector('div');
+
+    expect(tigerStaminaBar).toHaveClass(css.fightStaminaBar);
+    expect(tigerStaminaBarFill).toHaveClass(css.fightStaminaBarFill);
+    expect(snowLeopardStaminaBar).toHaveClass(css.fightStaminaBar);
+    expect(snowLeopardStaminaBarFill).toHaveClass(css.fightStaminaBarFill);
   });
 });
