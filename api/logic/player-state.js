@@ -28,7 +28,7 @@ export async function getPlayerState({fighterActions, fighters}, playerID) {
 }
 
 export function sendPlayerState(actions, fighter, socket) {
-  socket.send(JSON.stringify({actions, cmd: 'player_state', fighter}));
+  socket.send(JSON.stringify({actions, cmd: 'player_state', fighter: serializeFighterForClient(fighter)}));
 }
 
 export async function syncPlayerState({fighterActions, fighters}, sockets) {
@@ -67,4 +67,17 @@ function shouldSyncOfflineFighter(fighter) {
     return false;
   }
   return !fighter.retired;
+}
+
+function serializeFighterForClient(fighter) {
+  if(!fighter?.stats || typeof fighter.stats !== 'object') {
+    return fighter;
+  }
+
+  return {
+    ...fighter,
+    stats: Object.fromEntries(
+      Object.entries(fighter.stats).map(([key, value]) => [key, typeof value === 'bigint' ? `${value}` : value]),
+    ),
+  };
 }
