@@ -33,8 +33,8 @@ export default function FightMenu() {
   else if(fight.state === FIGHT_IN_PROGRESS) {
     const [you, them] = fight.fighters;
     const themStats = parseBigIntStats(them.stats);
-    const youCurrentHealth = BigInt(Math.floor(Number(you.currentHealth)));
-    const themCurrentHealth = BigInt(Math.floor(Number(them.currentHealth)));
+    const yourCurrentHealth = BigInt(Math.floor(Number(you.currentHealth)));
+    const theirCurrentHealth = BigInt(Math.floor(Number(them.currentHealth)));
     content = (
       <>
         <h3>Enemy Stats:</h3>
@@ -64,13 +64,13 @@ export default function FightMenu() {
         <br />
         Health:
         {' '}
-        {themCurrentHealth.toFormattedNumber()}
+        {theirCurrentHealth.toFormattedNumber()}
         <br />
         <Button onClick={() => setAnnouncer(fight.attack(0))}>Attack!</Button>
         <h3>Stats:</h3>
         Health:
         {' '}
-        {youCurrentHealth.toFormattedNumber()}
+        {yourCurrentHealth.toFormattedNumber()}
         <h3>MSG</h3>
       </>
     );
