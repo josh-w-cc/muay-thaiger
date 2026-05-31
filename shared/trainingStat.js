@@ -18,7 +18,7 @@ export function getTrainingEffect({anima = 0n, speed = 0n, vigor = 0n, vitality 
 
 export default function trainStat(stats, stat, amount = 1n) {
   const trainingMultiplier = getTrainingMultiplier(stats, stat);
-  stats[stat] = stats[stat] + trainingMultiplier * BigInt(amount);
+  stats[stat] = stats[stat] + trainingMultiplier * amount;
   return stats[stat];
 }
 
