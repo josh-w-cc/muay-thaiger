@@ -98,7 +98,7 @@ describe('sendPlayerState', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {actions: [], cmd: 'player_state', fighter});
   });
 
-  it('casts fighter bigint stats to strings in player_state payload', () => {
+  it('casts fighter stats to strings in player_state payload', () => {
     const send = createCallTracker();
     const socket = {send};
     const fighter = {
@@ -116,7 +116,7 @@ describe('sendPlayerState', () => {
       cmd: 'player_state',
       fighter: {
         ...fighter,
-        stats: {agility: '6', speed: '7', vigor: 8},
+        stats: {agility: '6', speed: '7', vigor: '8'},
       },
     });
   });
