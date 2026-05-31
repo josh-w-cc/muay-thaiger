@@ -35,19 +35,6 @@ export async function unregisterFighterAction({fighterActions, fighters}, messag
   return {action_id: normalizedMessage.action_id};
 }
 
-function normalizeMessage(message, errorCode) {
-  if(!message) {
-    throw createCommandError(errorCode);
-  }
-  const actionID = Number(message.action_id);
-  if(!Number.isInteger(actionID)) {
-    throw createCommandError(errorCode);
-  }
-  return {
-    action_id: actionID,
-  };
-}
-
 function getNextTouchedAt(actions) {
   const maxMs = getMaxTouchedAtMs(actions);
   return maxMs !== null ? new Date(maxMs + 1) : null;
@@ -59,6 +46,19 @@ function isValidAction(fighter, actionID) {
     return false;
   }
   return skill.requires(parseBigIntStats(fighter.stats || {}));
+}
+
+function normalizeMessage(message, errorCode) {
+  if(!message) {
+    throw createCommandError(errorCode);
+  }
+  const actionID = Number(message.action_id);
+  if(!Number.isInteger(actionID)) {
+    throw createCommandError(errorCode);
+  }
+  return {
+    action_id: actionID,
+  };
 }
 
 async function transferLatestTouchedAt(fighterActions, removedActions, remainingActions) {
