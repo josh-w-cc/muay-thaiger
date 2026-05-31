@@ -43,4 +43,14 @@ describe('buildStateFromServerFighter', () => {
     expect(state.createdAt).toBe('2026-01-01T00:00:00.000Z');
     expect(state.displayName).toBe('Iron Fist');
   });
+
+  it('casts received stats to BigInt and defaults invalid values to zero', () => {
+    const state = buildStateFromServerFighter({
+      race: 1,
+      stats: {agility: '12', strength: 'bad'},
+    });
+
+    expect(state.agility).toBe(12n);
+    expect(state.strength).toBe(0n);
+  });
 });

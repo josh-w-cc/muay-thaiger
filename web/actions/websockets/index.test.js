@@ -162,7 +162,7 @@ describe('player websocket helpers', () => {
           id: 9,
           player: 77,
           race: 2,
-          stats: {agility: 6, stamina: 7, strength: 8},
+          stats: {agility: '6', stamina: '7', strength: '8'},
         },
       }),
     });

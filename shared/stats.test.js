@@ -23,4 +23,12 @@ describe('parseBigIntStats', () => {
   it('returns an empty object for empty input', () => {
     assert.deepEqual(parseBigIntStats({}), {});
   });
+
+  it('returns an empty object when stats is not an object', () => {
+    assert.deepEqual(parseBigIntStats('invalid'), {});
+  });
+
+  it('converts invalid values to 0n without throwing', () => {
+    assert.deepEqual(parseBigIntStats({agility: 'x', strength: '12'}), {agility: 0n, strength: 12n});
+  });
 });
