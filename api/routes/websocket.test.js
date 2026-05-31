@@ -58,7 +58,20 @@ describe('WebSocket /ws/connect', () => {
     const created = {id: 1, action: 2, fighter: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
     const currentFighter = {id: 3, player: 8, retired: false};
     const player = {id: 8, token: 'player-token'};
-    const {knex} = mockKnexMulti([player, currentFighter, [], currentFighter, [], currentFighter, [], [created]]);
+    const {knex} = mockKnexMulti([
+      player,
+      currentFighter,
+      [],
+      undefined,
+      currentFighter,
+      [],
+      currentFighter,
+      [],
+      [created],
+      currentFighter,
+      [created],
+      undefined,
+    ]);
     const app = Fastify();
     app.decorate('db', knex);
     app.decorate('websocketConnections', new Set());
@@ -298,6 +311,9 @@ describe('WebSocket /ws/connect', () => {
     const fighterActions = {
       listByFighterID: async () => actions,
     };
+    const fights = {
+      findActiveByFighterID: async () => null,
+    };
     const fighters = {
       findCurrentByPlayerID: async () => fighter,
       update: async () => fighter,
@@ -307,11 +323,37 @@ describe('WebSocket /ws/connect', () => {
       findByToken: async (token) => (token === 'known-token' ? player : null),
     };
 
-    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {fighterActions, fighters, players});
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {fighterActions, fights, fighters, players});
 
     assert.equal(send.calls.length, 2);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', player_id: 5, token: 'known-token'});
     assert.deepEqual(JSON.parse(send.calls[1][0]), {actions, cmd: 'player_state', fighter});
+  });
+
+  it('includes active fight in player_state after successful authentication', async () => {
+    const send = createCallTracker();
+    const player = {id: 5, token: 'known-token'};
+    const fighter = {gold: '0', id: 9, player: 5, retired: false, stats: {}};
+    const fight = {attacker: 9, defender: null, details: {}, id: 12, reason: 'gold', victory: null};
+    const socket = {OPEN: 1, readyState: 1, send};
+    const fighterActions = {
+      listByFighterID: async () => [],
+    };
+    const fighters = {
+      findCurrentByPlayerID: async () => fighter,
+    };
+    const fights = {
+      findActiveByFighterID: async () => fight,
+    };
+    const players = {
+      create: async () => null,
+      findByToken: async (token) => (token === 'known-token' ? player : null),
+    };
+
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {fighterActions, fighters, fights, players});
+
+    assert.equal(send.calls.length, 2);
+    assert.deepEqual(JSON.parse(send.calls[1][0]), {actions: [], cmd: 'player_state', fight, fighter});
   });
 
   it('responds with token invalid message when auth token does not match a player', async () => {
@@ -452,9 +494,10 @@ describe('WebSocket /ws/connect', () => {
       create: async () => created,
       listByFighterID: async () => [],
     };
+    const fights = {findActiveByFighterID: async () => null};
     const fighters = {findCurrentByPlayerID: async () => fighter};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {fighterActions, fighters});
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {fighterActions, fights, fighters});
 
     assert.equal(send.calls.length, 2);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {
@@ -485,6 +528,7 @@ describe('WebSocket /ws/connect', () => {
       },
       touch: async () => {},
     };
+    const fights = {findActiveByFighterID: async () => null};
     const fighters = {
       findCurrentByPlayerID: async () => fighter,
       update: async () => {
@@ -493,7 +537,7 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({action_id: 2, cmd: 'idle'}), socket, {fighterActions, fighters});
+    await onMessage(JSON.stringify({action_id: 2, cmd: 'idle'}), socket, {fighterActions, fights, fighters});
 
     assert.ok(
       callOrder.indexOf('update') < callOrder.indexOf('create'),
@@ -527,9 +571,10 @@ describe('WebSocket /ws/connect', () => {
       },
       remove,
     };
+    const fights = {findActiveByFighterID: async () => null};
     const fighters = {findCurrentByPlayerID: async () => fighter};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'stop'}), socket, {fighterActions, fighters});
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'stop'}), socket, {fighterActions, fights, fighters});
 
     assert.deepEqual(remove.calls, [[4], [6]]);
     assert.equal(send.calls.length, 2);
@@ -555,6 +600,7 @@ describe('WebSocket /ws/connect', () => {
       listByFighterID: async () => actions,
       touch: async () => null,
     };
+    const fight = {attacker: 9, defender: null, details: {}, id: 12, reason: 'gold', victory: null};
     const fighters = {
       findCurrentByPlayerID: async (id) => {
         if(id === 1) {
@@ -564,6 +610,9 @@ describe('WebSocket /ws/connect', () => {
       },
       update: async () => updatedFighterRecord,
     };
+    const fights = {
+      findActiveByFighterID: async (fighterID) => (fighterID === 9 ? fight : null),
+    };
     const sockets = new Set([
       {OPEN: 1, player: {id: 1}, readyState: 1, send: sendOpen},
       {OPEN: 1, player: {id: 2}, readyState: 1, send: sendNoFighter},
@@ -571,12 +620,13 @@ describe('WebSocket /ws/connect', () => {
       closedSocket,
     ]);
 
-    await syncPlayerState({fighterActions, fighters}, sockets);
+    await syncPlayerState({fighterActions, fights, fighters}, sockets);
 
     assert.equal(sendOpen.calls.length, 1);
     assert.deepEqual(JSON.parse(sendOpen.calls[0][0]), {
       actions,
       cmd: 'player_state',
+      fight,
       fighter: updatedFighterRecord,
     });
     assert.equal(sendNoFighter.calls.length, 0);

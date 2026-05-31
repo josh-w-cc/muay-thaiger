@@ -29,7 +29,7 @@ describe('trainStat', () => {
   it('applies training to the target stat and returns the new value', () => {
     const stats = {stamina: 3n, vitality: 2n};
 
-    const trainedStatValue = trainStat(stats, 'stamina', 2);
+    const trainedStatValue = trainStat(stats, 'stamina', 2n);
 
     equal(trainedStatValue, 7n);
     deepEqual(stats, {stamina: 7n, vitality: 2n});
@@ -38,7 +38,7 @@ describe('trainStat', () => {
   it('treats unknown stats as +1 per amount', () => {
     const stats = {focus: 2n};
 
-    const trainedStatValue = trainStat(stats, 'focus', 3);
+    const trainedStatValue = trainStat(stats, 'focus', 3n);
 
     equal(trainedStatValue, 5n);
     deepEqual(stats, {focus: 5n});
