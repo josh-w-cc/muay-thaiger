@@ -77,7 +77,7 @@ function serializeFighterForClient(fighter) {
   return {
     ...fighter,
     stats: Object.fromEntries(
-      Object.entries(fighter.stats).map(([key, value]) => [key, `${value}`]),
+      Object.entries(fighter.stats).map(([key, value]) => [key, value.toString()]),
     ),
   };
 }
