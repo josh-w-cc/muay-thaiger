@@ -15,10 +15,10 @@ export const SKILL_IDS = Object.freeze({
 export const SKILL_DEFINITIONS = Object.freeze({
   gymnastics: {
     action: (fighter) => {
-      fighter.train('stamina', 5);
-      fighter.train('strength', 5);
-      fighter.train('constitution', 1);
-      fighter.train('agility', 15);
+      fighter.train('stamina', 5n);
+      fighter.train('strength', 5n);
+      fighter.train('constitution', 1n);
+      fighter.train('agility', 15n);
     },
     name: 'Gymnastics',
     requires: (fighter) => fighter.stamina > 2500n && fighter.strength > 250n && fighter.agility > 500n,
@@ -26,7 +26,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
   },
   running: {
     action: (fighter) => {
-      fighter.train('stamina', 25);
+      fighter.train('stamina', 25n);
     },
     name: 'Running',
     requires: (fighter) => fighter.stamina > 1000n && fighter.constitution > 250n,
@@ -34,10 +34,10 @@ export const SKILL_DEFINITIONS = Object.freeze({
   },
   laboring: {
     action: (fighter) => {
-      fighter.win(100);
-      fighter.train('stamina', 1);
-      fighter.train('strength', 1);
-      fighter.train('constitution', 1);
+      fighter.win(100n);
+      fighter.train('stamina', 1n);
+      fighter.train('strength', 1n);
+      fighter.train('constitution', 1n);
     },
     name: 'La฿oring',
     requires: (fighter) => fighter.stamina > 500n && fighter.constitution > 100n && fighter.strength > 100n,
@@ -45,9 +45,9 @@ export const SKILL_DEFINITIONS = Object.freeze({
   },
   calisthenics: {
     action: (fighter) => {
-      fighter.train('stamina', 5);
-      fighter.train('strength', 3);
-      fighter.train('constitution', 1);
+      fighter.train('stamina', 5n);
+      fighter.train('strength', 3n);
+      fighter.train('constitution', 1n);
     },
     name: 'Calisthenics',
     requires: (fighter) => fighter.stamina > 250n && fighter.constitution > 10n && fighter.strength > 25n,
@@ -74,7 +74,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
   },
   shadowBoxing: {
     action: (fighter) => {
-      fighter.train('stamina', 3);
+      fighter.train('stamina', 3n);
     },
     name: 'Shadow Boxing',
     requires: (fighter) => fighter.stamina > 25n,
@@ -90,7 +90,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
   },
   begging: {
     action: (fighter) => {
-      fighter.win(1);
+      fighter.win(1n);
     },
     name: '฿egging',
     requires: () => true,
