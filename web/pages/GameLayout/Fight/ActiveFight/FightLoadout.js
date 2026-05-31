@@ -1,18 +1,18 @@
 import Button from '@/components/Button.js';
 
-import {FIGHT_FOR_GLORY_LOADOUT, TAPPER_FILL_DURATIONS} from './fightForGloryData.js';
+import {FIGHT_LOADOUT, TAPPER_FILL_DURATIONS} from './fightData.js';
 import css from '../Fight.module.css';
 
 
-export default function FightForGloryLoadout() {
+export default function FightLoadout() {
   const buttons = [
-    `Strategy: ${FIGHT_FOR_GLORY_LOADOUT.strategy}`,
-    ...FIGHT_FOR_GLORY_LOADOUT.moves,
+    `Strategy: ${FIGHT_LOADOUT.strategy}`,
+    ...FIGHT_LOADOUT.moves,
   ];
 
   return (
-    <div className={css.gloryLoadout}>
-      <div className={css.gloryLoadoutButtons}>
+    <div className={css.fightLoadout}>
+      <div className={css.fightLoadoutButtons}>
         {buttons.map((label, buttonIndex) => (
           <TapperButton delay={buttonIndex * 0.4} duration={TAPPER_FILL_DURATIONS[buttonIndex]} key={label}>{label}</TapperButton>
         ))}
