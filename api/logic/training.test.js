@@ -135,7 +135,7 @@ describe('applyTraining', () => {
   });
 
   it('increases gold for win-type actions', async () => {
-    const fighter = {id: 1, gold: '0', stats: BASE_STATS};
+    const fighter = {id: 1, gold: 0n, stats: BASE_STATS};
     const actions = [{action: 1, fighter: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const updateCalls = [];
     const fighterActions = {
@@ -151,11 +151,11 @@ describe('applyTraining', () => {
 
     await applyTraining({fighterActions, fighters}, fighter);
 
-    assert.equal(updateCalls[0].gold, '1');
+    assert.equal(updateCalls[0].gold, 1n);
   });
 
   it('uses BigInt arithmetic for large gold values', async () => {
-    const fighter = {id: 1, gold: '9007199254740993', stats: BASE_STATS};
+    const fighter = {id: 1, gold: 9007199254740993n, stats: BASE_STATS};
     const actions = [{action: 1, fighter: 1, id: 5, touched_at: getOffsetDate(-1000)}];
     const updateCalls = [];
     const fighterActions = {
@@ -171,7 +171,7 @@ describe('applyTraining', () => {
 
     await applyTraining({fighterActions, fighters}, fighter);
 
-    assert.equal(updateCalls[0].gold, '9007199254740994');
+    assert.equal(updateCalls[0].gold, 9007199254740994n);
   });
 
   it('returns the updated fighter and actions from the fighters model', async () => {

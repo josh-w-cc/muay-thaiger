@@ -62,7 +62,7 @@ function generateTickFn({get, set}) {
 }
 
 function generateTrainFn({get, set}) {
-  return (stat, amount = 1) => {
+  return (stat, amount = 1n) => {
     const nextStats = {...get()};
     const trainedStatValue = trainStat(nextStats, stat, amount);
     if(trainedStatValue === null) {
