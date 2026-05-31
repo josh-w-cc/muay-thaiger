@@ -10,9 +10,15 @@ export default function FightForGlory() {
   return (
     <Section className={css.glorySection}>
       <h2>Fight for Glory</h2>
-      <FightForGloryLoadout />
-      <FightForGloryFighters />
-      <FightForGloryFeed />
+      <ActiveFight />
     </Section>
   );
+}
+
+function ActiveFight() {
+  return <>
+    <FightForGloryLoadout/>
+    <FightForGloryFighters/>
+    <FightForGloryFeed/>
+  </>;
 }
