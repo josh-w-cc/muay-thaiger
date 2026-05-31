@@ -34,7 +34,7 @@ function trainStats(actions, fighter) {
   const stats = parseBigIntStats({...fighter.stats});
   let gold = fighter.gold;
   const proxy = createFighterProxy(stats, (amount) => {
-    gold = (BigInt(gold) + BigInt(amount)).toString();
+    gold += amount;
   });
   applyTrainingActions(actions, proxy);
   return {gold, stats};
@@ -42,7 +42,7 @@ function trainStats(actions, fighter) {
 
 function createFighterProxy(stats, onWin) {
   return {
-    train: (stat, amount = 1) => trainStat(stats, stat, amount),
+    train: (stat, amount = 1n) => trainStat(stats, stat, amount),
     win: onWin,
   };
 }
