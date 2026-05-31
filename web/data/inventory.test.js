@@ -12,7 +12,7 @@ describe('useInventoryStore', () => {
 
   it('buys an item when the fighter can afford it', () => {
     const {fighter, spend} = createMockFighter(AFFORDABLE_GOLD);
-    const item = {cost: 5};
+    const item = {cost: 5n};
 
     useInventoryStore.getState().buy(fighter, item);
 
@@ -22,7 +22,7 @@ describe('useInventoryStore', () => {
 
   it('does not buy an item when the fighter cannot afford it', () => {
     const {fighter, spend} = createMockFighter(UNAFFORDABLE_GOLD);
-    const item = {cost: 5};
+    const item = {cost: 5n};
 
     useInventoryStore.getState().buy(fighter, item);
 

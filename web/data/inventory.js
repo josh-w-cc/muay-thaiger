@@ -1,13 +1,13 @@
 import {create} from 'zustand';
 
 
-export const COST_MULTIPLIER = 100;
+export const COST_MULTIPLIER = 100n;
 
 
 const useInventoryStore = create((set) => ({
   ...getInitialState(),
   buy(fighter, item) {
-    if(fighter.gold < BigInt(item.cost * COST_MULTIPLIER)) {
+    if(fighter.gold < item.cost * COST_MULTIPLIER) {
       return;
     }
     set((state) => ({items: [...state.items, item]}));
