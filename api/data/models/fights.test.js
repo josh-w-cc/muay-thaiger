@@ -32,7 +32,7 @@ describe('fights.find', () => {
 
 describe('fights.create', () => {
   it('inserts a fight and returns the created row', async () => {
-    const fight = {attacker: 1, defender: 2, reason: 'gold', details: {}};
+    const fight = {attacker: 1, defender: 2, reason: 'gold', details: {}, rank: 'bronze'};
     const {calls, knex} = mockKnex({id: 1, victory: null, ...fight});
     const fights = fightsModel(knex);
 
