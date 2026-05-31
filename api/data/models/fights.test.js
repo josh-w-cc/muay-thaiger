@@ -30,6 +30,31 @@ describe('fights.find', () => {
   });
 });
 
+describe('fights.findActiveByFighterID', () => {
+  it('finds the latest unresolved fight for the fighter as attacker or defender', async () => {
+    const {calls, knex} = mockKnex({id: 1, attacker: 7, defender: 2, victory: null, details: {}});
+    const fights = fightsModel(knex);
+
+    await fights.findActiveByFighterID(7);
+
+    assert.deepEqual(calls[0], ['table', 'fights']);
+    assert.deepEqual(calls[1], ['whereNull', 'victory']);
+    assert.deepEqual(calls[2], ['whereRaw', '(attacker = ? OR defender = ?)', [7, 7]]);
+    assert.deepEqual(calls[3], ['orderBy', 'created_at', 'desc']);
+    assert.deepEqual(calls[4], ['first']);
+  });
+
+  it('returns the unresolved fight when the fighter is the defender', async () => {
+    const {calls, knex} = mockKnex({id: 2, attacker: 1, defender: 7, victory: null, details: {}});
+    const fights = fightsModel(knex);
+
+    const fight = await fights.findActiveByFighterID(7);
+
+    assert.deepEqual(fight, {attacker: 1, defender: 7, details: {}, id: 2, victory: null});
+    assert.equal(calls[0][0], 'table');
+  });
+});
+
 describe('fights.create', () => {
   it('inserts a fight and returns the created row', async () => {
     const fight = {attacker: 1, defender: 2, reason: 'gold', details: {}};

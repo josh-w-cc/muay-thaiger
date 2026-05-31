@@ -81,7 +81,7 @@ async function sendCurrentPlayerState(models, socket) {
   if(!state) {
     return;
   }
-  sendPlayerState(state.actions, state.fighter, socket);
+  sendPlayerState(state.actions, state.fighter, socket, state.fight);
 }
 
 function canSendPlayerState({fighterActions, fighters}) {

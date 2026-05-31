@@ -18,20 +18,29 @@ export async function applyOfflineTraining(db, models = null) {
   }
 }
 
-export async function getPlayerState({fighterActions, fighters}, playerID) {
+export async function getPlayerState({fighterActions, fights, fighters}, playerID) {
   const fighter = await fighters.findCurrentByPlayerID(playerID);
   if(!fighter) {
     return null;
   }
   const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
-  return {actions, fighter: updatedFighter};
+  const state = {actions, fighter: updatedFighter};
+  const fight = await getActiveFight(fights, updatedFighter.id);
+  if(fight) {
+    state.fight = fight;
+  }
+  return state;
 }
 
-export function sendPlayerState(actions, fighter, socket) {
-  socket.send(JSON.stringify({actions, cmd: 'player_state', fighter}));
+export function sendPlayerState(actions, fighter, socket, fight = null) {
+  const payload = {actions, cmd: 'player_state', fighter};
+  if(fight) {
+    payload.fight = fight;
+  }
+  socket.send(JSON.stringify(payload));
 }
 
-export async function syncPlayerState({fighterActions, fighters}, sockets) {
+export async function syncPlayerState({fighterActions, fights, fighters}, sockets) {
   for(const socket of sockets) {
     if(!isSocketOpen(socket)) {
       sockets.delete(socket);
@@ -40,9 +49,9 @@ export async function syncPlayerState({fighterActions, fighters}, sockets) {
     if(!socket.player) {
       continue;
     }
-    const state = await getPlayerState({fighterActions, fighters}, socket.player.id);
+    const state = await getPlayerState({fighterActions, fights, fighters}, socket.player.id);
     if(state) {
-      sendPlayerState(state.actions, state.fighter, socket);
+      sendPlayerState(state.actions, state.fighter, socket, state.fight);
     }
   }
 }
@@ -67,4 +76,11 @@ function shouldSyncOfflineFighter(fighter) {
     return false;
   }
   return !fighter.retired;
+}
+
+async function getActiveFight(fights, fighterID) {
+  if(!fighterID || !fights?.findActiveByFighterID) {
+    return null;
+  }
+  return fights.findActiveByFighterID(fighterID);
 }
