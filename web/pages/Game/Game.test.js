@@ -10,6 +10,7 @@ import Fight from '../GameLayout/Fight';
 import Hub from '../GameLayout/Hub';
 import Shop from '../GameLayout/Shop';
 import Train from '../GameLayout/Train';
+import EditUser, {loader as editUserLoader} from '../EditUser';
 import Fallback from '../GameLayout/Fallback.js';
 import {GameLayout, loader as gameScreenLoader} from '../GameLayout/index.js';
 
@@ -59,6 +60,20 @@ vi.mock('../GameLayout/Shop', () => ({
   default: function MockShop() {
     return <h2>Shop Screen</h2>;
   },
+}));
+
+vi.mock('../EditUser', () => ({
+  default: function MockEditUser() {
+    const navigate = useNavigate();
+
+    return (
+      <>
+        <h2>Edit User Screen</h2>
+        <button onClick={() => navigate('/hub')}>Return to Hub</button>
+      </>
+    );
+  },
+  loader: vi.fn(),
 }));
 
 vi.mock('../GameLayout/Train', () => ({
@@ -209,6 +224,14 @@ describe('Game', () => {
 
     expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Edit Profile'})).toBeInTheDocument();
+    await user.click(screen.getByRole('button', {name: 'Edit Profile'}));
+    expect(await screen.findByRole('heading', {name: 'Edit User Screen'})).toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: /^fight$/i})).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Edit Profile'})).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', {name: 'Return to Hub'}));
+    expect(await screen.findByRole('heading', {name: 'Hub Screen'})).toBeInTheDocument();
+
     await user.click(screen.getByRole('button', {name: /^fight$/i}));
     expect(await screen.findByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
 
@@ -408,6 +431,17 @@ describe('Game', () => {
     expect(await screen.findByRole('heading', {name: 'Fight Screen'})).toBeInTheDocument();
   });
 
+  it('renders the edit user screen from the URL without the game header', async () => {
+    localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
+    const gameModule = await import('./index.js');
+
+    renderGame({gameModule, initialPath: '/edit-user'});
+
+    expect(await screen.findByRole('heading', {name: 'Edit User Screen'})).toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: /^fight$/i})).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Edit Profile'})).not.toBeInTheDocument();
+  });
+
   it('stays on hub when navigating to fighter select from a game screen with token', async () => {
     const user = userEvent.setup();
     localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, 'token-value');
@@ -443,6 +477,7 @@ function renderGame({gameModule, initialPath = '/'}) {
       {
         children: [
           {index: true, element: <Game />, loader: fighterSelectLoader},
+          {element: <EditUser />, loader: editUserLoader, path: 'edit-user'},
           {
             children: [
               {element: <Fight />, path: 'fight'},

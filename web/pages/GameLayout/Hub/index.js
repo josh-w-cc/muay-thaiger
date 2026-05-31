@@ -1,6 +1,7 @@
+import Section from '@/components/primitive/Section.js';
+
 import FighterDetails from './FighterDetails.js';
 import Leaderboard from './Leaderboard.js';
-import Stats from './Stats.js';
 import css from './Hub.module.css';
 
 const EVENTS = [
@@ -24,18 +25,15 @@ const EVENTS = [
 export default function Hub() {
   return (
     <>
-      <section className={css.section}>
+      <Section>
         <FighterDetails />
-      </section>
-      <section className={css.section}>
-        <Stats />
-      </section>
-      <section className={css.section}>
+      </Section>
+      <Section>
         <Events />
-      </section>
-      <section className={css.section}>
+      </Section>
+      <Section>
         <Leaderboard />
-      </section>
+      </Section>
     </>
   );
 }

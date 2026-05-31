@@ -1,4 +1,6 @@
 import {randomUUID} from 'node:crypto';
+import {MOVE_IDS} from 'shared/moves.js';
+import {parseBigIntStats} from 'shared/stats.js';
 import {createCommandError} from './command-errors.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
@@ -10,17 +12,17 @@ const DEFAULT_TRAINING_STATS = {
   strength: 0n,
 };
 
-export async function authenticate({fighters, players, races}, message) {
-  const player = await getPlayer({fighters, players, races}, message.token, message.race);
+export async function authenticate({fighterMoves, fighters, players, races}, message) {
+  const player = await getPlayer({fighterMoves, fighters, players, races}, message.token, message.race);
   if(!player) {
     throw createCommandError('auth-invalid-token');
   }
   return player;
 }
 
-async function getPlayer({fighters, players, races}, token, race) {
+async function getPlayer({fighterMoves, fighters, players, races}, token, race) {
   if(token === 'new') {
-    return createPlayer({fighters, players, races}, race);
+    return createPlayer({fighterMoves, fighters, players, races}, race);
   }
   if(typeof token !== 'string') {
     throw createCommandError('auth-invalid-token');
@@ -28,7 +30,7 @@ async function getPlayer({fighters, players, races}, token, race) {
   return players.findByToken(token);
 }
 
-async function createPlayer({fighters, players, races}, race) {
+async function createPlayer({fighterMoves, fighters, players, races}, race) {
   const raceID = Number(race);
   if(!Number.isInteger(raceID) || raceID < 1) {
     throw createCommandError('invalid-auth-data');
@@ -39,12 +41,13 @@ async function createPlayer({fighters, players, races}, race) {
   }
   const token = randomUUID();
   const player = await players.create({display_name: `Player-${token.slice(0, TOKEN_PREVIEW_LENGTH)}`, token});
-  await fighters.create({
+  const fighter = await fighters.create({
     display_name: player.display_name,
     player: player.id,
     race: raceID,
     stats: getDefaultStats(raceData),
   });
+  await enableStarterMoves(fighterMoves, fighter.id);
   return player;
 }
 
@@ -52,8 +55,9 @@ function getDefaultStats({stats = {}}) {
   return parseBigIntStats({...DEFAULT_TRAINING_STATS, ...stats});
 }
 
-function parseBigIntStats(stats) {
-  return Object.fromEntries(
-    Object.entries(stats).map(([key, value]) => [key, BigInt(value ?? 0)]),
-  );
+function enableStarterMoves(fighterMoves, fighterID) {
+  return Promise.all([
+    fighterMoves.create({enabled: true, fighter: fighterID, move: MOVE_IDS.wildPunch}),
+    fighterMoves.create({enabled: true, fighter: fighterID, move: MOVE_IDS.wildKick}),
+  ]);
 }

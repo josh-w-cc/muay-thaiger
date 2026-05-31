@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
+import createCallTracker from '../utils/test/createCallTracker.js';
 import {applyOfflineTraining, getPlayerState, sendPlayerState} from './player-state.js';
 
 describe('applyOfflineTraining', () => {
@@ -97,11 +98,3 @@ describe('sendPlayerState', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {actions: [], cmd: 'player_state', fighter});
   });
 });
-
-function createCallTracker() {
-  const fn = (...args) => {
-    fn.calls.push(args);
-  };
-  fn.calls = [];
-  return fn;
-}

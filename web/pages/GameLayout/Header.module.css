@@ -39,9 +39,10 @@
 
 @media(max-width: 768px) {
   .headerControls {
-    left: 0;
-    position: fixed;
-    top: 0;
+    margin-left: calc(-1 * var(--space-lg));
+    margin-right: calc(-1 * var(--space-lg));
+    padding-left: 0;
+    padding-right: var(--space-xs);
     width: 100vw;
     z-index: 10;
   }

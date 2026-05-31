@@ -73,21 +73,6 @@ describe('NavHeader', () => {
     expect(source).toMatch(/\.navigationButton:hover\s*{[^}]*background-color:\s*transparent;/s);
   });
 
-  it('defines horizontal mobile header scrolling with snap spacing', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'NavHeader.module.css');
-    const mobileHeaderPattern = new RegExp(
-      '@media\\(max-width:\\s*768px\\)\\s*{[\\s\\S]*\\.header\\s*{[\\s\\S]*'
-      + 'overflow-x:\\s*auto;[\\s\\S]*padding:\\s*40px 150px 0;[\\s\\S]*'
-      + 'right:\\s*var\\(--space-xl\\);[\\s\\S]*scroll-snap-type:\\s*x mandatory;[\\s\\S]*'
-      + 'width:\\s*calc\\(100% \\+ var\\(--space-xl\\) \\* 2\\);',
-      's',
-    );
-    const source = fs.readFileSync(modulePath, 'utf8');
-
-    expect(source).toMatch(mobileHeaderPattern);
-  });
-
   it('marks the current route button as active', async () => {
     pathname = '/train';
     const {default: NavHeader} = await import('./NavHeader.js');

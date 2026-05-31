@@ -36,4 +36,4 @@ Playwright runs as a Docker Compose profile (`playwright`) and is not started by
 
 ## CI
 
-GitHub Actions (`.github/workflows/playwright.yml`) runs Playwright lint and E2E checks. On PRs, it triggers for changes in `api/**`, `web/**`, `playwright/**`, `docker-compose.yml`, and the workflow file (with AGENTS.md exclusions). On push, it runs on `main` for compose/workflow and Dockerfile updates used by the E2E stack.
+GitHub Actions (`.github/workflows/playwright.yml`) runs Playwright lint and E2E checks. On PRs, it triggers for changes in `api/**`, `shared/**`, `web/**`, `playwright/**`, `docker-compose.yml`, and the workflow file (with AGENTS.md exclusions). On push, it runs on `main` for shared changes plus compose/workflow and Dockerfile updates used by the E2E stack.

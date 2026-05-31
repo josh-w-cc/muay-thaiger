@@ -8,6 +8,8 @@ export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
     case 'auth':
       return handleAuth(models, message, socket);
+    case 'fight':
+      return handleFight(models, socket);
     case 'idle':
       return handleIdle(models, message, socket);
     case 'stop':
@@ -17,26 +19,28 @@ export async function processMessageCommand(models, message, socket) {
   }
 }
 
-async function applyCurrentTraining(models, playerID) {
-  if(!canSendPlayerState(models)) {
-    return;
-  }
-  const fighter = await models.fighters.findCurrentByPlayerID(playerID);
-  if(!fighter) {
-    return;
-  }
-  await applyTraining(models, fighter);
-}
-
-function canSendPlayerState({fighterActions, fighters}) {
-  return Boolean(fighterActions?.listByFighterID && fighters?.findCurrentByPlayerID);
-}
-
 async function handleAuth(models, message, socket) {
   const player = await authenticate(models, message);
   socket.player = player;
   socket.send(JSON.stringify({cmd: 'auth', display_name: player.display_name, player_id: player.id, token: player.token}));
   await sendCurrentPlayerState(models, socket);
+}
+
+async function handleFight(models, socket) {
+  if(!socket.player) {
+    throw createCommandError('invalid-fight-message');
+  }
+  const fighter = await models.fighters.findCurrentByPlayerID(socket.player.id);
+  if(!fighter) {
+    throw createCommandError('invalid-fight-message');
+  }
+  const fight = await models.fights.create({
+    attacker: fighter.id,
+    defender: null,
+    details: {},
+    reason: 'gold',
+  });
+  socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }
 
 async function handleIdle(models, message, socket) {
@@ -58,6 +62,17 @@ async function handleStop(models, message, socket) {
   await sendCurrentPlayerState(models, socket);
 }
 
+async function applyCurrentTraining(models, playerID) {
+  if(!canSendPlayerState(models)) {
+    return;
+  }
+  const fighter = await models.fighters.findCurrentByPlayerID(playerID);
+  if(!fighter) {
+    return;
+  }
+  await applyTraining(models, fighter);
+}
+
 async function sendCurrentPlayerState(models, socket) {
   if(!canSendPlayerState(models)) {
     return;
@@ -67,4 +82,8 @@ async function sendCurrentPlayerState(models, socket) {
     return;
   }
   sendPlayerState(state.actions, state.fighter, socket);
+}
+
+function canSendPlayerState({fighterActions, fighters}) {
+  return Boolean(fighterActions?.listByFighterID && fighters?.findCurrentByPlayerID);
 }

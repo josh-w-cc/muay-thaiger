@@ -37,6 +37,14 @@ describe('client websocket commands', () => {
     expect(sendCommand).toHaveBeenCalledWith({action_id: 2, cmd: 'stop'});
   });
 
+  it('sends a fight command', async () => {
+    const {createFightCmd} = await import('./clientCommands.js');
+
+    createFightCmd();
+
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'fight'});
+  });
+
   it('responds to pending auth and routes to the hub for fighter selection', async () => {
     const {selectFighterCmd} = await import('./clientCommands.js');
     const socket = {};
