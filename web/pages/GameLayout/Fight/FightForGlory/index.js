@@ -16,9 +16,11 @@ export default function FightForGlory() {
 }
 
 function ActiveFight() {
-  return <>
-    <FightForGloryLoadout/>
-    <FightForGloryFighters/>
-    <FightForGloryFeed/>
-  </>;
+  return (
+    <>
+      <FightForGloryLoadout />
+      <FightForGloryFighters />
+      <FightForGloryFeed />
+    </>
+  );
 }
