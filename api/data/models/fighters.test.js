@@ -35,3 +35,20 @@ describe('fighters.read', () => {
     assert.deepEqual(listed, [{id: 1, stats: {vigor: 4n}}]);
   });
 });
+
+describe('fighters.write', () => {
+  it('casts BigInt stats to strings in create and update writes', async () => {
+    const createResult = [{id: 1, stats: {vigor: '4'}}];
+    const updateResult = [{id: 1, stats: {vigor: '5'}}];
+    const {calls: createCalls, knex: createKnex} = mockKnex(createResult);
+    const {calls: updateCalls, knex: updateKnex} = mockKnex(updateResult);
+    const fightersForCreate = fightersModel(createKnex);
+    const fightersForUpdate = fightersModel(updateKnex);
+
+    await fightersForCreate.create({display_name: 'Tiger', stats: {vigor: 4n, speed: 2n}});
+    await fightersForUpdate.update(1, {stats: {vigor: 5n, speed: '2'}});
+
+    assert.deepEqual(createCalls[1], ['insert', {display_name: 'Tiger', stats: {vigor: '4', speed: '2'}}]);
+    assert.deepEqual(updateCalls[2], ['update', {stats: {vigor: '5', speed: '2'}}]);
+  });
+});
