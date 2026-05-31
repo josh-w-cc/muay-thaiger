@@ -362,27 +362,58 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('creates a fight and responds to fight command for authenticated socket', async () => {
-    const send = createCallTracker();
-    const createFight = createCallTracker();
-    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
-    const fighter = {id: 9, player: 1, retired: false};
-    const createdFight = {attacker: 9, defender: null, details: {}, id: 4, reason: 'gold'};
-    const fighters = {findCurrentByPlayerID: async () => fighter};
-    const fights = {
-      create: async (fightData) => {
-        createFight(fightData);
-        return createdFight;
-      },
-    };
+    const random = Math.random;
+    Math.random = () => 0.5;
+    try {
+      const send = createCallTracker();
+      const createFight = createCallTracker();
+      const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+      const fighter = {
+        id: 9,
+        player: 1,
+        retired: false,
+        stats: {
+          apm: 100n,
+          attack: 81n,
+          defense: 64n,
+          health: 200n,
+          power: 144n,
+          stamina: 121n,
+        },
+      };
+      const createdFight = {attacker: 9, defender: null, details: {bot: {}}, id: 4, reason: 'gold'};
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fights = {
+        create: async (fightData) => {
+          createFight(fightData);
+          return createdFight;
+        },
+      };
 
-    await onMessage(JSON.stringify({cmd: 'fight'}), socket, {fighters, fights});
+      await onMessage(JSON.stringify({cmd: 'fight'}), socket, {fighters, fights});
 
-    assert.deepEqual(createFight.calls, [[{attacker: 9, defender: null, details: {}, reason: 'gold'}]]);
-    assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {
-      cmd: 'ok',
-      metadata: {fight: createdFight, responded_cmd: 'fight'},
-    });
+      assert.equal(createFight.calls.length, 1);
+      const [fightPayload] = createFight.calls[0];
+      assert.equal(fightPayload.attacker, 9);
+      assert.equal(fightPayload.defender, null);
+      assert.equal(fightPayload.reason, 'gold');
+      assert.deepEqual(fightPayload.details.bot, {
+        apm: 100,
+        attack: 9,
+        defense: 8,
+        health: 2000,
+        power: 144,
+        stamina: 1331,
+      });
+      assert.equal(send.calls.length, 1);
+      assert.deepEqual(JSON.parse(send.calls[0][0]), {
+        cmd: 'ok',
+        metadata: {fight: createdFight, responded_cmd: 'fight'},
+      });
+    }
+    finally {
+      Math.random = random;
+    }
   });
 
   it('does not create a fight when the authenticated player has no current fighter', async () => {

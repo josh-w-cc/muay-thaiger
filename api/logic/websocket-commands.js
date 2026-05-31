@@ -1,6 +1,7 @@
 import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
 import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
+import {generateGoldBotStats} from './fight-bot.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 
@@ -34,11 +35,12 @@ async function handleFight(models, socket) {
   if(!fighter) {
     throw createCommandError('invalid-fight-message');
   }
+  const reason = 'gold';
   const fight = await models.fights.create({
     attacker: fighter.id,
     defender: null,
-    details: {},
-    reason: 'gold',
+    details: reason === 'gold' ? {bot: generateGoldBotStats(fighter.stats)} : {},
+    reason,
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }
