@@ -55,13 +55,13 @@ export default function FightFighters() {
 function FightFighterCard({alt, className, hp, mirror, src, stamina}) {
   return (
     <div className={classnames(css.fightFighter, className)}>
-      <FightStaminaBar current={stamina.current} label={stamina.label} max={stamina.max} />
+      <FightStatBar barClassName={css.fightStaminaBar} current={stamina.current} label={stamina.label} max={stamina.max} />
       <img
         alt={alt}
         className={classnames(css.fightFighterImage, {[css.fightFighterImageMirror]: mirror})}
         src={src}
       />
-      <FightHealthBar current={hp.current} label={hp.label} max={hp.max} />
+      <FightStatBar barClassName={css.fightHealthBar} current={hp.current} label={hp.label} max={hp.max} />
     </div>
   );
 }
@@ -75,32 +75,17 @@ function FightFighterStats({attack, defense}) {
   );
 }
 
-function FightHealthBar({current, label, max}) {
+function FightStatBar({barClassName, current, label, max}) {
   return (
     <div
       aria-label={label}
       aria-valuemax={max}
       aria-valuemin={0}
       aria-valuenow={current}
-      className={css.fightHealthBar}
+      className={barClassName}
       role="progressbar"
     >
-      <div className={css.fightHealthBarFill} style={{width: `${Math.round((current / max) * 100)}%`}} />
-    </div>
-  );
-}
-
-function FightStaminaBar({current, label, max}) {
-  return (
-    <div
-      aria-label={label}
-      aria-valuemax={max}
-      aria-valuemin={0}
-      aria-valuenow={current}
-      className={css.fightStaminaBar}
-      role="progressbar"
-    >
-      <div className={css.fightStaminaBarFill} style={{width: `${Math.round((current / max) * 100)}%`}} />
+      <div className={css.fill} style={{width: `${Math.round((current / max) * 100)}%`}} />
     </div>
   );
 }

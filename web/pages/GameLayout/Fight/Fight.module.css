@@ -75,28 +75,28 @@
   margin-top: var(--space-sm);
 }
 
+.fill {
+  composes: statBarFillBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
+}
+
 .fightHealthBar {
   composes: statBarBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   box-shadow: inset 0 -3px 6px -3px var(--color-red-hover), inset 0 3px 6px -3px var(--color-red-hover);
-}
 
-.fightHealthBarFill {
-  composes: statBarFillBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
-
-  background: linear-gradient(180deg, #ff7f7f 0%, var(--color-red) 25%, var(--color-red-hover) 75%, black 100%);
+  & .fill {
+    background: linear-gradient(180deg, #ff7f7f 0%, var(--color-red) 25%, var(--color-red-hover) 75%, black 100%);
+  }
 }
 
 .fightStaminaBar {
   composes: statBarBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   box-shadow: inset 0 -3px 6px -3px var(--color-gold-hover), inset 0 3px 6px -3px var(--color-gold-hover);
-}
 
-.fightStaminaBarFill {
-  composes: statBarFillBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
-
-  background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 25%, var(--color-gold-hover) 75%, black 100%);
+  & .fill {
+    background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 25%, var(--color-gold-hover) 75%, black 100%);
+  }
 }
 
 .fightLoadout {
