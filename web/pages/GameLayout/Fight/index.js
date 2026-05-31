@@ -1,6 +1,8 @@
 /* eslint-disable complexity, max-lines-per-function */
 import React from 'react';
 
+import {parseBigIntStats} from 'shared/stats.js';
+
 import useFighterStore from '@/data/fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '@/data/fight.js';
 import {createFightCmd} from '@/actions/websockets/clientCommands.js';
@@ -30,42 +32,45 @@ export default function FightMenu() {
   }
   else if(fight.state === FIGHT_IN_PROGRESS) {
     const [you, them] = fight.fighters;
+    const themStats = parseBigIntStats(them.stats);
+    const youCurrentHealth = BigInt(Math.floor(Number(you.currentHealth)));
+    const themCurrentHealth = BigInt(Math.floor(Number(them.currentHealth)));
     content = (
       <>
         <h3>Enemy Stats:</h3>
         APM:
         {' '}
-        {them.stats.apm.toFormattedNumber()}
+        {themStats.apm.toFormattedNumber()}
         <br />
         Attack:
         {' '}
-        {them.stats.attack.toFormattedNumber()}
+        {themStats.attack.toFormattedNumber()}
         <br />
         Defense:
         {' '}
-        {them.stats.defense.toFormattedNumber()}
+        {themStats.defense.toFormattedNumber()}
         <br />
         Health:
         {' '}
-        {them.stats.health.toFormattedNumber()}
+        {themStats.health.toFormattedNumber()}
         <br />
         Power:
         {' '}
-        {them.stats.power.toFormattedNumber()}
+        {themStats.power.toFormattedNumber()}
         <br />
         Stanima:
         {' '}
-        {them.stats.stamina.toFormattedNumber()}
+        {themStats.stamina.toFormattedNumber()}
         <br />
         Health:
         {' '}
-        {them.currentHealth.toFormattedNumber()}
+        {themCurrentHealth.toFormattedNumber()}
         <br />
         <Button onClick={() => setAnnouncer(fight.attack(0))}>Attack!</Button>
         <h3>Stats:</h3>
         Health:
         {' '}
-        {you.currentHealth.toFormattedNumber()}
+        {youCurrentHealth.toFormattedNumber()}
         <h3>MSG</h3>
       </>
     );
