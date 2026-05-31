@@ -16,9 +16,9 @@ export default function fighters(db) {
 
   return {
     create: (data) => create(serializeFighterStats(data)),
-    find: async (id) => castStats(await find(id)),
+    find: async (id) => castFighter(await find(id)),
     findCurrentByPlayerID: generateFindCurrentByPlayerIDFn(db),
-    list: async (direction) => castStatsRows(await list(direction)),
+    list: async (direction) => castFighterRows(await list(direction)),
     remove: generateRemoveFn(db, 'fighters'),
     update: (id, data) => update(id, serializeFighterStats(data)),
   };
@@ -31,7 +31,30 @@ function generateFindCurrentByPlayerIDFn(db) {
       .orderBy('created_at', 'desc')
       .first();
 
-    return castStats(fighter);
+    return castFighter(fighter);
+  };
+}
+
+function castFighterRows(rows) {
+  if(Array.isArray(rows)) {
+    return castStatsRows(rows).map(castFighterGold);
+  }
+
+  return castFighterGold(castStatsRows(rows));
+}
+
+function castFighter(row) {
+  return castFighterGold(castStats(row));
+}
+
+function castFighterGold(row) {
+  if(!row) {
+    return null;
+  }
+
+  return {
+    ...row,
+    gold: BigInt(row.gold ?? 0),
   };
 }
 

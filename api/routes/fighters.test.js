@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
+import 'shared/bigInt.js';
 
 import {mockKnex} from '../data/utils/mock-knex.js';
 import fightersRoutes from '../routes/fighters.js';
