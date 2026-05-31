@@ -38,17 +38,20 @@ async function handleFight(models, socket) {
     throw createCommandError('invalid-fight-message');
   }
   const reason = 'gold';
-  const details = {
-    starting_stats: captureStartingStats(fighter),
-    ...(reason === 'gold' ? {bot: generateGoldBotStats(fighter.stats)} : {}),
-  };
   const fight = await models.fights.create({
     attacker: fighter.id,
     defender: null,
-    details,
+    details: createFightDetails(fighter, reason),
     reason,
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
+}
+
+function createFightDetails(fighter, reason) {
+  return {
+    starting_stats: captureStartingStats(fighter),
+    ...(reason === 'gold' ? {bot: generateGoldBotStats(fighter.stats)} : {}),
+  };
 }
 
 function captureStartingStats(fighter) {
