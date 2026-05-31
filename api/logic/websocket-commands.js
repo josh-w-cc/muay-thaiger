@@ -4,7 +4,7 @@ import {registerFighterAction, unregisterFighterAction} from './fighter-actions.
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 
-const FIGHT_STAT_KEYS = ['anima', 'constitution', 'durability', 'reach', 'skill', 'speed', 'stamina', 'vigor', 'vitality'];
+const FIGHTER_STAT_KEYS = ['anima', 'constitution', 'durability', 'reach', 'skill', 'speed', 'stamina', 'vigor', 'vitality'];
 
 export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
@@ -47,7 +47,7 @@ async function handleFight(models, socket) {
 
 function captureStartingStats(fighter) {
   return Object.fromEntries(
-    FIGHT_STAT_KEYS.map((stat) => [stat, (fighter[stat] ?? 0).toString()]),
+    FIGHTER_STAT_KEYS.map((stat) => [stat, (fighter[stat] ?? 0).toString()]),
   );
 }
 
