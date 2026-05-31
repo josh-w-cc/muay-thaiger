@@ -101,3 +101,8 @@ export const SKILL_DEFINITIONS = Object.freeze({
 export const SKILLS_BY_ACTION_ID = Object.freeze(Object.fromEntries(Object.entries(SKILL_IDS).map(([key, id]) => [id, SKILL_DEFINITIONS[key]])));
 
 export const SKILL_SEED_ACTIONS = createSeedEntries(SKILL_DEFINITIONS, SKILL_IDS, () => ({type: 'train'}));
+
+export function getSkillActionID(skillKey) {
+  const id = SKILL_IDS[skillKey];
+  return Number.isInteger(id) ? id : null;
+}
