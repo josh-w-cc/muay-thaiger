@@ -51,6 +51,14 @@
   transform: scaleX(-1);
 }
 
+.fightFighterLeft {
+  align-items: flex-start;
+}
+
+.fightFighterRight {
+  align-items: flex-end;
+}
+
 .fightFighters {
   align-items: stretch;
   display: flex;
