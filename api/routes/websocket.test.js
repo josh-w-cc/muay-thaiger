@@ -390,7 +390,7 @@ describe('WebSocket /ws/connect', () => {
           stamina: 121n,
         },
       };
-      const createdFight = {attacker: 9, defender: null, details: {bot: {}}, id: 4, reason: 'gold'};
+      const createdFight = {attacker: 9, defender: null, details: {attacker: {}, defender: {}}, id: 4, reason: 'gold'};
       const fighters = {findCurrentByPlayerID: async () => fighter};
       const fights = {
         create: async (fightData) => {
@@ -405,24 +405,28 @@ describe('WebSocket /ws/connect', () => {
         attacker: 9,
         defender: null,
         details: {
-          bot: {
-            apm: 100,
-            attack: 9,
-            defense: 8,
-            health: 2000,
-            power: 144,
-            stamina: 1331,
+          attacker: {
+            starting_stats: {
+              anima: '11',
+              constitution: '12',
+              durability: '13',
+              reach: '14',
+              skill: '15',
+              speed: '16',
+              stamina: '17',
+              vigor: '18',
+              vitality: '19',
+            },
           },
-          starting_stats: {
-            anima: '11',
-            constitution: '12',
-            durability: '13',
-            reach: '14',
-            skill: '15',
-            speed: '16',
-            stamina: '17',
-            vigor: '18',
-            vitality: '19',
+          defender: {
+            starting_stats: {
+              apm: 100,
+              attack: 9,
+              defense: 8,
+              health: 2000,
+              power: 144,
+              stamina: 1331,
+            },
           },
         },
         reason: 'gold',

@@ -49,8 +49,8 @@ async function handleFight(models, socket) {
 
 function createFightDetails(fighter, reason) {
   return {
-    starting_stats: captureStartingStats(fighter),
-    ...(reason === 'gold' ? {bot: generateGoldBotStats(fighter.stats)} : {}),
+    attacker: {starting_stats: captureStartingStats(fighter)},
+    ...(reason === 'gold' ? {defender: {starting_stats: generateGoldBotStats(fighter.stats)}} : {}),
   };
 }
 
