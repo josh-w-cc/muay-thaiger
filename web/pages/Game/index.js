@@ -1,15 +1,13 @@
-import {redirect, useLoaderData} from 'react-router-dom';
+import {redirect} from 'react-router-dom';
 
 import {loadPlayerToken} from '@/actions/websockets/token.js';
+import useRacesStore from '@/data/races.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import FighterSelect from '../FighterSelect';
 import './Game.css';
 
 export default function Game() {
-  const races = useLoaderData() ?? [];
-  return (
-    <FighterSelect races={races} />
-  );
+  return <FighterSelect />;
 }
 
 export async function fighterSelectLoader() {
@@ -24,11 +22,16 @@ function hasPlayerToken() {
 }
 
 async function loadRaces() {
+  const {setRaces} = useRacesStore.getState();
+
   try {
-    return await fetchJSON('race');
+    const races = await fetchJSON('race');
+    setRaces(races);
+    return races;
   }
   catch(error) {
     console.error('Failed to load races', error);
+    setRaces([]);
     return [];
   }
 }

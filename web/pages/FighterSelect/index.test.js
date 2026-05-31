@@ -1,5 +1,6 @@
-import {render, screen, within} from '@testing-library/react';
+import {act, render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import useRacesStore, {resetRacesStore} from '@/data/races.js';
 import SnowLeopard from './assets/SnowLeopard.png';
 import Tiger from './assets/Tiger.png';
 
@@ -13,10 +14,16 @@ vi.mock('@/actions/selectFighter.js', () => ({
 describe('FighterSelect', () => {
   beforeEach(() => {
     selectMock = vi.fn();
+    act(() => {
+      resetRacesStore();
+    });
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    act(() => {
+      resetRacesStore();
+    });
   });
 
   it('renders races and selects the chosen race', async () => {
@@ -31,7 +38,10 @@ describe('FighterSelect', () => {
     ];
     const {default: FighterSelect} = await import('./index.js');
 
-    render(<FighterSelect races={races} />);
+    act(() => {
+      useRacesStore.getState().setRaces(races);
+    });
+    render(<FighterSelect />);
 
     const raceHeading = screen.getByRole('heading', {name: 'Snow Leopard Prime'});
     const raceCard = raceHeading.closest('div');
@@ -56,7 +66,10 @@ describe('FighterSelect', () => {
       },
     ];
 
-    render(<FighterSelect races={races} />);
+    act(() => {
+      useRacesStore.getState().setRaces(races);
+    });
+    render(<FighterSelect />);
 
     const pageHeading = screen.getByRole('heading', {name: 'Choose your fighter:'});
     const racesContainer = pageHeading.nextElementSibling;
@@ -83,7 +96,10 @@ describe('FighterSelect', () => {
       },
     ];
 
-    render(<FighterSelect races={races} />);
+    act(() => {
+      useRacesStore.getState().setRaces(races);
+    });
+    render(<FighterSelect />);
 
     expect(screen.queryByText(/Vigor:\s*7/i)).not.toBeInTheDocument();
   });
