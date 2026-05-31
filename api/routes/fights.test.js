@@ -80,7 +80,7 @@ describe('POST /fights', () => {
   });
 
   it('creates a fight with no defender (robot)', async () => {
-    const fightNoDefender = {...sampleFight, defender: null, reason: 'rank'};
+    const fightNoDefender = {...sampleFight, defender: null};
     const {knex} = mockKnex([fightNoDefender]);
     const app = Fastify();
     app.decorate('db', knex);
@@ -88,7 +88,7 @@ describe('POST /fights', () => {
 
     const response = await app.inject({
       method: 'POST',
-      payload: {attacker: 1, reason: 'rank', details: {}},
+      payload: {attacker: 1, reason: 'gold', details: {}},
       url: '/fights',
     });
 

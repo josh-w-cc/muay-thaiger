@@ -3,8 +3,7 @@ import {describe, it} from 'node:test';
 
 import {down, up} from '../migrations/20260531120000_add_rank_to_fights.js';
 
-
-describe('20260531120000_add_rank_to_fights migration', () => {
+describe('add rank to fights migration', () => {
   it('adds rank column to fights table', async () => {
     const calls = [];
     const knex = {
