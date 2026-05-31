@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS fights (
   defender BIGINT REFERENCES fighters(id),
   victory BOOLEAN DEFAULT NULL,
   reason fight_reason NOT NULL,
+  rank TEXT,
   details JSONB NOT NULL DEFAULT '{}'::JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
