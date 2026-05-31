@@ -1,3 +1,5 @@
+import 'shared/bigInt.js';
+
 import {render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -130,8 +132,8 @@ describe('Fight', () => {
     attack.mockReturnValue('POW!');
     Object.assign(fightState, {
       fighters: [
-        {currentHealth: '900', stats: {apm: '1', attack: '2', defense: '3', health: '4', power: '5', stamina: '6'}},
-        {currentHealth: '800', stats: {apm: '7', attack: '8', defense: '9', health: '100000', power: '11', stamina: '12'}},
+        {currentHealth: 900n, stats: {apm: 1n, attack: 2n, defense: 3n, health: 4n, power: 5n, stamina: 6n}},
+        {currentHealth: 800n, stats: {apm: 7n, attack: 8n, defense: 9n, health: 100000n, power: 11n, stamina: 12n}},
       ],
       messages: ['msg-a', 'msg-b'],
       state: 'in-progress',
