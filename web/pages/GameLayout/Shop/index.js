@@ -21,7 +21,7 @@ function ShopRows({buy, fighter}) {
     <div key={itemKey}>
       {Items[itemKey].name}
       {' '}
-      {BigInt(Items[itemKey].cost).toFormattedNumber()}
+      {Items[itemKey].cost.toFormattedNumber()}
       ฿
       <Button onClick={() => buy(fighter, Items[itemKey])}>Buy</Button>
       <br />
