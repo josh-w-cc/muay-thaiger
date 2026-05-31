@@ -44,12 +44,13 @@ describe('getPlayerState', () => {
       listByFighterID: async () => actions,
       touch: async () => null,
     };
+    const fights = {findActiveByFighterID: async () => null};
     const fighters = {
       findCurrentByPlayerID: async () => fighter,
       update: async () => updatedFighter,
     };
 
-    const result = await getPlayerState({fighterActions, fighters}, 5);
+    const result = await getPlayerState({fighterActions, fights, fighters}, 5);
 
     assert.equal(result.fighter, updatedFighter);
     assert.deepEqual(result.actions, actions);
@@ -58,11 +59,24 @@ describe('getPlayerState', () => {
   it('returns actions and original fighter when no actions are present', async () => {
     const fighter = {id: 9, player: 5, retired: false, stats: {}};
     const fighterActions = {listByFighterID: async () => []};
+    const fights = {findActiveByFighterID: async () => null};
     const fighters = {findCurrentByPlayerID: async () => fighter};
 
-    const result = await getPlayerState({fighterActions, fighters}, 5);
+    const result = await getPlayerState({fighterActions, fights, fighters}, 5);
 
     assert.deepEqual(result, {actions: [], fighter});
+  });
+
+  it('returns an active unresolved fight when the fighter has one', async () => {
+    const fighter = {id: 9, player: 5, retired: false, stats: {}};
+    const fight = {attacker: 9, defender: null, details: {}, id: 3, reason: 'gold', victory: null};
+    const fighterActions = {listByFighterID: async () => []};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {findActiveByFighterID: async () => fight};
+
+    const result = await getPlayerState({fighterActions, fights, fighters}, 5);
+
+    assert.deepEqual(result, {actions: [], fight, fighter});
   });
 
   it('returns null when the player has no current fighter', async () => {
@@ -96,5 +110,17 @@ describe('sendPlayerState', () => {
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {actions: [], cmd: 'player_state', fighter});
+  });
+
+  it('includes fight in player_state when one is provided', () => {
+    const send = createCallTracker();
+    const socket = {send};
+    const fighter = {id: 3, player: 2, retired: false, stats: {}};
+    const fight = {attacker: 3, defender: null, details: {}, id: 8, reason: 'gold', victory: null};
+
+    sendPlayerState([], fighter, socket, fight);
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {actions: [], cmd: 'player_state', fight, fighter});
   });
 });
