@@ -48,13 +48,13 @@ function castFighter(row) {
 }
 
 function castFighterGold(row) {
-  if(!row || row.gold === undefined || row.gold === null) {
-    return row ?? null;
+  if(!row) {
+    return null;
   }
 
   return {
     ...row,
-    gold: BigInt(row.gold),
+    gold: BigInt(row.gold ?? 0),
   };
 }
 

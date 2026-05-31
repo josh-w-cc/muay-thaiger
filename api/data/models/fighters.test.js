@@ -34,6 +34,20 @@ describe('fighters.read', () => {
     assert.deepEqual(found, {id: 1, gold: 3n, stats: {vigor: 4n}});
     assert.deepEqual(listed, [{id: 1, gold: 3n, stats: {vigor: 4n}}]);
   });
+
+  it('defaults missing gold to 0n in reads', async () => {
+    const fighter = {id: 1, stats: {vigor: '4'}};
+    const {knex: findKnex} = mockKnex(fighter);
+    const {knex: listKnex} = mockKnex([fighter]);
+    const fightersForFind = fightersModel(findKnex);
+    const fightersForList = fightersModel(listKnex);
+
+    const found = await fightersForFind.find(1);
+    const listed = await fightersForList.list();
+
+    assert.deepEqual(found, {id: 1, gold: 0n, stats: {vigor: 4n}});
+    assert.deepEqual(listed, [{id: 1, gold: 0n, stats: {vigor: 4n}}]);
+  });
 });
 
 describe('fighters.write', () => {
