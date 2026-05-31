@@ -125,6 +125,7 @@ describe('Fight', () => {
     await user.click(screen.getByRole('button', {name: 'Fight!'}));
 
     expect(createFightCmd).toHaveBeenCalledTimes(1);
+    expect(createFightCmd).toHaveBeenCalledWith('gold');
   });
 
   it('shows in-progress stats and attack message', async () => {

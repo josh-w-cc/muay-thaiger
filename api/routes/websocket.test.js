@@ -375,7 +375,7 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({cmd: 'fight'}), socket, {fighters, fights});
+    await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighters, fights});
 
     assert.deepEqual(createFight.calls, [[{attacker: 9, defender: null, details: {}, reason: 'gold'}]]);
     assert.equal(send.calls.length, 1);

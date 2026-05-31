@@ -40,9 +40,9 @@ describe('client websocket commands', () => {
   it('sends a fight command', async () => {
     const {createFightCmd} = await import('./clientCommands.js');
 
-    createFightCmd();
+    createFightCmd('gold');
 
-    expect(sendCommand).toHaveBeenCalledWith({cmd: 'fight'});
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'fight', reason: 'gold'});
   });
 
   it('responds to pending auth and routes to the hub for fighter selection', async () => {

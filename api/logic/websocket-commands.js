@@ -9,7 +9,7 @@ export async function processMessageCommand(models, message, socket) {
     case 'auth':
       return handleAuth(models, message, socket);
     case 'fight':
-      return handleFight(models, socket);
+      return handleFight(models, message, socket);
     case 'idle':
       return handleIdle(models, message, socket);
     case 'stop':
@@ -26,7 +26,7 @@ async function handleAuth(models, message, socket) {
   await sendCurrentPlayerState(models, socket);
 }
 
-async function handleFight(models, socket) {
+async function handleFight(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-fight-message');
   }
@@ -38,7 +38,7 @@ async function handleFight(models, socket) {
     attacker: fighter.id,
     defender: null,
     details: {},
-    reason: 'gold',
+    reason: message.reason ?? 'gold',
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }
