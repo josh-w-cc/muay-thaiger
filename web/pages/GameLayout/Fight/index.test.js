@@ -92,8 +92,8 @@ describe('Fight', () => {
     expect(within(glorySection).getByRole('progressbar', {name: 'Tiger fighter stamina'})).toBeInTheDocument();
     expect(within(glorySection).getByRole('progressbar', {name: 'Snow leopard fighter stamina'})).toBeInTheDocument();
     expect(within(glorySection).getAllByRole('separator')).toHaveLength(1);
-    expect(within(glorySection).getByRole('separator')).toHaveClass(css.gloryFighterDivider);
-    const fighterCards = glorySection.querySelectorAll(`.${css.gloryFighter}`);
+    expect(within(glorySection).getByRole('separator')).toHaveClass(css.fightFighterDivider);
+    const fighterCards = glorySection.querySelectorAll(`.${css.fightFighter}`);
     fighterCards.forEach((card) => {
       expect(card).not.toHaveTextContent('A:');
       expect(card).not.toHaveTextContent('D:');
@@ -108,12 +108,12 @@ describe('Fight', () => {
     expect(glorySection).toHaveTextContent('Snow Leopard throws Roundhouse');
     expect(glorySection).toHaveTextContent('Misses clean.');
     within(glorySection).getAllByText('Tiger', {selector: 'strong'})
-      .forEach((element) => expect(element).toHaveClass(css.gloryFeedAttackerSelf));
+      .forEach((element) => expect(element).toHaveClass(css.fightFeedAttackerSelf));
     within(glorySection).getAllByText('Snow Leopard', {selector: 'strong'})
-      .forEach((element) => expect(element).toHaveClass(css.gloryFeedAttackerEnemy));
+      .forEach((element) => expect(element).toHaveClass(css.fightFeedAttackerEnemy));
     const feedItems = within(glorySection).getAllByRole('listitem');
     expect(feedItems.length).toBeGreaterThanOrEqual(12);
-    expect(feedItems[0]).toHaveClass(css.gloryFeedItem);
+    expect(feedItems[0]).toHaveClass(css.fightFeedItem);
   });
 
   it('sends a fight command when clicking Fight', async () => {
