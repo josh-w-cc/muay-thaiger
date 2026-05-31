@@ -5,6 +5,7 @@ import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 
 const FIGHT_REASONS = ['gold', 'rank'];
+const FIGHTER_STAT_KEYS = ['anima', 'constitution', 'durability', 'reach', 'skill', 'speed', 'stamina', 'vigor', 'vitality'];
 
 export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
@@ -42,10 +43,16 @@ async function handleFight(models, message, socket) {
   const fight = await models.fights.create({
     attacker: fighter.id,
     defender: null,
-    details: {},
+    details: {starting_stats: captureStartingStats(fighter)},
     reason: message.reason,
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
+}
+
+function captureStartingStats(fighter) {
+  return Object.fromEntries(
+    FIGHTER_STAT_KEYS.map((stat) => [stat, (fighter[stat] ?? 0).toString()]),
+  );
 }
 
 async function handleIdle(models, message, socket) {
