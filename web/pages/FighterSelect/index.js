@@ -1,5 +1,6 @@
 import selectFighter from '@/actions/selectFighter.js';
 import Button from '@/components/Button.js';
+import useRacesStore from '@/data/races.js';
 import SnowLeopard from './assets/SnowLeopard.png';
 import Tiger from './assets/Tiger.png';
 
@@ -11,7 +12,9 @@ const RACE_IMAGES_BY_ID = {
   2: SnowLeopard,
 };
 
-function FighterSelect({races = []}) {
+function FighterSelect() {
+  const races = useRacesStore((state) => state.races);
+
   return (
     <>
       <h1>Choose your fighter:</h1>
@@ -22,9 +25,7 @@ function FighterSelect({races = []}) {
             name={race.name}
             image={getRaceImage(race.id)}
             stats={race.stats}
-            onSelect={() => {
-              selectFighter(`${race.id}`);
-            }}
+            onSelect={() => selectFighter(`${race.id}`)}
           />
         ))}
       </div>
