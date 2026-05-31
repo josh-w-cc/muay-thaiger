@@ -5,6 +5,8 @@ import {generateGoldBotStats} from './fight-bot.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 
+const FIGHTER_STAT_KEYS = ['anima', 'constitution', 'durability', 'reach', 'skill', 'speed', 'stamina', 'vigor', 'vitality'];
+
 export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
     case 'auth':
@@ -39,10 +41,19 @@ async function handleFight(models, socket) {
   const fight = await models.fights.create({
     attacker: fighter.id,
     defender: null,
-    details: reason === 'gold' ? {bot: generateGoldBotStats(fighter.stats)} : {},
+    details: {
+      bot: generateGoldBotStats(fighter.stats),
+      starting_stats: captureStartingStats(fighter),
+    },
     reason,
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
+}
+
+function captureStartingStats(fighter) {
+  return Object.fromEntries(
+    FIGHTER_STAT_KEYS.map((stat) => [stat, (fighter[stat] ?? fighter.stats?.[stat] ?? 0).toString()]),
+  );
 }
 
 async function handleIdle(models, message, socket) {

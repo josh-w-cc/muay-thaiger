@@ -42,7 +42,7 @@ function trainStats(actions, fighter) {
 
 function createFighterProxy(stats, onWin) {
   return {
-    train: (stat, amount = 1) => trainStat(stats, stat, amount),
+    train: (stat, amount = 1n) => trainStat(stats, stat, amount),
     win: onWin,
   };
 }

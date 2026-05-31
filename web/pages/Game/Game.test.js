@@ -17,6 +17,7 @@ import {GameLayout, loader as gameScreenLoader} from '../GameLayout/index.js';
 
 const originalWebSocket = globalThis.WebSocket;
 const originalLocalStorage = globalThis.localStorage;
+const originalLocation = globalThis.window.location;
 const originalWindow = globalThis.window;
 let fetchJSONMock;
 const {routerNavigate} = vi.hoisted(() => ({
@@ -106,6 +107,15 @@ describe('Game', () => {
     resetPlayerStore();
     setLocalStorage(originalLocalStorage);
     globalThis.WebSocket = originalWebSocket;
+    try {
+      Object.defineProperty(globalThis.window, 'location', {
+        configurable: true,
+        value: originalLocation,
+      });
+    }
+    catch {
+      // window.location was not mocked in this test; nothing to restore
+    }
     globalThis.window = originalWindow;
   });
 
@@ -308,8 +318,12 @@ describe('Game', () => {
     });
   });
 
-  it('clears invalid auth token and retries auth with new token', async () => {
-    const user = userEvent.setup();
+  it('clears invalid auth token and redirects to /', async () => {
+    Object.defineProperty(globalThis.window, 'location', {
+      configurable: true,
+      value: {href: 'http://localhost/'},
+      writable: true,
+    });
     const send = vi.fn();
     const socket = {close: vi.fn(), readyState: 1, send};
     globalThis.WebSocket = vi.fn(function () {
@@ -322,16 +336,18 @@ describe('Game', () => {
     await screen.findByRole('button', {name: 'Fighter Select'});
     setPlayerToken('existing-token');
     socket.onmessage({data: JSON.stringify({cmd: 'auth'})});
-    await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
     socket.onmessage({data: JSON.stringify({cmd: 'auth-invalid-token'})});
 
     expect(localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY)).toBeNull();
-    expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({cmd: 'auth', token: 'existing-token'}));
-    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
+    expect(globalThis.window.location.href).toBe('/');
   });
 
-  it('retries auth with new token when localStorage is unavailable', async () => {
-    const user = userEvent.setup();
+  it('redirects to / on invalid token even when localStorage is unavailable', async () => {
+    Object.defineProperty(globalThis.window, 'location', {
+      configurable: true,
+      value: {href: 'http://localhost/'},
+      writable: true,
+    });
     const send = vi.fn();
     const socket = {close: vi.fn(), readyState: 1, send};
     globalThis.WebSocket = vi.fn(function () {
@@ -344,11 +360,9 @@ describe('Game', () => {
     renderGame({gameModule});
     await screen.findByRole('button', {name: 'Fighter Select'});
     socket.onmessage({data: JSON.stringify({cmd: 'auth'})});
-    await user.click(screen.getByRole('button', {name: 'Fighter Select'}));
     socket.onmessage({data: JSON.stringify({cmd: 'auth-invalid-token'})});
 
-    expect(send).toHaveBeenNthCalledWith(1, JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
-    expect(send).toHaveBeenNthCalledWith(2, JSON.stringify({cmd: 'auth', race: '1', token: 'new'}));
+    expect(globalThis.window.location.href).toBe('/');
   });
 
   it('ignores invalid websocket auth messages', async () => {

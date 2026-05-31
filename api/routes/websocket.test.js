@@ -369,9 +369,18 @@ describe('WebSocket /ws/connect', () => {
       const createFight = createCallTracker();
       const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
       const fighter = {
+        anima: 11,
+        constitution: 12,
+        durability: 13,
         id: 9,
         player: 1,
+        reach: 14,
         retired: false,
+        skill: 15,
+        speed: 16,
+        stamina: 17,
+        vigor: 18,
+        vitality: 19,
         stats: {
           apm: 100n,
           attack: 81n,
@@ -392,24 +401,37 @@ describe('WebSocket /ws/connect', () => {
 
       await onMessage(JSON.stringify({cmd: 'fight'}), socket, {fighters, fights});
 
-      assert.equal(createFight.calls.length, 1);
-      const [fightPayload] = createFight.calls[0];
-      assert.equal(fightPayload.attacker, 9);
-      assert.equal(fightPayload.defender, null);
-      assert.equal(fightPayload.reason, 'gold');
-      assert.deepEqual(fightPayload.details.bot, {
-        apm: 100,
-        attack: 9,
-        defense: 8,
-        health: 2000,
-        power: 144,
-        stamina: 1331,
-      });
-      assert.equal(send.calls.length, 1);
-      assert.deepEqual(JSON.parse(send.calls[0][0]), {
-        cmd: 'ok',
-        metadata: {fight: createdFight, responded_cmd: 'fight'},
-      });
+    assert.deepEqual(createFight.calls, [[{
+      attacker: 9,
+      defender: null,
+      details: {
+        bot: {
+          apm: 100,
+          attack: 9,
+          defense: 8,
+          health: 2000,
+          power: 144,
+          stamina: 1331,
+        },
+        starting_stats: {
+          anima: '11',
+          constitution: '12',
+          durability: '13',
+          reach: '14',
+          skill: '15',
+          speed: '16',
+          stamina: '17',
+          vigor: '18',
+          vitality: '19',
+        },
+      },
+      reason: 'gold',
+    }]]);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {
+      cmd: 'ok',
+      metadata: {fight: createdFight, responded_cmd: 'fight'},
+    });
     }
     finally {
       Math.random = random;
