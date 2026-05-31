@@ -96,7 +96,7 @@
 .fightStaminaBarFill {
   composes: statBarFillBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
-  background: linear-gradient(180deg, #ffec9a 0%, var(--color-gold) 25%, var(--color-gold-hover) 75%, black 100%);
+  background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 25%, var(--color-gold-hover) 75%, black 100%);
 }
 
 .fightLoadout {
