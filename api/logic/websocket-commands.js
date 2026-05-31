@@ -30,6 +30,9 @@ async function handleFight(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-fight-message');
   }
+  if(typeof message.reason !== 'string' || message.reason.length === 0) {
+    throw createCommandError('invalid-fight-message');
+  }
   const fighter = await models.fighters.findCurrentByPlayerID(socket.player.id);
   if(!fighter) {
     throw createCommandError('invalid-fight-message');
@@ -38,7 +41,7 @@ async function handleFight(models, message, socket) {
     attacker: fighter.id,
     defender: null,
     details: {},
-    reason: message.reason ?? 'gold',
+    reason: message.reason,
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }
