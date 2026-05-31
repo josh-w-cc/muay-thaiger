@@ -4,6 +4,8 @@ import {registerFighterAction, unregisterFighterAction} from './fighter-actions.
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 
+const FIGHT_REASONS = ['gold', 'rank'];
+
 export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
     case 'auth':
@@ -30,7 +32,7 @@ async function handleFight(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-fight-message');
   }
-  if(typeof message.reason !== 'string' || message.reason.length === 0) {
+  if(!FIGHT_REASONS.includes(message.reason)) {
     throw createCommandError('invalid-fight-message');
   }
   const fighter = await models.fighters.findCurrentByPlayerID(socket.player.id);
