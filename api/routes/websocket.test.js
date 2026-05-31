@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
+import {MOVE_IDS} from 'shared/moves.js';
 
 import createCallTracker from '../utils/test/createCallTracker.js';
 import {syncPlayerState} from '../logic/player-state.js';
@@ -159,12 +160,13 @@ describe('WebSocket /ws/connect', () => {
   it('creates a player and sends the player token on auth new', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
-    const fighters = {create: async () => null};
+    const fighterMoves = {create: async () => null};
+    const fighters = {create: async () => ({id: 1})};
     const races = {find: async () => ({id: 2, stats: RACE_DEFAULT_STATS})};
     const player = {display_name: 'Player-abcdefgh', id: 1, token: 'player-uuid-token'};
     const players = {create: async () => player};
 
-    await onMessage(JSON.stringify({cmd: 'auth', race: 2, token: 'new'}), socket, {fighters, players, races});
+    await onMessage(JSON.stringify({cmd: 'auth', race: 2, token: 'new'}), socket, {fighterMoves, fighters, players, races});
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', display_name: 'Player-abcdefgh', player_id: 1, token: 'player-uuid-token'});
@@ -174,9 +176,16 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
     const fighterCreateCalls = [];
+    const fighterMoveCreateCalls = [];
     const fighters = {
       create: async (input) => {
         fighterCreateCalls.push(input);
+        return {id: 9, ...input};
+      },
+    };
+    const fighterMoves = {
+      create: async (input) => {
+        fighterMoveCreateCalls.push(input);
         return input;
       },
     };
@@ -184,7 +193,7 @@ describe('WebSocket /ws/connect', () => {
     const player = {display_name: 'Player-abcdefgh', id: 1, token: 'player-uuid-token'};
     const players = {create: async () => player};
 
-    await onMessage(JSON.stringify({cmd: 'auth', race: '2', token: 'new'}), socket, {fighters, players, races});
+    await onMessage(JSON.stringify({cmd: 'auth', race: '2', token: 'new'}), socket, {fighterMoves, fighters, players, races});
 
     assert.equal(fighterCreateCalls.length, 1);
     assert.deepEqual(fighterCreateCalls[0], {
@@ -205,16 +214,21 @@ describe('WebSocket /ws/connect', () => {
         vitality: 1n,
       },
     });
+    assert.deepEqual(fighterMoveCreateCalls, [
+      {enabled: true, fighter: 9, move: MOVE_IDS.wildPunch},
+      {enabled: true, fighter: 9, move: MOVE_IDS.wildKick},
+    ]);
   });
 
   it('does not create a player when auth new race is invalid', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
+    const fighterMoves = {create: async () => null};
     const fighters = {create: async () => null};
     const races = {find: async () => null};
     const players = {create: async () => ({id: 1, token: 'player-uuid-token'})};
 
-    await onMessage(JSON.stringify({cmd: 'auth', race: 'not-a-race', token: 'new'}), socket, {fighters, players, races});
+    await onMessage(JSON.stringify({cmd: 'auth', race: 'not-a-race', token: 'new'}), socket, {fighterMoves, fighters, players, races});
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-auth-data'});
@@ -223,6 +237,7 @@ describe('WebSocket /ws/connect', () => {
   it('does not create a player when auth new race is not found', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
+    const fighterMoves = {create: async () => null};
     const fighters = {create: async () => null};
     const races = {find: async () => null};
     const createPlayer = createCallTracker();
@@ -233,7 +248,7 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({cmd: 'auth', race: '3', token: 'new'}), socket, {fighters, players, races});
+    await onMessage(JSON.stringify({cmd: 'auth', race: '3', token: 'new'}), socket, {fighterMoves, fighters, players, races});
 
     assert.equal(createPlayer.calls.length, 0);
     assert.equal(send.calls.length, 1);
