@@ -351,6 +351,54 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-idle-message'});
   });
 
+  it('sends error for fight command when socket has no authenticated player', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+
+    await onMessage(JSON.stringify({cmd: 'fight'}), socket, {});
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-fight-message'});
+  });
+
+  it('creates a fight and responds to fight commands for authenticated sockets', async () => {
+    const send = createCallTracker();
+    const createFight = createCallTracker();
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+    const fighter = {id: 9, player: 1, retired: false};
+    const createdFight = {attacker: 9, defender: null, details: {}, id: 4, reason: 'gold'};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {
+      create: async (...args) => {
+        createFight(...args);
+        return createdFight;
+      },
+    };
+
+    await onMessage(JSON.stringify({cmd: 'fight'}), socket, {fighters, fights});
+
+    assert.deepEqual(createFight.calls, [[{attacker: 9, defender: null, details: {}, reason: 'gold'}]]);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {
+      cmd: 'ok',
+      metadata: {fight: createdFight, responded_cmd: 'fight'},
+    });
+  });
+
+  it('does not create a fight when the authenticated player has no current fighter', async () => {
+    const send = createCallTracker();
+    const createFight = createCallTracker();
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+    const fighters = {findCurrentByPlayerID: async () => null};
+    const fights = {create: createFight};
+
+    await onMessage(JSON.stringify({cmd: 'fight'}), socket, {fighters, fights});
+
+    assert.equal(createFight.calls.length, 0);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-fight-message'});
+  });
+
   it('does not respond to idle messages when the player has no current fighter', async () => {
     const send = createCallTracker();
     const create = createCallTracker();

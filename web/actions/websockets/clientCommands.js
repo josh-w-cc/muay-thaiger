@@ -8,6 +8,10 @@ export function createFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'idle'});
 }
 
+export function createFightCmd() {
+  sendCommand({cmd: 'fight'});
+}
+
 export function removeFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'stop'});
 }

@@ -3,6 +3,7 @@ import React from 'react';
 
 import useFighterStore from '@/data/fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '@/data/fight.js';
+import {createFightCmd} from '@/actions/websockets/clientCommands.js';
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';
 
@@ -14,7 +15,6 @@ export default function FightMenu() {
   const fight = useFightStore();
   const fighter = useFighterStore();
   const [announcer, setAnnouncer] = React.useState('');
-  const [risk, setRisk] = React.useState(1);
 
   if(needsZerothFight(fighter)) {
     return (<ZerothFight />);
@@ -24,16 +24,7 @@ export default function FightMenu() {
   if(fight.state === FIGHT_NOT_STARTED) {
     content = (
       <>
-        Risk:
-        {' '}
-        <select onChange={(e) => setRisk(e.target.options[e.target.selectedIndex].value)}>
-          <option value={0}>Minimal</option>
-          <option value={1}>Low</option>
-          <option value={2}>Moderate</option>
-          <option value={3}>High</option>
-          <option value={4}>ALL!</option>
-        </select>
-        <Button onClick={() => fight.forGold(fighter, risk)}>Fight!</Button>
+        <Button onClick={() => createFightCmd()}>Fight!</Button>
       </>
     );
   }
