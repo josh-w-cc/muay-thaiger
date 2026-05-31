@@ -23,10 +23,10 @@ describe('applyTrainingAction', () => {
     applyTrainingAction({action: 7}, fighter);
 
     deepEqual(calls, [
-      ['win', 100],
-      ['train', 'stamina', 1],
-      ['train', 'strength', 1],
-      ['train', 'constitution', 1],
+      ['win', 100n],
+      ['train', 'stamina', 1n],
+      ['train', 'strength', 1n],
+      ['train', 'constitution', 1n],
     ]);
   });
 
@@ -59,10 +59,10 @@ describe('applyTrainingActions', () => {
 
     deepEqual(calls, [
       ['train', 'stamina', 1],
-      ['win', 100],
-      ['train', 'stamina', 1],
-      ['train', 'strength', 1],
-      ['train', 'constitution', 1],
+      ['win', 100n],
+      ['train', 'stamina', 1n],
+      ['train', 'strength', 1n],
+      ['train', 'constitution', 1n],
     ]);
   });
 });
