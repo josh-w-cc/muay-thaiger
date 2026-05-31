@@ -15,29 +15,44 @@ import {
 } from './fightForGloryData.js';
 import css from '../Fight.module.css';
 
+const tigerCard = {
+  alt: 'Tiger Muay Thai fighter',
+  attack: FIGHT_FOR_GLORY_FIGHTER_ATTACK,
+  className: css.gloryFighterLeft,
+  defense: FIGHT_FOR_GLORY_FIGHTER_DEFENSE,
+  hp: FIGHT_FOR_GLORY_FIGHTER_HP,
+  src: TigerMuayThai,
+  stamina: FIGHT_FOR_GLORY_FIGHTER_STAMINA,
+};
+const opponentCard = {
+  alt: 'Snow leopard Muay Thai fighter',
+  attack: FIGHT_FOR_GLORY_OPPONENT_ATTACK,
+  className: css.gloryFighterRight,
+  defense: FIGHT_FOR_GLORY_OPPONENT_DEFENSE,
+  hp: FIGHT_FOR_GLORY_OPPONENT_HP,
+  mirror: true,
+  src: SnowLeopardMuayThaiReady,
+  stamina: FIGHT_FOR_GLORY_OPPONENT_STAMINA,
+};
 
 export default function FightForGloryFighters() {
-  const tigerCard = {
-    alt: 'Tiger Muay Thai fighter', attack: FIGHT_FOR_GLORY_FIGHTER_ATTACK,
-    className: css.gloryFighterLeft, defense: FIGHT_FOR_GLORY_FIGHTER_DEFENSE,
-    hp: FIGHT_FOR_GLORY_FIGHTER_HP, src: TigerMuayThai, stamina: FIGHT_FOR_GLORY_FIGHTER_STAMINA,
-  };
-  const opponentCard = {
-    alt: 'Snow leopard Muay Thai fighter', attack: FIGHT_FOR_GLORY_OPPONENT_ATTACK,
-    className: css.gloryFighterRight, defense: FIGHT_FOR_GLORY_OPPONENT_DEFENSE,
-    hp: FIGHT_FOR_GLORY_OPPONENT_HP, mirror: true, src: SnowLeopardMuayThaiReady,
-    stamina: FIGHT_FOR_GLORY_OPPONENT_STAMINA,
-  };
   return (
-    <div className={css.gloryFighters}>
-      <FightForGloryFighterCard {...tigerCard} />
-      <div aria-orientation="vertical" className={css.gloryFighterDivider} role="separator" />
-      <FightForGloryFighterCard {...opponentCard} />
-    </div>
+    <>
+      <div className={css.gloryFighters}>
+        <FightForGloryFighterCard {...tigerCard} />
+        <div aria-orientation="vertical" className={css.gloryFighterDivider} role="separator" />
+        <FightForGloryFighterCard {...opponentCard} />
+      </div>
+      <div className={css.gloryFighterStatsRow}>
+        <FightForGloryFighterStats attack={tigerCard.attack} defense={tigerCard.defense} />
+        <div aria-hidden className={css.gloryFighterStatsDividerSpacer} />
+        <FightForGloryFighterStats attack={opponentCard.attack} defense={opponentCard.defense} />
+      </div>
+    </>
   );
 }
 
-function FightForGloryFighterCard({alt, attack, className, defense, hp, mirror, src, stamina}) {
+function FightForGloryFighterCard({alt, className, hp, mirror, src, stamina}) {
   return (
     <div className={classnames(css.gloryFighter, className)}>
       <FightForGloryStaminaBar current={stamina.current} label={stamina.label} max={stamina.max} />
@@ -47,10 +62,15 @@ function FightForGloryFighterCard({alt, attack, className, defense, hp, mirror, 
         src={src}
       />
       <FightForGloryHealthBar current={hp.current} label={hp.label} max={hp.max} />
-      <div className={css.gloryFighterStats}>
-        <span>{`A: ${attack.toFormattedNumber()}`}</span>
-        <span>{`D: ${defense.toFormattedNumber()}`}</span>
-      </div>
+    </div>
+  );
+}
+
+function FightForGloryFighterStats({attack, defense}) {
+  return (
+    <div className={css.gloryFighterStats}>
+      <span>{`A: ${attack.toFormattedNumber()}`}</span>
+      <span>{`D: ${defense.toFormattedNumber()}`}</span>
     </div>
   );
 }

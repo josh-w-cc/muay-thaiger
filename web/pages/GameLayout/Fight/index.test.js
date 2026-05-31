@@ -89,6 +89,12 @@ describe('Fight', () => {
     expect(within(glorySection).getByRole('progressbar', {name: 'Tiger fighter stamina'})).toBeInTheDocument();
     expect(within(glorySection).getByRole('progressbar', {name: 'Snow leopard fighter stamina'})).toBeInTheDocument();
     expect(within(glorySection).getAllByRole('separator')).toHaveLength(1);
+    expect(within(glorySection).getByRole('separator')).toHaveClass(css.gloryFighterDivider);
+    const fighterCards = glorySection.querySelectorAll(`.${css.gloryFighter}`);
+    fighterCards.forEach((card) => {
+      expect(card).not.toHaveTextContent('A:');
+      expect(card).not.toHaveTextContent('D:');
+    });
     expect(within(glorySection).getByRole('button', {name: 'Strategy: Pressure Counter'})).toHaveClass(css.tapperButton);
     expect(glorySection).toHaveTextContent('A: 7.50e6');
     expect(glorySection).toHaveTextContent('D: 6.00e6');

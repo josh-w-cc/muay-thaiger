@@ -59,6 +59,16 @@
   margin-top: var(--space-sm);
 }
 
+.gloryFighterStatsDividerSpacer {
+  width: var(--space-sm);
+}
+
+.gloryFighterStatsRow {
+  display: flex;
+  margin-left: calc(-1 * var(--space-md));
+  margin-right: calc(-1 * var(--space-md));
+}
+
 .gloryHealthBar {
   composes: statBarBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
@@ -147,7 +157,9 @@
   font-size: 0.75rem;
   gap: var(--space-sm);
   justify-content: center;
+  line-height: 1.2;
   padding: var(--space-xs) 0;
+  width: calc((100% - var(--space-sm)) / 2);
 }
 
 .glorySection {
