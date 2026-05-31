@@ -1,10 +1,10 @@
-.gloryFeed {
+.fightFeed {
   border-top: 1px solid var(--color-border-default);
   margin-top: var(--space-md);
   padding-top: var(--space-md);
 }
 
-.gloryFeedList {
+.fightFeedList {
   list-style: none;
   margin: var(--space-sm) 0 0;
   max-height: 10rem;
@@ -12,46 +12,46 @@
   padding-left: 0;
 }
 
-.gloryFeedItem {
+.fightFeedItem {
   border-bottom: 1px solid var(--color-border-subtle);
   padding: var(--space-xs) 0;
 }
 
-.gloryFeedItem:last-child {
+.fightFeedItem:last-child {
   border-bottom: 0;
 }
 
-.gloryFeedAttackerEnemy {
+.fightFeedAttackerEnemy {
   color: var(--color-red);
 }
 
-.gloryFeedAttackerSelf {
+.fightFeedAttackerSelf {
   color: var(--color-gold);
 }
 
-.gloryFighter {
+.fightFighter {
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: 0;
 }
 
-.gloryFighterDivider {
+.fightFighterDivider {
   background: linear-gradient(180deg, black 0 20%, var(--color-gold) 50%, black 80% 100%);
   border: 1px solid black;
   width: var(--space-sm);
 }
 
-.gloryFighterImage {
+.fightFighterImage {
   display: block;
   width: 100%;
 }
 
-.gloryFighterImageMirror {
+.fightFighterImageMirror {
   transform: scaleX(-1);
 }
 
-.gloryFighters {
+.fightFighters {
   align-items: stretch;
   display: flex;
   margin-left: calc(-1 * var(--space-md));
@@ -59,41 +59,41 @@
   margin-top: var(--space-sm);
 }
 
-.gloryFighterStatsDividerSpacer {
+.fightFighterStatsDividerSpacer {
   width: var(--space-sm);
 }
 
-.gloryFighterStatsRow {
+.fightFighterStatsRow {
   display: flex;
   margin-left: calc(-1 * var(--space-md));
   margin-right: calc(-1 * var(--space-md));
 }
 
-.gloryHealthBar {
+.fightHealthBar {
   composes: statBarBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   box-shadow: inset 0 -3px 6px -3px var(--color-red-hover), inset 0 3px 6px -3px var(--color-red-hover);
 }
 
-.gloryHealthBarFill {
+.fightHealthBarFill {
   composes: statBarFillBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   background: linear-gradient(180deg, #ff7f7f 0%, var(--color-red) 25%, var(--color-red-hover) 75%, black 100%);
 }
 
-.gloryStaminaBar {
+.fightStaminaBar {
   composes: statBarBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   box-shadow: inset 0 -3px 6px -3px var(--color-green-hover), inset 0 3px 6px -3px var(--color-green-hover);
 }
 
-.gloryStaminaBarFill {
+.fightStaminaBarFill {
   composes: statBarFillBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
 
   background: linear-gradient(180deg, #7fff7f 0%, var(--color-green) 25%, var(--color-green-hover) 75%, black 100%);
 }
 
-.gloryLoadout {
+.fightLoadout {
   margin-top: var(--space-sm);
 }
 
@@ -145,14 +145,14 @@
   transform: translateY(2px);
 }
 
-.gloryLoadoutButtons {
+.fightLoadoutButtons {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
   margin-top: var(--space-sm);
 }
 
-.gloryFighterStats {
+.fightFighterStats {
   display: flex;
   font-size: 0.75rem;
   gap: var(--space-sm);
