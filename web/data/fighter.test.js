@@ -97,13 +97,8 @@ describe('useFighterStore', () => {
     expect(useFighterStore.getState().strength).toBe(1n);
   });
 
-  it('logs and ignores unknown training stats', () => {
-    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    useFighterStore.getState().train('charisma');
-
-    expect(error).toHaveBeenCalledWith('Tried to train unknown stat:', 'charisma');
+  it('throws for unknown training stats', () => {
+    expect(() => useFighterStore.getState().train('charisma')).toThrow(TypeError);
     expect(useFighterStore.getState().strength).toBe(0n);
-    error.mockRestore();
   });
 });
