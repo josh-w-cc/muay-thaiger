@@ -1,5 +1,6 @@
 import fightersModel from '../data/models/fighters.js';
 import fighterActionsModel from '../data/models/fighter-actions.js';
+import fighterMovesModel from '../data/models/fighter-moves.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
 import {processMessageCommand} from '../logic/websocket-commands.js';
@@ -7,7 +8,13 @@ import {processMessageCommand} from '../logic/websocket-commands.js';
 
 export default async function websocketRoutes(app) {
   const connections = app.websocketConnections;
-  const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), players: playersModel(app.db), races: racesModel(app.db)};
+  const models = {
+    fighterActions: fighterActionsModel(app.db),
+    fighterMoves: fighterMovesModel(app.db),
+    fighters: fightersModel(app.db),
+    players: playersModel(app.db),
+    races: racesModel(app.db),
+  };
   app.get('/connect', {websocket: true}, (socket) => onConnect(socket, models, connections));
 }
 
