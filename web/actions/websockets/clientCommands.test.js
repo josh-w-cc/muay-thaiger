@@ -40,9 +40,17 @@ describe('client websocket commands', () => {
   it('sends a fight command with reason and rank', async () => {
     const {createFightCmd} = await import('./clientCommands.js');
 
-    createFightCmd('gold');
+    createFightCmd(' gold ');
 
     expect(sendCommand).toHaveBeenCalledWith({cmd: 'fight', rank: '', reason: 'gold'});
+  });
+
+  it('does not send a fight command for invalid reasons', async () => {
+    const {createFightCmd} = await import('./clientCommands.js');
+
+    createFightCmd('tournament');
+
+    expect(sendCommand).not.toHaveBeenCalled();
   });
 
   it('responds to pending auth and routes to the hub for fighter selection', async () => {
