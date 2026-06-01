@@ -214,19 +214,7 @@ describe('WebSocket /ws/connect', () => {
       display_name: 'Player-abcdefgh',
       player: 1,
       race: 2,
-      stats: {
-        agility: 0n,
-        anima: 2n,
-        constitution: 0n,
-        durability: 2n,
-        reach: 1n,
-        skill: 0n,
-        speed: 2n,
-        stamina: 0n,
-        strength: 0n,
-        vigor: 1n,
-        vitality: 1n,
-      },
+      stats: {id: 2, stats: RACE_DEFAULT_STATS},
     });
     assert.deepEqual(fighterMoveCreateCalls, [
       {enabled: true, fighter: 9, move: MOVE_IDS.wildPunch},
@@ -503,7 +491,7 @@ describe('WebSocket /ws/connect', () => {
   it('applies training before creating the fighter action on idle command', async () => {
     const callOrder = [];
     const existingAction = {action: 2, fighter: 9, id: 7, touched_at: new Date(Date.now() - 2000).toISOString()};
-    const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {anima: 1, speed: 1, stamina: 1, vigor: 1, vitality: 1}};
+    const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {anima: 1n, speed: 1n, stamina: 1n, vigor: 1n, vitality: 1n}};
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send: createCallTracker()};
     let listCallCount = 0;
     const fighterActions = {
