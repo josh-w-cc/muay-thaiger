@@ -12,7 +12,7 @@ export function createFighterActionCmd(actionID) {
 export function createFightCmd(reason, rank = '') {
   const normalizedReason = normalizeFightReason(reason);
   if(!isFightReason(normalizedReason)) {
-    return;
+    throw new Error('invalid-fight-reason');
   }
   sendCommand({cmd: 'fight', reason: normalizedReason, rank});
 }

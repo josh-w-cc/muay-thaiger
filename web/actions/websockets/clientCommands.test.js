@@ -45,10 +45,10 @@ describe('client websocket commands', () => {
     expect(sendCommand).toHaveBeenCalledWith({cmd: 'fight', rank: '', reason: 'gold'});
   });
 
-  it('does not send a fight command for invalid reasons', async () => {
+  it('throws for invalid fight reasons', async () => {
     const {createFightCmd} = await import('./clientCommands.js');
 
-    createFightCmd('tournament');
+    expect(() => createFightCmd('tournament')).toThrowError('invalid-fight-reason');
 
     expect(sendCommand).not.toHaveBeenCalled();
   });
