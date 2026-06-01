@@ -27,8 +27,8 @@ async function auth(models, message, socket) {
   await sendCurrentPlayerState(models, socket);
 }
 
-async function fight(models, {reason}, socket) {
-  const fight = await createFight(models, socket.player?.id, reason);
+async function fight(models, {reason, rank}, socket) {
+  const fight = await createFight(models, socket.player?.id, reason, rank);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }
 
