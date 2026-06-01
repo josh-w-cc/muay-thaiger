@@ -6,7 +6,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('constitution', 1n);
       fighter.train('agility', 15n);
     },
-    description: 'Increases agility',
+    description: 'Increases agility & strength',
     name: 'Gymnastics',
     requires: (fighter) => fighter.stamina > 2500n && fighter.strength > 250n && fighter.agility > 500n,
     duration: 8,
@@ -38,7 +38,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('strength', 3n);
       fighter.train('constitution', 1n);
     },
-    description: 'Slightly increases stamina',
+    description: 'Slightly increases stamina & strength',
     name: 'Calisthenics',
     requires: (fighter) => fighter.stamina > 250n && fighter.constitution > 10n && fighter.strength > 25n,
     duration: 4,
@@ -60,7 +60,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('stamina');
     },
     name: 'Breathwork',
-    description: 'Very slightly increases stamina & constitution',
+    description: 'Very slightly increases constitution & stamina',
     requires: (fighter) => fighter.stamina > 50n,
     duration: 2,
   },
