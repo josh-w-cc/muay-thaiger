@@ -213,7 +213,7 @@ describe('WebSocket /ws/connect', () => {
       display_name: 'Player-abcdefgh',
       player: 1,
       race: 2,
-      stats: {id: 2, stats: RACE_DEFAULT_STATS},
+      stats: RACE_DEFAULT_STATS,
     });
     assert.deepEqual(fighterMoveCreateCalls, [
       {enabled: true, fighter: 9, move: MOVE_IDS.wildPunch},
