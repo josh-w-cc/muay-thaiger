@@ -42,7 +42,7 @@ describe('client websocket commands', () => {
 
     createFightCmd('gold');
 
-    expect(sendCommand).toHaveBeenCalledWith({cmd: 'fight', rank: null, reason: 'gold'});
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'fight', rank: '', reason: 'gold'});
   });
 
   it('responds to pending auth and routes to the hub for fighter selection', async () => {
