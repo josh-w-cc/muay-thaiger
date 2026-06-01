@@ -1,4 +1,4 @@
-import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
+import {SKILLS_BY_ACTION_ID} from 'shared/skills/index.js';
 import {findTouchedAtTransfer, getMaxTouchedAtMs} from 'shared/training.js';
 import {createCommandError} from './command-errors.js';
 

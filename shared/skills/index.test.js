@@ -1,7 +1,7 @@
 import {deepEqual, equal} from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {SKILL_DEFINITIONS, SKILL_IDS, SKILLS_BY_ACTION_ID, SKILL_SEED_ACTIONS} from './skills.js';
+import {SKILL_DEFINITIONS, SKILL_IDS, SKILLS_BY_ACTION_ID, SKILL_SEED_ACTIONS} from './index.js';
 
 
 describe('SKILL_IDS', () => {

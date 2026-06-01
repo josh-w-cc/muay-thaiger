@@ -1,4 +1,4 @@
-import {SKILLS_BY_ACTION_ID} from './skills.js';
+import {SKILLS_BY_ACTION_ID} from './skills/index.js';
 import {createTrainingTimeline as createSharedTrainingTimeline, getScheduledActions} from './trainingTimeline.js';
 
 export function applyTrainingAction(action, fighter) {

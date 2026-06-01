@@ -1,5 +1,5 @@
 import {RACES} from 'shared/races.js';
-import {SKILL_IDS, SKILL_SEED_ACTIONS} from 'shared/skills.js';
+import {SKILL_IDS, SKILL_SEED_ACTIONS} from 'shared/skills/index.js';
 import {MOVE_IDS, MOVE_SEED_MOVES} from 'shared/moves.js';
 
 export const SEED_FIGHTERS = [
