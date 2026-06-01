@@ -58,12 +58,15 @@ function RegimenRows({fighter}) {
 
 function RegimenRow({actionEnabled, description, name, progress, skillKey}) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const tooltipID = `skill-tooltip-${skillKey}`;
 
   return (
     <div className={css.regimenRow}>
       <div className={css.regimenName}>
         {name}
         <button
+          aria-describedby={tooltipOpen ? tooltipID : undefined}
+          aria-expanded={tooltipOpen}
           aria-label={`${name} info`}
           className={css.infoButton}
           onClick={() => setTooltipOpen((isOpen) => !isOpen)}
@@ -72,7 +75,7 @@ function RegimenRow({actionEnabled, description, name, progress, skillKey}) {
           type='button'
         >
           <FaCircleInfo aria-hidden size={12} />
-          {tooltipOpen && <span className={css.infoTooltip} role='tooltip'>{description}</span>}
+          {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role='tooltip'>{description}</span>}
         </button>
       </div>
       <div className={css.regimenProgress}>
