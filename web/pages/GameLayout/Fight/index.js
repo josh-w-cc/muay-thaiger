@@ -39,8 +39,17 @@ function FightContent({fight}) {
       <p>Fight pending...</p>
       <FightMetadata label="Fight ID" value={fight.id} />
       <FightMetadata label="Reason" value={fight.reason} />
+      <FightMetadata label="Created" value={fight.created_at} />
+      <FightMetadata label="Details" value={formatFightDetails(fight.details)} />
     </>
   );
+}
+
+function formatFightDetails(details) {
+  if(details == null) {
+    return null;
+  }
+  return JSON.stringify(details);
 }
 
 function FightMetadata({label, value}) {
