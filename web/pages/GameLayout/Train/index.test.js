@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 
 import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {SKILL_IDS} from 'shared/skills.js';
+import {SKILL_IDS} from 'shared/skills/index.js';
 
 import Train from './index.js';
 
@@ -47,8 +47,8 @@ vi.mock('@/data/fighter.js', () => {
   return {default: mockedStore};
 });
 
-vi.mock('shared/skills.js', async () => {
-  const actual = await vi.importActual('shared/skills.js');
+vi.mock('shared/skills/index.js', async () => {
+  const actual = await vi.importActual('shared/skills/index.js');
 
   return {
     ...actual,

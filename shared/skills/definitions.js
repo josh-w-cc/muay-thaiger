@@ -1,17 +1,3 @@
-import {createSeedEntries} from './seedData.js';
-
-export const SKILL_IDS = Object.freeze({
-  begging: 1,
-  breathwork: 4,
-  calisthenics: 6,
-  gymnastics: 9,
-  laboring: 7,
-  running: 8,
-  shadowBoxing: 3,
-  walking: 2,
-  yoga: 5,
-});
-
 export const SKILL_DEFINITIONS = Object.freeze({
   gymnastics: {
     action: (fighter) => {
@@ -106,7 +92,3 @@ export const SKILL_DEFINITIONS = Object.freeze({
     duration: 1,
   },
 });
-
-export const SKILLS_BY_ACTION_ID = Object.freeze(Object.fromEntries(Object.entries(SKILL_IDS).map(([key, id]) => [id, SKILL_DEFINITIONS[key]])));
-
-export const SKILL_SEED_ACTIONS = createSeedEntries(SKILL_DEFINITIONS, SKILL_IDS, () => ({type: 'train'}));
