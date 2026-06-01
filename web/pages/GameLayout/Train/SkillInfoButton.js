@@ -4,6 +4,7 @@ import css from './Train.module.css';
 
 export default function SkillInfoButton({description, duration, name, setTooltipOpen, tooltipID, tooltipOpen}) {
   const durationText = Number.isFinite(duration) ? ` (${duration}s)` : '';
+  const tooltipText = `${description}${durationText}`;
 
   return (
     <button
@@ -17,12 +18,7 @@ export default function SkillInfoButton({description, duration, name, setTooltip
       type="button"
     >
       <FaCircleInfo aria-hidden size={12} />
-      {tooltipOpen && (
-        <span className={css.infoTooltip} id={tooltipID} role="tooltip">
-          {description}
-          {durationText}
-        </span>
-      )}
+      {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role="tooltip">{tooltipText}</span>}
     </button>
   );
 }
