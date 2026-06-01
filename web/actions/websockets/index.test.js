@@ -7,6 +7,7 @@ vi.mock('@/router.js', () => ({
 
 import useFighterActionsStore, {resetFighterActionsStore} from '@/data/fighterActions.js';
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
+import useFightStore, {resetFightStore} from '@/data/fight.js';
 import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './token.js';
 import {
@@ -36,6 +37,7 @@ describe('player websocket helpers', () => {
     localStorage.clear();
     resetFighterActionsStore();
     resetFighterStore();
+    resetFightStore();
     resetPlayerStore();
     resetSocketState();
     globalThis.WebSocket = originalWebSocket;
@@ -157,11 +159,13 @@ describe('player websocket helpers', () => {
     expect(usePlayerStore.getState().selectedRace).toBe('99');
     expect(usePlayerStore.getState().playerID).toBe(999);
     expect(useFighterStore.getState().race).toBe('1');
+    useFightStore.setState({id: 100, messages: ['local'], state: 'in-progress'});
 
     socket.onmessage({
       data: JSON.stringify({
         cmd: 'player_state',
         actions: [{action: 2, id: 11}],
+        fight: {id: 88, messages: ['server'], reason: 'gold', state: 'won', victory: 9},
         fighter: {
           gold: '250',
           id: 9,
@@ -183,12 +187,16 @@ describe('player websocket helpers', () => {
     expect(useFighterStore.getState().agility).toBe(6n);
     expect(useFighterStore.getState().stamina).toBe(7n);
     expect(useFighterStore.getState().strength).toBe(8n);
+    expect(useFightStore.getState().id).toBe(88);
+    expect(useFightStore.getState().state).toBe('won');
+    expect(useFightStore.getState().messages).toEqual(['server']);
     expect(send).not.toHaveBeenCalled();
   });
 
   it('normalizes player_state actions and player id when payload fields are missing', () => {
     usePlayerStore.getState().setPlayerID(999);
     useFighterActionsStore.getState().setActions([{id: 5}]);
+    useFightStore.setState({id: 22, messages: ['local'], state: 'in-progress'});
     const socket = connectSocketOnAppLoad();
     socket.onmessage({
       data: JSON.stringify({
@@ -206,6 +214,8 @@ describe('player websocket helpers', () => {
 
     expect(usePlayerStore.getState().playerID).toBeNull();
     expect(useFighterActionsStore.getState().actions).toEqual([]);
+    expect(useFightStore.getState().id).toBeNull();
+    expect(useFightStore.getState().messages).toEqual([]);
   });
 
   it('does not route to hub when player_state is received', () => {

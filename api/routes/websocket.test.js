@@ -3,7 +3,6 @@ import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 import {MOVE_IDS} from 'shared/moves.js';
-import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
 
 import createCallTracker from '../utils/test/createCallTracker.js';
 import {syncPlayerState} from '../logic/player-state.js';
@@ -393,45 +392,88 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('creates a fight and responds to fight command for authenticated socket', async () => {
-    const send = createCallTracker();
-    const createFight = createCallTracker();
-    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
-    const fighterStats = Object.fromEntries(
-      FIGHTER_STAT_KEYS.map((stat, index) => [stat, 11 + index]),
-    );
-    const fighter = {
-      ...fighterStats,
-      id: 9,
-      player: 1,
-      retired: false,
-    };
-    const expectedStartingStats = Object.fromEntries(
-      FIGHTER_STAT_KEYS.map((stat) => [stat, fighterStats[stat].toString()]),
-    );
-    const createdFight = {attacker: 9, defender: null, details: {}, id: 4, reason: 'gold'};
-    const fighters = {findCurrentByPlayerID: async () => fighter};
-    const fights = {
-      create: async (fightData) => {
-        createFight(fightData);
-        return createdFight;
-      },
-    };
+    const random = Math.random;
+    Math.random = () => 0.5;
+    try {
+      const send = createCallTracker();
+      const createFight = createCallTracker();
+      const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+      const fighter = {
+        anima: 11,
+        constitution: 12,
+        durability: 13,
+        id: 9,
+        player: 1,
+        reach: 14,
+        retired: false,
+        skill: 15,
+        speed: 16,
+        stamina: 17,
+        vigor: 18,
+        vitality: 19,
+        stats: {
+          constitution: 12n,
+          durability: 13n,
+          reach: 14n,
+          skill: 15n,
+          speed: 16n,
+          stamina: 17n,
+          strength: 18n,
+        },
+      };
+      const createdFight = {attacker: 9, defender: null, details: {attacker: {}, defender: {}}, id: 4, reason: 'gold'};
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fights = {
+        create: async (fightData) => {
+          createFight(fightData);
+          return createdFight;
+        },
+      };
 
-    await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighters, fights});
+      await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighters, fights});
 
-    assert.deepEqual(createFight.calls, [[{
-      attacker: 9,
-      defender: null,
-      details: {
-        starting_stats: expectedStartingStats,
-      },
-      reason: 'gold',
-    }]]);
-    assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {
-      cmd: 'ok',
-      metadata: {fight: createdFight, responded_cmd: 'fight'},
-    });
+      assert.deepEqual(createFight.calls, [[{
+        attacker: 9,
+        defender: null,
+        details: {
+          attacker: {
+            starting_stats: {
+              anima: '11',
+              constitution: '12',
+              durability: '13',
+              reach: '14',
+              skill: '15',
+              speed: '16',
+              stamina: '17',
+              vigor: '18',
+              vitality: '19',
+            },
+          },
+          defender: {
+            starting_stats: {
+              anima: '11',
+              constitution: '12',
+              durability: '13',
+              reach: '14',
+              skill: '15',
+              speed: '16',
+              stamina: '17',
+              vigor: '18',
+              vitality: '19',
+            },
+          },
+        },
+        reason: 'gold',
+      }]]);
+      assert.equal(send.calls.length, 1);
+      assert.deepEqual(JSON.parse(send.calls[0][0]), {
+        cmd: 'ok',
+        metadata: {fight: createdFight, responded_cmd: 'fight'},
+      });
+    }
+    finally {
+      Math.random = random;
+    }
   });
 
   it('sends error for fight command with invalid reason', async () => {
