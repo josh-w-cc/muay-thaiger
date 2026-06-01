@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 
 import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {SKILL_IDS} from 'shared/skills.js';
+import {SKILL_IDS} from 'shared/skills/index.js';
 
 import Train from './index.js';
 
