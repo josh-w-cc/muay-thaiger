@@ -144,6 +144,15 @@ describe('Train', () => {
     expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
   });
 
+  it('uses a non-font-awesome icon set for skill info', () => {
+    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
+    const modulePath = path.join(directoryPath, 'SkillInfoButton.js');
+    const source = fs.readFileSync(modulePath, 'utf8');
+
+    expect(source).toContain('from \'react-icons/ai\'');
+    expect(source).not.toContain('from \'react-icons/fa6\'');
+  });
+
   it('shows gray progress bar for inactive skills', () => {
     fighterActions.actions = [];
     render(<Train />);

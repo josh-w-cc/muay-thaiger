@@ -1,4 +1,4 @@
-import {FaCircleInfo} from 'react-icons/fa6';
+import {AiOutlineInfoCircle} from 'react-icons/ai';
 
 import css from './Train.module.css';
 
@@ -16,7 +16,7 @@ export default function SkillInfoButton({description, duration, name, setTooltip
       onMouseLeave={() => setTooltipOpen(false)}
       type="button"
     >
-      <FaCircleInfo aria-hidden size={12} />
+      <AiOutlineInfoCircle aria-hidden size={12} />
       {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role="tooltip">{tooltipText}</span>}
     </button>
   );
