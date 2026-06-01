@@ -429,7 +429,7 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({cmd: 'fight'}), socket, {fighters, fights});
+    await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighters, fights});
 
     assert.deepEqual(createFight.calls, [[{
       attacker: 9,
@@ -453,7 +453,7 @@ describe('WebSocket /ws/connect', () => {
     const fighters = {findCurrentByPlayerID: async () => null};
     const fights = {create: createFight};
 
-    await onMessage(JSON.stringify({cmd: 'fight'}), socket, {fighters, fights});
+    await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighters, fights});
 
     assert.equal(createFight.calls.length, 0);
     assert.equal(send.calls.length, 1);

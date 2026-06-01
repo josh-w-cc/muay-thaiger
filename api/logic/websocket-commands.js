@@ -10,7 +10,7 @@ export async function processMessageCommand(models, message, socket) {
     case 'auth':
       return handleAuth(models, message, socket);
     case 'fight':
-      return handleFight(models, socket);
+      return handleFight(models, message, socket);
     case 'idle':
       return handleIdle(models, message, socket);
     case 'stop':
@@ -27,8 +27,8 @@ async function handleAuth(models, message, socket) {
   await sendCurrentPlayerState(models, socket);
 }
 
-async function handleFight(models, socket) {
-  if(!socket.player) {
+async function handleFight(models, {reason}, socket) {
+  if(!socket.player || !reason) {
     throw createCommandError('invalid-fight-message');
   }
   const fighter = await models.fighters.findCurrentByPlayerID(socket.player.id);
@@ -39,7 +39,7 @@ async function handleFight(models, socket) {
     attacker: fighter.id,
     defender: null,
     details: {starting_stats: captureStartingStats(fighter)},
-    reason: 'gold',
+    reason,
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }
