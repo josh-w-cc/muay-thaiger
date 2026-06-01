@@ -1,4 +1,6 @@
+import {useState} from 'react';
 import cx from 'classnames';
+import {FaCircleInfo} from 'react-icons/fa6';
 import {SKILL_IDS} from 'shared/skills.js';
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';
@@ -43,6 +45,7 @@ function RegimenRows({fighter}) {
         .map((skillKey) => (
           <RegimenRow
             actionEnabled={isActionEnabled(actions, skillKey)}
+            description={Skills[skillKey].description}
             key={skillKey}
             name={Skills[skillKey].name}
             progress={actions.find((a) => a.action === SKILL_IDS[skillKey])?.progress || 0}
@@ -53,10 +56,28 @@ function RegimenRows({fighter}) {
   );
 }
 
-function RegimenRow({actionEnabled, name, progress, skillKey}) {
+function RegimenRow({actionEnabled, description, name, progress, skillKey}) {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const tooltipID = `skill-tooltip-${skillKey}`;
+
   return (
     <div className={css.regimenRow}>
-      <div>{name}</div>
+      <div className={css.regimenName}>
+        {name}
+        <button
+          aria-describedby={tooltipOpen ? tooltipID : undefined}
+          aria-expanded={tooltipOpen}
+          aria-label={`${name} info`}
+          className={css.infoButton}
+          onClick={() => setTooltipOpen((isOpen) => !isOpen)}
+          onMouseEnter={() => setTooltipOpen(true)}
+          onMouseLeave={() => setTooltipOpen(false)}
+          type='button'
+        >
+          <FaCircleInfo aria-hidden size={12} />
+          {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role='tooltip'>{description}</span>}
+        </button>
+      </div>
       <div className={css.regimenProgress}>
         <RegimenProgress actionEnabled={actionEnabled} name={name} progress={progress} />
         <Button
