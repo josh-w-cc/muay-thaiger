@@ -126,10 +126,13 @@ describe('Train', () => {
     fireEvent.click(infoIcon);
 
     expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
+    expect(infoIcon).toHaveAttribute('aria-expanded', 'true');
+    expect(infoIcon.getAttribute('aria-describedby')).toMatch(/^skill-tooltip-begging/);
 
     fireEvent.click(infoIcon);
 
     expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
+    expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('uses an opaque tooltip background token', () => {
