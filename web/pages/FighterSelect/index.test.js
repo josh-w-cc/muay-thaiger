@@ -92,7 +92,7 @@ describe('FighterSelect', () => {
       {
         id: 1,
         name: 'Tiger',
-        stats: {anima: 1, durability: 1, reach: 1, speed: 1, strength: 7, vitality: 1},
+        stats: {anima: 1, durability: 1, reach: 1, speed: 1, strength: 7, vigor: 0, vitality: 1},
       },
     ];
 
