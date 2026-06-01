@@ -22,7 +22,7 @@ describe('client websocket commands', () => {
   });
 
   it('sends an idle command', async () => {
-    const {createFighterActionCmd} = await import('./clientCommands.js');
+    const {createFighterActionCmd} = await import('../clientCommands.js');
 
     createFighterActionCmd(2);
 
@@ -30,7 +30,7 @@ describe('client websocket commands', () => {
   });
 
   it('sends a stop command', async () => {
-    const {removeFighterActionCmd} = await import('./clientCommands.js');
+    const {removeFighterActionCmd} = await import('../clientCommands.js');
 
     removeFighterActionCmd(2);
 
@@ -38,7 +38,7 @@ describe('client websocket commands', () => {
   });
 
   it('sends a fight command with reason and rank', async () => {
-    const {createFightCmd} = await import('./clientCommands.js');
+    const {createFightCmd} = await import('../clientCommands.js');
 
     createFightCmd('gold');
 
@@ -46,7 +46,7 @@ describe('client websocket commands', () => {
   });
 
   it('responds to pending auth and routes to the hub for fighter selection', async () => {
-    const {selectFighterCmd} = await import('./clientCommands.js');
+    const {selectFighterCmd} = await import('../clientCommands.js');
     const socket = {};
     connectSocketOnAppLoad.mockReturnValue(socket);
 

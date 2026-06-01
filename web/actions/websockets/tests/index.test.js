@@ -9,13 +9,13 @@ import useFighterActionsStore, {resetFighterActionsStore} from '@/data/fighterAc
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
 import useFightStore, {resetFightStore} from '@/data/fight.js';
 import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
-import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './token.js';
+import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '../token.js';
 import {
   connectSocketOnAppLoad,
   resetSocketState,
   sendCommand,
-} from './index.js';
-import {selectFighterCmd} from './clientCommands.js';
+} from '../index.js';
+import {selectFighterCmd} from '../clientCommands.js';
 
 
 describe('player websocket helpers', () => {
