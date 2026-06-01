@@ -22,10 +22,6 @@ vi.mock('@/data/fighter.js', () => ({
 }));
 
 vi.mock('@/data/fight.js', () => ({
-  FIGHT_IN_PROGRESS: 'in-progress',
-  FIGHT_LOST: 'lost',
-  FIGHT_NOT_STARTED: 'not-started',
-  FIGHT_WON: 'won',
   default: () => fightState,
 }));
 
@@ -44,12 +40,8 @@ describe('Fight', () => {
   beforeEach(() => {
     needsZerothFight.mockReturnValue(false);
     Object.assign(fightState, {
-      fighters: [
-        {currentHealth: '200', stats: {}},
-        {currentHealth: '100', stats: {}},
-      ],
-      messages: [],
-      state: 'not-started',
+      id: null,
+      reason: null,
     });
   });
 
@@ -122,29 +114,15 @@ describe('Fight', () => {
     expect(createFightCmd).toHaveBeenCalledWith('gold');
   });
 
-  it('shows in-progress stats and messages', () => {
+  it('shows active fight details from the server fight payload', () => {
     Object.assign(fightState, {
-      fighters: [
-        {currentHealth: 900n, stats: {apm: 1n, attack: 2n, defense: 3n, health: 4n, power: 5n, stamina: 6n}},
-        {currentHealth: 800n, stats: {apm: 7n, attack: 8n, defense: 9n, health: 100000n, power: 11n, stamina: 12n}},
-      ],
-      messages: ['msg-a', 'msg-b'],
-      state: 'in-progress',
+      id: 19,
+      reason: 'gold',
     });
     render(<Fight />);
-    expect(document.body).toHaveTextContent('1.00e5');
-    expect(document.body).toHaveTextContent('Stanima:');
-    expect(document.body).toHaveTextContent('msg-a');
-    expect(document.body).toHaveTextContent('msg-b');
-  });
-
-  it.each(['won', 'lost'])('restarts when fight is %s', async (state) => {
-    const user = userEvent.setup();
-    Object.assign(fightState, {state});
-    render(<Fight />);
-
-    await user.click(screen.getByRole('button', {name: 'Again?'}));
-
-    expect(createFightCmd).toHaveBeenCalledTimes(1);
+    expect(document.body).toHaveTextContent('Fight pending...');
+    expect(document.body).toHaveTextContent('Fight ID: 19');
+    expect(document.body).toHaveTextContent('Reason: gold');
+    expect(screen.queryByRole('button', {name: 'Fight!'})).not.toBeInTheDocument();
   });
 });
