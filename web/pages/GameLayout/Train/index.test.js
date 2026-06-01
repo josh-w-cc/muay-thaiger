@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 
 import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {SKILL_IDS} from 'shared/skills/index.js';
+import {SKILL_DEFINITIONS, SKILL_IDS} from 'shared/skills/index.js';
 
 import Train from './index.js';
 
@@ -74,6 +74,7 @@ vi.mock('@/actions/websockets/clientCommands.js', () => ({
 
 describe('Train', () => {
   afterEach(() => {
+    SKILL_DEFINITIONS.begging.duration = 3;
     fighter.idling = null;
     fighterActions.actions = [
       {action: 2, id: 5, progress: 23},
@@ -134,6 +135,18 @@ describe('Train', () => {
 
     expect(screen.queryByText('Perhaps a satang? (3s)')).not.toBeInTheDocument();
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('shows tooltip text without duration when skill duration is missing', async () => {
+    const user = userEvent.setup();
+    SKILL_DEFINITIONS.begging.duration = undefined;
+    render(<Train />);
+    const skillName = screen.getByText('฿egging');
+
+    await user.hover(skillName);
+
+    expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
+    expect(screen.queryByText('Perhaps a satang? (3s)')).not.toBeInTheDocument();
   });
 
   it('uses an opaque tooltip background token', () => {
