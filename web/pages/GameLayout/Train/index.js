@@ -67,6 +67,7 @@ function RegimenRow({actionEnabled, description, name, progress, skillKey}) {
         <button
           aria-label={`${name} info`}
           className={css.infoButton}
+          onBlur={() => setTooltipOpen(false)}
           onMouseEnter={() => setTooltipOpen(true)}
           onMouseLeave={() => setTooltipOpen(false)}
           onTouchEnd={(event) => {
