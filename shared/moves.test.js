@@ -38,8 +38,10 @@ describe('MOVE_DEFINITIONS', () => {
 
   it('defines expected metadata for initial moves', () => {
     equal(MOVE_DEFINITIONS.wildPunch.name, 'Wild Punch');
-    equal(MOVE_DEFINITIONS.wildPunch.duration, 1);
+    equal(MOVE_DEFINITIONS.wildPunch.recovery, 2);
+    equal(MOVE_DEFINITIONS.wildPunch.duration, undefined);
     equal(MOVE_DEFINITIONS.wildKick.name, 'Wild Kick');
-    equal(MOVE_DEFINITIONS.wildKick.duration, 2);
+    equal(MOVE_DEFINITIONS.wildKick.recovery, 3);
+    equal(MOVE_DEFINITIONS.wildKick.duration, undefined);
   });
 });
