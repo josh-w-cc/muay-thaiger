@@ -116,6 +116,8 @@ describe('Fight', () => {
 
   it('shows active fight details from the server fight payload', () => {
     Object.assign(fightState, {
+      created_at: '2026-06-01T00:00:00.000Z',
+      details: {attacker: {hp: 100}, round: 1},
       id: 19,
       reason: 'gold',
     });
@@ -123,6 +125,24 @@ describe('Fight', () => {
     expect(document.body).toHaveTextContent('Fight pending...');
     expect(document.body).toHaveTextContent('Fight ID: 19');
     expect(document.body).toHaveTextContent('Reason: gold');
+    expect(document.body).toHaveTextContent('Created: 2026-06-01T00:00:00.000Z');
+    expect(document.body).toHaveTextContent('Details: {"attacker":{"hp":100},"round":1}');
     expect(screen.queryByRole('button', {name: 'Fight!'})).not.toBeInTheDocument();
+  });
+
+  it('omits details metadata when pending fight has no details payload', () => {
+    Object.assign(fightState, {
+      created_at: '2026-06-01T00:00:00.000Z',
+      details: null,
+      id: 20,
+      reason: 'gold',
+    });
+    render(<Fight />);
+
+    expect(document.body).toHaveTextContent('Fight pending...');
+    expect(document.body).toHaveTextContent('Fight ID: 20');
+    expect(document.body).toHaveTextContent('Reason: gold');
+    expect(document.body).toHaveTextContent('Created: 2026-06-01T00:00:00.000Z');
+    expect(document.body).not.toHaveTextContent('Details:');
   });
 });

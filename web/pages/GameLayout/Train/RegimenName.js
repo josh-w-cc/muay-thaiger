@@ -8,6 +8,7 @@ export default function RegimenName({setTooltipOpen, skill, skillKey, tooltipOpe
       <span onMouseEnter={() => setTooltipOpen(true)} onMouseLeave={() => setTooltipOpen(false)}>{skill.name}</span>
       <SkillInfoButton
         description={skill.description}
+        duration={skill.duration}
         name={skill.name}
         setTooltipOpen={setTooltipOpen}
         tooltipID={`skill-tooltip-${skillKey}`}

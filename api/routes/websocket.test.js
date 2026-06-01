@@ -213,7 +213,7 @@ describe('WebSocket /ws/connect', () => {
       display_name: 'Player-abcdefgh',
       player: 1,
       race: 2,
-      stats: {id: 2, stats: RACE_DEFAULT_STATS},
+      stats: RACE_DEFAULT_STATS,
     });
     assert.deepEqual(fighterMoveCreateCalls, [
       {enabled: true, fighter: 9, move: MOVE_IDS.wildPunch},
@@ -451,18 +451,19 @@ describe('WebSocket /ws/connect', () => {
           },
           defender: {
             starting_stats: {
-              anima: '11',
-              constitution: '12',
-              durability: '13',
-              reach: '14',
-              skill: '15',
-              speed: '16',
-              stamina: '17',
-              vigor: '18',
-              vitality: '19',
+              anima: '100',
+              constitution: '100',
+              durability: '100',
+              reach: '100',
+              skill: '100',
+              speed: '100',
+              stamina: '100',
+              vigor: '100',
+              vitality: '100',
             },
           },
         },
+        rank: '',
         reason: 'gold',
       }]]);
       assert.equal(send.calls.length, 1);
