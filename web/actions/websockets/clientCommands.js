@@ -8,8 +8,8 @@ export function createFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'idle'});
 }
 
-export function createFightCmd(reason) {
-  sendCommand({cmd: 'fight', reason});
+export function createFightCmd(reason, rank = null) {
+  sendCommand({cmd: 'fight', rank, reason});
 }
 
 export function removeFighterActionCmd(actionID) {
