@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React from 'react';
 import cx from 'classnames';
 import {FaCircleInfo} from 'react-icons/fa6';
 import Button from '@/components/Button.js';
@@ -25,7 +25,7 @@ export default function RegimenRow({actionEnabled, progress, skill, skillKey}) {
 }
 
 function SkillInfoButton({description, name, skillKey}) {
-  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = React.useState(false);
   const tooltipID = `skill-tooltip-${skillKey}`;
 
   return (
