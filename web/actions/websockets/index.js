@@ -46,7 +46,7 @@ function connectSocket() {
   }
   loadPlayerToken();
   socket = new WebSocket(createWebSocketURL());
-  socket.onmessage = generateOnSocketMessageFn(socket, scheduleSocketReconnectTimeout);
+  socket.onmessage = generateOnSocketMessage(socket, scheduleSocketReconnectTimeout);
   scheduleSocketReconnectTimeout();
   return socket;
 }
@@ -72,7 +72,7 @@ function getOpenSocket() {
   return connectSocket();
 }
 
-function generateOnSocketMessageFn(sock, scheduleReconnectTimeout) {
+function generateOnSocketMessage(socket, scheduleReconnectTimeout) {
   return function onSocketMessage(event) {
     scheduleReconnectTimeout();
     const message = parseSocketMessage(event);
@@ -84,12 +84,12 @@ function generateOnSocketMessageFn(sock, scheduleReconnectTimeout) {
       console.warn('Unknown websocket cmd:', message.cmd);
       return;
     }
-    onCommand(message, sock);
+    onCommand(message, socket);
   };
 }
 
-function onAuth(message, sock) {
-  onAuthMessage({message, socket: sock});
+function onAuth(message, socket) {
+  onAuthMessage({message, socket});
 }
 
 function onAuthInvalidToken() {
