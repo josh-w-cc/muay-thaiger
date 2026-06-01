@@ -20,7 +20,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('constitution', 1n);
       fighter.train('agility', 15n);
     },
-    name: 'Gymnastics', description: 'Increases stamina, strength, constitution, and agility.',
+    description: 'Increases stamina, strength, constitution, and agility.', name: 'Gymnastics',
     requires: (fighter) => fighter.stamina > 2500n && fighter.strength > 250n && fighter.agility > 500n,
     duration: 8,
   },
@@ -28,7 +28,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
     action: (fighter) => {
       fighter.train('stamina', 25n);
     },
-    name: 'Running', description: 'Greatly increases stamina.',
+    description: 'Greatly increases stamina.', name: 'Running',
     requires: (fighter) => fighter.stamina > 1000n && fighter.constitution > 250n,
     duration: 8,
   },
@@ -39,7 +39,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('strength', 1n);
       fighter.train('constitution', 1n);
     },
-    name: 'La฿oring', description: 'Increases gold, stamina, strength, and constitution.',
+    description: 'Increases gold, stamina, strength, and constitution.', name: 'La฿oring',
     requires: (fighter) => fighter.stamina > 500n && fighter.constitution > 100n && fighter.strength > 100n,
     duration: 4,
   },
@@ -49,7 +49,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('strength', 3n);
       fighter.train('constitution', 1n);
     },
-    name: 'Calisthenics', description: 'Increases stamina, strength, and constitution.',
+    description: 'Increases stamina, strength, and constitution.', name: 'Calisthenics',
     requires: (fighter) => fighter.stamina > 250n && fighter.constitution > 10n && fighter.strength > 25n,
     duration: 4,
   },
@@ -59,7 +59,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('strength');
       fighter.train('constitution');
     },
-    name: 'Yoga', description: 'Increases agility, strength, and constitution.',
+    description: 'Increases agility, strength, and constitution.', name: 'Yoga',
     requires: (fighter) => fighter.stamina > 100n,
     duration: 2,
   },
@@ -68,7 +68,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('constitution');
       fighter.train('stamina');
     },
-    name: 'Breathwork', description: 'Increases constitution and stamina.',
+    description: 'Increases constitution and stamina.', name: 'Breathwork',
     requires: (fighter) => fighter.stamina > 50n,
     duration: 2,
   },
@@ -76,7 +76,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
     action: (fighter) => {
       fighter.train('stamina', 3n);
     },
-    name: 'Shadow Boxing', description: 'Increases stamina.',
+    description: 'Increases stamina.', name: 'Shadow Boxing',
     requires: (fighter) => fighter.stamina > 25n,
     duration: 2,
   },
@@ -84,7 +84,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
     action: (fighter) => {
       fighter.train('stamina');
     },
-    name: 'Walking', description: 'Increases stamina.',
+    description: 'Increases stamina.', name: 'Walking',
     requires: () => true,
     duration: 1,
   },
@@ -92,7 +92,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
     action: (fighter) => {
       fighter.win(1n);
     },
-    name: '฿egging', description: 'Increases gold.',
+    description: 'Increases gold.', name: '฿egging',
     requires: () => true,
     duration: 1,
   },
