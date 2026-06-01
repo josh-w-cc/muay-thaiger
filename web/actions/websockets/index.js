@@ -1,9 +1,14 @@
 import {
+  initRouter,
   isSocketReady,
+  loadPlayerToken,
   resetAuthState,
 } from '@/actions/websockets/auth.js';
 import {generateOnSocketMessage} from '@/actions/websockets/serverCommands.js';
-import {loadPlayerToken} from '@/actions/websockets/auth.js';
+import router from '@/router.js';
+
+initRouter(router);
+
 let reconnectSocketTimeout = null;
 let socket = null;
 const SOCKET_INACTIVITY_MILLISECONDS = 15 * 60 * 1000;

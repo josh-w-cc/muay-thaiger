@@ -1,8 +1,12 @@
 import usePlayerStore from '@/data/player.js';
-import router from '@/router.js';
 
 export const PLAYER_TOKEN_STORAGE_KEY = 'mt-player-token';
 let playerToken = null;
+let _router = null;
+
+export function initRouter(router) {
+  _router = router;
+}
 
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
@@ -48,7 +52,7 @@ export function routeToHubIfAuthorized() {
   if(!selectedRace || !token) {
     return;
   }
-  router.navigate('/hub');
+  _router?.navigate('/hub');
 }
 
 export function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, selectedRace, socket, token}) {
