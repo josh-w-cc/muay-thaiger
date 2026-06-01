@@ -1,7 +1,7 @@
 import Section from '@/components/primitive/Section.js';
 
 import ActiveFight from '../ActiveFight/index.js';
-import css from '../Fight.module.css';
+import css from './FightForGlory.module.css';
 
 
 export default function FightForGlory() {
