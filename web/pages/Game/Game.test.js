@@ -4,7 +4,7 @@ import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router-dom'
 
 import selectFighter from '@/actions/selectFighter.js';
 import {connectSocketOnAppLoad, resetSocketState} from '@/actions/websockets/index.js';
-import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '@/actions/websockets/token.js';
+import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '@/actions/websockets/auth.js';
 import {resetPlayerStore} from '@/data/player.js';
 import useRacesStore, {resetRacesStore} from '@/data/races.js';
 import Fight from '../GameLayout/Fight';

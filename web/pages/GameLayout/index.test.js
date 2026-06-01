@@ -11,7 +11,7 @@ vi.mock('react-router-dom', () => ({
   redirect,
 }));
 
-vi.mock('@/actions/websockets/token.js', () => ({
+vi.mock('@/actions/websockets/auth.js', () => ({
   loadPlayerToken,
 }));
 

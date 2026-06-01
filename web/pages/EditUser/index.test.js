@@ -13,7 +13,7 @@ vi.mock('react-router-dom', () => ({
   useNavigate: () => navigate,
 }));
 
-vi.mock('@/actions/websockets/token.js', () => ({
+vi.mock('@/actions/websockets/auth.js', () => ({
   loadPlayerToken,
 }));
 
