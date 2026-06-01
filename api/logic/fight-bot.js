@@ -1,10 +1,12 @@
+import '../../shared/bigInt.js';
+
 export function generateGoldBotStats(fighterBaseStats = {}) {
   const {agility, constitution, durability, reach, skill, stamina, strength} = getBaseStats(fighterBaseStats);
-  const apm = maxBigInt(4n, logApprox(agility) + logApprox(skill));
-  const attack = logApprox(stamina) + logApprox(agility) + skill + reach;
-  const defense = logApprox(agility) + logApprox(stamina) + skill;
+  const apm = maxBigInt(4n, agility.logApprox() + skill.logApprox());
+  const attack = stamina.logApprox() + agility.logApprox() + skill + reach;
+  const defense = agility.logApprox() + stamina.logApprox() + skill;
   const health = stamina + constitution * constitution + durability * durability;
-  const power = (strength + agility) * logApprox(stamina) + skill;
+  const power = (strength + agility) * stamina.logApprox() + skill;
 
   return {
     apm: applyRandomVariance(apm),
@@ -44,11 +46,6 @@ function getPositiveBigInt(value, fallback) {
     // ignored
   }
   return fallback;
-}
-
-function logApprox(value) {
-  const digits = value < 0n ? (-value).toString() : value.toString();
-  return BigInt(digits === '0' ? 0 : digits.length);
 }
 
 function maxBigInt(left, right) {
