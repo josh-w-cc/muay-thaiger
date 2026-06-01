@@ -446,6 +446,20 @@ describe('WebSocket /ws/connect', () => {
     });
   });
 
+  it('sends error for fight command with invalid reason', async () => {
+    const send = createCallTracker();
+    const createFight = createCallTracker();
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+    const fighters = {findCurrentByPlayerID: async () => ({id: 9, player: 1, retired: false})};
+    const fights = {create: createFight};
+
+    await onMessage(JSON.stringify({cmd: 'fight', reason: ''}), socket, {fighters, fights});
+
+    assert.equal(createFight.calls.length, 0);
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-fight-message'});
+  });
+
   it('does not create a fight when the authenticated player has no current fighter', async () => {
     const send = createCallTracker();
     const createFight = createCallTracker();

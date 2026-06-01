@@ -28,7 +28,7 @@ async function handleAuth(models, message, socket) {
 }
 
 async function handleFight(models, {reason}, socket) {
-  if(!socket.player || !reason) {
+  if(!socket.player || typeof reason !== 'string' || reason.trim().length === 0) {
     throw createCommandError('invalid-fight-message');
   }
   const fighter = await models.fighters.findCurrentByPlayerID(socket.player.id);
