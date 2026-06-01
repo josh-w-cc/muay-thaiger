@@ -15,6 +15,12 @@ test('player token redirects root route to hub', async ({page}) => {
   await expect(page.getByRole('button', {name: 'Hub'})).toHaveAttribute('aria-current', 'page');
 });
 
+test('hub route redirects to fighter select when no player token exists', async ({page}) => {
+  await page.goto('/hub');
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading', {name: 'Choose your fighter:'})).toBeVisible();
+});
+
 test('choosing a fighter stores player token and routes to hub', async ({page}) => {
   await page.goto('/');
   await expect(page.getByRole('heading', {name: 'Choose your fighter:'})).toBeVisible();
