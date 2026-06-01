@@ -39,6 +39,7 @@ function FightContent({fight}) {
       <p>Fight pending...</p>
       <FightMetadata label="Fight ID" value={fight.id} />
       <FightMetadata label="Reason" value={fight.reason} />
+      <FightMetadata label="Created" value={fight.created_at} />
     </>
   );
 }

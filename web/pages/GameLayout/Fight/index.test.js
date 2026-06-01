@@ -116,6 +116,7 @@ describe('Fight', () => {
 
   it('shows active fight details from the server fight payload', () => {
     Object.assign(fightState, {
+      created_at: '2026-06-01T00:00:00.000Z',
       id: 19,
       reason: 'gold',
     });
@@ -123,6 +124,7 @@ describe('Fight', () => {
     expect(document.body).toHaveTextContent('Fight pending...');
     expect(document.body).toHaveTextContent('Fight ID: 19');
     expect(document.body).toHaveTextContent('Reason: gold');
+    expect(document.body).toHaveTextContent('Created: 2026-06-01T00:00:00.000Z');
     expect(screen.queryByRole('button', {name: 'Fight!'})).not.toBeInTheDocument();
   });
 });
