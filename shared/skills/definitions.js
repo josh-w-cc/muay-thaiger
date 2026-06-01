@@ -87,7 +87,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.win(1n);
     },
     name: '฿egging',
-    description: 'Perhaps a satang?',
+    description: 'Spare a satang?',
     requires: () => true,
     duration: 1,
   },
