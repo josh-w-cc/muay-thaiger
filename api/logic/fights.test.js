@@ -31,6 +31,7 @@ describe('createFight', () => {
       details: {
         attacker: {
           starting_stats: {
+            agility: '0',
             anima: '11',
             constitution: '12',
             durability: '13',
@@ -38,12 +39,14 @@ describe('createFight', () => {
             skill: '15',
             speed: '16',
             stamina: '17',
+            strength: '0',
             vigor: '18',
             vitality: '19',
           },
         },
         defender: {
           starting_stats: {
+            agility: '100',
             anima: '100',
             constitution: '100',
             durability: '100',
@@ -51,6 +54,7 @@ describe('createFight', () => {
             skill: '100',
             speed: '100',
             stamina: '100',
+            strength: '100',
             vigor: '100',
             vitality: '100',
           },
@@ -95,6 +99,7 @@ describe('createFight', () => {
     await createFight({fighters, fights}, 1, 'gold');
 
     assert.deepEqual(create.calls[0][0].details.attacker.starting_stats, {
+      agility: '0',
       anima: '1',
       constitution: '2',
       durability: '3',
@@ -102,6 +107,7 @@ describe('createFight', () => {
       skill: '5',
       speed: '6',
       stamina: '7',
+      strength: '0',
       vigor: '8',
       vitality: '9',
     });
