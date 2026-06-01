@@ -1,45 +1,38 @@
 import {create} from 'zustand';
 
-export const FIGHT_IN_PROGRESS = 'in-progress';
-export const FIGHT_LOST = 'lost';
-export const FIGHT_NOT_STARTED = 'not-started';
-export const FIGHT_WON = 'won';
-
-const useFightStore = create((set) => ({
-  ...getInitialFightState(),
-  syncServerState: (fight) => set(getServerFightState(fight)),
-}));
+const useFightStore = create((set) => createFightState(set));
 
 export default useFightStore;
 
 export function resetFightStore() {
-  useFightStore.setState(getInitialFightState());
+  useFightStore.setState(createFightState(useFightStore.setState), true);
+}
+
+function createFightState(set, fight = null) {
+  return {
+    ...getInitialFightState(),
+    ...getServerFightState(fight),
+    syncServerState: (nextFight) => set(createFightState(set, nextFight), true),
+  };
 }
 
 function getInitialFightState() {
   return {
     attacker: null,
+    created_at: null,
     defender: null,
     details: null,
-    fighters: [],
     id: null,
-    messages: [],
+    rank: null,
     reason: null,
-    state: FIGHT_NOT_STARTED,
+    updated_at: null,
     victory: null,
   };
 }
 
 function getServerFightState(fight) {
-  const nextFight = getInitialFightState();
   if(!fight || typeof fight !== 'object') {
-    return nextFight;
+    return {};
   }
-  Object.keys(nextFight).forEach((key) => {
-    const value = fight[key];
-    if(value !== undefined) {
-      nextFight[key] = value;
-    }
-  });
-  return nextFight;
+  return fight;
 }
