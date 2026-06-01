@@ -1,20 +1,42 @@
 import {create} from 'zustand';
 
-import {FIGHT_STATES, generateAttackFn, generateFinishFn, generateForGoldFn, generateStartFn, generateTickFn, getInitialState} from './fightState.js';
+export const FIGHT_IN_PROGRESS = 'in-progress';
+export const FIGHT_LOST = 'lost';
+export const FIGHT_NOT_STARTED = 'not-started';
+export const FIGHT_WON = 'won';
 
-export const {IN_PROGRESS: FIGHT_IN_PROGRESS, LOST: FIGHT_LOST, NOT_STARTED: FIGHT_NOT_STARTED, WON: FIGHT_WON} = FIGHT_STATES;
-
-const useFightStore = create((set, get) => ({
+const useFightStore = create((set) => ({
   ...getInitialState(),
-  attack: generateAttackFn({get, set}),
-  finish: generateFinishFn({get, set}),
-  forGold: generateForGoldFn({get, set}),
-  start: generateStartFn({get, set}),
-  tick: generateTickFn({get, set}),
+  syncServerState: (fight) => set({
+    ...getInitialFightState(),
+    ...(fight || {}),
+  }),
 }));
 
 export default useFightStore;
 
 export function resetFightStore() {
   useFightStore.setState(getInitialState());
+}
+
+function getInitialFightState() {
+  return {
+    attacker: null,
+    defender: null,
+    details: null,
+    fighters: [],
+    id: null,
+    messages: [],
+    reason: null,
+    state: FIGHT_NOT_STARTED,
+    victory: null,
+  };
+}
+
+function getInitialState() {
+  return {
+    ...getInitialFightState(),
+    attack: () => '',
+    finish: () => undefined,
+  };
 }
