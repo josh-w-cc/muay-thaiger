@@ -1,75 +1,21 @@
 import {useState} from 'react';
-import cx from 'classnames';
-import {FaCircleInfo} from 'react-icons/fa6';
-import Button from '@/components/Button.js';
 
-import {onActionButtonClick} from './skillButtons.js';
+import RegimenActionButton from './RegimenActionButton.js';
+import RegimenName from './RegimenName.js';
+import RegimenProgress from './RegimenProgress.js';
 
 import css from './Train.module.css';
 
 export default function RegimenRow({actionEnabled, progress, skill, skillKey}) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
-  const tooltipID = `skill-tooltip-${skillKey}`;
-  const infoButtonProps = {description: skill.description, duration: skill.duration, name: skill.name, setTooltipOpen, tooltipID, tooltipOpen};
 
   return (
     <div className={css.regimenRow}>
-      <div className={css.regimenName}>
-        <span onMouseEnter={() => setTooltipOpen(true)} onMouseLeave={() => setTooltipOpen(false)}>{skill.name}</span>
-        <SkillInfoButton {...infoButtonProps} />
-      </div>
+      <RegimenName setTooltipOpen={setTooltipOpen} skill={skill} skillKey={skillKey} tooltipOpen={tooltipOpen} />
       <div className={css.regimenProgress}>
         <RegimenProgress actionEnabled={actionEnabled} name={skill.name} progress={progress} />
-        <Button className={cx(css.actionButton, {[css.idleActive]: actionEnabled})} onClick={() => onActionButtonClick({actionEnabled, skillKey})}>
-          {actionEnabled ? 'STOP' : 'IDLE'}
-        </Button>
+        <RegimenActionButton actionEnabled={actionEnabled} skillKey={skillKey} />
       </div>
     </div>
-  );
-}
-
-function SkillInfoButton({description, duration, name, setTooltipOpen, tooltipID, tooltipOpen}) {
-  const durationText = Number.isFinite(duration) ? ` (${duration}s)` : '';
-  return (
-    <button
-      aria-describedby={tooltipOpen ? tooltipID : undefined}
-      aria-expanded={tooltipOpen}
-      aria-label={`${name} info`}
-      className={css.infoButton}
-      onClick={() => setTooltipOpen((isOpen) => !isOpen)}
-      onMouseEnter={() => setTooltipOpen(true)}
-      onMouseLeave={() => setTooltipOpen(false)}
-      type="button"
-    >
-      <FaCircleInfo aria-hidden size={12} />
-      {tooltipOpen && <SkillTooltip description={description} durationText={durationText} tooltipID={tooltipID} />}
-    </button>
-  );
-}
-
-function SkillTooltip({description, durationText, tooltipID}) {
-  return (
-    <span className={css.infoTooltip} id={tooltipID} role="tooltip">
-      {description}
-      {durationText}
-    </span>
-  );
-}
-
-function RegimenProgress({actionEnabled, name, progress}) {
-  return (
-    <>
-      <div
-        aria-label={`${name} completion`}
-        aria-valuemax={100}
-        aria-valuemin={0}
-        aria-valuenow={progress}
-        className={cx(css.regimenProgressTrack, {[css.regimenProgressTrackDisabled]: !actionEnabled})}
-        role="progressbar"
-      >
-        <div className={css.regimenProgressFill} style={{width: `${progress}%`}} />
-      </div>
-      <span className={cx(css.regimenProgressLabel, {[css.regimenProgressLabelDisabled]: !actionEnabled})}>{`${progress}%`}</span>
-    </>
   );
 }
