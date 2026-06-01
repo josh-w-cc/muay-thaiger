@@ -23,8 +23,8 @@ describe('FightFighters', () => {
     const snowLeopardStaminaBarFill = snowLeopardStaminaBar.querySelector('div');
 
     expect(tigerStaminaBar).toHaveClass(css.fightStaminaBar);
-    expect(tigerStaminaBarFill).toHaveClass(css.fightStaminaBarFill);
+    expect(tigerStaminaBarFill).toHaveClass(css.fill);
     expect(snowLeopardStaminaBar).toHaveClass(css.fightStaminaBar);
-    expect(snowLeopardStaminaBarFill).toHaveClass(css.fightStaminaBarFill);
+    expect(snowLeopardStaminaBarFill).toHaveClass(css.fill);
   });
 });
