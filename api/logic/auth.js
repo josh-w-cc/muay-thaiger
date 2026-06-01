@@ -1,16 +1,8 @@
 import {randomUUID} from 'node:crypto';
 import {MOVE_IDS} from 'shared/moves.js';
-import {parseBigIntStats} from 'shared/stats.js';
 import {createCommandError} from './command-errors.js';
 
 const TOKEN_PREVIEW_LENGTH = 8;
-const DEFAULT_TRAINING_STATS = {
-  agility: 0n,
-  constitution: 0n,
-  skill: 0n,
-  stamina: 0n,
-  strength: 0n,
-};
 
 export async function authenticate({fighterMoves, fighters, players, races}, message) {
   const player = await getPlayer({fighterMoves, fighters, players, races}, message.token, message.race);
@@ -45,14 +37,10 @@ async function createPlayer({fighterMoves, fighters, players, races}, race) {
     display_name: player.display_name,
     player: player.id,
     race: raceID,
-    stats: getDefaultStats(raceData),
+    stats: {...raceData},
   });
   await enableStarterMoves(fighterMoves, fighter.id);
   return player;
-}
-
-function getDefaultStats({stats = {}}) {
-  return parseBigIntStats({...DEFAULT_TRAINING_STATS, ...stats});
 }
 
 function enableStarterMoves(fighterMoves, fighterID) {

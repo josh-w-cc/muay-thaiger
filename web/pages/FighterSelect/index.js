@@ -73,15 +73,7 @@ function renderStats(stats) {
       {label}
       :
       {' '}
-      {formatStatValue(value)}
+      {value.toFormattedNumber()}
     </div>
   ));
-}
-
-function formatStatValue(value) {
-  if(value === null || value === undefined) {
-    return value;
-  }
-
-  return BigInt(value).toFormattedNumber();
 }
