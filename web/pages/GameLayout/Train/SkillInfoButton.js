@@ -3,8 +3,7 @@ import {FaCircleInfo} from 'react-icons/fa6';
 import css from './Train.module.css';
 
 export default function SkillInfoButton({description, duration, name, setTooltipOpen, tooltipID, tooltipOpen}) {
-  const durationText = Number.isFinite(duration) ? ` (${duration}s)` : '';
-  const tooltipText = `${description}${durationText}`;
+  const tooltipText = `${description} (${duration}s)`;
 
   return (
     <button
