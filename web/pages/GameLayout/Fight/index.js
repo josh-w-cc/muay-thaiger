@@ -49,7 +49,7 @@ function formatFightDetails(details) {
   if(details == null) {
     return null;
   }
-  return JSON.stringify(details);
+  return (<pre>{JSON.stringify(details, null, 2)}</pre>);
 }
 
 function FightMetadata({label, value}) {
