@@ -5,6 +5,7 @@ import {
   generateRemoveFn,
   generateUpdateFn,
 } from '../utils/crud.js';
+import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
 import {castStats, castStatsRows} from '../utils/stats.js';
 
 
@@ -15,12 +16,26 @@ export default function fighters(db) {
   const update = generateUpdateFn(db, 'fighters');
 
   return {
-    create: (data) => create(serializeFighterStats(data)),
+    create: (data) => create(serializeFighterStats(withDefaultStats(data))),
     find: async (id) => castFighter(await find(id)),
     findCurrentByPlayerID: generateFindCurrentByPlayerIDFn(db),
     list: async (direction) => castFighterRows(await list(direction)),
     remove: generateRemoveFn(db, 'fighters'),
     update: (id, data) => update(id, serializeFighterStats(data)),
+  };
+}
+
+function withDefaultStats(data) {
+  if(!data?.stats) {
+    return data;
+  }
+
+  return {
+    ...data,
+    stats: {
+      ...Object.fromEntries(FIGHTER_STAT_KEYS.map((key) => [key, 0])),
+      ...data.stats,
+    },
   };
 }
 
