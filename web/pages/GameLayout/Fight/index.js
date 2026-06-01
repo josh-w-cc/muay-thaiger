@@ -1,6 +1,3 @@
-/* eslint-disable complexity, max-lines-per-function */
-import React from 'react';
-
 import useFighterStore from '@/data/fighter.js';
 import useFightStore, {FIGHT_IN_PROGRESS, FIGHT_NOT_STARTED, FIGHT_LOST, FIGHT_WON} from '@/data/fight.js';
 import {createFightCmd} from '@/actions/websockets/clientCommands.js';
@@ -14,7 +11,6 @@ import ZerothFight, {needsZerothFight} from './ZerothFight.js';
 export default function FightMenu() {
   const fight = useFightStore();
   const fighter = useFighterStore();
-  const [announcer, setAnnouncer] = React.useState('');
 
   if(needsZerothFight(fighter)) {
     return (<ZerothFight />);
@@ -60,8 +56,6 @@ export default function FightMenu() {
         Health:
         {' '}
         {them.currentHealth.toFormattedNumber()}
-        <br />
-        <Button onClick={() => setAnnouncer(fight.attack(0))}>Attack!</Button>
         <h3>Stats:</h3>
         Health:
         {' '}
@@ -72,11 +66,7 @@ export default function FightMenu() {
   }
   else if(fight.state === FIGHT_WON || fight.state === FIGHT_LOST) {
     content = (
-      <Button onClick={() => {
-        fight.finish();
-        setAnnouncer('');
-      }}
-      >
+      <Button onClick={() => createFightCmd()}>
         Again?
       </Button>
     );
@@ -85,7 +75,6 @@ export default function FightMenu() {
     <>
       <Section>
         <h1>Fight for ฿</h1>
-        <h2>{announcer}</h2>
         {content}
         {fight.messages.slice().reverse()}
       </Section>

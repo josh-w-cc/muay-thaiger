@@ -10,12 +10,10 @@ import css from './Fight.module.css';
 import Fight from './index.js';
 
 
-const {fighter, fightState, createFightCmd, attack, finish, needsZerothFight} = vi.hoisted(() => ({
-  attack: vi.fn(),
+const {fighter, fightState, createFightCmd, needsZerothFight} = vi.hoisted(() => ({
   createFightCmd: vi.fn(),
   fighter: {gold: 500, id: 1, stamina: 1, strength: 1},
   fightState: {},
-  finish: vi.fn(),
   needsZerothFight: vi.fn(),
 }));
 
@@ -44,15 +42,12 @@ vi.mock('./ZerothFight.js', () => ({
 
 describe('Fight', () => {
   beforeEach(() => {
-    attack.mockReturnValue('');
     needsZerothFight.mockReturnValue(false);
     Object.assign(fightState, {
-      attack,
       fighters: [
         {currentHealth: '200', stats: {}},
         {currentHealth: '100', stats: {}},
       ],
-      finish,
       messages: [],
       state: 'not-started',
     });
@@ -127,9 +122,7 @@ describe('Fight', () => {
     expect(createFightCmd).toHaveBeenCalledWith('gold');
   });
 
-  it('shows in-progress stats and attack message', async () => {
-    const user = userEvent.setup();
-    attack.mockReturnValue('POW!');
+  it('shows in-progress stats and messages', () => {
     Object.assign(fightState, {
       fighters: [
         {currentHealth: 900n, stats: {apm: 1n, attack: 2n, defense: 3n, health: 4n, power: 5n, stamina: 6n}},
@@ -139,11 +132,6 @@ describe('Fight', () => {
       state: 'in-progress',
     });
     render(<Fight />);
-
-    await user.click(screen.getByRole('button', {name: 'Attack!'}));
-
-    expect(attack).toHaveBeenCalledWith(0);
-    expect(screen.getByRole('heading', {name: 'POW!'})).toBeInTheDocument();
     expect(document.body).toHaveTextContent('1.00e5');
     expect(document.body).toHaveTextContent('Stanima:');
     expect(document.body).toHaveTextContent('msg-a');
@@ -157,6 +145,6 @@ describe('Fight', () => {
 
     await user.click(screen.getByRole('button', {name: 'Again?'}));
 
-    expect(finish).toHaveBeenCalledTimes(1);
+    expect(createFightCmd).toHaveBeenCalledTimes(1);
   });
 });
