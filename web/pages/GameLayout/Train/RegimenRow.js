@@ -12,7 +12,7 @@ export default function RegimenRow({actionEnabled, progress, skill, skillKey}) {
     <div className={css.regimenRow}>
       <div className={css.regimenName}>
         {skill.name}
-        <SkillInfoButton description={skill.description} name={skill.name} skillKey={skillKey} />
+        <SkillInfoButton description={skill.description} duration={skill.duration} name={skill.name} skillKey={skillKey} />
       </div>
       <div className={css.regimenProgress}>
         <RegimenProgress actionEnabled={actionEnabled} name={skill.name} progress={progress} />
@@ -24,9 +24,10 @@ export default function RegimenRow({actionEnabled, progress, skill, skillKey}) {
   );
 }
 
-function SkillInfoButton({description, name, skillKey}) {
+function SkillInfoButton({description, duration, name, skillKey}) {
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
   const tooltipID = `skill-tooltip-${skillKey}`;
+  const durationText = Number.isFinite(duration) ? ` (${duration}s)` : '';
 
   return (
     <button
@@ -40,8 +41,17 @@ function SkillInfoButton({description, name, skillKey}) {
       type="button"
     >
       <FaCircleInfo aria-hidden size={12} />
-      {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role="tooltip">{description}</span>}
+      {tooltipOpen && <SkillTooltip description={description} durationText={durationText} tooltipID={tooltipID} />}
     </button>
+  );
+}
+
+function SkillTooltip({description, durationText, tooltipID}) {
+  return (
+    <span className={css.infoTooltip} id={tooltipID} role="tooltip">
+      {description}
+      {durationText}
+    </span>
   );
 }
 

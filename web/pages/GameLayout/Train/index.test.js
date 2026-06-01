@@ -56,6 +56,7 @@ vi.mock('shared/skills.js', async () => {
       begging: {
         action,
         description: 'Perhaps a satang?',
+        duration: 3,
         name: '฿egging',
         requires: () => true,
       },
@@ -112,11 +113,11 @@ describe('Train', () => {
 
     await user.hover(infoIcon);
 
-    expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
+    expect(screen.getByText('Perhaps a satang? (3s)')).toBeInTheDocument();
 
     await user.unhover(infoIcon);
 
-    expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
+    expect(screen.queryByText('Perhaps a satang? (3s)')).not.toBeInTheDocument();
   });
 
   it('toggles the skill tooltip on click', async () => {
@@ -125,11 +126,11 @@ describe('Train', () => {
 
     fireEvent.click(infoIcon);
 
-    expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
+    expect(screen.getByText('Perhaps a satang? (3s)')).toBeInTheDocument();
 
     fireEvent.click(infoIcon);
 
-    expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
+    expect(screen.queryByText('Perhaps a satang? (3s)')).not.toBeInTheDocument();
   });
 
   it('uses an opaque tooltip background token', () => {
