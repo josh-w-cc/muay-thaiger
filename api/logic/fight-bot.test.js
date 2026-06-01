@@ -13,7 +13,6 @@ describe('generateGoldBotStats', () => {
       skill: 1,
       speed: 1,
       stamina: 1,
-      strength: undefined,
       vigor: 1,
     });
 
@@ -37,6 +36,7 @@ describe('generateGoldBotStats', () => {
       speed: 1000,
       stamina: 200,
       strength: 7,
+      vigor: 9,
     });
 
     assert.deepEqual(result, {
