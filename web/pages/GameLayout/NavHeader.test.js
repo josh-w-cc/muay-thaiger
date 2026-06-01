@@ -52,17 +52,14 @@ describe('NavHeader', () => {
     expect(screen.getByRole('img', {name: 'Shop'})).toHaveAttribute('src', expect.stringContaining(ShopButton));
     expect(screen.getByRole('img', {name: 'Train'})).toHaveAttribute('src', expect.stringContaining(TrainButton));
     expect(screen.getByRole('button', {name: 'Hub'})).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('button', {name: 'Fight'})).not.toHaveAttribute('aria-current');
 
-    await user.click(screen.getByRole('button', {name: 'Fight'}));
     await user.click(screen.getByRole('button', {name: 'Hub'}));
     await user.click(screen.getByRole('button', {name: 'Train'}));
     await user.click(screen.getByRole('button', {name: 'Shop'}));
 
-    expect(navigate).toHaveBeenNthCalledWith(1, '/fight');
-    expect(navigate).toHaveBeenNthCalledWith(2, '/hub');
-    expect(navigate).toHaveBeenNthCalledWith(3, '/train');
-    expect(navigate).toHaveBeenNthCalledWith(4, '/shop');
+    expect(navigate).toHaveBeenNthCalledWith(1, '/hub');
+    expect(navigate).toHaveBeenNthCalledWith(2, '/train');
+    expect(navigate).toHaveBeenNthCalledWith(3, '/shop');
   });
 
   it('keeps header navigation hover background transparent', () => {

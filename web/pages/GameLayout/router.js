@@ -4,7 +4,6 @@ import {GameLayout, loader as gameLayoutLoader} from './index.js';
 
 const gameLayoutRoutes = {
   children: [
-    {path: 'fight', lazy: lazyPage(() => import('./Fight/index.js'))},
     {path: 'hub', lazy: lazyPage(() => import('./Hub/index.js'))},
     {path: 'shop', lazy: lazyPage(() => import('./Shop/index.js'))},
     {path: 'train', lazy: lazyPage(() => import('./Train/index.js'))},
