@@ -441,11 +441,35 @@ describe('WebSocket /ws/connect', () => {
     const fighters = {findCurrentByPlayerID: async () => ({id: 9, player: 1, retired: false})};
     const fights = {create: createFight};
 
-    await onMessage(JSON.stringify({cmd: 'fight', reason: ''}), socket, {fighters, fights});
+    await onMessage(JSON.stringify({cmd: 'fight', reason: 'tournament'}), socket, {fighters, fights});
 
     assert.equal(createFight.calls.length, 0);
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-fight-message'});
+  });
+
+  it('creates a fight and responds to rank fight command for authenticated socket', async () => {
+    const send = createCallTracker();
+    const createFight = createCallTracker();
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+    const fighter = {id: 9, player: 1, retired: false};
+    const createdFight = {attacker: 9, defender: null, details: {}, id: 5, reason: 'rank'};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {
+      create: async (fightData) => {
+        createFight(fightData);
+        return createdFight;
+      },
+    };
+
+    await onMessage(JSON.stringify({cmd: 'fight', reason: 'rank'}), socket, {fighters, fights});
+
+    assert.deepEqual(createFight.calls[0][0].reason, 'rank');
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {
+      cmd: 'ok',
+      metadata: {fight: createdFight, responded_cmd: 'fight'},
+    });
   });
 
   it('does not create a fight when the authenticated player has no current fighter', async () => {
