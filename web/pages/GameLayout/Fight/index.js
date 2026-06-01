@@ -46,7 +46,7 @@ function FightContent({fight}) {
 }
 
 function formatFightDetails(details) {
-  if(details === null || details === undefined) {
+  if(details == null) {
     return null;
   }
   return JSON.stringify(details);
