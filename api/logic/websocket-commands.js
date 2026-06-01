@@ -6,12 +6,14 @@ import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
 
+const FIGHT_REASONS = ['gold', 'rank'];
+
 export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
     case 'auth':
       return auth(models, message, socket);
     case 'fight':
-      return fight(models, socket);
+      return fight(models, message, socket);
     case 'idle':
       return idle(models, message, socket);
     case 'stop':
@@ -28,20 +30,20 @@ async function auth(models, message, socket) {
   await sendCurrentPlayerState(models, socket);
 }
 
-async function fight(models, socket) {
-  if(!socket.player) {
+async function fight(models, {reason}, socket) {
+  const normalizedReason = typeof reason === 'string' ? reason.trim() : '';
+  if(!socket.player || !FIGHT_REASONS.includes(normalizedReason)) {
     throw createCommandError('invalid-fight-message');
   }
   const fighter = await models.fighters.findCurrentByPlayerID(socket.player.id);
   if(!fighter) {
     throw createCommandError('invalid-fight-message');
   }
-  const reason = 'gold';
   const fight = await models.fights.create({
     attacker: fighter.id,
     defender: null,
-    details: createFightDetails(fighter, reason),
-    reason,
+    details: createFightDetails(fighter, normalizedReason),
+    reason: normalizedReason,
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }
