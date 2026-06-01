@@ -1,3 +1,7 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {SKILL_IDS} from 'shared/skills.js';
@@ -104,6 +108,14 @@ describe('Train', () => {
     await user.unhover(infoIcon);
 
     expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
+  });
+
+  it('uses an opaque tooltip background token', () => {
+    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
+    const modulePath = path.join(directoryPath, 'Train.module.css');
+    const source = fs.readFileSync(modulePath, 'utf8');
+
+    expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
   });
 
   it('shows gray progress bar for inactive skills', () => {
