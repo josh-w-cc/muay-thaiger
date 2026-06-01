@@ -24,7 +24,7 @@ export default function FightMenu() {
   if(fight.state === FIGHT_NOT_STARTED) {
     content = (
       <>
-        <Button onClick={() => createFightCmd()}>Fight!</Button>
+        <Button onClick={() => createFightCmd('gold')}>Fight!</Button>
       </>
     );
   }
