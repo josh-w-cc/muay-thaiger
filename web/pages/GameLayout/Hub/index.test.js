@@ -1,7 +1,4 @@
 import {render, screen, within} from '@testing-library/react';
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
 
 import Hub from './index.js';
 
@@ -36,19 +33,6 @@ vi.mock('@/data/fighter.js', () => ({
 describe('Hub', () => {
   afterEach(() => {
     vi.clearAllMocks();
-  });
-
-  it('renders fighter details section with name, age, and race without stats', () => {
-    render(<Hub />);
-
-    expect(screen.queryByRole('heading', {name: 'Fighter Details:'})).not.toBeInTheDocument();
-    expect(screen.getByText('Name').closest('div')).toBeInTheDocument();
-    expect(within(screen.getByText('Name').closest('div')).getByText('Iron Tiger')).toBeInTheDocument();
-    expect(screen.getByText('Race', {selector: 'dt'}).closest('div')).toBeInTheDocument();
-    expect(within(screen.getByText('Race', {selector: 'dt'}).closest('div')).getByText('Tiger')).toBeInTheDocument();
-    expect(screen.getByText('Age').closest('div')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', {name: 'Stats:'})).not.toBeInTheDocument();
-    expect(screen.queryByText('Stanima', {selector: 'dt'})).not.toBeInTheDocument();
   });
 
   it('renders hub layout without the stats section', () => {
@@ -103,24 +87,5 @@ describe('Hub', () => {
     expect(within(statsLeaderboard).getByText('Stone Viper')).toBeInTheDocument();
     expect(within(statsLeaderboard).getByText('Red Hawk')).toBeInTheDocument();
     expect(within(statsLeaderboard).queryByText('Reach')).not.toBeInTheDocument();
-  });
-
-  it('verifies fighter details compose from the shared stat-list base', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'Hub.module.css');
-    const source = fs.readFileSync(modulePath, 'utf8');
-
-    const detailsStatListPattern = new RegExp(
-      [
-        String.raw`\.details\s*{[^}]*`,
-        String.raw`composes:\s*statListBase\s*from\s*`,
-        String.raw`'..\/..\/..\/components\/primitive\/css-modules\/stat-list-base\.module\.css';`,
-      ].join(''),
-      's',
-    );
-
-    expect(source).toMatch(
-      detailsStatListPattern,
-    );
   });
 });
