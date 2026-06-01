@@ -47,6 +47,7 @@ vi.mock('./Skills.js', () => ({
   default: {
     begging: {
       action,
+      description: 'Perhaps a satang?',
       name: '฿egging',
       requires: () => true,
     },
@@ -85,9 +86,24 @@ describe('Train', () => {
     expect(screen.queryByRole('heading', {name: 'Training Regimen:'})).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: 'Skills:'})).not.toBeInTheDocument();
     expect(screen.getByText('฿egging')).toBeInTheDocument();
+    expect(screen.getByLabelText('฿egging info')).toBeInTheDocument();
 
     expect(screen.getByRole('progressbar', {name: '฿egging completion'})).toHaveAttribute('aria-valuenow', '77');
     expect(screen.getByRole('button', {name: 'STOP'})).toBeInTheDocument();
+  });
+
+  it('shows and hides skill tooltip on hover', async () => {
+    const user = userEvent.setup();
+    render(<Train />);
+    const infoIcon = screen.getByLabelText('฿egging info');
+
+    await user.hover(infoIcon);
+
+    expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
+
+    await user.unhover(infoIcon);
+
+    expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
   });
 
   it('shows gray progress bar for inactive skills', () => {
