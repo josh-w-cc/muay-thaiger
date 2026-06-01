@@ -1,7 +1,6 @@
 import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
 import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
-import {generateGoldBotStats} from './fight-bot.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
@@ -49,9 +48,10 @@ async function fight(models, {reason}, socket) {
 }
 
 function createFightDetails(fighter, reason) {
+  const startingStats = captureStartingStats(fighter);
   return {
-    attacker: {starting_stats: captureStartingStats(fighter)},
-    ...(reason === 'gold' ? {defender: {starting_stats: generateGoldBotStats(fighter.stats)}} : {}),
+    attacker: {starting_stats: startingStats},
+    ...(reason === 'gold' ? {defender: {starting_stats: startingStats}} : {}),
   };
 }
 
