@@ -41,15 +41,23 @@ async function fight(models, {reason}, socket) {
   const fight = await models.fights.create({
     attacker: fighter.id,
     defender: null,
-    details: {starting_stats: captureStartingStats(fighter)},
+    details: createFightDetails(fighter, normalizedReason),
     reason: normalizedReason,
   });
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fight, responded_cmd: 'fight'}}));
 }
 
+function createFightDetails(fighter, reason) {
+  const startingStats = captureStartingStats(fighter);
+  return {
+    attacker: {starting_stats: startingStats},
+    ...(reason === 'gold' ? {defender: {starting_stats: startingStats}} : {}),
+  };
+}
+
 function captureStartingStats(fighter) {
   return Object.fromEntries(
-    FIGHTER_STAT_KEYS.map((stat) => [stat, (fighter[stat] ?? 0).toString()]),
+    FIGHTER_STAT_KEYS.map((stat) => [stat, (fighter[stat] ?? fighter.stats?.[stat] ?? 0).toString()]),
   );
 }
 
