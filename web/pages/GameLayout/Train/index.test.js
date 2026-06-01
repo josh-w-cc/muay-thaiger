@@ -95,13 +95,13 @@ describe('Train', () => {
   it('shows and hides skill tooltip on hover', async () => {
     const user = userEvent.setup();
     render(<Train />);
-    const infoIcon = screen.getByLabelText('฿egging info');
+    const skillName = screen.getByText('฿egging');
 
-    await user.hover(infoIcon);
+    await user.hover(skillName);
 
     expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
 
-    await user.unhover(infoIcon);
+    await user.unhover(skillName);
 
     expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
   });
