@@ -9,26 +9,26 @@ import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
 export async function processMessageCommand(models, message, socket) {
   switch(message.cmd) {
     case 'auth':
-      return handleAuth(models, message, socket);
+      return auth(models, message, socket);
     case 'fight':
-      return handleFight(models, socket);
+      return fight(models, socket);
     case 'idle':
-      return handleIdle(models, message, socket);
+      return idle(models, message, socket);
     case 'stop':
-      return handleStop(models, message, socket);
+      return stop(models, message, socket);
     default:
       socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
   }
 }
 
-async function handleAuth(models, message, socket) {
+async function auth(models, message, socket) {
   const player = await authenticate(models, message);
   socket.player = player;
   socket.send(JSON.stringify({cmd: 'auth', display_name: player.display_name, player_id: player.id, token: player.token}));
   await sendCurrentPlayerState(models, socket);
 }
 
-async function handleFight(models, socket) {
+async function fight(models, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-fight-message');
   }
@@ -59,7 +59,7 @@ function captureStartingStats(fighter) {
   );
 }
 
-async function handleIdle(models, message, socket) {
+async function idle(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-idle-message');
   }
@@ -69,7 +69,7 @@ async function handleIdle(models, message, socket) {
   await sendCurrentPlayerState(models, socket);
 }
 
-async function handleStop(models, message, socket) {
+async function stop(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-stop-message');
   }
