@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState} from 'react';
 import cx from 'classnames';
 import {FaCircleInfo} from 'react-icons/fa6';
 import Button from '@/components/Button.js';
@@ -8,7 +8,7 @@ import {onActionButtonClick} from './skillButtons.js';
 import css from './Train.module.css';
 
 export default function RegimenRow({actionEnabled, progress, skill, skillKey}) {
-  const [tooltipOpen, setTooltipOpen] = React.useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
   const tooltipID = `skill-tooltip-${skillKey}`;
 
   return (
