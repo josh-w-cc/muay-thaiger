@@ -1,7 +1,9 @@
 import cx from 'classnames';
+import {InfoIcon} from 'lucide-react';
 import {SKILL_IDS} from 'shared/skills.js';
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';
+import Tooltip from '@/components/primitive/Tooltip.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 
@@ -43,6 +45,7 @@ function RegimenRows({fighter}) {
         .map((skillKey) => (
           <RegimenRow
             actionEnabled={isActionEnabled(actions, skillKey)}
+            description={Skills[skillKey].description}
             key={skillKey}
             name={Skills[skillKey].name}
             progress={actions.find((a) => a.action === SKILL_IDS[skillKey])?.progress || 0}
@@ -53,10 +56,16 @@ function RegimenRows({fighter}) {
   );
 }
 
-function RegimenRow({actionEnabled, name, progress, skillKey}) {
+function RegimenRow({actionEnabled, description, name, progress, skillKey}) {
   return (
     <div className={css.regimenRow}>
-      <div>{name}</div>
+      <div>
+        {name}
+        {' '}
+        <Tooltip text={description}>
+          <InfoIcon aria-label={`${name} info`} size={12} />
+        </Tooltip>
+      </div>
       <div className={css.regimenProgress}>
         <RegimenProgress actionEnabled={actionEnabled} name={name} progress={progress} />
         <Button
