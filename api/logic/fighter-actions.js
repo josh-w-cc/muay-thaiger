@@ -1,5 +1,4 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills.js';
-import {parseBigIntStats} from 'shared/stats.js';
 import {findTouchedAtTransfer, getMaxTouchedAtMs} from 'shared/training.js';
 import {createCommandError} from './command-errors.js';
 
@@ -45,7 +44,7 @@ function isValidAction(fighter, actionID) {
   if(!skill) {
     return false;
   }
-  return skill.requires(parseBigIntStats(fighter.stats || {}));
+  return skill.requires(fighter.stats);
 }
 
 function normalizeMessage(message, errorCode) {

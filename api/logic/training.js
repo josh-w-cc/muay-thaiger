@@ -1,4 +1,3 @@
-import {parseBigIntStats} from 'shared/stats.js';
 import {
   applyTrainingActions,
   createTrainingTimeline,
@@ -31,7 +30,7 @@ async function touchAppliedActions(fighterActions, actions, touchedAtByActionID)
 }
 
 function trainStats(actions, fighter) {
-  const stats = parseBigIntStats({...fighter.stats});
+  const stats = {...fighter.stats};
   let gold = fighter.gold;
   const proxy = createFighterProxy(stats, (amount) => {
     gold += amount;
