@@ -169,7 +169,3 @@
   padding: var(--space-xs) 0;
   width: calc((100% - var(--space-sm)) / 2);
 }
-
-.glorySection {
-  overflow: hidden;
-}
