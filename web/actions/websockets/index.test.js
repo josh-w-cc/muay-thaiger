@@ -165,7 +165,7 @@ describe('player websocket helpers', () => {
       data: JSON.stringify({
         cmd: 'player_state',
         actions: [{action: 2, id: 11}],
-        fight: {id: 88, messages: ['server'], reason: 'gold', state: 'won', victory: 9},
+        fight: {id: 88, reason: 'gold', rank: 'bronze', victory: 9},
         fighter: {
           gold: '250',
           id: 9,
@@ -188,8 +188,10 @@ describe('player websocket helpers', () => {
     expect(useFighterStore.getState().stamina).toBe(7n);
     expect(useFighterStore.getState().strength).toBe(8n);
     expect(useFightStore.getState().id).toBe(88);
-    expect(useFightStore.getState().state).toBe('won');
-    expect(useFightStore.getState().messages).toEqual(['server']);
+    expect(useFightStore.getState().rank).toBe('bronze');
+    expect(useFightStore.getState().reason).toBe('gold');
+    expect(useFightStore.getState()).not.toHaveProperty('messages');
+    expect(useFightStore.getState()).not.toHaveProperty('state');
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -215,7 +217,8 @@ describe('player websocket helpers', () => {
     expect(usePlayerStore.getState().playerID).toBeNull();
     expect(useFighterActionsStore.getState().actions).toEqual([]);
     expect(useFightStore.getState().id).toBeNull();
-    expect(useFightStore.getState().messages).toEqual([]);
+    expect(useFightStore.getState().reason).toBeNull();
+    expect(useFightStore.getState()).not.toHaveProperty('messages');
   });
 
   it('does not route to hub when player_state is received', () => {
