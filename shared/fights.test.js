@@ -15,6 +15,7 @@ describe('fights', () => {
 
   it('validates fight reasons', () => {
     assert.equal(isFightReason('gold'), true);
+    assert.equal(isFightReason('rank'), true);
     assert.equal(isFightReason(' rank '), true);
     assert.equal(isFightReason('tournament'), false);
   });
