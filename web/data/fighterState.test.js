@@ -6,6 +6,4 @@ describe('fighterState helpers', () => {
     expect(isFightIdling()).toBe(false);
     expect(isFightIdling({key: 'FIGHT-club'})).toBe(true);
   });
-
-
 });
