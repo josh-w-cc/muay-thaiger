@@ -84,6 +84,7 @@ function FightStatBar({barClassName, current, label, max}) {
       aria-valuenow={current}
       className={barClassName}
       role="progressbar"
+      style={{width: '100%'}}
     >
       <div className={css.fill} style={{width: `${Math.round((current / max) * 100)}%`}} />
     </div>
