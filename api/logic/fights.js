@@ -3,7 +3,7 @@ import {createCommandError} from './command-errors.js';
 
 const FIGHT_REASONS = ['gold', 'rank'];
 const BOT_RANK_STATS = {
-  '': 1n,
+  '': 100n,
 };
 
 export async function createFight({fighters, fights}, playerID, reason, rank = '') {
