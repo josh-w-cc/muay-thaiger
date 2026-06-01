@@ -52,7 +52,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('strength', 3n);
       fighter.train('constitution', 1n);
     },
-    description: 'Increases stamina',
+    description: 'Slightly increases stamina',
     name: 'Calisthenics',
     requires: (fighter) => fighter.stamina > 250n && fighter.constitution > 10n && fighter.strength > 25n,
     duration: 4,
@@ -64,7 +64,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('constitution');
     },
     name: 'Yoga',
-    description: 'Slightly increases agility, consitution, & strength',
+    description: 'Very slightly increases agility, constitution, & strength',
     requires: (fighter) => fighter.stamina > 100n,
     duration: 2,
   },
@@ -74,7 +74,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('stamina');
     },
     name: 'Breathwork',
-    description: 'Slightly increases stamina & constitution',
+    description: 'Very slightly increases stamina & constitution',
     requires: (fighter) => fighter.stamina > 50n,
     duration: 2,
   },
@@ -83,7 +83,7 @@ export const SKILL_DEFINITIONS = Object.freeze({
       fighter.train('stamina', 3n);
     },
     name: 'Shadow Boxing',
-    description: 'Slightly increases stamina',
+    description: 'Very slightly increases stamina',
     requires: (fighter) => fighter.stamina > 25n,
     duration: 2,
   },
