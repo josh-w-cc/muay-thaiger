@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState} from 'react';
 import cx from 'classnames';
 import {FaCircleInfo} from 'react-icons/fa6';
 import Button from '@/components/Button.js';
@@ -8,11 +8,15 @@ import {onActionButtonClick} from './skillButtons.js';
 import css from './Train.module.css';
 
 export default function RegimenRow({actionEnabled, progress, skill, skillKey}) {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const tooltipID = `skill-tooltip-${skillKey}`;
+  const infoButtonProps = {description: skill.description, duration: skill.duration, name: skill.name, setTooltipOpen, tooltipID, tooltipOpen};
+
   return (
     <div className={css.regimenRow}>
       <div className={css.regimenName}>
-        {skill.name}
-        <SkillInfoButton description={skill.description} duration={skill.duration} name={skill.name} skillKey={skillKey} />
+        <span onMouseEnter={() => setTooltipOpen(true)} onMouseLeave={() => setTooltipOpen(false)}>{skill.name}</span>
+        <SkillInfoButton {...infoButtonProps} />
       </div>
       <div className={css.regimenProgress}>
         <RegimenProgress actionEnabled={actionEnabled} name={skill.name} progress={progress} />
@@ -24,11 +28,8 @@ export default function RegimenRow({actionEnabled, progress, skill, skillKey}) {
   );
 }
 
-function SkillInfoButton({description, duration, name, skillKey}) {
-  const [tooltipOpen, setTooltipOpen] = React.useState(false);
-  const tooltipID = `skill-tooltip-${skillKey}`;
+function SkillInfoButton({description, duration, name, setTooltipOpen, tooltipID, tooltipOpen}) {
   const durationText = Number.isFinite(duration) ? ` (${duration}s)` : '';
-
   return (
     <button
       aria-describedby={tooltipOpen ? tooltipID : undefined}
