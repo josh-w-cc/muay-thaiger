@@ -424,12 +424,13 @@ describe('WebSocket /ws/connect', () => {
         vigor: 18,
         vitality: 19,
         stats: {
-          apm: 100n,
-          attack: 81n,
-          defense: 64n,
-          health: 200n,
-          power: 144n,
-          stamina: 121n,
+          constitution: 12n,
+          durability: 13n,
+          reach: 14n,
+          skill: 15n,
+          speed: 16n,
+          stamina: 17n,
+          strength: 18n,
         },
       };
       const createdFight = {attacker: 9, defender: null, details: {attacker: {}, defender: {}}, id: 4, reason: 'gold'};
@@ -462,12 +463,12 @@ describe('WebSocket /ws/connect', () => {
           },
           defender: {
             starting_stats: {
-              apm: 100,
-              attack: 9,
-              defense: 8,
-              health: 2000,
-              power: 144,
-              stamina: 1331,
+              apm: 4n,
+              attack: 33n,
+              defense: 19n,
+              health: 330n,
+              power: 83n,
+              stamina: 17n,
             },
           },
         },
