@@ -47,8 +47,8 @@ vi.mock('@/data/fighter.js', () => {
   return {default: mockedStore};
 });
 
-vi.mock('shared/skills.js', async () => {
-  const actual = await vi.importActual('shared/skills.js');
+vi.mock('shared/skills/index.js', async () => {
+  const actual = await vi.importActual('shared/skills/index.js');
 
   return {
     ...actual,
