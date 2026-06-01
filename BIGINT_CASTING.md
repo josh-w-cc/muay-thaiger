@@ -13,7 +13,7 @@ This document lists all current explicit casts to/from `BigInt` in runtime code 
 | `api/data/seed-data/seeds/001-fighters.js:86` | `Number(value)` | `BigInt` -> `number` | **Yes** | Race seed stats originate as `BigInt` in `shared/races.js`; JSON/DB seed rows need non-`BigInt` values. |
 | `web/data/fightState.js:41` | `Number(fighter.gold)` | `BigInt` -> `number` | **Yes** | Fight betting logic uses floating-point percentage math. |
 | `web/data/fightState.js:60-61` | `Number(left.health)`, `Number(left.stamina)`, `Number(right.health)`, `Number(right.stamina)` | `BigInt` -> `number` | **Yes** | Fight simulation state uses mutable floating-point values. |
-| `web/data/fightState.js:78-79` | `Number(nextFighters[x].stats.apm)` | `BigInt` -> `number` | **Yes** | Per-tick APM accumulation is fractional. |
+| `web/data/fightState.js:78-79` | `Number(nextFighters[fighterIndex].stats.apm)` | `BigInt` -> `number` | **Yes** | Per-tick APM accumulation is fractional. |
 | `web/data/fightState.js:105` | `Number(you.stats.attack)`, `Number(them.stats.defense)` | `BigInt` -> `number` | **Yes** | Randomized hit chance compares floating-point products. |
 | `web/data/fightState.js:108` | `Number(you.stats.power)` | `BigInt` -> `number` | **Yes** | Damage roll multiplies by random float. |
 
