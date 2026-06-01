@@ -1,3 +1,5 @@
+import cx from 'classnames';
+
 import {FIGHT_FEED} from './FightFeedData.js';
 import css from '../Fight.module.css';
 
@@ -13,7 +15,10 @@ export default function FightFeed() {
 }
 
 function FightFeedItem({item}) {
-  const attackerClassName = item.isSelf ? css.fightFeedAttackerSelf : css.fightFeedAttackerEnemy;
+  const attackerClassName = cx({
+    [css.fightFeedAttackerEnemy]: !item.isSelf,
+    [css.fightFeedAttackerSelf]: item.isSelf,
+  });
 
   return (
     <li className={css.fightFeedItem}>
