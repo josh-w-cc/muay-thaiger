@@ -57,7 +57,7 @@ describe('generateGoldBotStats', () => {
       reach: 'abc',
       skill: 0,
       speed: undefined,
-      stamina: '-2',
+      stamina: -2,
       strength: undefined,
       vigor: 2,
     });
