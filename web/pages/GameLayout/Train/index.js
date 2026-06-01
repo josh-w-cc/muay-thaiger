@@ -1,9 +1,9 @@
+import {useState} from 'react';
 import cx from 'classnames';
-import {InfoIcon} from 'lucide-react';
+import {FaCircleInfo} from 'react-icons/fa6';
 import {SKILL_IDS} from 'shared/skills.js';
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';
-import Tooltip from '@/components/primitive/Tooltip.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
 
@@ -57,14 +57,27 @@ function RegimenRows({fighter}) {
 }
 
 function RegimenRow({actionEnabled, description, name, progress, skillKey}) {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
   return (
     <div className={css.regimenRow}>
-      <div>
+      <div className={css.regimenName}>
         {name}
         {' '}
-        <Tooltip text={description}>
-          <InfoIcon aria-label={`${name} info`} size={12} />
-        </Tooltip>
+        <button
+          aria-label={`${name} info`}
+          className={css.infoButton}
+          onMouseEnter={() => setTooltipOpen(true)}
+          onMouseLeave={() => setTooltipOpen(false)}
+          onTouchEnd={(event) => {
+            event.preventDefault();
+            setTooltipOpen((isOpen) => !isOpen);
+          }}
+          type='button'
+        >
+          <FaCircleInfo aria-hidden size={12} />
+          {tooltipOpen && <span className={css.infoTooltip} role='tooltip'>{description}</span>}
+        </button>
       </div>
       <div className={css.regimenProgress}>
         <RegimenProgress actionEnabled={actionEnabled} name={name} progress={progress} />
