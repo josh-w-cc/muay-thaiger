@@ -63,17 +63,12 @@ function RegimenRow({actionEnabled, description, name, progress, skillKey}) {
     <div className={css.regimenRow}>
       <div className={css.regimenName}>
         {name}
-        {' '}
         <button
           aria-label={`${name} info`}
           className={css.infoButton}
-          onBlur={() => setTooltipOpen(false)}
+          onClick={() => setTooltipOpen((isOpen) => !isOpen)}
           onMouseEnter={() => setTooltipOpen(true)}
           onMouseLeave={() => setTooltipOpen(false)}
-          onTouchEnd={(event) => {
-            event.preventDefault();
-            setTooltipOpen((isOpen) => !isOpen);
-          }}
           type='button'
         >
           <FaCircleInfo aria-hidden size={12} />
