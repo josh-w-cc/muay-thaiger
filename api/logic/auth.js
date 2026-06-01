@@ -37,7 +37,7 @@ async function createPlayer({fighterMoves, fighters, players, races}, race) {
     display_name: player.display_name,
     player: player.id,
     race: raceID,
-    stats: {...raceData},
+    stats: {...raceData.stats},
   });
   await enableStarterMoves(fighterMoves, fighter.id);
   return player;
