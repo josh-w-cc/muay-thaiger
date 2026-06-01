@@ -6,17 +6,14 @@ export const FIGHT_NOT_STARTED = 'not-started';
 export const FIGHT_WON = 'won';
 
 const useFightStore = create((set) => ({
-  ...getInitialState(),
-  syncServerState: (fight) => set({
-    ...getInitialFightState(),
-    ...(fight || {}),
-  }),
+  ...getInitialFightState(),
+  syncServerState: (fight) => set(getServerFightState(fight)),
 }));
 
 export default useFightStore;
 
 export function resetFightStore() {
-  useFightStore.setState(getInitialState());
+  useFightStore.setState(getInitialFightState());
 }
 
 function getInitialFightState() {
@@ -33,10 +30,16 @@ function getInitialFightState() {
   };
 }
 
-function getInitialState() {
-  return {
-    ...getInitialFightState(),
-    attack: () => '',
-    finish: () => undefined,
-  };
+function getServerFightState(fight) {
+  const nextFight = getInitialFightState();
+  if(!fight || typeof fight !== 'object') {
+    return nextFight;
+  }
+  Object.keys(nextFight).forEach((key) => {
+    const value = fight[key];
+    if(value !== undefined) {
+      nextFight[key] = value;
+    }
+  });
+  return nextFight;
 }
