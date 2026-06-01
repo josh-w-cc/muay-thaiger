@@ -72,10 +72,10 @@ function RegimenRow({actionEnabled, description, name, progress, skillKey}) {
           onClick={() => setTooltipOpen((isOpen) => !isOpen)}
           onMouseEnter={() => setTooltipOpen(true)}
           onMouseLeave={() => setTooltipOpen(false)}
-          type="button"
+          type='button'
         >
           <FaCircleInfo aria-hidden size={12} />
-          {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role="tooltip">{description}</span>}
+          {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role='tooltip'>{description}</span>}
         </button>
       </div>
       <div className={css.regimenProgress}>
