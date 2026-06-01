@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
+import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
 
 import fightersModel from './fighters.js';
 import {mockKnex} from '../utils/mock-knex.js';
@@ -62,7 +63,35 @@ describe('fighters.write', () => {
     await fightersForCreate.create({display_name: 'Tiger', stats: {vigor: 4n, speed: 2n}});
     await fightersForUpdate.update(1, {stats: {vigor: 5n, speed: '2'}});
 
-    assert.deepEqual(createCalls[1], ['insert', {display_name: 'Tiger', stats: {vigor: '4', speed: '2'}}]);
+    const expectedCreateStats = Object.fromEntries(FIGHTER_STAT_KEYS.map((key) => [key, '0']));
+    Object.assign(expectedCreateStats, {vigor: '4', speed: '2'});
+
+    assert.deepEqual(createCalls[1], ['insert', {display_name: 'Tiger', stats: expectedCreateStats}]);
     assert.deepEqual(updateCalls[2], ['update', {stats: {vigor: '5', speed: '2'}}]);
+  });
+
+  it('defaults missing stats to 0 in create writes', async () => {
+    const {calls, knex} = mockKnex([{id: 1, stats: {}}]);
+    const fighters = fightersModel(knex);
+
+    await fighters.create({
+      display_name: 'Tiger',
+      stats: {anima: 1n, durability: 1n, reach: 2n, speed: 1n, vigor: 2n, vitality: 2n},
+    });
+
+    const expectedStats = Object.fromEntries(FIGHTER_STAT_KEYS.map((key) => [key, '0']));
+    Object.assign(expectedStats, {
+      anima: '1',
+      durability: '1',
+      reach: '2',
+      speed: '1',
+      vigor: '2',
+      vitality: '2',
+    });
+
+    assert.deepEqual(calls[1], ['insert', {
+      display_name: 'Tiger',
+      stats: expectedStats,
+    }]);
   });
 });
