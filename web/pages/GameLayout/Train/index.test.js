@@ -56,6 +56,7 @@ vi.mock('shared/skills/index.js', async () => {
       begging: {
         action,
         description: 'Perhaps a satang?',
+        duration: 3,
         name: '฿egging',
         requires: () => true,
       },
@@ -112,11 +113,11 @@ describe('Train', () => {
 
     await user.hover(skillName);
 
-    expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
+    expect(screen.getByText('Perhaps a satang? (3s)')).toBeInTheDocument();
 
     await user.unhover(skillName);
 
-    expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
+    expect(screen.queryByText('Perhaps a satang? (3s)')).not.toBeInTheDocument();
   });
 
   it('toggles the skill tooltip on click', async () => {
@@ -125,13 +126,13 @@ describe('Train', () => {
 
     fireEvent.click(infoIcon);
 
-    expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
+    expect(screen.getByText('Perhaps a satang? (3s)')).toBeInTheDocument();
     expect(infoIcon).toHaveAttribute('aria-expanded', 'true');
     expect(infoIcon.getAttribute('aria-describedby')).toMatch(/^skill-tooltip-begging/);
 
     fireEvent.click(infoIcon);
 
-    expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
+    expect(screen.queryByText('Perhaps a satang? (3s)')).not.toBeInTheDocument();
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
   });
 

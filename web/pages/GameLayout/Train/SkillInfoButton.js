@@ -2,7 +2,9 @@ import {FaCircleInfo} from 'react-icons/fa6';
 
 import css from './Train.module.css';
 
-export default function SkillInfoButton({description, name, setTooltipOpen, tooltipID, tooltipOpen}) {
+export default function SkillInfoButton({description, duration, name, setTooltipOpen, tooltipID, tooltipOpen}) {
+  const tooltipText = `${description} (${duration}s)`;
+
   return (
     <button
       aria-describedby={tooltipOpen ? tooltipID : undefined}
@@ -15,7 +17,7 @@ export default function SkillInfoButton({description, name, setTooltipOpen, tool
       type="button"
     >
       <FaCircleInfo aria-hidden size={12} />
-      {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role="tooltip">{description}</span>}
+      {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role="tooltip">{tooltipText}</span>}
     </button>
   );
 }
