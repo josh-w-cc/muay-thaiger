@@ -10,14 +10,14 @@ export const MOVE_DEFINITIONS = Object.freeze({
     affect: (opponent) => {
       opponent.takeDamage(2);
     },
-    duration: 1,
+    recovery: 3,
     name: 'Wild Punch',
   },
   wildKick: {
     affect: (opponent) => {
       opponent.takeDamage(3);
     },
-    duration: 2,
+    recovery: 5,
     name: 'Wild Kick',
   },
 });
