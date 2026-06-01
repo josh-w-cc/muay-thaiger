@@ -1,6 +1,5 @@
 import usePlayerStore from '@/data/player.js';
 import router from '@/router.js';
-import {canRespondToAuth, getAuthResponse} from '@/actions/websockets/websocketState.js';
 import {clearPlayerToken, getPlayerToken, setPlayerToken} from '@/actions/websockets/token.js';
 
 let hasReceivedAuthRequest = false;
@@ -48,4 +47,27 @@ export function routeToHubIfAuthorized() {
     return;
   }
   router.navigate('/hub');
+}
+
+export function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, selectedRace, socket, token}) {
+  return isAuthHandshakePending({hasReceivedAuthRequest, hasRespondedToAuth}) && hasAuthResponseData({selectedRace, token}) && isSocketReady(socket);
+}
+
+export function getAuthResponse({selectedRace, token}) {
+  if(token) {
+    return {cmd: 'auth', token};
+  }
+  return {cmd: 'auth', race: selectedRace, token: 'new'};
+}
+
+export function isSocketReady(socket) {
+  return Boolean(socket && socket.readyState === WebSocket.OPEN);
+}
+
+function hasAuthResponseData({selectedRace, token}) {
+  return Boolean(selectedRace || token);
+}
+
+function isAuthHandshakePending({hasReceivedAuthRequest, hasRespondedToAuth}) {
+  return !hasRespondedToAuth && hasReceivedAuthRequest;
 }
