@@ -9,6 +9,7 @@ const useFightStore = create((set, get) => ({
   attack: generateAttackFn({get, set}),
   finish: generateFinishFn({get, set}),
   forGold: generateForGoldFn({get, set}),
+  overwrite: generateOverwriteFn(set),
   start: generateStartFn({get, set}),
   tick: generateTickFn({get, set}),
 }));
@@ -16,5 +17,24 @@ const useFightStore = create((set, get) => ({
 export default useFightStore;
 
 export function resetFightStore() {
-  useFightStore.setState(getInitialState());
+  useFightStore.getState().overwrite(null);
+}
+
+function generateOverwriteFn(set) {
+  return (fight) => set((state) => ({
+    ...getInitialState(),
+    ...pickFightActions(state),
+    ...(fight ?? {}),
+  }), true);
+}
+
+function pickFightActions(state) {
+  return {
+    attack: state.attack,
+    finish: state.finish,
+    forGold: state.forGold,
+    overwrite: state.overwrite,
+    start: state.start,
+    tick: state.tick,
+  };
 }

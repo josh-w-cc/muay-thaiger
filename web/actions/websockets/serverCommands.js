@@ -1,5 +1,6 @@
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
+import useFightStore from '@/data/fight.js';
 import usePlayerStore from '@/data/player.js';
 import {
   onAuth as onAuthMessage,
@@ -44,6 +45,7 @@ function onPlayerState(message) {
   }
   useFighterActionsStore.getState().setActions(Array.isArray(message.actions) ? message.actions : []);
   useFighterStore.getState().overwrite(message.fighter);
+  useFightStore.getState().overwrite(message.fight ?? null);
   usePlayerStore.getState().setPlayerID(message.fighter.player ?? null);
   usePlayerStore.getState().selectFighter(`${message.fighter.race}`);
 }
