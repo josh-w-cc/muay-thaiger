@@ -59,6 +59,11 @@
   gap: var(--space-xs);
 }
 
+.skillDescription {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+}
+
 .stats {
   composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
 }

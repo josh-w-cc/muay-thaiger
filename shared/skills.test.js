@@ -48,6 +48,13 @@ describe('SKILL_SEED_ACTIONS', () => {
 });
 
 describe('SKILL_DEFINITIONS', () => {
+  it('includes a description for each skill', () => {
+    for(const skill of Object.values(SKILL_DEFINITIONS)) {
+      equal(typeof skill.description, 'string');
+      equal(skill.description.length > 0, true);
+    }
+  });
+
   it('applies each skill action to fighter stats and gold', () => {
     const calls = [];
     const fighter = {
