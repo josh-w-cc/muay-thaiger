@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 
 import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {SKILL_IDS} from 'shared/skills.js';
+import {SKILL_IDS} from 'shared/skills/index.js';
 
 import Train from './index.js';
 
@@ -47,8 +47,8 @@ vi.mock('@/data/fighter.js', () => {
   return {default: mockedStore};
 });
 
-vi.mock('shared/skills.js', async () => {
-  const actual = await vi.importActual('shared/skills.js');
+vi.mock('shared/skills/index.js', async () => {
+  const actual = await vi.importActual('shared/skills/index.js');
 
   return {
     ...actual,
@@ -108,13 +108,13 @@ describe('Train', () => {
   it('shows and hides skill tooltip on hover', async () => {
     const user = userEvent.setup();
     render(<Train />);
-    const infoIcon = screen.getByLabelText('฿egging info');
+    const skillName = screen.getByText('฿egging');
 
-    await user.hover(infoIcon);
+    await user.hover(skillName);
 
     expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
 
-    await user.unhover(infoIcon);
+    await user.unhover(skillName);
 
     expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
   });
