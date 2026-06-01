@@ -1,4 +1,4 @@
-import racesModel from '../data/models/races.js';
+import racesModel from '#api/data/models/races.js';
 
 
 export default async function raceRoutes(app) {
