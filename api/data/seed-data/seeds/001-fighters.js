@@ -1,6 +1,6 @@
 import {RACES} from 'shared/races.js';
-import {SKILL_IDS, SKILL_SEED_ACTIONS} from 'shared/skills/index.js';
-import {MOVE_IDS, MOVE_SEED_MOVES} from 'shared/moves.js';
+import {SKILL_SEED_ACTIONS} from 'shared/skills/index.js';
+import {MOVE_SEED_MOVES} from 'shared/moves.js';
 
 export const SEED_FIGHTERS = [
   {
@@ -28,9 +28,7 @@ export const SEED_PLAYERS = [
   {display_name: 'TigerJab', id: 4, token: 'seed-token-tigerjab'},
 ];
 
-export {SKILL_IDS};
 export const SEED_ACTIONS = SKILL_SEED_ACTIONS;
-export {MOVE_IDS};
 export const SEED_MOVES = MOVE_SEED_MOVES;
 
 export const SEED_RACES = RACES;
