@@ -126,7 +126,9 @@ describe('Fight', () => {
     expect(document.body).toHaveTextContent('Fight ID: 19');
     expect(document.body).toHaveTextContent('Reason: gold');
     expect(document.body).toHaveTextContent('Created: 2026-06-01T00:00:00.000Z');
-    expect(document.body).toHaveTextContent('Details: {"attacker":{"hp":100},"round":1}');
+    const detailsPre = document.body.querySelector('pre');
+    expect(detailsPre).toBeInTheDocument();
+    expect(detailsPre.textContent).toBe(JSON.stringify(fightState.details, null, 2));
     expect(screen.queryByRole('button', {name: 'Fight!'})).not.toBeInTheDocument();
   });
 
