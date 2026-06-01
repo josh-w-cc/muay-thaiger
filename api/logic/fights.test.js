@@ -5,7 +5,7 @@ import createCallTracker from '../utils/test/createCallTracker.js';
 import {createFight} from './fights.js';
 
 describe('createFight', () => {
-  it('creates a gold fight with captured attacker and defender starting stats', async () => {
+  it('creates a gold fight with captured attacker stats and low-rank bot defender stats', async () => {
     const create = createCallTracker();
     const fighter = {
       anima: 11,
@@ -44,18 +44,19 @@ describe('createFight', () => {
         },
         defender: {
           starting_stats: {
-            anima: '11',
-            constitution: '12',
-            durability: '13',
-            reach: '14',
-            skill: '15',
-            speed: '16',
-            stamina: '17',
-            vigor: '18',
-            vitality: '19',
+            anima: '1',
+            constitution: '1',
+            durability: '1',
+            reach: '1',
+            skill: '1',
+            speed: '1',
+            stamina: '1',
+            vigor: '1',
+            vitality: '1',
           },
         },
       },
+      rank: '',
       reason: 'gold',
     });
   });
