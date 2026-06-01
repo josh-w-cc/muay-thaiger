@@ -10,7 +10,6 @@ export function resetFightStore() {
 
 function createFightState(set, fight = null) {
   return {
-    ...getInitialFightState(),
     ...getServerFightState(fight),
     syncServerState: (nextFight) => set(createFightState(set, nextFight), true),
   };
@@ -32,7 +31,10 @@ function getInitialFightState() {
 
 function getServerFightState(fight) {
   if(!fight || typeof fight !== 'object') {
-    return {};
+    return getInitialFightState();
   }
-  return fight;
+  return {
+    ...getInitialFightState(),
+    ...fight,
+  };
 }
