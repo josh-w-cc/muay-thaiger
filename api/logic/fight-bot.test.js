@@ -13,6 +13,7 @@ describe('generateGoldBotStats', () => {
       skill: 1,
       speed: 1,
       stamina: 1,
+      strength: undefined,
       vigor: 1,
     });
 
@@ -57,6 +58,7 @@ describe('generateGoldBotStats', () => {
       skill: 0,
       speed: undefined,
       stamina: '-2',
+      strength: undefined,
       vigor: 2,
     });
 
