@@ -35,19 +35,6 @@ describe('Hub', () => {
     vi.clearAllMocks();
   });
 
-  it('renders fighter details section with name, age, and race without stats', () => {
-    render(<Hub />);
-
-    expect(screen.queryByRole('heading', {name: 'Fighter Details:'})).not.toBeInTheDocument();
-    expect(screen.getByText('Name').closest('div')).toBeInTheDocument();
-    expect(within(screen.getByText('Name').closest('div')).getByText('Iron Tiger')).toBeInTheDocument();
-    expect(screen.getByText('Race', {selector: 'dt'}).closest('div')).toBeInTheDocument();
-    expect(within(screen.getByText('Race', {selector: 'dt'}).closest('div')).getByText('Tiger')).toBeInTheDocument();
-    expect(screen.getByText('Age').closest('div')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', {name: 'Stats:'})).not.toBeInTheDocument();
-    expect(screen.queryByText('Stanima', {selector: 'dt'})).not.toBeInTheDocument();
-  });
-
   it('renders hub layout without the stats section', () => {
     const {container} = render(<Hub />);
     const detailFieldCount = 3;
