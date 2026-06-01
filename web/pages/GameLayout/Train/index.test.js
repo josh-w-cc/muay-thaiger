@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
-import {render, screen} from '@testing-library/react';
+import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {SKILL_IDS} from 'shared/skills.js';
 
@@ -47,16 +47,25 @@ vi.mock('@/data/fighter.js', () => {
   return {default: mockedStore};
 });
 
-vi.mock('./Skills.js', () => ({
-  default: {
-    begging: {
-      action,
-      description: 'Perhaps a satang?',
-      name: '฿egging',
-      requires: () => true,
+vi.mock('shared/skills.js', async () => {
+  const actual = await vi.importActual('shared/skills.js');
+
+  return {
+    ...actual,
+    SKILL_DEFINITIONS: {
+      begging: {
+        action,
+        description: 'Perhaps a satang?',
+        name: '฿egging',
+        requires: () => true,
+      },
     },
-  },
-}));
+    SKILL_IDS: {
+      ...actual.SKILL_IDS,
+      begging: 99,
+    },
+  };
+});
 vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFighterActionCmd: (...args) => createFighterActionCmd(...args),
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
@@ -106,6 +115,19 @@ describe('Train', () => {
     expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
 
     await user.unhover(infoIcon);
+
+    expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
+  });
+
+  it('toggles the skill tooltip on click', async () => {
+    render(<Train />);
+    const infoIcon = screen.getByLabelText('฿egging info');
+
+    fireEvent.click(infoIcon);
+
+    expect(screen.getByText('Perhaps a satang?')).toBeInTheDocument();
+
+    fireEvent.click(infoIcon);
 
     expect(screen.queryByText('Perhaps a satang?')).not.toBeInTheDocument();
   });
