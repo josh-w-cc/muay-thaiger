@@ -32,9 +32,9 @@ describe('FightFighters', () => {
     expect(snowLeopardStaminaBarFill).toHaveClass(css.fill);
     expect(tigerHealthBar).toHaveClass(css.fightHealthBar);
     expect(snowLeopardHealthBar).toHaveClass(css.fightHealthBar);
-    expect(tigerStaminaBar).toHaveStyle({width: '100%'});
-    expect(snowLeopardStaminaBar).toHaveStyle({width: '100%'});
-    expect(tigerHealthBar).toHaveStyle({width: '100%'});
-    expect(snowLeopardHealthBar).toHaveStyle({width: '100%'});
+    expect(tigerStaminaBar).not.toHaveAttribute('style');
+    expect(snowLeopardStaminaBar).not.toHaveAttribute('style');
+    expect(tigerHealthBar).not.toHaveAttribute('style');
+    expect(snowLeopardHealthBar).not.toHaveAttribute('style');
   });
 });
