@@ -9,7 +9,7 @@ export function createFighterActionCmd(actionID) {
 }
 
 export function createFightCmd(reason, rank = null) {
-  sendCommand({cmd: 'fight', rank, reason});
+  sendCommand({cmd: 'fight', reason, rank});
 }
 
 export function removeFighterActionCmd(actionID) {
