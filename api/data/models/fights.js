@@ -21,10 +21,11 @@ export default function fights(db) {
 }
 
 function serializeFightCreate({attacker, defender, rank, reason}) {
+  const details = serializeFightDetails(attacker, defender);
   return {
-    attacker: attacker?.id ?? null,
+    attacker: attacker.id,
     defender: defender?.id ?? null,
-    details: serializeFightDetails(attacker, defender),
+    details,
     rank,
     reason,
   };
@@ -56,7 +57,7 @@ function serializeParticipantDetails(participant) {
 }
 
 function validateParticipantDetails(participant) {
-  if(participant?.race == null || !hasStats(participant?.stats)) {
+  if(!participant || participant.race === null || participant.race === undefined || !hasStats(participant.stats)) {
     throwInvalidFightStats();
   }
 }
