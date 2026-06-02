@@ -6,12 +6,12 @@ const BOT_RANK_STATS = {
   '': 100n,
 };
 
-export async function createFight({fighters, fights}, playerID, reason, rank = '') {
+export async function createFight({fighters, fights, fightJudge}, playerID, reason, rank = '') {
   const normalizedReason = normalizeFightReason(reason);
   const normalizedRank = normalizeFightRank(rank);
   validateFightMessage(playerID, normalizedReason);
   const fighter = await getCurrentFighter(fighters, playerID);
-  return fights.create({
+  const fight = await fights.create({
     attacker: {
       id: fighter.id,
       race: fighter.race,
@@ -21,6 +21,8 @@ export async function createFight({fighters, fights}, playerID, reason, rank = '
     rank: normalizedRank,
     reason: normalizedReason,
   });
+  await fightJudge.attach(fighters, fight);
+  return fight;
 }
 
 function captureFightStats(fighter) {

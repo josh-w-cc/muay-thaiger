@@ -33,6 +33,24 @@ describe('FightJudge.load', () => {
   });
 });
 
+describe('FightJudge.attach', () => {
+  it('stores a new unresolved fight by all participant player IDs', async () => {
+    const judge = new FightJudge();
+    const fight = {attacker: 11, defender: 12, id: 101, victory: null};
+    const fighters = {
+      find: async (fighterID) => ({
+        11: {id: 11, player: 1},
+        12: {id: 12, player: 2},
+      }[fighterID] ?? null),
+    };
+
+    await judge.attach(fighters, fight);
+
+    assert.equal(judge.get(1), fight);
+    assert.equal(judge.get(2), fight);
+  });
+});
+
 describe('attachFightJudge', () => {
   it('loads unresolved fights into app.fightJudge on server ready', async () => {
     const unresolvedFight = {attacker: 9, defender: null, id: 5, victory: null};
