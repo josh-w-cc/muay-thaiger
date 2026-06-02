@@ -81,28 +81,25 @@ describe('fights.create', () => {
 
     await fights.create(fight);
 
-    const expectedFightInsert = {
-      attacker: 1,
-      defender: 2,
-      details: {
-        attacker: {
-          race: 1,
-          starting_stats: {speed: '10', vigor: '9'},
-          stats: {speed: '10', vigor: '9'},
-        },
-        defender: {
-          race: 2,
-          starting_stats: {speed: '8', vigor: '7'},
-          stats: {speed: '8', vigor: '7'},
-        },
-      },
-      rank: 'bronze',
-      reason: 'gold',
-    };
-
+    const inserted = calls[1][1];
     assert.deepEqual(calls[0], ['table', 'fights']);
-    assert.deepEqual(calls[1], ['insert', expectedFightInsert]);
     assert.deepEqual(calls[2], ['returning', '*']);
+    assert.equal(inserted.attacker, 1);
+    assert.equal(inserted.defender, 2);
+    assert.equal(inserted.rank, 'bronze');
+    assert.equal(inserted.reason, 'gold');
+    assert.equal(inserted.details.attacker.race, 1);
+    assert.deepEqual(inserted.details.attacker.starting_stats, {speed: '10', vigor: '9'});
+    assert.deepEqual(inserted.details.attacker.stats, {speed: '10', vigor: '9'});
+    assert.equal(typeof inserted.details.attacker.seed, 'number');
+    assert.ok(inserted.details.attacker.seed >= 0);
+    assert.ok(inserted.details.attacker.seed < 2 ** 32);
+    assert.equal(inserted.details.defender.race, 2);
+    assert.deepEqual(inserted.details.defender.starting_stats, {speed: '8', vigor: '7'});
+    assert.deepEqual(inserted.details.defender.stats, {speed: '8', vigor: '7'});
+    assert.equal(typeof inserted.details.defender.seed, 'number');
+    assert.ok(inserted.details.defender.seed >= 0);
+    assert.ok(inserted.details.defender.seed < 2 ** 32);
   });
 
   it('inserts only attacker details when defender is missing', async () => {
@@ -117,19 +114,18 @@ describe('fights.create', () => {
 
     await fights.create(fight);
 
-    assert.deepEqual(calls[1], ['insert', {
-      attacker: 1,
-      defender: null,
-      details: {
-        attacker: {
-          race: 1,
-          starting_stats: {speed: '10', vigor: '9'},
-          stats: {speed: '10', vigor: '9'},
-        },
-      },
-      rank: '',
-      reason: 'rank',
-    }]);
+    const inserted = calls[1][1];
+    assert.equal(inserted.attacker, 1);
+    assert.equal(inserted.defender, null);
+    assert.equal(inserted.rank, '');
+    assert.equal(inserted.reason, 'rank');
+    assert.equal(inserted.details.attacker.race, 1);
+    assert.deepEqual(inserted.details.attacker.starting_stats, {speed: '10', vigor: '9'});
+    assert.deepEqual(inserted.details.attacker.stats, {speed: '10', vigor: '9'});
+    assert.equal(typeof inserted.details.attacker.seed, 'number');
+    assert.ok(inserted.details.attacker.seed >= 0);
+    assert.ok(inserted.details.attacker.seed < 2 ** 32);
+    assert.equal(inserted.details.defender, undefined);
   });
 
   it('throws when attacker stats are missing', () => {
