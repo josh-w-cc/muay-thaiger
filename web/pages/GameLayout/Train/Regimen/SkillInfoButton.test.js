@@ -6,6 +6,21 @@ import SkillInfoButton from './SkillInfoButton.js';
 import css from './SkillInfoButton.module.css';
 
 
+function SkillInfoButtonWrapper() {
+  const [tooltipOpen, setTooltipOpen] = React.useState(false);
+
+  return (
+    <SkillInfoButton
+      description="Keep your guard up."
+      duration={30}
+      name="Defense"
+      setTooltipOpen={setTooltipOpen}
+      tooltipID="skill-tooltip-defense"
+      tooltipOpen={tooltipOpen}
+    />
+  );
+}
+
 describe('SkillInfoButton', () => {
   afterEach(() => {
     vi.clearAllMocks();
@@ -30,22 +45,7 @@ describe('SkillInfoButton', () => {
   it('shows and hides the tooltip on hover', async () => {
     const user = userEvent.setup();
 
-    function Wrapper() {
-      const [tooltipOpen, setTooltipOpen] = React.useState(false);
-
-      return (
-        <SkillInfoButton
-          description="Keep your guard up."
-          duration={30}
-          name="Defense"
-          setTooltipOpen={setTooltipOpen}
-          tooltipID="skill-tooltip-defense"
-          tooltipOpen={tooltipOpen}
-        />
-      );
-    }
-
-    render(<Wrapper />);
+    render(<SkillInfoButtonWrapper />);
 
     const button = screen.getByRole('button', {name: 'Defense info'});
 
