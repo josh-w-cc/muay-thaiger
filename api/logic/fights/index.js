@@ -1,10 +1,7 @@
 import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
-import {MOVE_IDS} from 'shared/moves.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
 import {createCommandError} from '../command-errors.js';
-import {createBotStats, normalizeFightRank} from './bot.js';
-
-const BOT_MOVE_IDS = [MOVE_IDS.wildPunch, MOVE_IDS.wildKick];
+import {createBot, normalizeFightRank} from './bot.js';
 
 export async function createFight({fighterMoves, fighters, fights, fightJudge}, playerID, reason, rank = '') {
   const normalizedReason = normalizeFightReason(reason);
@@ -43,7 +40,7 @@ async function captureFightMoves(fighterMoves, fighterID) {
 
 function createGoldFightDefender(reason, rank) {
   return reason === 'gold'
-    ? {id: null, moves: BOT_MOVE_IDS, race: 1, stats: createBotStats(rank)}
+    ? createBot(rank)
     : null;
 }
 
