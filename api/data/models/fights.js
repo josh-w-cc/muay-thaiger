@@ -21,7 +21,7 @@ export default function fights(db) {
 }
 
 function serializeFightCreate({attacker, defender, rank, reason}) {
-  const serializedAttacker = serializeParticipant(attacker);
+  const serializedAttacker = serializeParticipant(attacker, true);
   const serializedDefender = serializeParticipant(defender);
   if(!hasStats(serializedAttacker.details.stats)) {
     throw new TypeError('invalid-fight-stats');
@@ -36,39 +36,47 @@ function serializeFightCreate({attacker, defender, rank, reason}) {
   };
 }
 
-function serializeParticipant(participant) {
+function serializeParticipant(participant, isRequired = false) {
   return {
-    details: serializeParticipantDetails(participant),
+    details: serializeParticipantDetails(participant, isRequired),
     id: participant?.id ?? null,
   };
 }
 
 function serializeFightDetails(attacker, defender) {
-  if(!hasStats(defender.stats)) {
+  if(!defender) {
     return {attacker};
   }
 
   return {attacker, defender};
 }
 
-function serializeParticipantDetails(participant) {
+function throwInvalidFightStats() {
+  throw new TypeError('invalid-fight-stats');
+}
+
+function serializeParticipantDetails(participant, isRequired = false) {
   if(!participant) {
-    return {
-      race: null,
-      starting_stats: {},
-      stats: {},
-    };
+    if(isRequired) {
+      throwInvalidFightStats();
+    }
+
+    return null;
   }
 
-  if(participant.race == null || !hasStats(participant.stats)) {
-    throw new TypeError('invalid-fight-stats');
-  }
+  validateParticipantDetails(participant);
 
   return {
     race: participant.race,
     starting_stats: serializeStats(participant.stats),
     stats: serializeStats(participant.stats),
   };
+}
+
+function validateParticipantDetails(participant) {
+  if(participant.race == null || !hasStats(participant.stats)) {
+    throwInvalidFightStats();
+  }
 }
 
 function hasStats(stats) {

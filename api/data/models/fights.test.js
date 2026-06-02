@@ -92,12 +92,49 @@ describe('fights.create', () => {
     assert.deepEqual(calls[2], ['returning', '*']);
   });
 
+  it('inserts only attacker details when defender is missing', async () => {
+    const fight = {
+      attacker: {id: 1, race: 1, stats: {speed: 10n, vigor: 9}},
+      defender: null,
+      rank: '',
+      reason: 'rank',
+    };
+    const {calls, knex} = mockKnex({id: 1, victory: null, ...fight});
+    const fights = fightsModel(knex);
+
+    await fights.create(fight);
+
+    assert.deepEqual(calls[1], ['insert', {
+      attacker: 1,
+      defender: null,
+      details: {
+        attacker: {
+          race: 1,
+          starting_stats: {speed: '10', vigor: '9'},
+          stats: {speed: '10', vigor: '9'},
+        },
+      },
+      rank: '',
+      reason: 'rank',
+    }]);
+  });
+
   it('throws when attacker stats are missing', () => {
     const {knex} = mockKnex({id: 1});
     const fights = fightsModel(knex);
 
     assert.throws(
       () => fights.create({attacker: {id: 1}, reason: 'gold'}),
+      {name: 'TypeError', message: 'invalid-fight-stats'},
+    );
+  });
+
+  it('throws when attacker is missing', () => {
+    const {knex} = mockKnex({id: 1});
+    const fights = fightsModel(knex);
+
+    assert.throws(
+      () => fights.create({attacker: null, reason: 'gold'}),
       {name: 'TypeError', message: 'invalid-fight-stats'},
     );
   });
@@ -124,6 +161,20 @@ describe('fights.create', () => {
       () => fights.create({
         attacker: {id: 1, race: 1, stats: {speed: 10}},
         defender: {id: 2, stats: {speed: 8}},
+        reason: 'gold',
+      }),
+      {name: 'TypeError', message: 'invalid-fight-stats'},
+    );
+  });
+
+  it('throws when defender stats are blank', () => {
+    const {knex} = mockKnex({id: 1});
+    const fights = fightsModel(knex);
+
+    assert.throws(
+      () => fights.create({
+        attacker: {id: 1, race: 1, stats: {speed: 10}},
+        defender: {id: 2, race: 2, stats: {}},
         reason: 'gold',
       }),
       {name: 'TypeError', message: 'invalid-fight-stats'},
