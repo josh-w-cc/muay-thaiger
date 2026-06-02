@@ -75,6 +75,19 @@ describe('createFight', () => {
     assert.equal(create.calls[0][0].defender, null);
   });
 
+  it('attaches created fight to fightJudge when available', async () => {
+    const attach = createCallTracker();
+    const fighter = {id: 9};
+    const createdFight = {attacker: 9, defender: null, id: 4, reason: 'rank'};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {create: async () => createdFight};
+    const fightJudge = {attach};
+
+    await createFight({fighters, fights, fightJudge}, 1, 'rank');
+
+    assert.deepEqual(attach.calls, [[fighters, createdFight]]);
+  });
+
   it('uses nested fighter.stats values when top-level stats are missing', async () => {
     const create = createCallTracker();
     const fighter = {
