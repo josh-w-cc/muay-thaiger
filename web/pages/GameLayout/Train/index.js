@@ -1,7 +1,7 @@
 import Section from '@/components/primitive/Section.js';
 import useFighterStore from '@/data/fighter.js';
 
-import RegimenRows from './regimens/RegimenRows.js';
+import RegimenRows from './Regimen/RegimenRows.js';
 import TrainStat from './TrainStat.js';
 
 import css from './Train.module.css';
