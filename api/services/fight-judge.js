@@ -10,13 +10,17 @@ export class FightJudge {
 
     const unresolvedFights = await fights.listUnresolved();
     for(const fight of unresolvedFights) {
-      const playerIDs = await getFightPlayerIDs(fighters, fight);
-      for(const playerID of playerIDs) {
-        if(this.#fightsByPlayerID.has(playerID)) {
-          continue;
-        }
-        this.#fightsByPlayerID.set(playerID, fight);
+      await this.attach(fighters, fight);
+    }
+  }
+
+  async attach(fighters, fight) {
+    const playerIDs = await getFightPlayerIDs(fighters, fight);
+    for(const playerID of playerIDs) {
+      if(this.#fightsByPlayerID.has(playerID)) {
+        continue;
       }
+      this.#fightsByPlayerID.set(playerID, fight);
     }
   }
 

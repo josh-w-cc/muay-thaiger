@@ -14,6 +14,7 @@ export default async function websocketRoutes(app) {
     fighterMoves: fighterMovesModel(app.db),
     fighters: fightersModel(app.db),
     fights: fightsModel(app.db),
+    fightJudge: app.fightJudge,
     players: playersModel(app.db),
     races: racesModel(app.db),
   };
