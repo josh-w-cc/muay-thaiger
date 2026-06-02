@@ -1,4 +1,4 @@
-import {MdInfoOutline} from 'react-icons/md';
+import {HiOutlineInformationCircle} from 'react-icons/hi';
 
 import css from './Train.module.css';
 
@@ -16,7 +16,7 @@ export default function SkillInfoButton({description, duration, name, setTooltip
       onMouseLeave={() => setTooltipOpen(false)}
       type="button"
     >
-      <MdInfoOutline aria-hidden size={12} />
+      <HiOutlineInformationCircle aria-hidden size={12} />
       {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role="tooltip">{tooltipText}</span>}
     </button>
   );
