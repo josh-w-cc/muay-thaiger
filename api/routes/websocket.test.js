@@ -633,15 +633,19 @@ describe('WebSocket /ws/connect', () => {
     const fighterActions = {
       listByFighterID: async () => {
         listCallCount += 1;
-        if(listCallCount > 1) {
+        if(listCallCount === 3) {
           return [];
         }
         return [{action: 1, id: 4}, {action: 2, id: 5}, {action: 1, id: 6}];
       },
       remove,
+      touch: async () => null,
     };
     const fights = {findActiveByFighterID: async () => null};
-    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fighters = {
+      findCurrentByPlayerID: async () => fighter,
+      update: async () => fighter,
+    };
 
     await onMessage(JSON.stringify({action_id: 1, cmd: 'stop'}), socket, {fighterActions, fights, fighters});
 
@@ -656,6 +660,48 @@ describe('WebSocket /ws/connect', () => {
       cmd: 'player_state',
       fighter,
     });
+  });
+
+  it('applies training before removing fighter actions on stop command', async () => {
+    const callOrder = [];
+    const staleAction = {action: 2, fighter: 9, id: 4, touched_at: new Date(Date.now() - 2000).toISOString()};
+    const fighter = {
+      gold: 0n,
+      id: 9,
+      player: 1,
+      retired: false,
+      stats: {agility: 1n, anima: 1n, constitution: 1n, skill: 1n, speed: 1n, stamina: 1n, strength: 1n, vigor: 1n, vitality: 1n},
+    };
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send: createCallTracker()};
+    let listCallCount = 0;
+    const fighterActions = {
+      listByFighterID: async () => {
+        listCallCount += 1;
+        if(listCallCount === 3) {
+          return [];
+        }
+        return [staleAction];
+      },
+      remove: async () => {
+        callOrder.push('remove');
+      },
+      touch: async () => {},
+    };
+    const fights = {findActiveByFighterID: async () => null};
+    const fighters = {
+      findCurrentByPlayerID: async () => fighter,
+      update: async () => {
+        callOrder.push('update');
+        return fighter;
+      },
+    };
+
+    await onMessage(JSON.stringify({action_id: 2, cmd: 'stop'}), socket, {fighterActions, fights, fighters});
+
+    assert.ok(
+      callOrder.indexOf('update') < callOrder.indexOf('remove'),
+      'training (update) should be applied before the action is removed',
+    );
   });
 
   it('syncs each authenticated player current fighter state', async () => {
