@@ -101,6 +101,34 @@ describe('fights.create', () => {
       {name: 'TypeError', message: 'invalid-fight-stats'},
     );
   });
+
+  it('throws when attacker race is missing', () => {
+    const {knex} = mockKnex({id: 1});
+    const fights = fightsModel(knex);
+
+    assert.throws(
+      () => fights.create({
+        attacker: {id: 1, stats: {speed: 10}},
+        defender: {id: 2, race: 2, stats: {speed: 8}},
+        reason: 'gold',
+      }),
+      {name: 'TypeError', message: 'invalid-fight-stats'},
+    );
+  });
+
+  it('throws when defender race is missing', () => {
+    const {knex} = mockKnex({id: 1});
+    const fights = fightsModel(knex);
+
+    assert.throws(
+      () => fights.create({
+        attacker: {id: 1, race: 1, stats: {speed: 10}},
+        defender: {id: 2, stats: {speed: 8}},
+        reason: 'gold',
+      }),
+      {name: 'TypeError', message: 'invalid-fight-stats'},
+    );
+  });
 });
 
 describe('fights.update', () => {

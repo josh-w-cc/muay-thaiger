@@ -52,11 +52,22 @@ function serializeFightDetails(attacker, defender) {
 }
 
 function serializeParticipantDetails(participant) {
-  const stats = participant?.stats;
+  if(!participant) {
+    return {
+      race: null,
+      starting_stats: {},
+      stats: {},
+    };
+  }
+
+  if(participant.race == null || !hasStats(participant.stats)) {
+    throw new TypeError('invalid-fight-stats');
+  }
+
   return {
-    race: participant?.race ?? null,
-    starting_stats: serializeStats(stats),
-    stats: serializeStats(stats),
+    race: participant.race,
+    starting_stats: serializeStats(participant.stats),
+    stats: serializeStats(participant.stats),
   };
 }
 
