@@ -11,10 +11,10 @@ export default async function websocketRoutes(app) {
   const connections = app.websocketConnections;
   const models = {
     fighterActions: fighterActionsModel(app.db),
-    fightJudge: app.fightJudge,
     fighterMoves: fighterMovesModel(app.db),
     fighters: fightersModel(app.db),
     fights: fightsModel(app.db),
+    fightJudge: app.fightJudge,
     players: playersModel(app.db),
     races: racesModel(app.db),
   };
