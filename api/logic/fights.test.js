@@ -4,6 +4,8 @@ import {describe, it} from 'node:test';
 import createCallTracker from '../utils/test/createCallTracker.js';
 import {createFight} from './fights.js';
 
+const HIGH_RANK_BOT_STAT = (10n ** 33n).toString();
+
 describe('createFight', () => {
   it('creates a gold fight with captured attacker stats and low-rank bot defender stats', async () => {
     const create = createCallTracker();
@@ -73,6 +75,65 @@ describe('createFight', () => {
       reason: 'gold',
     });
     assert.deepEqual(attach.calls, [[fighters, createdFight]]);
+  });
+
+  it('creates a gold fight with ranked bot defender stats', async () => {
+    const create = createCallTracker();
+    const fighter = {id: 9, race: 2};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {create};
+
+    await createFight({fighters, fights}, 1, 'gold', 'AAAAA');
+
+    assert.deepEqual(create.calls[0][0], {
+      attacker: {
+        id: 9,
+        race: 2,
+        stats: {
+          agility: '0',
+          anima: '0',
+          constitution: '0',
+          durability: '0',
+          reach: '0',
+          skill: '0',
+          speed: '0',
+          stamina: '0',
+          strength: '0',
+          vigor: '0',
+          vitality: '0',
+        },
+      },
+      defender: {
+        id: null,
+        race: 1,
+        stats: {
+          agility: HIGH_RANK_BOT_STAT,
+          anima: HIGH_RANK_BOT_STAT,
+          constitution: HIGH_RANK_BOT_STAT,
+          durability: HIGH_RANK_BOT_STAT,
+          reach: HIGH_RANK_BOT_STAT,
+          skill: HIGH_RANK_BOT_STAT,
+          speed: HIGH_RANK_BOT_STAT,
+          stamina: HIGH_RANK_BOT_STAT,
+          strength: HIGH_RANK_BOT_STAT,
+          vigor: HIGH_RANK_BOT_STAT,
+          vitality: HIGH_RANK_BOT_STAT,
+        },
+      },
+      rank: 'AAAAA',
+      reason: 'gold',
+    });
+  });
+
+  it('treats Z rank as stronger than ZZ for gold bots', async () => {
+    const create = createCallTracker();
+    const fighter = {id: 9, race: 2};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {create};
+
+    await createFight({fighters, fights}, 1, 'gold', 'Z');
+
+    assert.equal(create.calls[0][0].defender.stats.agility, '1000');
   });
 
   it('creates a rank fight without defender starting stats', async () => {
@@ -155,6 +216,52 @@ describe('createFight', () => {
       vitality: '9',
     });
     assert.deepEqual(attach.calls, [[fighters, createdFight]]);
+  });
+
+  it('treats ZZ rank the same as an unranked gold bot', async () => {
+    const create = createCallTracker();
+    const fighter = {id: 9};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {create};
+
+    await createFight({fighters, fights}, 1, 'gold', 'ZZ');
+
+    assert.deepEqual(create.calls[0][0].defender.stats, {
+      agility: '100',
+      anima: '100',
+      constitution: '100',
+      durability: '100',
+      reach: '100',
+      skill: '100',
+      speed: '100',
+      stamina: '100',
+      strength: '100',
+      vigor: '100',
+      vitality: '100',
+    });
+  });
+
+  it('treats unsupported multi-character ranks the same as an unranked gold bot', async () => {
+    const create = createCallTracker();
+    const fighter = {id: 9};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {create};
+
+    await createFight({fighters, fights}, 1, 'gold', 'BB');
+
+    assert.deepEqual(create.calls[0][0].defender.stats, {
+      agility: '100',
+      anima: '100',
+      constitution: '100',
+      durability: '100',
+      reach: '100',
+      skill: '100',
+      speed: '100',
+      stamina: '100',
+      strength: '100',
+      vigor: '100',
+      vitality: '100',
+    });
   });
 
   it('throws invalid-fight-message when reason is invalid', async () => {
