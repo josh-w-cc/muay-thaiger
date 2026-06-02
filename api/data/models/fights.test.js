@@ -30,6 +30,19 @@ describe('fights.find', () => {
   });
 });
 
+describe('fights.listUnresolved', () => {
+  it('lists unresolved fights ordered by newest first', async () => {
+    const {calls, knex} = mockKnex([{id: 1, victory: null, details: {}}]);
+    const fights = fightsModel(knex);
+
+    await fights.listUnresolved();
+
+    assert.deepEqual(calls[0], ['table', 'fights']);
+    assert.deepEqual(calls[1], ['whereNull', 'victory']);
+    assert.deepEqual(calls[2], ['orderBy', 'created_at', 'desc']);
+  });
+});
+
 describe('fights.findActiveByFighterID', () => {
   it('finds the latest unresolved fight for the fighter as attacker or defender', async () => {
     const {calls, knex} = mockKnex({id: 1, attacker: 7, defender: 2, victory: null, details: {}});
