@@ -70,7 +70,7 @@ describe('createFight', () => {
 
   it('creates a gold fight with ranked bot defender stats', async () => {
     const create = createCallTracker();
-    const fighter = {id: 9};
+    const fighter = {id: 9, race: 2};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 
@@ -79,6 +79,7 @@ describe('createFight', () => {
     assert.deepEqual(create.calls[0][0], {
       attacker: {
         id: 9,
+        race: 2,
         stats: {
           agility: '0',
           anima: '0',
@@ -95,6 +96,7 @@ describe('createFight', () => {
       },
       defender: {
         id: null,
+        race: 1,
         stats: {
           agility: HIGH_RANK_BOT_STAT,
           anima: HIGH_RANK_BOT_STAT,
@@ -112,6 +114,17 @@ describe('createFight', () => {
       rank: 'AAAAA',
       reason: 'gold',
     });
+  });
+
+  it('treats Z rank as stronger than ZZ for gold bots', async () => {
+    const create = createCallTracker();
+    const fighter = {id: 9};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {create};
+
+    await createFight({fighters, fights}, 1, 'gold', 'Z');
+
+    assert.equal(create.calls[0][0].defender.stats.agility, '1000');
   });
 
   it('creates a rank fight without defender starting stats', async () => {
@@ -188,13 +201,13 @@ describe('createFight', () => {
     });
   });
 
-  it('treats invalid ranks the same as an unranked gold bot', async () => {
+  it('treats unsupported multi-character ranks the same as an unranked gold bot', async () => {
     const create = createCallTracker();
     const fighter = {id: 9};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 
-    await createFight({fighters, fights}, 1, 'gold', 'bronze');
+    await createFight({fighters, fights}, 1, 'gold', 'BB');
 
     assert.deepEqual(create.calls[0][0].defender.stats, {
       agility: '100',
