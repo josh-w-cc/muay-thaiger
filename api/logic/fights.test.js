@@ -180,6 +180,29 @@ describe('createFight', () => {
     });
   });
 
+  it('treats invalid ranks the same as an unranked gold bot', async () => {
+    const create = createCallTracker();
+    const fighter = {id: 9};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {create};
+
+    await createFight({fighters, fights}, 1, 'gold', 'bronze');
+
+    assert.deepEqual(create.calls[0][0].defender.stats, {
+      agility: '100',
+      anima: '100',
+      constitution: '100',
+      durability: '100',
+      reach: '100',
+      skill: '100',
+      speed: '100',
+      stamina: '100',
+      strength: '100',
+      vigor: '100',
+      vitality: '100',
+    });
+  });
+
   it('throws invalid-fight-message when reason is invalid', async () => {
     const create = createCallTracker();
     const fighters = {findCurrentByPlayerID: async () => ({id: 9})};
