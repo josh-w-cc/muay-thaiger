@@ -5,7 +5,7 @@ import {down, up} from '../migrations/20260601120000_create_entities.js';
 
 
 describe('20260601120000_create_entities migration', () => {
-  it('creates entities with fighter foreign key', async () => {
+  it('creates entities with player or fighter ownership foreign keys', async () => {
     const calls = [];
     const knex = {
       raw: async (sql) => {
@@ -18,7 +18,9 @@ describe('20260601120000_create_entities migration', () => {
 
     assert.equal(calls.length, 1);
     assert.match(calls[0], /CREATE TABLE IF NOT EXISTS entities/);
-    assert.match(calls[0], /fighter BIGINT NOT NULL REFERENCES fighters\(id\) ON DELETE CASCADE/);
+    assert.match(calls[0], /player BIGINT REFERENCES players\(id\) ON DELETE CASCADE/);
+    assert.match(calls[0], /fighter BIGINT REFERENCES fighters\(id\) ON DELETE CASCADE/);
+    assert.match(calls[0], /CHECK \(\(player IS NOT NULL\) <> \(fighter IS NOT NULL\)\)/);
     assert.match(calls[0], /CREATE OR REPLACE TRIGGER entities_updated_at/);
   });
 
