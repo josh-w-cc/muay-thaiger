@@ -1,6 +1,6 @@
 import {FaCircleInfo} from 'react-icons/fa6';
 
-import css from './Train.module.css';
+import css from '../Train.module.css';
 
 export default function SkillInfoButton({description, duration, name, setTooltipOpen, tooltipID, tooltipOpen}) {
   const tooltipText = `${description} (${duration}s)`;

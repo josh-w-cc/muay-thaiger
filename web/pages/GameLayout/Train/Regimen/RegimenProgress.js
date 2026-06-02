@@ -1,6 +1,6 @@
 import cx from 'classnames';
 
-import css from './Train.module.css';
+import css from '../Train.module.css';
 
 export default function RegimenProgress({actionEnabled, name, progress}) {
   return (
