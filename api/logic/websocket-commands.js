@@ -1,7 +1,7 @@
 import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
 import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
-import {createFight} from './fights.js';
+import {createFight} from './fights/index.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 

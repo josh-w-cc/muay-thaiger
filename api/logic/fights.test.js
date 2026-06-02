@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import createCallTracker from '../utils/test/createCallTracker.js';
-import {createFight} from './fights.js';
+import {createFight} from './fights/index.js';
 
 const HIGH_RANK_BOT_STAT = (10n ** 33n).toString();
 
