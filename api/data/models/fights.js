@@ -57,7 +57,7 @@ function serializeParticipantDetails(participant) {
 }
 
 function validateParticipantDetails(participant) {
-  if(!participant || participant.race === null || participant.race === undefined || !hasStats(participant.stats)) {
+  if(!participant?.race || !hasStats(participant?.stats)) {
     throwInvalidFightStats();
   }
 }
