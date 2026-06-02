@@ -43,10 +43,6 @@ function serializeFightDetails(attacker, defender) {
   };
 }
 
-function throwInvalidFightStats() {
-  throw new TypeError('invalid-fight-stats');
-}
-
 function serializeParticipantDetails(participant) {
   validateParticipantDetails(participant);
   return {
@@ -58,7 +54,7 @@ function serializeParticipantDetails(participant) {
 
 function validateParticipantDetails(participant) {
   if(!participant?.race || !hasStats(participant?.stats)) {
-    throwInvalidFightStats();
+    throw new TypeError('invalid-fight-stats');
   }
 }
 
