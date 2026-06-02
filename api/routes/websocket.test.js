@@ -405,6 +405,7 @@ describe('WebSocket /ws/connect', () => {
         durability: 13,
         id: 9,
         player: 1,
+        race: 2,
         reach: 14,
         retired: false,
         skill: 15,
@@ -437,6 +438,7 @@ describe('WebSocket /ws/connect', () => {
       assert.deepEqual(createFight.calls, [[{
         attacker: {
           id: 9,
+          race: 2,
           stats: {
             agility: '0',
             anima: '11',
@@ -453,6 +455,7 @@ describe('WebSocket /ws/connect', () => {
         },
         defender: {
           id: null,
+          race: 1,
           stats: {
             agility: '100',
             anima: '100',

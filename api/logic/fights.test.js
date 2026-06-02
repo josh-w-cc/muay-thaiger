@@ -14,6 +14,7 @@ describe('createFight', () => {
       constitution: 12,
       durability: 13,
       id: 9,
+      race: 2,
       reach: 14,
       skill: 15,
       speed: 16,
@@ -36,6 +37,7 @@ describe('createFight', () => {
     assert.deepEqual(create.calls[0][0], {
       attacker: {
         id: 9,
+        race: 2,
         stats: {
           agility: '0',
           anima: '11',
@@ -52,6 +54,7 @@ describe('createFight', () => {
       },
       defender: {
         id: null,
+        race: 1,
         stats: {
           agility: '100',
           anima: '100',
@@ -76,7 +79,7 @@ describe('createFight', () => {
     const create = createCallTracker();
     const attach = createCallTracker();
     const createdFight = {attacker: 9, defender: null, id: 4, reason: 'rank'};
-    const fighter = {id: 9};
+    const fighter = {id: 9, race: 2};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {
       create: async (fightData) => {
@@ -89,6 +92,7 @@ describe('createFight', () => {
     await createFight({fighters, fights, fightJudge}, 1, 'rank');
 
     assert.equal(create.calls.length, 1);
+    assert.equal(create.calls[0][0].attacker.race, 2);
     assert.equal(create.calls[0][0].defender, null);
     assert.deepEqual(attach.calls, [[fighters, createdFight]]);
   });
@@ -112,6 +116,7 @@ describe('createFight', () => {
     const createdFight = {attacker: 9, defender: null, id: 6, reason: 'gold'};
     const fighter = {
       id: 9,
+      race: 2,
       stats: {
         anima: 1n,
         constitution: 2n,
@@ -135,6 +140,7 @@ describe('createFight', () => {
 
     await createFight({fighters, fights, fightJudge}, 1, 'gold');
 
+    assert.equal(create.calls[0][0].attacker.race, 2);
     assert.deepEqual(create.calls[0][0].attacker.stats, {
       agility: '0',
       anima: '1',

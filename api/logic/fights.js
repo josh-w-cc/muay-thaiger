@@ -14,9 +14,10 @@ export async function createFight({fighters, fights, fightJudge}, playerID, reas
   const fight = await fights.create({
     attacker: {
       id: fighter.id,
+      race: fighter.race,
       stats: captureFightStats(fighter),
     },
-    defender: normalizedReason === 'gold' ? {id: null, stats: createBotStats(normalizedRank)} : null,
+    defender: normalizedReason === 'gold' ? {id: null, race: 1, stats: createBotStats(normalizedRank)} : null,
     rank: normalizedRank,
     reason: normalizedReason,
   });
