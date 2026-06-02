@@ -4,6 +4,8 @@ import {describe, it} from 'node:test';
 import createCallTracker from '../utils/test/createCallTracker.js';
 import {createFight} from './fights.js';
 
+const HIGH_RANK_BOT_STAT = (10n ** 33n).toString();
+
 describe('createFight', () => {
   it('creates a gold fight with captured attacker stats and low-rank bot defender stats', async () => {
     const create = createCallTracker();
@@ -91,17 +93,17 @@ describe('createFight', () => {
       defender: {
         id: null,
         stats: {
-          agility: '1300',
-          anima: '1300',
-          constitution: '1300',
-          durability: '1300',
-          reach: '1300',
-          skill: '1300',
-          speed: '1300',
-          stamina: '1300',
-          strength: '1300',
-          vigor: '1300',
-          vitality: '1300',
+          agility: HIGH_RANK_BOT_STAT,
+          anima: HIGH_RANK_BOT_STAT,
+          constitution: HIGH_RANK_BOT_STAT,
+          durability: HIGH_RANK_BOT_STAT,
+          reach: HIGH_RANK_BOT_STAT,
+          skill: HIGH_RANK_BOT_STAT,
+          speed: HIGH_RANK_BOT_STAT,
+          stamina: HIGH_RANK_BOT_STAT,
+          strength: HIGH_RANK_BOT_STAT,
+          vigor: HIGH_RANK_BOT_STAT,
+          vitality: HIGH_RANK_BOT_STAT,
         },
       },
       rank: 'AAAAA',

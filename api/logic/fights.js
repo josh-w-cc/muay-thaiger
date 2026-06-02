@@ -3,10 +3,8 @@ import {isFightReason, normalizeFightReason} from 'shared/fights.js';
 import {createCommandError} from './command-errors.js';
 
 const BOT_BASE_STAT = 100n;
-const BOT_RANK_MULTIPLIERS = {
-  '': 1n,
-};
-const BOT_RANK_MULTIPLIER_DIVISOR = 10n;
+const BOT_RANK_MULTIPLIER_BASE = 10n;
+const BOT_RANK_MULTIPLIER_DIVISOR = 4n;
 const BOT_RANK_PATTERN = /^[A-Z]{2,5}$/;
 const RANK_Z_CHAR_CODE = 'Z'.charCodeAt(0);
 
@@ -45,11 +43,7 @@ function normalizeFightRank(rank) {
 
 function getBotRankMultiplier(rank) {
   const normalizedRank = normalizeBotRank(rank);
-  if(normalizedRank in BOT_RANK_MULTIPLIERS) {
-    return BOT_RANK_MULTIPLIERS[normalizedRank];
-  }
-
-  return 1n + (getBotRankScore(normalizedRank) / BOT_RANK_MULTIPLIER_DIVISOR);
+  return BOT_RANK_MULTIPLIER_BASE ** (getBotRankScore(normalizedRank) / BOT_RANK_MULTIPLIER_DIVISOR);
 }
 
 function normalizeBotRank(rank) {
