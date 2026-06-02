@@ -58,8 +58,8 @@ describe('fights.findActiveByFighterID', () => {
 describe('fights.create', () => {
   it('inserts a fight with captured starting stats and returns the created row', async () => {
     const fight = {
-      attacker: {id: 1, stats: {speed: 10n, vigor: 9}},
-      defender: {id: 2, stats: {speed: '8', vigor: 7n}},
+      attacker: {id: 1, race: 1, stats: {speed: 10n, vigor: 9}},
+      defender: {id: 2, race: 2, stats: {speed: '8', vigor: 7n}},
       rank: 'bronze',
       reason: 'gold',
     };
@@ -73,10 +73,12 @@ describe('fights.create', () => {
       defender: 2,
       details: {
         attacker: {
+          race: 1,
           starting_stats: {speed: '10', vigor: '9'},
           stats: {speed: '10', vigor: '9'},
         },
         defender: {
+          race: 2,
           starting_stats: {speed: '8', vigor: '7'},
           stats: {speed: '8', vigor: '7'},
         },

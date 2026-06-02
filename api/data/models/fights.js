@@ -38,7 +38,7 @@ function serializeFightCreate({attacker, defender, rank, reason}) {
 
 function serializeParticipant(participant) {
   return {
-    details: serializeParticipantDetails(participant?.stats),
+    details: serializeParticipantDetails(participant),
     id: participant?.id ?? null,
   };
 }
@@ -51,8 +51,10 @@ function serializeFightDetails(attacker, defender) {
   return {attacker, defender};
 }
 
-function serializeParticipantDetails(stats) {
+function serializeParticipantDetails(participant) {
+  const stats = participant?.stats;
   return {
+    race: participant?.race ?? null,
     starting_stats: serializeStats(stats),
     stats: serializeStats(stats),
   };
