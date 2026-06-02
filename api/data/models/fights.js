@@ -21,51 +21,33 @@ export default function fights(db) {
 }
 
 function serializeFightCreate({attacker, defender, rank, reason}) {
-  const serializedAttacker = serializeParticipant(attacker, true);
-  const serializedDefender = serializeParticipant(defender);
-  if(!hasStats(serializedAttacker.details.stats)) {
-    throw new TypeError('invalid-fight-stats');
-  }
-
   return {
-    attacker: serializedAttacker.id,
-    defender: serializedDefender.id,
-    details: serializeFightDetails(serializedAttacker.details, serializedDefender.details),
+    attacker: attacker?.id ?? null,
+    defender: defender?.id ?? null,
+    details: serializeFightDetails(attacker, defender),
     rank,
     reason,
   };
 }
 
-function serializeParticipant(participant, isRequired = false) {
-  return {
-    details: serializeParticipantDetails(participant, isRequired),
-    id: participant?.id ?? null,
-  };
-}
-
 function serializeFightDetails(attacker, defender) {
+  const serializedAttacker = serializeParticipantDetails(attacker);
   if(!defender) {
-    return {attacker};
+    return {attacker: serializedAttacker};
   }
 
-  return {attacker, defender};
+  return {
+    attacker: serializedAttacker,
+    defender: serializeParticipantDetails(defender),
+  };
 }
 
 function throwInvalidFightStats() {
   throw new TypeError('invalid-fight-stats');
 }
 
-function serializeParticipantDetails(participant, isRequired = false) {
-  if(!participant) {
-    if(isRequired) {
-      throwInvalidFightStats();
-    }
-
-    return null;
-  }
-
+function serializeParticipantDetails(participant) {
   validateParticipantDetails(participant);
-
   return {
     race: participant.race,
     starting_stats: serializeStats(participant.stats),
@@ -74,7 +56,7 @@ function serializeParticipantDetails(participant, isRequired = false) {
 }
 
 function validateParticipantDetails(participant) {
-  if(participant.race == null || !hasStats(participant.stats)) {
+  if(participant?.race == null || !hasStats(participant?.stats)) {
     throwInvalidFightStats();
   }
 }
