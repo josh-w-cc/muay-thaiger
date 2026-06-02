@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 import {getScheduledTrainingActions} from 'shared/training.js';
-import {findLatestAction, getActionTime} from 'shared/trainingTimeline.js';
+import {findLatestAction, getOrderedActions} from 'shared/trainingTimeline.js';
 
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {runFighterActionTick, transferLatestTouchedAt} from './fighterActionTick.js';
@@ -54,7 +54,7 @@ function setScheduledActionProgress(progressByIndex, scheduledActions, nowMs) {
   if(!scheduledActions.length) {
     return;
   }
-  const orderedActions = getOrderedScheduledActions(scheduledActions, nowMs);
+  const orderedActions = getOrderedActions(scheduledActions, nowMs);
   const {latestActionTime} = findLatestAction(orderedActions, nowMs);
   let remainingMs = nowMs - latestActionTime;
   if(remainingMs <= 0) {
@@ -73,17 +73,6 @@ function setScheduledActionProgress(progressByIndex, scheduledActions, nowMs) {
 
 function tickActions(actions) {
   return setActionProgress(runFighterActionTick(actions));
-}
-
-function getOrderedScheduledActions(actions, nowMs) {
-  return [...actions].sort((leftAction, rightAction) => {
-    const leftTime = getActionTime(leftAction.action, nowMs);
-    const rightTime = getActionTime(rightAction.action, nowMs);
-    if(leftTime === rightTime) {
-      return leftAction.index - rightAction.index;
-    }
-    return leftTime - rightTime;
-  });
 }
 
 TickerState.addListener(() => useFighterActionsStore.getState().tick());

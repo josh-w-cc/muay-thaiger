@@ -75,7 +75,7 @@ function runTrainingCycle(actions, latestActionTime, startingRemainingMs, getTou
   return {appliedActions, touchedAtByActionKey};
 }
 
-function getOrderedActions(actions, nowMs) {
+export function getOrderedActions(actions, nowMs) {
   return [...actions].sort((leftAction, rightAction) => {
     const leftTime = getActionTime(leftAction.action, nowMs);
     const rightTime = getActionTime(rightAction.action, nowMs);
@@ -89,4 +89,3 @@ function getOrderedActions(actions, nowMs) {
 function createEmptyTimeline() {
   return {appliedActions: [], touchedAtByActionKey: new Map()};
 }
-
