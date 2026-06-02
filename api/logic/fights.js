@@ -13,19 +13,12 @@ export async function createFight({fighters, fights}, playerID, reason, rank = '
   const fighter = await getCurrentFighter(fighters, playerID);
   return fights.create({
     attacker: fighter.id,
+    attackerStats: captureFightStats(fighter),
     defender: null,
-    details: createFightDetails(fighter, normalizedReason, normalizedRank),
+    defenderStats: normalizedReason === 'gold' ? createBotStats(normalizedRank) : undefined,
     rank: normalizedRank,
     reason: normalizedReason,
   });
-}
-
-function createFightDetails(fighter, reason, rank) {
-  const attackerStats = captureFightStats(fighter);
-  return {
-    attacker: {stats: attackerStats},
-    ...(reason === 'gold' ? {defender: {stats: createBotStats(rank)}} : {}),
-  };
 }
 
 function captureFightStats(fighter) {

@@ -59,11 +59,9 @@ describe('fights.create', () => {
   it('inserts a fight with captured starting stats and returns the created row', async () => {
     const fight = {
       attacker: 1,
+      attackerStats: {speed: 10n, vigor: 9},
       defender: 2,
-      details: {
-        attacker: {stats: {speed: 10n, vigor: 9}},
-        defender: {stats: {speed: '8', vigor: 7n}},
-      },
+      defenderStats: {speed: '8', vigor: 7n},
       rank: 'bronze',
       reason: 'gold',
     };
@@ -85,6 +83,8 @@ describe('fights.create', () => {
         },
       },
     };
+    delete expectedFight.attackerStats;
+    delete expectedFight.defenderStats;
 
     assert.deepEqual(calls[0], ['table', 'fights']);
     assert.deepEqual(calls[1], ['insert', expectedFight]);

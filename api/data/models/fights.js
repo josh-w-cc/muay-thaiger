@@ -11,7 +11,7 @@ export default function fights(db) {
   const create = generateCreateFn(db, 'fights');
 
   return {
-    create: (data) => create(captureStartingStats(data)),
+    create: (fight) => create(serializeFightCreate(fight)),
     find: generateFindFn(db, 'fights'),
     findActiveByFighterID: (fighterID) => findActiveFightByFighterID(db, fighterID),
     list: generateListFn(db, 'fights', 'created_at'),
@@ -20,35 +20,30 @@ export default function fights(db) {
   };
 }
 
-function captureStartingStats(data) {
-  if(!data?.details) {
-    return data;
-  }
-
+function serializeFightCreate({attacker, attackerStats, defender, defenderStats, rank, reason}) {
   return {
-    ...data,
+    attacker,
+    defender,
     details: {
-      ...data.details,
-      attacker: captureParticipantStartingStats(data.details.attacker),
-      defender: captureParticipantStartingStats(data.details.defender),
+      attacker: serializeParticipantDetails(attackerStats),
+      ...(defenderStats ? {defender: serializeParticipantDetails(defenderStats)} : {}),
     },
+    rank,
+    reason,
   };
 }
 
-function captureParticipantStartingStats(participant) {
-  if(!participant?.stats) {
-    return participant;
-  }
-
-  const stats = Object.fromEntries(
-    Object.entries(participant.stats).map(([key, value]) => [key, value.toString()]),
-  );
-
+function serializeParticipantDetails(stats) {
   return {
-    ...participant,
-    starting_stats: stats,
-    stats,
+    starting_stats: serializeStats(stats),
+    stats: serializeStats(stats),
   };
+}
+
+function serializeStats(stats) {
+  return Object.fromEntries(
+    Object.entries(stats ?? {}).map(([key, value]) => [key, value.toString()]),
+  );
 }
 
 async function findActiveFightByFighterID(db, fighterID) {
