@@ -10,6 +10,7 @@ import healthRoutes from './routes/health.js';
 import playersRoutes from './routes/players.js';
 import raceRoutes from './routes/race.js';
 import websocketRoutes from './routes/websocket.js';
+import {attachFightJudge} from './services/fight-judge.js';
 import {attachScheduler} from './services/scheduler.js';
 
 
@@ -17,6 +18,7 @@ export default async function build(opts = {}) {
   const app = Fastify(opts);
 
   await app.register(dbPlugin);
+  attachFightJudge(app);
   app.decorate('websocketConnections', new Set());
   await app.register(websocket);
   attachScheduler(app);

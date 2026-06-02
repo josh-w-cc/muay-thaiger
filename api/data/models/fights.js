@@ -15,6 +15,7 @@ export default function fights(db) {
     find: generateFindFn(db, 'fights'),
     findActiveByFighterID: (fighterID) => findActiveFightByFighterID(db, fighterID),
     list: generateListFn(db, 'fights', 'created_at'),
+    listUnresolved: () => listUnresolvedFights(db),
     remove: generateRemoveFn(db, 'fights'),
     update: generateUpdateFn(db, 'fights'),
   };
@@ -82,4 +83,10 @@ async function findActiveFightByFighterID(db, fighterID) {
     .whereRaw('(attacker = ? OR defender = ?)', [fighterID, fighterID])
     .orderBy('created_at', 'desc')
     .first();
+}
+
+async function listUnresolvedFights(db) {
+  return db('fights')
+    .whereNull('victory')
+    .orderBy('created_at', 'desc');
 }
