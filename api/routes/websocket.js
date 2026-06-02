@@ -57,6 +57,10 @@ function parseMessage(raw) {
   }
 }
 
+function resolveCommandError(error) {
+  return error?.code || 'internal-error';
+}
+
 function sendSocketError(socket, error) {
   if(!isSocketOpen(socket)) {
     return;
@@ -64,8 +68,4 @@ function sendSocketError(socket, error) {
   socket.send(error === 'auth-invalid-token'
     ? JSON.stringify({cmd: 'auth-invalid-token'})
     : JSON.stringify({cmd: 'error', error}));
-}
-
-function resolveCommandError(error) {
-  return error?.code || 'internal-error';
 }
