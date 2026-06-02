@@ -1,4 +1,4 @@
-import {BsInfoCircle} from 'react-icons/bs';
+import {RiInformationLine} from 'react-icons/ri';
 
 import css from './Train.module.css';
 
@@ -16,7 +16,7 @@ export default function SkillInfoButton({description, duration, name, setTooltip
       onMouseLeave={() => setTooltipOpen(false)}
       type="button"
     >
-      <BsInfoCircle aria-hidden size={12} />
+      <RiInformationLine aria-hidden size={12} />
       {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role="tooltip">{tooltipText}</span>}
     </button>
   );

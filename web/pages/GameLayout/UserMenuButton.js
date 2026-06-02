@@ -1,5 +1,5 @@
 import {useNavigate} from 'react-router-dom';
-import {BsPersonCircle} from 'react-icons/bs';
+import {RiAccountCircleLine} from 'react-icons/ri';
 
 import Button from '@/components/Button.js';
 
@@ -16,7 +16,7 @@ export default function UserMenuButton() {
       onClick={() => navigate('/edit-user')}
       type="button"
     >
-      <BsPersonCircle aria-hidden="true" className={css.userMenuIcon} size={24} />
+      <RiAccountCircleLine aria-hidden="true" className={css.userMenuIcon} size={24} />
     </Button>
   );
 }

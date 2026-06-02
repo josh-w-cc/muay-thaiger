@@ -29,8 +29,8 @@ const {action, addAction, createFighterActionCmd, fighter, removeAction, removeF
   };
 });
 
-const {bsInfoCircle} = vi.hoisted(() => ({
-  bsInfoCircle: vi.fn((props) => <svg data-testid="skill-info-icon" {...props} />),
+const {riInformationLine} = vi.hoisted(() => ({
+  riInformationLine: vi.fn((props) => <svg data-testid="skill-info-icon" {...props} />),
 }));
 
 const fighterActions = vi.hoisted(() => ({
@@ -75,8 +75,8 @@ vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFighterActionCmd: (...args) => createFighterActionCmd(...args),
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
 }));
-vi.mock('react-icons/bs', () => ({
-  BsInfoCircle: bsInfoCircle,
+vi.mock('react-icons/ri', () => ({
+  RiInformationLine: riInformationLine,
 }));
 
 describe('Train', () => {
@@ -151,10 +151,10 @@ describe('Train', () => {
     expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
   });
 
-  it('renders the Bootstrap icon for skill info', () => {
+  it('renders the Remix icon for skill info', () => {
     render(<Train />);
     expect(screen.getByTestId('skill-info-icon')).toBeInTheDocument();
-    expect(bsInfoCircle).toHaveBeenCalled();
+    expect(riInformationLine).toHaveBeenCalled();
   });
 
   it('shows gray progress bar for inactive skills', () => {
