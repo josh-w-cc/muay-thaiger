@@ -1,7 +1,7 @@
 import {deepEqual, equal} from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {createTrainingTimeline, getActionTime} from './trainingTimeline.js';
+import {createTrainingTimeline, getActionTime, getOrderedActions} from './trainingTimeline.js';
 
 
 describe('createTrainingTimeline', () => {
@@ -80,5 +80,20 @@ describe('createTrainingTimeline', () => {
 describe('getActionTime', () => {
   it('falls back to now for invalid action timestamps', () => {
     equal(getActionTime({created_at: 'invalid-date'}, 12345), 12345);
+  });
+});
+
+describe('getOrderedActions', () => {
+  it('orders by action time and uses index as a stable tie-breaker', () => {
+    const nowMs = Date.parse('2026-01-01T00:00:10.000Z');
+    const oldest = {action: {created_at: '2026-01-01T00:00:00.000Z'}, index: 2};
+    const tiedLowerIndex = {action: {created_at: '2026-01-01T00:00:01.000Z'}, index: 0};
+    const tiedHigherIndex = {action: {created_at: '2026-01-01T00:00:01.000Z'}, index: 1};
+
+    deepEqual(getOrderedActions([tiedHigherIndex, oldest, tiedLowerIndex], nowMs), [
+      oldest,
+      tiedLowerIndex,
+      tiedHigherIndex,
+    ]);
   });
 });
