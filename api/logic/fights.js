@@ -7,6 +7,7 @@ const BOT_RANK_STATS = {
 };
 const BOT_RANK_STEP = 10n;
 const BOT_RANK_PATTERN = /^[A-Z]{2,5}$/;
+const RANK_Z_CHAR_CODE = 'Z'.charCodeAt(0);
 
 export async function createFight({fighters, fights}, playerID, reason, rank = '') {
   const normalizedReason = normalizeFightReason(reason);
@@ -48,7 +49,10 @@ function getBotRankBonus(rank) {
   }
 
   return BOT_RANK_STEP * BigInt(
-    Array.from(normalizedRank).reduce((total, letter) => total + ('Z'.charCodeAt(0) - letter.charCodeAt(0)), 0),
+    Array.from(normalizedRank).reduce(
+      (total, rankCharacter) => total + (RANK_Z_CHAR_CODE - rankCharacter.charCodeAt(0)),
+      0,
+    ),
   );
 }
 
