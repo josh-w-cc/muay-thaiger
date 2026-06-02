@@ -12,10 +12,11 @@ export async function createFight({fighters, fights}, playerID, reason, rank = '
   validateFightMessage(playerID, normalizedReason);
   const fighter = await getCurrentFighter(fighters, playerID);
   return fights.create({
-    attacker: fighter.id,
-    attackerStats: captureFightStats(fighter),
-    defender: null,
-    defenderStats: normalizedReason === 'gold' ? createBotStats(normalizedRank) : undefined,
+    attacker: {
+      id: fighter.id,
+      stats: captureFightStats(fighter),
+    },
+    defender: normalizedReason === 'gold' ? {id: null, stats: createBotStats(normalizedRank)} : null,
     rank: normalizedRank,
     reason: normalizedReason,
   });

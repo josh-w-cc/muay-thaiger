@@ -26,33 +26,37 @@ describe('createFight', () => {
 
     assert.equal(create.calls.length, 1);
     assert.deepEqual(create.calls[0][0], {
-      attacker: 9,
-      attackerStats: {
-        agility: '0',
-        anima: '11',
-        constitution: '12',
-        durability: '13',
-        reach: '14',
-        skill: '15',
-        speed: '16',
-        stamina: '17',
-        strength: '0',
-        vigor: '18',
-        vitality: '19',
+      attacker: {
+        id: 9,
+        stats: {
+          agility: '0',
+          anima: '11',
+          constitution: '12',
+          durability: '13',
+          reach: '14',
+          skill: '15',
+          speed: '16',
+          stamina: '17',
+          strength: '0',
+          vigor: '18',
+          vitality: '19',
+        },
       },
-      defender: null,
-      defenderStats: {
-        agility: '100',
-        anima: '100',
-        constitution: '100',
-        durability: '100',
-        reach: '100',
-        skill: '100',
-        speed: '100',
-        stamina: '100',
-        strength: '100',
-        vigor: '100',
-        vitality: '100',
+      defender: {
+        id: null,
+        stats: {
+          agility: '100',
+          anima: '100',
+          constitution: '100',
+          durability: '100',
+          reach: '100',
+          skill: '100',
+          speed: '100',
+          stamina: '100',
+          strength: '100',
+          vigor: '100',
+          vitality: '100',
+        },
       },
       rank: '',
       reason: 'gold',
@@ -68,7 +72,7 @@ describe('createFight', () => {
     await createFight({fighters, fights}, 1, 'rank');
 
     assert.equal(create.calls.length, 1);
-    assert.equal(create.calls[0][0].defenderStats, undefined);
+    assert.equal(create.calls[0][0].defender, null);
   });
 
   it('uses nested fighter.stats values when top-level stats are missing', async () => {
@@ -92,7 +96,7 @@ describe('createFight', () => {
 
     await createFight({fighters, fights}, 1, 'gold');
 
-    assert.deepEqual(create.calls[0][0].attackerStats, {
+    assert.deepEqual(create.calls[0][0].attacker.stats, {
       agility: '0',
       anima: '1',
       constitution: '2',
