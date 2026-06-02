@@ -147,7 +147,7 @@ describe('Train', () => {
     expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
   });
 
-  it('renders the Material icon for skill info', () => {
+  it('renders the material icon for skill info', () => {
     render(<Train />);
     expect(screen.getByTestId('skill-info-icon')).toBeInTheDocument();
   });
