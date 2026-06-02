@@ -475,6 +475,7 @@ describe('WebSocket /ws/connect', () => {
         cmd: 'ok',
         metadata: {fight: createdFight, responded_cmd: 'fight'},
       });
+      assert.deepEqual(attachFight.calls, [[fighters, createdFight]]);
     }
     finally {
       Math.random = random;
@@ -519,6 +520,7 @@ describe('WebSocket /ws/connect', () => {
       cmd: 'ok',
       metadata: {fight: createdFight, responded_cmd: 'fight'},
     });
+    assert.deepEqual(attachFight.calls, [[fighters, createdFight]]);
   });
 
   it('does not create a fight when the authenticated player has no current fighter', async () => {
