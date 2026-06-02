@@ -397,6 +397,7 @@ describe('WebSocket /ws/connect', () => {
     try {
       const send = createCallTracker();
       const createFight = createCallTracker();
+      const attachFight = createCallTracker();
       const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
       const fighter = {
         anima: 11,
@@ -429,8 +430,9 @@ describe('WebSocket /ws/connect', () => {
           return createdFight;
         },
       };
+      const fightJudge = {attach: attachFight};
 
-      await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighters, fights});
+      await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighters, fights, fightJudge});
 
       assert.deepEqual(createFight.calls, [[{
         attacker: {
@@ -496,6 +498,7 @@ describe('WebSocket /ws/connect', () => {
   it('creates a fight and responds to rank fight command for authenticated socket', async () => {
     const send = createCallTracker();
     const createFight = createCallTracker();
+    const attachFight = createCallTracker();
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
     const fighter = {id: 9, player: 1, retired: false};
     const createdFight = {attacker: 9, defender: null, details: {}, id: 5, reason: 'rank'};
@@ -506,8 +509,9 @@ describe('WebSocket /ws/connect', () => {
         return createdFight;
       },
     };
+    const fightJudge = {attach: attachFight};
 
-    await onMessage(JSON.stringify({cmd: 'fight', reason: 'rank'}), socket, {fighters, fights});
+    await onMessage(JSON.stringify({cmd: 'fight', reason: 'rank'}), socket, {fighters, fights, fightJudge});
 
     assert.deepEqual(createFight.calls[0][0].reason, 'rank');
     assert.equal(send.calls.length, 1);

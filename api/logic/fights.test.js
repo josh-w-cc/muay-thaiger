@@ -7,6 +7,7 @@ import {createFight} from './fights.js';
 describe('createFight', () => {
   it('creates a gold fight with captured attacker stats and low-rank bot defender stats', async () => {
     const create = createCallTracker();
+    const attach = createCallTracker();
     const fighter = {
       anima: 11,
       constitution: 12,
@@ -21,8 +22,9 @@ describe('createFight', () => {
     };
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
+    const fightJudge = {attach};
 
-    await createFight({fighters, fights}, 1, 'gold');
+    await createFight({fighters, fights, fightJudge}, 1, 'gold');
 
     assert.equal(create.calls.length, 1);
     assert.deepEqual(create.calls[0][0], {
@@ -65,11 +67,13 @@ describe('createFight', () => {
 
   it('creates a rank fight without defender starting stats', async () => {
     const create = createCallTracker();
+    const attach = createCallTracker();
     const fighter = {id: 9};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
+    const fightJudge = {attach};
 
-    await createFight({fighters, fights}, 1, 'rank');
+    await createFight({fighters, fights, fightJudge}, 1, 'rank');
 
     assert.equal(create.calls.length, 1);
     assert.equal(create.calls[0][0].defender, null);
@@ -90,6 +94,7 @@ describe('createFight', () => {
 
   it('uses nested fighter.stats values when top-level stats are missing', async () => {
     const create = createCallTracker();
+    const attach = createCallTracker();
     const fighter = {
       id: 9,
       stats: {
@@ -106,8 +111,9 @@ describe('createFight', () => {
     };
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
+    const fightJudge = {attach};
 
-    await createFight({fighters, fights}, 1, 'gold');
+    await createFight({fighters, fights, fightJudge}, 1, 'gold');
 
     assert.deepEqual(create.calls[0][0].attacker.stats, {
       agility: '0',

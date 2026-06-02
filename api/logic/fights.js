@@ -20,9 +20,7 @@ export async function createFight({fighters, fights, fightJudge}, playerID, reas
     rank: normalizedRank,
     reason: normalizedReason,
   });
-  if(typeof fightJudge?.attach === 'function') {
-    await fightJudge.attach(fighters, fight);
-  }
+  await fightJudge.attach(fighters, fight);
   return fight;
 }
 
