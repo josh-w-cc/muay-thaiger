@@ -3,6 +3,7 @@ import {
   generateListFn,
   generateRemoveFn,
 } from '../utils/crud.js';
+import {serializeFightCreate} from './fight-create.js';
 import {normalizeFightRow, removeFightByID, upsertFightByPlayerID} from './fight-store.js';
 
 
@@ -26,7 +27,7 @@ export default function fights(db) {
 }
 
 async function createFight(db, activeFightByPlayerID, data, markLoaded) {
-  const fight = await db('fights').insert(data).returning('*').then((rows) => rows[0]);
+  const fight = await db('fights').insert(serializeFightCreate(data)).returning('*').then((rows) => rows[0]);
   markLoaded();
   const playerIDs = await findFightPlayerIDs(db, fight);
   upsertFightByPlayerID(activeFightByPlayerID, fight, playerIDs, true);
