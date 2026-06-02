@@ -138,7 +138,7 @@ describe('Train', () => {
 
   it('uses an opaque tooltip background token', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'Train.module.css');
+    const modulePath = path.join(directoryPath, 'SkillInfoButton.module.css');
     const source = fs.readFileSync(modulePath, 'utf8');
 
     expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
