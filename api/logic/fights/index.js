@@ -37,10 +37,6 @@ function captureFightStats(fighter) {
 }
 
 async function captureFightMoves(fighterMoves, fighterID) {
-  if(!fighterMoves?.listEnabledByFighterID) {
-    return [];
-  }
-
   const moves = await fighterMoves.listEnabledByFighterID(fighterID);
   return moves.map(({move}) => move);
 }
