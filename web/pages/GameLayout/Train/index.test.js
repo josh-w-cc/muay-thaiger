@@ -71,8 +71,8 @@ vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFighterActionCmd: (...args) => createFighterActionCmd(...args),
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
 }));
-vi.mock('react-icons/io5', () => ({
-  IoInformationCircleOutline: (props) => <svg data-testid="skill-info-icon" {...props} />,
+vi.mock('react-icons/bi', () => ({
+  BiInfoCircle: (props) => <svg data-testid="skill-info-icon" {...props} />,
 }));
 
 describe('Train', () => {
@@ -147,7 +147,7 @@ describe('Train', () => {
     expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
   });
 
-  it('renders the Ionicon for skill info', () => {
+  it('renders the BoxIcons icon for skill info', () => {
     render(<Train />);
     expect(screen.getByTestId('skill-info-icon')).toBeInTheDocument();
   });

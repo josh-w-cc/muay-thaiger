@@ -1,4 +1,4 @@
-import {IoInformationCircleOutline} from 'react-icons/io5';
+import {BiInfoCircle} from 'react-icons/bi';
 
 import css from './Train.module.css';
 
@@ -16,7 +16,7 @@ export default function SkillInfoButton({description, duration, name, setTooltip
       onMouseLeave={() => setTooltipOpen(false)}
       type="button"
     >
-      <IoInformationCircleOutline aria-hidden size={12} />
+      <BiInfoCircle aria-hidden size={12} />
       {tooltipOpen && <span className={css.infoTooltip} id={tooltipID} role="tooltip">{tooltipText}</span>}
     </button>
   );
