@@ -63,6 +63,52 @@ describe('createFight', () => {
     });
   });
 
+  it('creates a gold fight with ranked bot defender stats', async () => {
+    const create = createCallTracker();
+    const fighter = {id: 9};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {create};
+
+    await createFight({fighters, fights}, 1, 'gold', 'AAAAA');
+
+    assert.deepEqual(create.calls[0][0], {
+      attacker: {
+        id: 9,
+        stats: {
+          agility: '0',
+          anima: '0',
+          constitution: '0',
+          durability: '0',
+          reach: '0',
+          skill: '0',
+          speed: '0',
+          stamina: '0',
+          strength: '0',
+          vigor: '0',
+          vitality: '0',
+        },
+      },
+      defender: {
+        id: null,
+        stats: {
+          agility: '1350',
+          anima: '1350',
+          constitution: '1350',
+          durability: '1350',
+          reach: '1350',
+          skill: '1350',
+          speed: '1350',
+          stamina: '1350',
+          strength: '1350',
+          vigor: '1350',
+          vitality: '1350',
+        },
+      },
+      rank: 'AAAAA',
+      reason: 'gold',
+    });
+  });
+
   it('creates a rank fight without defender starting stats', async () => {
     const create = createCallTracker();
     const fighter = {id: 9};
@@ -108,6 +154,29 @@ describe('createFight', () => {
       strength: '0',
       vigor: '8',
       vitality: '9',
+    });
+  });
+
+  it('treats ZZ rank the same as an unranked gold bot', async () => {
+    const create = createCallTracker();
+    const fighter = {id: 9};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {create};
+
+    await createFight({fighters, fights}, 1, 'gold', 'ZZ');
+
+    assert.deepEqual(create.calls[0][0].defender.stats, {
+      agility: '100',
+      anima: '100',
+      constitution: '100',
+      durability: '100',
+      reach: '100',
+      skill: '100',
+      speed: '100',
+      stamina: '100',
+      strength: '100',
+      vigor: '100',
+      vitality: '100',
     });
   });
 

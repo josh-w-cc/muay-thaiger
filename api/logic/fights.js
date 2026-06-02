@@ -5,6 +5,8 @@ import {createCommandError} from './command-errors.js';
 const BOT_RANK_STATS = {
   '': 100n,
 };
+const BOT_RANK_STEP = 10n;
+const BOT_RANK_PATTERN = /^[A-Z]{2,5}$/;
 
 export async function createFight({fighters, fights}, playerID, reason, rank = '') {
   const normalizedReason = normalizeFightReason(reason);
@@ -29,7 +31,7 @@ function captureFightStats(fighter) {
 }
 
 function createBotStats(rank) {
-  const baseStat = BOT_RANK_STATS[rank] ?? BOT_RANK_STATS[''];
+  const baseStat = BOT_RANK_STATS[''] + getBotRankBonus(rank);
   return Object.fromEntries(
     FIGHTER_STAT_KEYS.map((stat) => [stat, baseStat.toString()]),
   );
@@ -37,6 +39,22 @@ function createBotStats(rank) {
 
 function normalizeFightRank(rank) {
   return typeof rank === 'string' ? rank.trim() : '';
+}
+
+function getBotRankBonus(rank) {
+  const normalizedRank = normalizeBotRank(rank);
+  if(normalizedRank in BOT_RANK_STATS) {
+    return BOT_RANK_STATS[normalizedRank] - BOT_RANK_STATS[''];
+  }
+
+  return BOT_RANK_STEP * BigInt(
+    Array.from(normalizedRank).reduce((total, letter) => total + ('Z'.charCodeAt(0) - letter.charCodeAt(0)), 0),
+  );
+}
+
+function normalizeBotRank(rank) {
+  const normalizedRank = typeof rank === 'string' ? rank.trim().toUpperCase() : '';
+  return BOT_RANK_PATTERN.test(normalizedRank) ? normalizedRank : '';
 }
 
 function validateFightMessage(playerID, reason) {
