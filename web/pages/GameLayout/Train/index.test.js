@@ -29,6 +29,10 @@ const {action, addAction, createFighterActionCmd, fighter, removeAction, removeF
   };
 });
 
+const {biInfoCircle} = vi.hoisted(() => ({
+  biInfoCircle: vi.fn((props) => <svg data-testid="skill-info-icon" {...props} />),
+}));
+
 const fighterActions = vi.hoisted(() => ({
   actions: [
     {action: 2, id: 5, progress: 23},
@@ -72,7 +76,7 @@ vi.mock('@/actions/websockets/clientCommands.js', () => ({
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
 }));
 vi.mock('react-icons/bi', () => ({
-  BiInfoCircle: (props) => <svg data-testid="skill-info-icon" {...props} />,
+  BiInfoCircle: biInfoCircle,
 }));
 
 describe('Train', () => {
@@ -147,9 +151,10 @@ describe('Train', () => {
     expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
   });
 
-  it('renders the BoxIcons icon for skill info', () => {
+  it('renders the BoxIcon icon for skill info', () => {
     render(<Train />);
     expect(screen.getByTestId('skill-info-icon')).toBeInTheDocument();
+    expect(biInfoCircle).toHaveBeenCalled();
   });
 
   it('shows gray progress bar for inactive skills', () => {
