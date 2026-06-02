@@ -29,13 +29,14 @@ User action → React event handler → action (`web/actions/`) → `fetchAPI()`
 
 Subprojects have additional details in local `AGENTS.md` files.
 - For API changes, read `api/AGENTS.md`.
+- For shared library changes, read `shared/AGENTS.md`.
 - For UI changes, read `web/AGENTS.md`.
 - For Playwright changes, read `playwright/AGENTS.md`.
 
 ## Tech stack
 
 - **Language:** JavaScript (not TypeScript)
-- **Runtime:** Node.js 25 with ESM (`"type": "module"` — use `import`/`export`, not `require`)
+- **Runtime:** Node.js 26 with ESM (`"type": "module"` — use `import`/`export`, not `require`)
 - **Database:** PostgreSQL 18
 
 ## Developer commands

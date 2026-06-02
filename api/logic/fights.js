@@ -1,7 +1,7 @@
 import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
+import {isFightReason, normalizeFightReason} from 'shared/fights.js';
 import {createCommandError} from './command-errors.js';
 
-const FIGHT_REASONS = ['gold', 'rank'];
 const BOT_RANK_STATS = {
   '': 100n,
 };
@@ -41,16 +41,12 @@ function createBotStartingStats(rank) {
   );
 }
 
-function normalizeFightReason(reason) {
-  return typeof reason === 'string' ? reason.trim() : '';
-}
-
 function normalizeFightRank(rank) {
   return typeof rank === 'string' ? rank.trim() : '';
 }
 
 function validateFightMessage(playerID, reason) {
-  if(!playerID || !FIGHT_REASONS.includes(reason)) {
+  if(!playerID || !isFightReason(reason)) {
     throw createCommandError('invalid-fight-message');
   }
 }

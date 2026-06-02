@@ -438,6 +438,7 @@ describe('WebSocket /ws/connect', () => {
         details: {
           attacker: {
             starting_stats: {
+              agility: '0',
               anima: '11',
               constitution: '12',
               durability: '13',
@@ -445,12 +446,14 @@ describe('WebSocket /ws/connect', () => {
               skill: '15',
               speed: '16',
               stamina: '17',
+              strength: '18',
               vigor: '18',
               vitality: '19',
             },
           },
           defender: {
             starting_stats: {
+              agility: '100',
               anima: '100',
               constitution: '100',
               durability: '100',
@@ -458,6 +461,7 @@ describe('WebSocket /ws/connect', () => {
               skill: '100',
               speed: '100',
               stamina: '100',
+              strength: '100',
               vigor: '100',
               vitality: '100',
             },
