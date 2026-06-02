@@ -79,6 +79,21 @@ describe('getPlayerState', () => {
     assert.deepEqual(result, {actions: [], fight, fighter});
   });
 
+  it('prefers active fights stored by player id when available', async () => {
+    const fighter = {id: 9, player: 5, retired: false, stats: {}};
+    const fight = {attacker: 9, defender: null, details: {}, id: 4, reason: 'gold', victory: null};
+    const fighterActions = {listByFighterID: async () => []};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fights = {
+      findActiveByFighterID: async () => null,
+      findActiveByPlayerID: async (playerID) => (playerID === 5 ? fight : null),
+    };
+
+    const result = await getPlayerState({fighterActions, fights, fighters}, 5);
+
+    assert.deepEqual(result, {actions: [], fight, fighter});
+  });
+
   it('returns null when the player has no current fighter', async () => {
     const fighters = {findCurrentByPlayerID: async () => null};
 

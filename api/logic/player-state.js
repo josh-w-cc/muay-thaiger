@@ -25,15 +25,37 @@ export async function getPlayerState({fighterActions, fights, fighters}, playerI
   }
   const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
   const state = {actions, fighter: updatedFighter};
-  const fight = await getActiveFight(fights, updatedFighter.id);
+  const fight = await getActiveFight(fights, playerID, updatedFighter.id);
   if(fight) {
     state.fight = fight;
   }
   return state;
 }
 
-async function getActiveFight(fights, fighterID) {
-  if(!fighterID) {
+async function getActiveFight(fights, playerID, fighterID) {
+  if(!fights) {
+    return null;
+  }
+  const fightByPlayerID = await getActiveFightByPlayerID(fights, playerID);
+  if(fightByPlayerID !== undefined) {
+    return fightByPlayerID;
+  }
+  return getActiveFightByFighterID(fights, fighterID);
+}
+
+async function getActiveFightByPlayerID(fights, playerID) {
+  if(!fights.findActiveByPlayerID) {
+    return undefined;
+  }
+  const fight = await fights.findActiveByPlayerID(playerID);
+  if(fight || fights.isActiveByPlayerIDLoaded?.()) {
+    return fight;
+  }
+  return undefined;
+}
+
+function getActiveFightByFighterID(fights, fighterID) {
+  if(!fighterID || !fights.findActiveByFighterID) {
     return null;
   }
   return fights.findActiveByFighterID(fighterID);
