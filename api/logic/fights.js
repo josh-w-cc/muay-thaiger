@@ -57,8 +57,8 @@ function normalizeBotRank(rank) {
   return BOT_RANK_PATTERN.test(normalizedRank) ? normalizedRank : '';
 }
 
-function getBotRankScore(rank) {
-  return Array.from(rank).reduce(
+function getBotRankScore(normalizedRank) {
+  return Array.from(normalizedRank).reduce(
     (total, character) => total + BigInt(RANK_Z_CHAR_CODE - character.charCodeAt(0)),
     0n,
   );
