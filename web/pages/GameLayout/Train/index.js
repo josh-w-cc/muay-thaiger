@@ -1,7 +1,7 @@
 import Section from '@/components/primitive/Section.js';
 import useFighterStore from '@/data/fighter.js';
 
-import RegimenRows from './Regimen/RegimenRows.js';
+import Regimen from './Regimen/index.js';
 import TrainStat from './TrainStat.js';
 
 import css from './Train.module.css';
@@ -23,7 +23,7 @@ export default function Train() {
         <div className={css.stats}>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</div>
       </Section>
       <Section>
-        <RegimenRows fighter={fighter} />
+        <Regimen fighter={fighter} />
       </Section>
     </>
   );

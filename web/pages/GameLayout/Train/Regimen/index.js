@@ -6,7 +6,7 @@ import {isActionEnabled} from './skillButtons.js';
 
 import css from '../Train.module.css';
 
-export default function RegimenRows({fighter}) {
+export default function Regimen({fighter}) {
   const {actions} = useFighterActionsStore();
   const skillKeys = Object.keys(SKILL_DEFINITIONS).filter((skillKey) => SKILL_DEFINITIONS[skillKey].requires(fighter));
 
