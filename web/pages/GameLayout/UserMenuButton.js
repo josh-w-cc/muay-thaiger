@@ -1,5 +1,5 @@
 import {useNavigate} from 'react-router-dom';
-import {HiOutlineUserCircle} from 'react-icons/hi';
+import {IoPersonCircleOutline} from 'react-icons/io5';
 
 import Button from '@/components/Button.js';
 
@@ -16,7 +16,7 @@ export default function UserMenuButton() {
       onClick={() => navigate('/edit-user')}
       type="button"
     >
-      <HiOutlineUserCircle aria-hidden="true" className={css.userMenuIcon} size={24} />
+      <IoPersonCircleOutline aria-hidden="true" className={css.userMenuIcon} size={24} />
     </Button>
   );
 }
