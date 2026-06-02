@@ -22,41 +22,41 @@ export default function fights(db) {
 }
 
 function serializeFightCreate({attacker, defender, rank, reason}) {
-  const serializedAttacker = serializeParticipant(attacker);
-  const serializedDefender = serializeParticipant(defender);
-  if(!hasStats(serializedAttacker.details.stats)) {
-    throw new TypeError('invalid-fight-stats');
-  }
-
+  const details = serializeFightDetails(attacker, defender);
   return {
-    attacker: serializedAttacker.id,
-    defender: serializedDefender.id,
-    details: serializeFightDetails(serializedAttacker.details, serializedDefender.details),
+    attacker: attacker.id,
+    defender: defender?.id ?? null,
+    details,
     rank,
     reason,
   };
 }
 
-function serializeParticipant(participant) {
-  return {
-    details: serializeParticipantDetails(participant?.stats),
-    id: participant?.id ?? null,
-  };
-}
-
 function serializeFightDetails(attacker, defender) {
-  if(!hasStats(defender.stats)) {
-    return {attacker};
+  const serializedAttacker = serializeParticipantDetails(attacker);
+  if(!defender) {
+    return {attacker: serializedAttacker};
   }
 
-  return {attacker, defender};
+  return {
+    attacker: serializedAttacker,
+    defender: serializeParticipantDetails(defender),
+  };
 }
 
-function serializeParticipantDetails(stats) {
+function serializeParticipantDetails(participant) {
+  validateParticipantDetails(participant);
   return {
-    starting_stats: serializeStats(stats),
-    stats: serializeStats(stats),
+    race: participant.race,
+    starting_stats: serializeStats(participant.stats),
+    stats: serializeStats(participant.stats),
   };
+}
+
+function validateParticipantDetails(participant) {
+  if(!participant?.race || !hasStats(participant?.stats)) {
+    throw new TypeError('invalid-fight-stats');
+  }
 }
 
 function hasStats(stats) {
