@@ -633,7 +633,7 @@ describe('WebSocket /ws/connect', () => {
     const fighterActions = {
       listByFighterID: async () => {
         listCallCount += 1;
-        if(listCallCount > 2) {
+        if(listCallCount === 3) {
           return [];
         }
         return [{action: 1, id: 4}, {action: 2, id: 5}, {action: 1, id: 6}];
@@ -677,7 +677,7 @@ describe('WebSocket /ws/connect', () => {
     const fighterActions = {
       listByFighterID: async () => {
         listCallCount += 1;
-        if(listCallCount > 2) {
+        if(listCallCount === 3) {
           return [];
         }
         return [staleAction];
