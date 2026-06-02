@@ -5,7 +5,7 @@ import {down, up} from '../migrations/20260601120000_create_entities.js';
 
 
 describe('20260601120000_create_entities migration', () => {
-  it('creates entities with player-or-fighter ownership foreign keys', async () => {
+  it('creates entities with player or fighter ownership foreign keys', async () => {
     const calls = [];
     const knex = {
       raw: async (sql) => {
