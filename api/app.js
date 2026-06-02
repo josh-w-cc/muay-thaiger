@@ -2,7 +2,10 @@ import websocket from '@fastify/websocket';
 import Fastify from 'fastify';
 import 'shared/bigInt.js';
 
+import {loadFightStore} from './data/fight-store.js';
 import dbPlugin from './data/db.js';
+import fightersModel from './data/models/fighters.js';
+import fightsModel from './data/models/fights.js';
 import serveSPA from './plugins/serve-spa.js';
 import actionsRoutes from './routes/actions.js';
 import fightersRoutes from './routes/fighters.js';
@@ -17,6 +20,7 @@ export default async function build(opts = {}) {
   const app = Fastify(opts);
 
   await app.register(dbPlugin);
+  app.decorate('fightStore', await loadFightStore({fighters: fightersModel(app.db), fights: fightsModel(app.db)}));
   app.decorate('websocketConnections', new Set());
   await app.register(websocket);
   attachScheduler(app);

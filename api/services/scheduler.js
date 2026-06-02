@@ -6,7 +6,12 @@ import {applyOfflineTraining, syncPlayerState} from '../logic/player-state.js';
 
 export function attachScheduler(app) {
   const connections = app.websocketConnections;
-  const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), fights: fightsModel(app.db)};
+  const models = {
+    fighterActions: fighterActionsModel(app.db),
+    fighters: fightersModel(app.db),
+    fightStore: app.fightStore,
+    fights: fightsModel(app.db),
+  };
   const offlineTrainingScheduler = createOfflineTrainingScheduler(app.db, app.log);
   const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
 

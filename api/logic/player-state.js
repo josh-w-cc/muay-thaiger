@@ -1,5 +1,6 @@
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import fightersModel from '../data/models/fighters.js';
+import {getStoredFight} from '../data/fight-store.js';
 import {applyTraining} from './training.js';
 
 const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
@@ -18,21 +19,25 @@ export async function applyOfflineTraining(db, models = null) {
   }
 }
 
-export async function getPlayerState({fighterActions, fights, fighters}, playerID) {
+export async function getPlayerState({fighterActions, fightStore, fights, fighters}, playerID) {
   const fighter = await fighters.findCurrentByPlayerID(playerID);
   if(!fighter) {
     return null;
   }
   const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
   const state = {actions, fighter: updatedFighter};
-  const fight = await getActiveFight(fights, updatedFighter.id);
+  const fight = await getActiveFight({fightStore, fights}, playerID, updatedFighter.id);
   if(fight) {
     state.fight = fight;
   }
   return state;
 }
 
-async function getActiveFight(fights, fighterID) {
+async function getActiveFight({fightStore, fights}, playerID, fighterID) {
+  const storedFight = getStoredFight(fightStore, playerID);
+  if(storedFight) {
+    return storedFight;
+  }
   if(!fighterID) {
     return null;
   }

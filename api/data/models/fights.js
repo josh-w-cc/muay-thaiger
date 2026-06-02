@@ -13,6 +13,7 @@ export default function fights(db) {
   return {
     create: (fight) => create(serializeFightCreate(fight)),
     find: generateFindFn(db, 'fights'),
+    listActive: () => listActiveFights(db),
     findActiveByFighterID: (fighterID) => findActiveFightByFighterID(db, fighterID),
     list: generateListFn(db, 'fights', 'created_at'),
     remove: generateRemoveFn(db, 'fights'),
@@ -82,4 +83,10 @@ async function findActiveFightByFighterID(db, fighterID) {
     .whereRaw('(attacker = ? OR defender = ?)', [fighterID, fighterID])
     .orderBy('created_at', 'desc')
     .first();
+}
+
+async function listActiveFights(db) {
+  return db('fights')
+    .whereNull('victory')
+    .orderBy('created_at', 'desc');
 }

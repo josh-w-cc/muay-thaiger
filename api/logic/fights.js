@@ -1,17 +1,18 @@
 import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
+import {storeFight} from '../data/fight-store.js';
 import {createCommandError} from './command-errors.js';
 
 const BOT_RANK_STATS = {
   '': 100n,
 };
 
-export async function createFight({fighters, fights}, playerID, reason, rank = '') {
+export async function createFight({fighters, fightStore, fights}, playerID, reason, rank = '') {
   const normalizedReason = normalizeFightReason(reason);
   const normalizedRank = normalizeFightRank(rank);
   validateFightMessage(playerID, normalizedReason);
   const fighter = await getCurrentFighter(fighters, playerID);
-  return fights.create({
+  const fight = await fights.create({
     attacker: {
       id: fighter.id,
       stats: captureFightStats(fighter),
@@ -20,6 +21,8 @@ export async function createFight({fighters, fights}, playerID, reason, rank = '
     rank: normalizedRank,
     reason: normalizedReason,
   });
+  storeFight(fightStore, playerID, fight);
+  return fight;
 }
 
 function captureFightStats(fighter) {

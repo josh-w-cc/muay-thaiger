@@ -111,6 +111,18 @@ describe('createFight', () => {
     });
   });
 
+  it('stores a newly created fight by player id when a fight store is available', async () => {
+    const fight = {attacker: 9, id: 22, reason: 'gold', victory: null};
+    const fightStore = new Map();
+    const fighters = {findCurrentByPlayerID: async () => ({id: 9})};
+    const fights = {create: async () => fight};
+
+    const result = await createFight({fighters, fightStore, fights}, 7, 'gold');
+
+    assert.equal(result, fight);
+    assert.equal(fightStore.get(7), fight);
+  });
+
   it('throws invalid-fight-message when reason is invalid', async () => {
     const create = createCallTracker();
     const fighters = {findCurrentByPlayerID: async () => ({id: 9})};
