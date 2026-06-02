@@ -1,5 +1,5 @@
 import {useNavigate} from 'react-router-dom';
-import {PiUserCircleBold} from 'react-icons/pi';
+import {TbUserCircle} from 'react-icons/tb';
 
 import Button from '@/components/Button.js';
 
@@ -16,7 +16,7 @@ export default function UserMenuButton() {
       onClick={() => navigate('/edit-user')}
       type="button"
     >
-      <PiUserCircleBold aria-hidden="true" className={css.userMenuIcon} size={24} />
+      <TbUserCircle aria-hidden="true" className={css.userMenuIcon} size={24} />
     </Button>
   );
 }

@@ -29,8 +29,8 @@ const {action, addAction, createFighterActionCmd, fighter, removeAction, removeF
   };
 });
 
-const {piInfoBold} = vi.hoisted(() => ({
-  piInfoBold: vi.fn((props) => <svg data-testid="skill-info-icon" {...props} />),
+const {mockInfoIcon} = vi.hoisted(() => ({
+  mockInfoIcon: vi.fn((props) => <svg data-testid="skill-info-icon" {...props} />),
 }));
 
 const fighterActions = vi.hoisted(() => ({
@@ -75,8 +75,8 @@ vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFighterActionCmd: (...args) => createFighterActionCmd(...args),
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
 }));
-vi.mock('react-icons/pi', () => ({
-  PiInfoBold: piInfoBold,
+vi.mock('react-icons/tb', () => ({
+  TbInfoCircle: mockInfoIcon,
 }));
 
 describe('Train', () => {
@@ -151,10 +151,10 @@ describe('Train', () => {
     expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
   });
 
-  it('renders the Phosphor icon for skill info', () => {
+  it('renders the Tabler icon for skill info', () => {
     render(<Train />);
     expect(screen.getByTestId('skill-info-icon')).toBeInTheDocument();
-    expect(piInfoBold).toHaveBeenCalled();
+    expect(mockInfoIcon).toHaveBeenCalled();
   });
 
   it('shows gray progress bar for inactive skills', () => {
