@@ -56,16 +56,48 @@ describe('fights.findActiveByFighterID', () => {
 });
 
 describe('fights.create', () => {
-  it('inserts a fight and returns the created row', async () => {
-    const fight = {attacker: 1, defender: 2, reason: 'gold', details: {}, rank: 'bronze'};
+  it('inserts a fight with captured starting stats and returns the created row', async () => {
+    const fight = {
+      attacker: {id: 1, stats: {speed: 10n, vigor: 9}},
+      defender: {id: 2, stats: {speed: '8', vigor: 7n}},
+      rank: 'bronze',
+      reason: 'gold',
+    };
     const {calls, knex} = mockKnex({id: 1, victory: null, ...fight});
     const fights = fightsModel(knex);
 
     await fights.create(fight);
 
+    const expectedFightInsert = {
+      attacker: 1,
+      defender: 2,
+      details: {
+        attacker: {
+          starting_stats: {speed: '10', vigor: '9'},
+          stats: {speed: '10', vigor: '9'},
+        },
+        defender: {
+          starting_stats: {speed: '8', vigor: '7'},
+          stats: {speed: '8', vigor: '7'},
+        },
+      },
+      rank: 'bronze',
+      reason: 'gold',
+    };
+
     assert.deepEqual(calls[0], ['table', 'fights']);
-    assert.deepEqual(calls[1], ['insert', fight]);
+    assert.deepEqual(calls[1], ['insert', expectedFightInsert]);
     assert.deepEqual(calls[2], ['returning', '*']);
+  });
+
+  it('throws when attacker stats are missing', () => {
+    const {knex} = mockKnex({id: 1});
+    const fights = fightsModel(knex);
+
+    assert.throws(
+      () => fights.create({attacker: {id: 1}, reason: 'gold'}),
+      {name: 'TypeError', message: 'invalid-fight-stats'},
+    );
   });
 });
 

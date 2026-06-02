@@ -12,29 +12,23 @@ export async function createFight({fighters, fights}, playerID, reason, rank = '
   validateFightMessage(playerID, normalizedReason);
   const fighter = await getCurrentFighter(fighters, playerID);
   return fights.create({
-    attacker: fighter.id,
-    defender: null,
-    details: createFightDetails(fighter, normalizedReason, normalizedRank),
+    attacker: {
+      id: fighter.id,
+      stats: captureFightStats(fighter),
+    },
+    defender: normalizedReason === 'gold' ? {id: null, stats: createBotStats(normalizedRank)} : null,
     rank: normalizedRank,
     reason: normalizedReason,
   });
 }
 
-function createFightDetails(fighter, reason, rank) {
-  const attackerStats = captureStartingStats(fighter);
-  return {
-    attacker: {starting_stats: attackerStats},
-    ...(reason === 'gold' ? {defender: {starting_stats: createBotStartingStats(rank)}} : {}),
-  };
-}
-
-function captureStartingStats(fighter) {
+function captureFightStats(fighter) {
   return Object.fromEntries(
     FIGHTER_STAT_KEYS.map((stat) => [stat, (fighter[stat] ?? fighter.stats?.[stat] ?? 0).toString()]),
   );
 }
 
-function createBotStartingStats(rank) {
+function createBotStats(rank) {
   const baseStat = BOT_RANK_STATS[rank] ?? BOT_RANK_STATS[''];
   return Object.fromEntries(
     FIGHTER_STAT_KEYS.map((stat) => [stat, baseStat.toString()]),
