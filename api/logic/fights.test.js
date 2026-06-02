@@ -118,7 +118,7 @@ describe('createFight', () => {
 
   it('treats Z rank as stronger than ZZ for gold bots', async () => {
     const create = createCallTracker();
-    const fighter = {id: 9};
+    const fighter = {id: 9, race: 2};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 
