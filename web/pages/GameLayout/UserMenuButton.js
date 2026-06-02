@@ -1,5 +1,5 @@
 import {useNavigate} from 'react-router-dom';
-import {FaCircleUser} from 'react-icons/fa6';
+import {AiOutlineUser} from 'react-icons/ai';
 
 import Button from '@/components/Button.js';
 
@@ -16,7 +16,7 @@ export default function UserMenuButton() {
       onClick={() => navigate('/edit-user')}
       type="button"
     >
-      <FaCircleUser aria-hidden="true" className={css.userMenuIcon} size={24} />
+      <AiOutlineUser aria-hidden="true" className={css.userMenuIcon} size={24} />
     </Button>
   );
 }

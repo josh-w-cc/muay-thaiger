@@ -10,8 +10,8 @@ vi.mock('react-router-dom', () => ({
   useNavigate: () => navigate,
 }));
 
-vi.mock('react-icons/fa6', () => ({
-  FaCircleUser: (props) => <svg data-testid="user-menu-icon" {...props} />,
+vi.mock('react-icons/ai', () => ({
+  AiOutlineUser: (props) => <svg data-testid="user-menu-icon" {...props} />,
 }));
 
 describe('UserMenuButton', () => {
