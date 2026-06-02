@@ -437,7 +437,7 @@ describe('WebSocket /ws/connect', () => {
         defender: null,
         details: {
           attacker: {
-            starting_stats: {
+            stats: {
               agility: '0',
               anima: '11',
               constitution: '12',
@@ -452,7 +452,7 @@ describe('WebSocket /ws/connect', () => {
             },
           },
           defender: {
-            starting_stats: {
+            stats: {
               agility: '100',
               anima: '100',
               constitution: '100',

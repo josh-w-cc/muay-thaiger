@@ -56,15 +56,38 @@ describe('fights.findActiveByFighterID', () => {
 });
 
 describe('fights.create', () => {
-  it('inserts a fight and returns the created row', async () => {
-    const fight = {attacker: 1, defender: 2, reason: 'gold', details: {}, rank: 'bronze'};
+  it('inserts a fight with captured starting stats and returns the created row', async () => {
+    const fight = {
+      attacker: 1,
+      defender: 2,
+      details: {
+        attacker: {stats: {speed: 10n, vigor: 9}},
+        defender: {stats: {speed: '8', vigor: 7n}},
+      },
+      rank: 'bronze',
+      reason: 'gold',
+    };
     const {calls, knex} = mockKnex({id: 1, victory: null, ...fight});
     const fights = fightsModel(knex);
 
     await fights.create(fight);
 
+    const expectedFight = {
+      ...fight,
+      details: {
+        attacker: {
+          starting_stats: {speed: '10', vigor: '9'},
+          stats: {speed: '10', vigor: '9'},
+        },
+        defender: {
+          starting_stats: {speed: '8', vigor: '7'},
+          stats: {speed: '8', vigor: '7'},
+        },
+      },
+    };
+
     assert.deepEqual(calls[0], ['table', 'fights']);
-    assert.deepEqual(calls[1], ['insert', fight]);
+    assert.deepEqual(calls[1], ['insert', expectedFight]);
     assert.deepEqual(calls[2], ['returning', '*']);
   });
 });

@@ -21,20 +21,20 @@ export async function createFight({fighters, fights}, playerID, reason, rank = '
 }
 
 function createFightDetails(fighter, reason, rank) {
-  const attackerStats = captureStartingStats(fighter);
+  const attackerStats = captureFightStats(fighter);
   return {
-    attacker: {starting_stats: attackerStats},
-    ...(reason === 'gold' ? {defender: {starting_stats: createBotStartingStats(rank)}} : {}),
+    attacker: {stats: attackerStats},
+    ...(reason === 'gold' ? {defender: {stats: createBotStats(rank)}} : {}),
   };
 }
 
-function captureStartingStats(fighter) {
+function captureFightStats(fighter) {
   return Object.fromEntries(
     FIGHTER_STAT_KEYS.map((stat) => [stat, (fighter[stat] ?? fighter.stats?.[stat] ?? 0).toString()]),
   );
 }
 
-function createBotStartingStats(rank) {
+function createBotStats(rank) {
   const baseStat = BOT_RANK_STATS[rank] ?? BOT_RANK_STATS[''];
   return Object.fromEntries(
     FIGHTER_STAT_KEYS.map((stat) => [stat, baseStat.toString()]),

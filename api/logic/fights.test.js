@@ -30,7 +30,7 @@ describe('createFight', () => {
       defender: null,
       details: {
         attacker: {
-          starting_stats: {
+          stats: {
             agility: '0',
             anima: '11',
             constitution: '12',
@@ -45,7 +45,7 @@ describe('createFight', () => {
           },
         },
         defender: {
-          starting_stats: {
+          stats: {
             agility: '100',
             anima: '100',
             constitution: '100',
@@ -98,7 +98,7 @@ describe('createFight', () => {
 
     await createFight({fighters, fights}, 1, 'gold');
 
-    assert.deepEqual(create.calls[0][0].details.attacker.starting_stats, {
+    assert.deepEqual(create.calls[0][0].details.attacker.stats, {
       agility: '0',
       anima: '1',
       constitution: '2',
