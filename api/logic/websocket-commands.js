@@ -1,7 +1,7 @@
 import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
 import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
-import {createFight} from './fights.js';
+import {createFight} from './fights/index.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 
@@ -46,6 +46,7 @@ async function stop(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-stop-message');
   }
+  await applyCurrentTraining(models, socket.player.id);
   const fighterAction = await unregisterFighterAction(models, message, socket.player.id);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'stop'}}));
   await sendCurrentPlayerState(models, socket);

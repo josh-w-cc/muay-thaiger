@@ -11,7 +11,7 @@ describe('SkillInfoButton', () => {
     vi.clearAllMocks();
   });
 
-  it('uses its own CSS module for the button and tooltip', async () => {
+  it('uses its own CSS module for the button and tooltip', () => {
     render(
       <SkillInfoButton
         description="Keep your guard up."
@@ -29,6 +29,7 @@ describe('SkillInfoButton', () => {
 
   it('shows and hides the tooltip on hover', async () => {
     const user = userEvent.setup();
+
     function Wrapper() {
       const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
