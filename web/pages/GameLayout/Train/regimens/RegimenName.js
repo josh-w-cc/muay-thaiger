@@ -1,6 +1,6 @@
 import SkillInfoButton from './SkillInfoButton.js';
 
-import css from './Train.module.css';
+import css from '../Train.module.css';
 
 export default function RegimenName({setTooltipOpen, skill, skillKey, tooltipOpen}) {
   return (

@@ -4,7 +4,7 @@ import useFighterActionsStore from '@/data/fighterActions.js';
 import RegimenRow from './RegimenRow.js';
 import {isActionEnabled} from './skillButtons.js';
 
-import css from './Train.module.css';
+import css from '../Train.module.css';
 
 export default function RegimenRows({fighter}) {
   const {actions} = useFighterActionsStore();

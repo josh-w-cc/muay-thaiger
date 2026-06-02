@@ -3,7 +3,7 @@ import Button from '@/components/Button.js';
 
 import {onActionButtonClick} from './skillButtons.js';
 
-import css from './Train.module.css';
+import css from '../Train.module.css';
 
 export default function RegimenActionButton({actionEnabled, skillKey}) {
   return (
