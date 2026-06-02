@@ -71,8 +71,8 @@ vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFighterActionCmd: (...args) => createFighterActionCmd(...args),
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
 }));
-vi.mock('react-icons/ai', () => ({
-  AiOutlineInfoCircle: (props) => <svg data-testid="skill-info-icon" {...props} />,
+vi.mock('react-icons/md', () => ({
+  MdInfoOutline: (props) => <svg data-testid="skill-info-icon" {...props} />,
 }));
 
 describe('Train', () => {
@@ -147,7 +147,7 @@ describe('Train', () => {
     expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
   });
 
-  it('renders the Ant Design info icon for skill info', () => {
+  it('renders the Material icon for skill info', () => {
     render(<Train />);
     expect(screen.getByTestId('skill-info-icon')).toBeInTheDocument();
   });
