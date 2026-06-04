@@ -576,6 +576,39 @@ describe('WebSocket /ws/connect', () => {
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-fight-message'});
   });
 
+  it('sends player state after responding to fight command for authenticated sockets', async () => {
+    const random = Math.random;
+    Math.random = () => 0.5;
+    try {
+      const send = createCallTracker();
+      const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+      const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
+      const createdFight = {attacker: 9, defender: null, details: {attacker: {}, defender: {}}, id: 4, reason: 'gold'};
+      const fighterActions = {listByFighterID: async () => []};
+      const fighterMoves = {listEnabledByFighterID: async () => []};
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fights = {create: async () => createdFight};
+      const fightJudge = {attach: async () => null, get: (playerID) => (playerID === 1 ? createdFight : null)};
+
+      await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighterActions, fighterMoves, fighters, fights, fightJudge});
+
+      assert.equal(send.calls.length, 2);
+      assert.deepEqual(JSON.parse(send.calls[0][0]), {
+        cmd: 'ok',
+        metadata: {fight: createdFight, responded_cmd: 'fight'},
+      });
+      assert.deepEqual(JSON.parse(send.calls[1][0]), {
+        actions: [],
+        cmd: 'player_state',
+        fight: createdFight,
+        fighter,
+      });
+    }
+    finally {
+      Math.random = random;
+    }
+  });
+
   it('does not respond to idle messages when the player has no current fighter', async () => {
     const send = createCallTracker();
     const create = createCallTracker();
