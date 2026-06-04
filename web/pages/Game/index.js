@@ -1,4 +1,4 @@
-import {redirect} from 'react-router-dom';
+import {Navigate, redirect} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 
 import {getHasConnectionError} from '@/actions/websockets/index.js';
@@ -20,7 +20,7 @@ export default function Game() {
   }, []);
 
   if(hasConnectionError) {
-    return <p role="alert">Failed to connect to server.</p>;
+    return <Navigate replace to="/maintenance" />;
   }
 
   return <FighterSelect />;

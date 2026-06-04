@@ -38,12 +38,15 @@ describe('router', () => {
     const {default: routes} = await import('./router.js');
     const children = routes[0].children;
     const indexRoute = children.find((route) => route.index);
+    const maintenanceRoute = children.find((route) => route.path === 'maintenance');
     const editUserRoute = children.find((route) => route.path === 'edit-user');
     const gameLayoutRoute = children.find((route) => route.children);
 
     expect(indexRoute.index).toBe(true);
     expect(indexRoute.element).toBeDefined();
     expect(indexRoute.loader).toEqual(expect.any(Function));
+    expect(maintenanceRoute.path).toBe('maintenance');
+    expect(maintenanceRoute.element).toBeDefined();
     expect(editUserRoute.path).toBe('edit-user');
     expect(editUserRoute.lazy).toEqual(expect.any(Function));
     expect(gameLayoutRoute.children.map(({path}) => path)).toEqual([

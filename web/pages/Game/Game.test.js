@@ -195,7 +195,7 @@ describe('Game', () => {
     expect(socketURL.protocol).toBe('ws:');
   });
 
-  it('renders a websocket connection error instead of fighter select when socket connection fails', async () => {
+  it('redirects to the maintenance page when socket connection fails', async () => {
     const gameModule = await import('./index.js');
 
     const {unmount} = renderGame({gameModule});
@@ -204,7 +204,8 @@ describe('Game', () => {
       socket.onerror(new Event('error'));
     });
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Failed to connect to server.');
+    expect(await screen.findByRole('heading', {name: 'Maintenance'})).toBeInTheDocument();
+    expect(screen.getByText('Failed to connect to server.')).toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Fighter Select'})).not.toBeInTheDocument();
     unmount();
   });
@@ -498,6 +499,15 @@ function renderGame({gameModule, initialPath = '/'}) {
       {
         children: [
           {index: true, element: <Game />, loader: fighterSelectLoader},
+          {
+            element: (
+              <div>
+                <h1>Maintenance</h1>
+                <p>Failed to connect to server.</p>
+              </div>
+            ),
+            path: 'maintenance',
+          },
           {element: <EditUser />, loader: editUserLoader, path: 'edit-user'},
           {
             children: [
