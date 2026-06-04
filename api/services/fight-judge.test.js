@@ -68,10 +68,11 @@ describe('FightJudge.attach', () => {
 
     await judge.attach(twoPlayerFighters, fight);
 
-    assert.deepEqual(judge.get(1).startingStats, {attacker: attackerStats, defender: defenderStats});
+    assert.deepEqual(judge.get(1).attacker.startingStats, attackerStats);
+    assert.deepEqual(judge.get(1).defender.startingStats, defenderStats);
   });
 
-  it('omits defender key from startingStats when fight has no defender details', async () => {
+  it('omits defender from stored fight when fight has no defender details', async () => {
     const judge = new FightJudge();
     const attackerStats = {speed: 10n, vigor: 5n};
     const fight = {
@@ -89,7 +90,8 @@ describe('FightJudge.attach', () => {
 
     await judge.attach(singlePlayerFighters, fight);
 
-    assert.deepEqual(judge.get(1).startingStats, {attacker: attackerStats});
+    assert.deepEqual(judge.get(1).attacker.startingStats, attackerStats);
+    assert.equal('defender' in judge.get(1), false);
   });
 });
 

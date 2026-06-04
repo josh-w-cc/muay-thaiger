@@ -16,15 +16,16 @@ export class FightJudge {
 
   async attach(fighters, fight) {
     const playerIDs = await getFightPlayerIDs(fighters, fight);
-    const fightWithStartingStats = {
-      ...fight,
-      startingStats: captureStartingStats(fight),
+    const {attacker: _attacker, defender: _defender, ...rest} = fight;
+    const enrichedFight = {
+      ...rest,
+      ...captureStartingStats(fight),
     };
     for(const playerID of playerIDs) {
       if(this.#fightsByPlayerID.has(playerID)) {
         continue;
       }
-      this.#fightsByPlayerID.set(playerID, fightWithStartingStats);
+      this.#fightsByPlayerID.set(playerID, enrichedFight);
     }
   }
 
@@ -53,9 +54,9 @@ async function getFightPlayerIDs(fighters, fight) {
 }
 
 function captureStartingStats(fight) {
-  const stats = {attacker: fight.details.attacker.stats};
+  const result = {attacker: {startingStats: fight.details.attacker.stats}};
   if(fight.details.defender) {
-    stats.defender = fight.details.defender.stats;
+    result.defender = {startingStats: fight.details.defender.stats};
   }
-  return stats;
+  return result;
 }
