@@ -8,13 +8,13 @@ import {attachFightJudge, FightJudge} from './fight-judge.js';
 
 function validStats() {
   return {
-    agility: '11',
-    constitution: '7',
-    durability: '13',
-    reach: '17',
-    skill: '19',
-    stamina: '23',
-    strength: '29',
+    agility: 11n,
+    constitution: 7n,
+    durability: 13n,
+    reach: 17n,
+    skill: 19n,
+    stamina: 23n,
+    strength: 29n,
   };
 }
 
@@ -97,25 +97,25 @@ describe('FightJudge.get', () => {
         attacker: {
           starting_stats: {agility: '99', stamina: '99'},
           stats: {
-            agility: '11',
-            constitution: '7',
-            durability: '13',
-            reach: '17',
-            skill: '19',
-            stamina: '23',
-            strength: '29',
+            agility: 11n,
+            constitution: 7n,
+            durability: 13n,
+            reach: 17n,
+            skill: 19n,
+            stamina: 23n,
+            strength: 29n,
           },
         },
         defender: {
           starting_stats: {agility: '99', stamina: '99'},
           stats: {
-            agility: '31',
-            constitution: '37',
-            durability: '41',
-            reach: '43',
-            skill: '47',
-            stamina: '53',
-            strength: '59',
+            agility: 31n,
+            constitution: 37n,
+            durability: 41n,
+            reach: 43n,
+            skill: 47n,
+            stamina: 53n,
+            strength: 59n,
           },
         },
       },
@@ -163,13 +163,13 @@ describe('FightJudge.get', () => {
             strength: '200',
           },
           stats: {
-            agility: '10',
-            constitution: '11',
-            durability: '12',
-            reach: '13',
-            skill: '14',
-            stamina: '15',
-            strength: '16',
+            agility: 10n,
+            constitution: 11n,
+            durability: 12n,
+            reach: 13n,
+            skill: 14n,
+            stamina: 15n,
+            strength: 16n,
           },
         },
       },
@@ -185,8 +185,8 @@ describe('FightJudge.get', () => {
     await judge.attach(fighters, fight);
 
     const firstAttack = judge.get(1).details.attacker.calculated_stats.attack;
-    fight.details.attacker.stats.skill = '60';
-    fight.details.attacker.stats.stamina = '70';
+    fight.details.attacker.stats.skill = 60n;
+    fight.details.attacker.stats.stamina = 70n;
     const secondAttack = judge.get(1).details.attacker.calculated_stats.attack;
 
     assert.notEqual(firstAttack, secondAttack);

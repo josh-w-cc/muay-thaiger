@@ -98,5 +98,8 @@ function parseBigIntStat(stats, statName) {
   if(stats[statName] === null || stats[statName] === undefined) {
     throw new TypeError('invalid-fight-stats');
   }
-  return BigInt(stats[statName]);
+  if(typeof stats[statName] !== 'bigint') {
+    throw new TypeError('invalid-fight-stats');
+  }
+  return stats[statName];
 }
