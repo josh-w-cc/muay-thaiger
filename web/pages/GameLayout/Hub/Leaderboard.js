@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import css from './Leaderboard.module.css';
 
 const LEADERBOARD = [
@@ -59,7 +60,7 @@ function LeaderboardHeader({columns}) {
   return (
     <thead>
       <tr>
-        {columns.map(({className, key, label}) => <th className={className} key={key}>{label}</th>)}
+        {columns.map(({className, key, label}) => <th className={cx(css.leaderboardTh, className)} key={key}>{label}</th>)}
       </tr>
     </thead>
   );

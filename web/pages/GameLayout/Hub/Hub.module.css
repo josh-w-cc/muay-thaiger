@@ -41,8 +41,5 @@
 }
 
 .outcome {
-  color: var(--color-gold);
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
+  composes: goldLabelBase from '../../../components/primitive/css-modules/gold-label-base.module.css';
 }
