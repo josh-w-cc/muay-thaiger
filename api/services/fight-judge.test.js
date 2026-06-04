@@ -6,6 +6,18 @@ import {mockKnexMulti} from '../data/utils/mock-knex.js';
 import {attachFightJudge, FightJudge} from './fight-judge.js';
 
 
+function validStats() {
+  return {
+    agility: '11',
+    constitution: '7',
+    durability: '13',
+    reach: '17',
+    skill: '19',
+    stamina: '23',
+    strength: '29',
+  };
+}
+
 describe('FightJudge.load', () => {
   it('stores unresolved fights by player ID and discards duplicate player entries', async () => {
     const judge = new FightJudge();
@@ -208,15 +220,7 @@ describe('FightJudge.get', () => {
       defender: 12,
       details: {
         attacker: {
-          stats: {
-            agility: '11',
-            constitution: '7',
-            durability: '13',
-            reach: '17',
-            skill: '19',
-            stamina: '23',
-            strength: '29',
-          },
+          stats: validStats(),
         },
         defender: {},
       },
@@ -262,15 +266,3 @@ describe('attachFightJudge', () => {
     await app.close();
   });
 });
-
-function validStats() {
-  return {
-    agility: '11',
-    constitution: '7',
-    durability: '13',
-    reach: '17',
-    skill: '19',
-    stamina: '23',
-    strength: '29',
-  };
-}

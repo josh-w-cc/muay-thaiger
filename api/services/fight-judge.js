@@ -95,7 +95,7 @@ function calculateStats(stats) {
 }
 
 function parseBigIntStat(stats, statName) {
-  if(stats[statName] == null) {
+  if(stats[statName] === null || stats[statName] === undefined) {
     throw new TypeError('invalid-fight-stats');
   }
   return BigInt(stats[statName]);
