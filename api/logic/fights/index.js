@@ -19,9 +19,10 @@ export async function createFight({fighterMoves, fighters, fights, fightJudge}, 
 }
 
 async function captureFightParticipant(fighterMoves, fighter) {
+  const moves = await captureFightMoves(fighterMoves, fighter.id);
   return {
     id: fighter.id,
-    moves: await captureFightMoves(fighterMoves, fighter.id),
+    moves,
     race: fighter.race,
     stats: captureFightStats(fighter),
   };
@@ -34,8 +35,9 @@ function captureFightStats(fighter) {
 }
 
 async function captureFightMoves(fighterMoves, fighterID) {
+  const lastUsed = Math.floor(Date.now() / 1000);
   const moves = await fighterMoves.listEnabledByFighterID(fighterID);
-  return moves.map(({move}) => move);
+  return moves.map(({move}) => ({id: move, lastUsed}));
 }
 
 function createGoldFightDefender(reason, rank) {
