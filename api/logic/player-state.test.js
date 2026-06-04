@@ -79,6 +79,28 @@ describe('getPlayerState', () => {
     assert.deepEqual(result, {actions: [], fight, fighter});
   });
 
+  it('includes fight when player id is 0', async () => {
+    const fighter = {id: 9, player: 0, retired: false, stats: {}};
+    const fight = {attacker: 9, defender: null, details: {}, id: 3, reason: 'gold', victory: null};
+    const fighterActions = {listByFighterID: async () => []};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fightJudge = {get: (playerID) => (playerID === 0 ? fight : null)};
+
+    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 0);
+
+    assert.deepEqual(result, {actions: [], fight, fighter});
+  });
+
+  it('returns state without fight when fightJudge.get is missing', async () => {
+    const fighter = {id: 9, player: 5, retired: false, stats: {}};
+    const fighterActions = {listByFighterID: async () => []};
+    const fighters = {findCurrentByPlayerID: async () => fighter};
+
+    const result = await getPlayerState({fighterActions, fightJudge: {}, fighters}, 5);
+
+    assert.deepEqual(result, {actions: [], fighter});
+  });
+
   it('returns null when the player has no current fighter', async () => {
     const fighters = {findCurrentByPlayerID: async () => null};
 
