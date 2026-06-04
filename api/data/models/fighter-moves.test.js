@@ -19,3 +19,17 @@ describe('fighterMoves.listEnabledByFighterID', () => {
     assert.deepEqual(calls[2], ['orderBy', 'move']);
   });
 });
+
+describe('fighterMoves.touchLastUsedByFighterID', () => {
+  it('updates last_used to now for all enabled moves of the fighter', async () => {
+    const {calls, knex} = mockKnex([]);
+    knex.fn = {now: () => 'NOW()'};
+    const fighterMoves = fighterMovesModel(knex);
+
+    await fighterMoves.touchLastUsedByFighterID(7);
+
+    assert.deepEqual(calls[0], ['table', 'fighter_moves']);
+    assert.deepEqual(calls[1], ['where', {enabled: true, fighter: 7}]);
+    assert.deepEqual(calls[2], ['update', {last_used: 'NOW()'}]);
+  });
+});

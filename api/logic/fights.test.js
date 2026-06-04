@@ -27,6 +27,7 @@ describe('createFight', () => {
     };
     const fighterMoves = {
       listEnabledByFighterID: async () => [{move: MOVE_IDS.wildPunch}, {move: MOVE_IDS.wildKick}],
+      touchLastUsedByFighterID: async () => {},
     };
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {
@@ -88,6 +89,7 @@ describe('createFight', () => {
     const fighter = {id: 9, race: 2};
     const fighterMoves = {
       listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
+      touchLastUsedByFighterID: async () => {},
     };
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
@@ -139,7 +141,7 @@ describe('createFight', () => {
   it('treats Z rank as stronger than ZZ for gold bots', async () => {
     const create = createCallTracker();
     const fighter = {id: 9, race: 2};
-    const fighterMoves = {listEnabledByFighterID: async () => []};
+    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 
@@ -155,6 +157,7 @@ describe('createFight', () => {
     const fighter = {id: 9, race: 2};
     const fighterMoves = {
       listEnabledByFighterID: async () => [{move: MOVE_IDS.wildPunch}],
+      touchLastUsedByFighterID: async () => {},
     };
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {
@@ -178,7 +181,7 @@ describe('createFight', () => {
     const attach = createCallTracker();
     const fighter = {id: 9};
     const createdFight = {attacker: 9, defender: null, id: 4, reason: 'rank'};
-    const fighterMoves = {listEnabledByFighterID: async () => []};
+    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create: async () => createdFight};
     const fightJudge = {attach};
@@ -209,6 +212,7 @@ describe('createFight', () => {
     };
     const fighterMoves = {
       listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
+      touchLastUsedByFighterID: async () => {},
     };
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {
@@ -242,7 +246,7 @@ describe('createFight', () => {
   it('captures no attacker moves when the fighter has no enabled moves', async () => {
     const create = createCallTracker();
     const fighter = {id: 9, race: 2};
-    const fighterMoves = {listEnabledByFighterID: async () => []};
+    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 
@@ -254,7 +258,7 @@ describe('createFight', () => {
   it('treats ZZ rank the same as an unranked gold bot', async () => {
     const create = createCallTracker();
     const fighter = {id: 9};
-    const fighterMoves = {listEnabledByFighterID: async () => []};
+    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 
@@ -278,7 +282,7 @@ describe('createFight', () => {
   it('treats unsupported multi-character ranks the same as an unranked gold bot', async () => {
     const create = createCallTracker();
     const fighter = {id: 9};
-    const fighterMoves = {listEnabledByFighterID: async () => []};
+    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 

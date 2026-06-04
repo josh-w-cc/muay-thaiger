@@ -453,6 +453,7 @@ describe('WebSocket /ws/connect', () => {
       const createdFight = {attacker: 9, defender: null, details: {attacker: {}, defender: {}}, id: 4, reason: 'gold'};
       const fighterMoves = {
         listEnabledByFighterID: async () => [{move: MOVE_IDS.wildPunch}, {move: MOVE_IDS.wildKick}],
+        touchLastUsedByFighterID: async () => {},
       };
       const fighters = {findCurrentByPlayerID: async () => fighter};
       const fights = {
@@ -540,6 +541,7 @@ describe('WebSocket /ws/connect', () => {
     const createdFight = {attacker: 9, defender: null, details: {}, id: 5, reason: 'rank'};
     const fighterMoves = {
       listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
+      touchLastUsedByFighterID: async () => {},
     };
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {

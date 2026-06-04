@@ -19,9 +19,11 @@ export async function createFight({fighterMoves, fighters, fights, fightJudge}, 
 }
 
 async function captureFightParticipant(fighterMoves, fighter) {
+  const moves = await captureFightMoves(fighterMoves, fighter.id);
+  await fighterMoves.touchLastUsedByFighterID(fighter.id);
   return {
     id: fighter.id,
-    moves: await captureFightMoves(fighterMoves, fighter.id),
+    moves,
     race: fighter.race,
     stats: captureFightStats(fighter),
   };
