@@ -5,6 +5,9 @@ const {loadPlayerToken, redirect} = vi.hoisted(() => ({
   loadPlayerToken: vi.fn(),
   redirect: vi.fn(() => 'redirected'),
 }));
+const {loadMoves} = vi.hoisted(() => ({
+  loadMoves: vi.fn(),
+}));
 
 vi.mock('react-router-dom', () => ({
   Outlet: () => <div data-testid="outlet" />,
@@ -14,6 +17,9 @@ vi.mock('react-router-dom', () => ({
 vi.mock('@/actions/websockets/state/token.js', () => ({
   loadPlayerToken,
 }));
+vi.mock('@/data/movesLoader.js', () => ({
+  default: (...args) => loadMoves(...args),
+}));
 
 vi.mock('./Header.js', () => ({
   default: () => <div data-testid="header" />,
@@ -22,6 +28,7 @@ vi.mock('./Header.js', () => ({
 describe('GameLayout', () => {
   afterEach(() => {
     vi.clearAllMocks();
+    loadMoves.mockResolvedValue([]);
   });
 
   it('renders the header above the route outlet inside the shared page wrapper', async () => {
@@ -45,18 +52,21 @@ describe('GameLayout', () => {
     const result = await loader();
 
     expect(loadPlayerToken).toHaveBeenCalledTimes(1);
+    expect(loadMoves).not.toHaveBeenCalled();
     expect(redirect).toHaveBeenCalledWith('/');
     expect(result).toBe('redirected');
   });
 
   it('returns null when a player token exists', async () => {
     loadPlayerToken.mockReturnValue(true);
+    loadMoves.mockResolvedValue([{id: 1, name: 'Wild Punch'}]);
     const {loader} = await import('./index.js');
 
     const result = await loader();
 
     expect(loadPlayerToken).toHaveBeenCalledTimes(1);
     expect(redirect).not.toHaveBeenCalled();
+    expect(loadMoves).toHaveBeenCalledTimes(1);
     expect(result).toBeNull();
   });
 });
