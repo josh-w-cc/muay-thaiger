@@ -13,7 +13,7 @@ const RANK_Z_CHAR_CODE = 'Z'.charCodeAt(0);
 export function createBot(rank) {
   return {
     id: null,
-    moves: BOT_MOVE_IDS,
+    moves: BOT_MOVE_IDS.map((id) => ({id, lastUsed: null})),
     race: BOT_RACE,
     stats: createBotStats(rank),
   };
