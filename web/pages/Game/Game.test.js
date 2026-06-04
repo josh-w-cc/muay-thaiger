@@ -131,6 +131,7 @@ describe('Game', () => {
 
     expect(response.headers.get('Location')).toBe('/hub');
     expect(response.status).toBe(302);
+    expect(fetchJSONMock).not.toHaveBeenCalled();
   });
 
   it('loader fetches races for fighter select', async () => {

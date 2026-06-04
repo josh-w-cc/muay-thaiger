@@ -39,7 +39,7 @@ async function registerRoutes(app) {
   await app.register(fightersRoutes, {prefix: '/api'});
   await app.register(healthRoutes);
   await app.register(movesRoutes, {prefix: '/api'});
-  await app.register(websocketRoutes, {prefix: '/ws'});
   await app.register(playersRoutes, {prefix: '/api'});
   await app.register(raceRoutes, {prefix: '/api'});
+  await app.register(websocketRoutes, {prefix: '/ws'});
 }

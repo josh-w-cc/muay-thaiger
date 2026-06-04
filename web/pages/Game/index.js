@@ -12,10 +12,10 @@ export default function Game() {
 }
 
 export async function fighterSelectLoader() {
-  await loadMoves();
   if(hasPlayerToken()) {
     return redirect('/hub');
   }
+  await loadMoves();
   return loadRaces();
 }
 
