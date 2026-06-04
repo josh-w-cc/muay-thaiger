@@ -1,6 +1,11 @@
 import 'shared/bigInt.js';
 
 const PARTICIPANT_STAT_KEYS = ['agility', 'constitution', 'durability', 'reach', 'skill', 'stamina', 'strength'];
+const BIGINT_CONVERTERS = {
+  bigint: (value) => value,
+  number: (value) => (Number.isInteger(value) ? BigInt(value) : 0n),
+  string: (value) => (/^-?\d+$/.test(value) ? BigInt(value) : 0n),
+};
 
 export function calculateParticipantStats(participant) {
   const agility = getParticipantStat(participant, 'agility');
@@ -49,10 +54,5 @@ function readParticipantStat(participant, stat) {
 }
 
 function toBigInt(value) {
-  try {
-    return BigInt(value ?? 0);
-  }
-  catch {
-    return 0n;
-  }
+  return BIGINT_CONVERTERS[typeof value]?.(value) ?? 0n;
 }
