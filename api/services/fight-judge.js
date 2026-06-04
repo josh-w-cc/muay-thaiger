@@ -58,16 +58,20 @@ function applyCalculatedStats(fight) {
   const attacker = fight?.details?.attacker;
   const defender = fight?.details?.defender;
 
-  applyCalculatedStatsToParticipant(attacker, true);
-  applyCalculatedStatsToParticipant(defender, false);
+  applyCalculatedStatsToParticipant(attacker);
+  applyCalculatedStatsToDefender(defender);
 }
 
-function applyCalculatedStatsToParticipant(participant, required) {
-  if(!participant) {
-    if(required) {
-      throw new TypeError('invalid-fight-stats');
-    }
+function applyCalculatedStatsToDefender(defender) {
+  if(!defender) {
     return;
+  }
+  applyCalculatedStatsToParticipant(defender);
+}
+
+function applyCalculatedStatsToParticipant(participant) {
+  if(!participant) {
+    throw new TypeError('invalid-fight-stats');
   }
 
   if(!participant.stats) {
