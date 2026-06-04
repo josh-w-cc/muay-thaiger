@@ -6,8 +6,8 @@ import {
   generateListFn,
   generateRemoveFn,
   generateUpdateFn,
-} from '../utils/crud.js';
-import {castFight, castFightRows} from '../utils/fights.js';
+} from '../../utils/crud.js';
+import {castFight, castFightRows} from './fights.js';
 
 
 export default function fights(db) {
