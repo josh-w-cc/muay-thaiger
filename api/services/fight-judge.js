@@ -1,6 +1,6 @@
 import 'shared/bigInt.js';
 import fightersModel from '../data/models/fighters.js';
-import fightsModel from '../data/models/fights.js';
+import fightsModel from '../data/models/fights/index.js';
 
 
 export class FightJudge {

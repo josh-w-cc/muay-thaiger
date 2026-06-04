@@ -6,20 +6,24 @@ import {
   generateListFn,
   generateRemoveFn,
   generateUpdateFn,
-} from '../utils/crud.js';
+} from '../../utils/crud.js';
+import {castFight, castFightRows} from './fights.js';
 
 
 export default function fights(db) {
   const create = generateCreateFn(db, 'fights');
+  const find = generateFindFn(db, 'fights');
+  const list = generateListFn(db, 'fights', 'created_at');
+  const update = generateUpdateFn(db, 'fights');
 
   return {
-    create: (fight) => create(serializeFightCreate(fight)),
-    find: generateFindFn(db, 'fights'),
+    create: async (fight) => castFight(await create(serializeFightCreate(fight))),
+    find: async (id) => castFight(await find(id)),
     findActiveByFighterID: (fighterID) => findActiveFightByFighterID(db, fighterID),
-    list: generateListFn(db, 'fights', 'created_at'),
+    list: async (direction) => castFightRows(await list(direction)),
     listUnresolved: () => listUnresolvedFights(db),
     remove: generateRemoveFn(db, 'fights'),
-    update: generateUpdateFn(db, 'fights'),
+    update: async (id, data) => castFight(await update(id, data)),
   };
 }
 
@@ -52,7 +56,6 @@ function serializeParticipantDetails(participant) {
     moves: serializeMoves(participant.moves),
     race: participant.race,
     seed: randomInt(2 ** 32),
-    starting_stats: serializeStats(participant.stats),
     stats: serializeStats(participant.stats),
   };
 }
@@ -88,15 +91,19 @@ function serializeMoves(moves) {
 }
 
 async function findActiveFightByFighterID(db, fighterID) {
-  return db('fights')
+  const fight = await db('fights')
     .whereNull('victory')
     .whereRaw('(attacker = ? OR defender = ?)', [fighterID, fighterID])
     .orderBy('created_at', 'desc')
     .first();
+
+  return castFight(fight);
 }
 
 async function listUnresolvedFights(db) {
-  return db('fights')
+  const fights = await db('fights')
     .whereNull('victory')
     .orderBy('created_at', 'desc');
+
+  return castFightRows(fights);
 }
