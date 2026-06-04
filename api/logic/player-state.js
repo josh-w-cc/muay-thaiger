@@ -25,15 +25,16 @@ export async function getPlayerState({fighterActions, fightJudge, fighters}, pla
   }
   const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
   const state = {actions, fighter: updatedFighter};
-  const fight = getActiveFight(fightJudge, playerID);
+  const fight = await getActiveFight(fightJudge, playerID);
   if(fight) {
     state.fight = fight;
   }
   return state;
 }
 
-function getActiveFight(fightJudge, playerID) {
-  return fightJudge.get(playerID);
+async function getActiveFight(fightJudge, playerID) {
+  const fight = await fightJudge?.get(playerID);
+  return fight ?? null;
 }
 
 export function sendPlayerState(actions, fighter, socket, fight = null) {

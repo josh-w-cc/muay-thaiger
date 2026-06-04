@@ -25,11 +25,139 @@ describe('FightJudge.load', () => {
 
     await judge.load({fighters, fights});
 
-    assert.equal(judge.get(1), firstFight);
-    assert.equal(judge.get(2), firstFight);
-    assert.equal(judge.get(3), secondFight);
-    assert.equal(judge.get(4), thirdFight);
-    assert.equal(judge.get(999), null);
+    assert.equal(await judge.get(1), firstFight);
+    assert.equal(await judge.get(2), firstFight);
+    assert.equal(await judge.get(3), secondFight);
+    assert.equal(await judge.get(4), thirdFight);
+    assert.equal(await judge.get(999), null);
+  });
+
+  it('returns per-request calculated stats from current fighter values', async () => {
+    const judge = new FightJudge();
+    const fight = {
+      attacker: 11,
+      defender: 12,
+      details: {
+        attacker: {
+          moves: [1],
+          race: 1,
+          stats: {
+            agility: 10n,
+            constitution: 10n,
+            durability: 10n,
+            reach: 10n,
+            skill: 10n,
+            stamina: 10n,
+            strength: 10n,
+          },
+        },
+        defender: {
+          moves: [2],
+          race: 2,
+          stats: {
+            agility: 20n,
+            constitution: 20n,
+            durability: 20n,
+            reach: 20n,
+            skill: 20n,
+            stamina: 20n,
+            strength: 20n,
+          },
+        },
+      },
+      id: 101,
+      victory: null,
+    };
+    const fighterRows = {
+      11: {
+        id: 11,
+        player: 1,
+        stats: {
+          agility: 1000000n,
+          constitution: 3n,
+          durability: 5n,
+          reach: 7n,
+          skill: 11n,
+          stamina: 1000n,
+          strength: 17n,
+        },
+      },
+      12: {
+        id: 12,
+        player: 2,
+        stats: {
+          agility: 100n,
+          constitution: 4n,
+          durability: 6n,
+          reach: 2n,
+          skill: 5n,
+          stamina: 10n,
+          strength: 7n,
+        },
+      },
+    };
+    const fighters = {
+      find: async (fighterID) => fighterRows[fighterID] ?? null,
+    };
+    const fights = {listUnresolved: async () => [fight]};
+
+    await judge.load({fighters, fights});
+
+    const firstResult = await judge.get(1);
+    assert.notEqual(firstResult, fight);
+    assert.deepEqual(firstResult.details.attacker, {
+      attack: 23n,
+      defense: 19n,
+      health: 45n,
+      moves: [1],
+      power: 76n,
+      race: 1,
+      stats: {
+        agility: 10n,
+        constitution: 10n,
+        durability: 10n,
+        reach: 10n,
+        skill: 10n,
+        stamina: 10n,
+        strength: 10n,
+      },
+    });
+    assert.deepEqual(firstResult.details.defender, {
+      attack: 10n,
+      defense: 9n,
+      health: 96n,
+      moves: [2],
+      power: 16n,
+      race: 2,
+      stats: {
+        agility: 20n,
+        constitution: 20n,
+        durability: 20n,
+        reach: 20n,
+        skill: 20n,
+        stamina: 20n,
+        strength: 20n,
+      },
+    });
+
+    fighterRows[11] = {
+      ...fighterRows[11],
+      stats: {
+        agility: 10000000000n,
+        constitution: 2n,
+        durability: 3n,
+        reach: 1n,
+        skill: 20n,
+        stamina: 10000n,
+        strength: 1000n,
+      },
+    };
+
+    const secondResult = await judge.get(1);
+    assert.equal(secondResult.details.attacker.attack, 28n);
+    assert.equal(secondResult.details.attacker.defense, 32n);
+    assert.equal(secondResult.details.attacker.health, 12n);
+    assert.equal(secondResult.details.attacker.power, 5010n);
   });
 });
 
@@ -46,8 +174,8 @@ describe('FightJudge.attach', () => {
 
     await judge.attach(fighters, fight);
 
-    assert.equal(judge.get(1), fight);
-    assert.equal(judge.get(2), fight);
+    assert.equal(await judge.get(1), fight);
+    assert.equal(await judge.get(2), fight);
   });
 });
 
@@ -64,7 +192,7 @@ describe('attachFightJudge', () => {
     attachFightJudge(app);
     await app.ready();
 
-    assert.equal(app.fightJudge.get(4), unresolvedFight);
+    assert.equal(await app.fightJudge.get(4), unresolvedFight);
     await app.close();
   });
 });
