@@ -6,7 +6,7 @@ import {
   onAuth as onAuthMessage,
   onAuthInvalidToken as onAuthInvalidTokenMessage,
 } from '@/actions/websockets/auth.js';
-import {parseSocketMessage} from '@/actions/websockets/websocketState.js';
+import {parseSocketMessage} from '@/actions/websockets/state/websocketState.js';
 
 const onSocketCommand = {
   'auth': onAuth,

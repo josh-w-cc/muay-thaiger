@@ -2,8 +2,8 @@ import {
   resetAuthState,
 } from '@/actions/websockets/auth.js';
 import {generateOnSocketMessageFn} from '@/actions/websockets/serverCommands.js';
-import {loadPlayerToken} from '@/actions/websockets/token.js';
-import {isSocketReady} from '@/actions/websockets/websocketState.js';
+import {loadPlayerToken} from '@/actions/websockets/state/token.js';
+import {isSocketReady} from '@/actions/websockets/state/websocketState.js';
 let reconnectSocketTimeout = null;
 let socket = null;
 const SOCKET_INACTIVITY_MILLISECONDS = 15 * 60 * 1000;
