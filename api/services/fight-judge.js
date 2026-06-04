@@ -25,7 +25,7 @@ export class FightJudge {
   }
 
   get(playerID) {
-    const fight = this.#fightsByPlayerID.get(playerID) ?? null;
+    const fight = this.#fightsByPlayerID.get(playerID);
     if(!fight) {
       return null;
     }
