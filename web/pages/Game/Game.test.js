@@ -14,6 +14,7 @@ import Train from '../GameLayout/Train';
 import EditUser, {loader as editUserLoader} from '../EditUser';
 import Fallback from '../GameLayout/Fallback.js';
 import {GameLayout, loader as gameScreenLoader} from '../GameLayout/index.js';
+import Maintenance from '../Maintenance.js';
 
 
 const originalWebSocket = globalThis.WebSocket;
@@ -195,18 +196,19 @@ describe('Game', () => {
     expect(socketURL.protocol).toBe('ws:');
   });
 
-  it('redirects to the maintenance page when socket connection fails', async () => {
+  it('navigates to the maintenance page when socket connection fails', async () => {
     const gameModule = await import('./index.js');
 
-    const {unmount} = renderGame({gameModule});
+    const {router, unmount} = renderGame({gameModule});
     const socket = globalThis.WebSocket.mock.results[0].value;
     await act(async () => {
       socket.onerror(new Event('error'));
     });
 
-    expect(await screen.findByRole('heading', {name: 'Maintenance'})).toBeInTheDocument();
+    expect(await screen.findByRole('heading', {name: 'Unable to connect'})).toBeInTheDocument();
     expect(screen.getByText('Failed to connect to server.')).toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Fighter Select'})).not.toBeInTheDocument();
+    expect(router.state.historyAction).toBe('REPLACE');
     unmount();
   });
 
@@ -499,15 +501,7 @@ function renderGame({gameModule, initialPath = '/'}) {
       {
         children: [
           {index: true, element: <Game />, loader: fighterSelectLoader},
-          {
-            element: (
-              <div>
-                <h1>Maintenance</h1>
-                <p>Failed to connect to server.</p>
-              </div>
-            ),
-            path: 'maintenance',
-          },
+          {element: <Maintenance />, path: 'maintenance'},
           {element: <EditUser />, loader: editUserLoader, path: 'edit-user'},
           {
             children: [
@@ -529,9 +523,10 @@ function renderGame({gameModule, initialPath = '/'}) {
   routerNavigate.mockImplementation((screenPath) => router.navigate(screenPath));
   connectSocketOnAppLoad();
 
-  return render(
-    <RouterProvider fallbackElement={<div>Loading...</div>} router={router} />,
-  );
+  return {
+    router,
+    ...render(<RouterProvider fallbackElement={<div>Loading...</div>} router={router} />),
+  };
 }
 
 function setLocalStorage(value) {
