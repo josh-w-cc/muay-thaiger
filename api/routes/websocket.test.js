@@ -16,6 +16,7 @@ describe('WebSocket /ws/connect', () => {
     const {knex} = mockKnex(undefined);
     const app = Fastify();
     app.decorate('db', knex);
+    app.decorate('fightJudge', {get: () => null});
     app.decorate('websocketConnections', new Set());
     await app.register(websocket);
     await app.register(websocketRoutes, {prefix: '/ws'});
@@ -33,6 +34,7 @@ describe('WebSocket /ws/connect', () => {
     const {knex} = mockKnex([{display_name: 'Player-12345678', id: 1, token: 'generated-token'}]);
     const app = Fastify();
     app.decorate('db', knex);
+    app.decorate('fightJudge', {get: () => null});
     app.decorate('websocketConnections', new Set());
     await app.register(websocket);
     await app.register(websocketRoutes, {prefix: '/ws'});
@@ -72,6 +74,7 @@ describe('WebSocket /ws/connect', () => {
     ]);
     const app = Fastify();
     app.decorate('db', knex);
+    app.decorate('fightJudge', {get: () => null});
     app.decorate('websocketConnections', new Set());
     await app.register(websocket);
     await app.register(websocketRoutes, {prefix: '/ws'});
@@ -566,10 +569,10 @@ describe('WebSocket /ws/connect', () => {
       create: async () => created,
       listByFighterID: async () => [],
     };
-    const fights = {findActiveByFighterID: async () => null};
+    const fightJudge = {get: () => null};
     const fighters = {findCurrentByPlayerID: async () => fighter};
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {fighterActions, fights, fighters});
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {fighterActions, fightJudge, fighters});
 
     assert.equal(send.calls.length, 2);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {
@@ -600,7 +603,7 @@ describe('WebSocket /ws/connect', () => {
       },
       touch: async () => {},
     };
-    const fights = {findActiveByFighterID: async () => null};
+    const fightJudge = {get: () => null};
     const fighters = {
       findCurrentByPlayerID: async () => fighter,
       update: async () => {
@@ -609,7 +612,7 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({action_id: 2, cmd: 'idle'}), socket, {fighterActions, fights, fighters});
+    await onMessage(JSON.stringify({action_id: 2, cmd: 'idle'}), socket, {fighterActions, fightJudge, fighters});
 
     assert.ok(
       callOrder.indexOf('update') < callOrder.indexOf('create'),
@@ -644,13 +647,13 @@ describe('WebSocket /ws/connect', () => {
       remove,
       touch: async () => null,
     };
-    const fights = {findActiveByFighterID: async () => null};
+    const fightJudge = {get: () => null};
     const fighters = {
       findCurrentByPlayerID: async () => fighter,
       update: async () => fighter,
     };
 
-    await onMessage(JSON.stringify({action_id: 1, cmd: 'stop'}), socket, {fighterActions, fights, fighters});
+    await onMessage(JSON.stringify({action_id: 1, cmd: 'stop'}), socket, {fighterActions, fightJudge, fighters});
 
     assert.deepEqual(remove.calls, [[4], [6]]);
     assert.equal(send.calls.length, 2);
@@ -690,7 +693,7 @@ describe('WebSocket /ws/connect', () => {
       },
       touch: async () => {},
     };
-    const fights = {findActiveByFighterID: async () => null};
+    const fightJudge = {get: () => null};
     const fighters = {
       findCurrentByPlayerID: async () => fighter,
       update: async () => {
@@ -699,7 +702,7 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({action_id: 2, cmd: 'stop'}), socket, {fighterActions, fights, fighters});
+    await onMessage(JSON.stringify({action_id: 2, cmd: 'stop'}), socket, {fighterActions, fightJudge, fighters});
 
     assert.ok(
       callOrder.indexOf('update') < callOrder.indexOf('remove'),

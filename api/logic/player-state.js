@@ -33,9 +33,6 @@ export async function getPlayerState({fighterActions, fightJudge, fighters}, pla
 }
 
 function getActiveFight(fightJudge, playerID) {
-  if(typeof fightJudge?.get !== 'function' || playerID == null) {
-    return null;
-  }
   return fightJudge.get(playerID);
 }
 
