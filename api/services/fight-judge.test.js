@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
+import patchBigIntPrototype from 'shared/bigInt.js';
 
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
 import {attachFightJudge, FightJudge} from './fight-judge.js';
 
+patchBigIntPrototype();
 
 describe('FightJudge.load', () => {
   it('stores unresolved fights by player ID and discards duplicate player entries', async () => {
@@ -72,7 +74,7 @@ describe('FightJudge.attach', () => {
     assert.deepEqual(judge.get(1).defender.startingStats, defenderStats);
   });
 
-  it('captures calculated attacker and defender stats from current fight details', async () => {
+  it('computes calculated attacker and defender stats from current fight details', async () => {
     const judge = new FightJudge();
     const fight = {
       attacker: 11,

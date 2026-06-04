@@ -1,4 +1,3 @@
-import 'shared/bigInt.js';
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
 export class FightJudge {
@@ -60,7 +59,8 @@ export function attachFightJudge(app) {
 async function getFightPlayerIDs(fighters, fight) {
   const fighterIDs = [...new Set([fight?.attacker, fight?.defender].filter((fighterID) => fighterID != null))];
   const fighterRows = await Promise.all(fighterIDs.map((fighterID) => fighters.find(fighterID)));
-  return [...new Set(fighterRows.map((fighter) => fighter?.player).filter((playerID) => playerID != null))];
+  const playerIDs = fighterRows.map((fighter) => fighter?.player).filter((playerID) => playerID != null);
+  return [...new Set(playerIDs)];
 }
 
 function captureStartingStats(fight) {
@@ -78,21 +78,22 @@ function captureCalculatedStats(fight) {
 }
 
 function calculateFighterStats({agility, constitution, durability, reach, skill, stamina, strength}) {
-  const [agilityValue, constitutionValue, durabilityValue, reachValue, skillValue, staminaValue, strengthValue] = [
-    agility,
-    constitution,
-    durability,
-    reach,
-    skill,
-    stamina,
-    strength,
-  ].map((value) => BigInt(value || 0));
-  const staminaLog = staminaValue.logApprox();
-  const agilityLog = agilityValue.logApprox();
+  const agilityValue = toBigIntOrZero(agility);
+  const constitutionValue = toBigIntOrZero(constitution);
+  const durabilityValue = toBigIntOrZero(durability);
+  const reachValue = toBigIntOrZero(reach);
+  const skillValue = toBigIntOrZero(skill);
+  const staminaValue = toBigIntOrZero(stamina);
+  const strengthValue = toBigIntOrZero(strength);
+  const staminaLogApprox = staminaValue.logApprox();
+  const agilityLogApprox = agilityValue.logApprox();
   return {
-    attack: skillValue + staminaLog + agilityLog.logApprox() + reachValue,
-    defense: skillValue + agilityLog + staminaLog.logApprox(),
+    attack: skillValue + staminaLogApprox + agilityLogApprox.logApprox() + reachValue,
+    defense: skillValue + agilityLogApprox + staminaLogApprox.logApprox(),
     health: constitutionValue * constitutionValue * durabilityValue,
-    power: (strengthValue + skillValue.logApprox()) * staminaLog,
+    power: (strengthValue + skillValue.logApprox()) * staminaLogApprox,
   };
+}
+function toBigIntOrZero(value) {
+  return BigInt(value ?? 0);
 }
