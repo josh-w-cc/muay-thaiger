@@ -1,20 +1,16 @@
 import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
 import {createCommandError} from '../command-errors.js';
-import {createBotStats, normalizeFightRank} from './bot.js';
+import {createBot, normalizeFightRank} from './bot.js';
 
-export async function createFight({fighters, fights, fightJudge}, playerID, reason, rank = '') {
+export async function createFight({fighterMoves, fighters, fights, fightJudge}, playerID, reason, rank = '') {
   const normalizedReason = normalizeFightReason(reason);
   const normalizedRank = normalizeFightRank(rank);
   validateFightMessage(playerID, normalizedReason);
   const fighter = await getCurrentFighter(fighters, playerID);
   const fight = await fights.create({
-    attacker: {
-      id: fighter.id,
-      race: fighter.race,
-      stats: captureFightStats(fighter),
-    },
-    defender: normalizedReason === 'gold' ? {id: null, race: 1, stats: createBotStats(normalizedRank)} : null,
+    attacker: await captureFightParticipant(fighterMoves, fighter),
+    defender: createGoldFightDefender(normalizedReason, normalizedRank),
     rank: normalizedRank,
     reason: normalizedReason,
   });
@@ -22,10 +18,30 @@ export async function createFight({fighters, fights, fightJudge}, playerID, reas
   return fight;
 }
 
+async function captureFightParticipant(fighterMoves, fighter) {
+  return {
+    id: fighter.id,
+    moves: await captureFightMoves(fighterMoves, fighter.id),
+    race: fighter.race,
+    stats: captureFightStats(fighter),
+  };
+}
+
 function captureFightStats(fighter) {
   return Object.fromEntries(
     FIGHTER_STAT_KEYS.map((stat) => [stat, (fighter[stat] ?? fighter.stats?.[stat] ?? 0).toString()]),
   );
+}
+
+async function captureFightMoves(fighterMoves, fighterID) {
+  const moves = await fighterMoves.listEnabledByFighterID(fighterID);
+  return moves.map(({move}) => move);
+}
+
+function createGoldFightDefender(reason, rank) {
+  return reason === 'gold'
+    ? createBot(rank)
+    : null;
 }
 
 function validateFightMessage(playerID, reason) {

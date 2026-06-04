@@ -418,6 +418,9 @@ describe('WebSocket /ws/connect', () => {
         },
       };
       const createdFight = {attacker: 9, defender: null, details: {attacker: {}, defender: {}}, id: 4, reason: 'gold'};
+      const fighterMoves = {
+        listEnabledByFighterID: async () => [{move: MOVE_IDS.wildPunch}, {move: MOVE_IDS.wildKick}],
+      };
       const fighters = {findCurrentByPlayerID: async () => fighter};
       const fights = {
         create: async (fightData) => {
@@ -427,11 +430,12 @@ describe('WebSocket /ws/connect', () => {
       };
       const fightJudge = {attach: attachFight};
 
-      await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighters, fights, fightJudge});
+      await onMessage(JSON.stringify({cmd: 'fight', reason: 'gold'}), socket, {fighterMoves, fighters, fights, fightJudge});
 
       assert.deepEqual(createFight.calls, [[{
         attacker: {
           id: 9,
+          moves: [1, 2],
           race: 2,
           stats: {
             agility: '0',
@@ -449,6 +453,7 @@ describe('WebSocket /ws/connect', () => {
         },
         defender: {
           id: null,
+          moves: [1, 2],
           race: 1,
           stats: {
             agility: '100',
@@ -500,6 +505,9 @@ describe('WebSocket /ws/connect', () => {
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
     const fighter = {id: 9, player: 1, retired: false};
     const createdFight = {attacker: 9, defender: null, details: {}, id: 5, reason: 'rank'};
+    const fighterMoves = {
+      listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
+    };
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {
       create: async (fightData) => {
@@ -509,9 +517,10 @@ describe('WebSocket /ws/connect', () => {
     };
     const fightJudge = {attach: attachFight};
 
-    await onMessage(JSON.stringify({cmd: 'fight', reason: 'rank'}), socket, {fighters, fights, fightJudge});
+    await onMessage(JSON.stringify({cmd: 'fight', reason: 'rank'}), socket, {fighterMoves, fighters, fights, fightJudge});
 
     assert.deepEqual(createFight.calls[0][0].reason, 'rank');
+    assert.deepEqual(createFight.calls[0][0].attacker.moves, [2]);
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {
       cmd: 'ok',

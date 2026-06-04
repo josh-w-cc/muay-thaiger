@@ -49,6 +49,7 @@ function serializeFightDetails(attacker, defender) {
 function serializeParticipantDetails(participant) {
   validateParticipantDetails(participant);
   return {
+    moves: serializeMoves(participant.moves),
     race: participant.race,
     seed: randomInt(2 ** 32),
     starting_stats: serializeStats(participant.stats),
@@ -78,6 +79,12 @@ function serializeStats(stats) {
   return Object.fromEntries(
     Object.entries(stats).map(([key, value]) => [key, value.toString()]),
   );
+}
+
+function serializeMoves(moves) {
+  return Array.isArray(moves)
+    ? moves.map((move) => move.toString())
+    : [];
 }
 
 async function findActiveFightByFighterID(db, fighterID) {
