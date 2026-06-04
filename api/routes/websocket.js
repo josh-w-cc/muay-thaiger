@@ -24,15 +24,15 @@ export default async function websocketRoutes(app) {
 
 export function onConnect(socket, models, connections, logger) {
   connections.add(socket);
-  logWebsocket(logger, 'info', {connection_count: connections.size}, 'websocket connected');
+  logWebSocketActivity(logger, 'info', {connection_count: connections.size}, 'websocket connected');
   socket.on('close', () => {
     connections.delete(socket);
-    logWebsocket(logger, 'info', {connection_count: connections.size}, 'websocket disconnected');
+    logWebSocketActivity(logger, 'info', {connection_count: connections.size}, 'websocket disconnected');
   });
   socket.on('message', (raw) => onMessage(raw, socket, models, logger));
   setImmediate(() => {
     if(isSocketOpen(socket)) {
-      logWebsocket(logger, 'debug', {cmd: 'auth'}, 'websocket send');
+      logWebSocketActivity(logger, 'debug', {cmd: 'auth'}, 'websocket send');
       socket.send(JSON.stringify({cmd: 'auth'}));
     }
   });
@@ -47,7 +47,7 @@ export async function onMessage(raw, socket, models, logger) {
     await processMessageCommand(models, message, socket);
   }
   catch(error) {
-    logWebsocket(logger, 'error', {cmd: message.cmd, err: error, player_id: getSocketPlayerID(socket)}, 'websocket command failed');
+    logWebSocketActivity(logger, 'error', {cmd: message.cmd, err: error, player_id: getSocketPlayerID(socket)}, 'websocket command failed');
     sendSocketError(socket, resolveCommandError(error));
   }
 }
@@ -55,14 +55,14 @@ export async function onMessage(raw, socket, models, logger) {
 function parseMessageIfActive(raw, socket, logger) {
   const message = parseMessage(raw);
   if(!message) {
-    logWebsocket(logger, 'warn', 'websocket invalid message');
+    logWebSocketActivity(logger, 'warn', {raw_type: typeof raw}, 'websocket invalid message');
     return null;
   }
   if(!isSocketOpen(socket)) {
-    logWebsocket(logger, 'debug', {cmd: message.cmd}, 'websocket ignored message');
+    logWebSocketActivity(logger, 'debug', {cmd: message.cmd}, 'websocket ignored message');
     return null;
   }
-  logWebsocket(logger, 'debug', {cmd: message.cmd, player_id: getSocketPlayerID(socket)}, 'websocket received');
+  logWebSocketActivity(logger, 'debug', {cmd: message.cmd, player_id: getSocketPlayerID(socket)}, 'websocket received');
   return message;
 }
 
@@ -87,7 +87,7 @@ function getSocketPlayerID(socket) {
   return socket.player && Number.isInteger(socket.player.id) ? socket.player.id : null;
 }
 
-function logWebsocket(logger, level, ...args) {
+function logWebSocketActivity(logger, level, ...args) {
   if(!logger || typeof logger[level] !== 'function') {
     return;
   }

@@ -117,8 +117,8 @@ describe('WebSocket /ws/connect', () => {
     onConnect(socket, {}, connections);
     assert.equal(connections.has(socket), true);
 
-    const closeHandler = socketOn.calls.find(([eventName]) => eventName === 'close')[1];
-    closeHandler();
+    const onClose = socketOn.calls.find(([eventName]) => eventName === 'close')[1];
+    onClose();
     assert.equal(connections.has(socket), false);
   });
 
@@ -151,7 +151,7 @@ describe('WebSocket /ws/connect', () => {
 
     assert.equal(send.calls.length, 0);
     assert.equal(warn.calls.length, 1);
-    assert.deepEqual(warn.calls[0], ['websocket invalid message']);
+    assert.deepEqual(warn.calls[0], [{raw_type: 'string'}, 'websocket invalid message']);
   });
 
   it('responds with token invalid message for auth commands with missing token', async () => {
@@ -395,6 +395,9 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'internal-error'});
     assert.equal(error.calls.length, 1);
+    assert.equal(error.calls[0][0].cmd, 'auth');
+    assert.equal(error.calls[0][0].err.message, 'database failure');
+    assert.equal(error.calls[0][0].player_id, null);
     assert.equal(error.calls[0][1], 'websocket command failed');
   });
 

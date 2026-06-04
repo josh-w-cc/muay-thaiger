@@ -38,7 +38,6 @@ export function respondToAuth(socket) {
     return;
   }
   hasRespondedToAuth = true;
-  console.debug('WebSocket send cmd:', 'auth');
   socket.send(JSON.stringify(getAuthResponse({selectedRace, token})));
 }
 
