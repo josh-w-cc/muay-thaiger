@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {FIGHT_REASONS, isFightReason, normalizeFightReason} from './fights.js';
+import {FIGHT_REASONS, isFightReason, normalizeFightRank, normalizeFightReason} from './fights.js';
 
 describe('fights', () => {
   it('defines shared fight reasons', () => {
@@ -18,5 +18,10 @@ describe('fights', () => {
     assert.equal(isFightReason('rank'), true);
     assert.equal(isFightReason(' rank '), true);
     assert.equal(isFightReason('tournament'), false);
+  });
+
+  it('normalizes fight rank strings', () => {
+    assert.equal(normalizeFightRank(' A '), 'A');
+    assert.equal(normalizeFightRank(1), '');
   });
 });

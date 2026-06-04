@@ -18,3 +18,13 @@ export function castStats(row) {
     stats: parseBigIntStats(row.stats),
   };
 }
+
+export function serializeStats(stats) {
+  if(!stats || typeof stats !== 'object' || Array.isArray(stats)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(stats).map(([key, value]) => [key, value.toString()]),
+  );
+}
