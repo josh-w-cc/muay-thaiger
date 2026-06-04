@@ -1,3 +1,4 @@
+import 'shared/bigInt.js';
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights.js';
 
@@ -54,30 +55,48 @@ async function getFightPlayerIDs(fighters, fight) {
 }
 
 function applyCalculatedStats(fight) {
-  applyCalculatedStatsToParticipant(fight?.details?.attacker);
-  applyCalculatedStatsToParticipant(fight?.details?.defender);
+  const attacker = fight?.details?.attacker;
+  const defender = fight?.details?.defender;
+
+  applyCalculatedStatsToParticipant(attacker, true);
+  applyCalculatedStatsToParticipant(defender, false);
 }
 
-function applyCalculatedStatsToParticipant(participant) {
-  if(!participant?.stats) {
+function applyCalculatedStatsToParticipant(participant, required) {
+  if(!participant) {
+    if(required) {
+      throw new TypeError('invalid-fight-stats');
+    }
     return;
   }
+
+  if(!participant.stats) {
+    throw new TypeError('invalid-fight-stats');
+  }
+
   participant.calculated_stats = calculateStats(participant.stats);
 }
 
 function calculateStats(stats) {
-  const agility = Number(stats.agility);
-  const constitution = Number(stats.constitution);
-  const durability = Number(stats.durability);
-  const reach = Number(stats.reach);
-  const skill = Number(stats.skill);
-  const stamina = Number(stats.stamina);
-  const strength = Number(stats.strength);
+  const agility = parseBigIntStat(stats, 'agility');
+  const constitution = parseBigIntStat(stats, 'constitution');
+  const durability = parseBigIntStat(stats, 'durability');
+  const reach = parseBigIntStat(stats, 'reach');
+  const skill = parseBigIntStat(stats, 'skill');
+  const stamina = parseBigIntStat(stats, 'stamina');
+  const strength = parseBigIntStat(stats, 'strength');
 
   return {
-    attack: skill + Math.log(stamina) + Math.log(Math.log(agility)) + reach,
-    defense: skill + Math.log(agility) + Math.log(Math.log(stamina)),
+    attack: skill + stamina.logApprox() + agility.logApprox().logApprox() + reach,
+    defense: skill + agility.logApprox() + stamina.logApprox().logApprox(),
     health: constitution * constitution * durability,
-    power: (strength + Math.log(skill)) * Math.log(stamina),
+    power: (strength + skill.logApprox()) * stamina.logApprox(),
   };
+}
+
+function parseBigIntStat(stats, statName) {
+  if(stats[statName] == null) {
+    throw new TypeError('invalid-fight-stats');
+  }
+  return BigInt(stats[statName]);
 }

@@ -9,9 +9,27 @@ import {attachFightJudge, FightJudge} from './fight-judge.js';
 describe('FightJudge.load', () => {
   it('stores unresolved fights by player ID and discards duplicate player entries', async () => {
     const judge = new FightJudge();
-    const firstFight = {attacker: 11, defender: 12, id: 101, victory: null};
-    const secondFight = {attacker: 13, defender: 14, id: 102, victory: null};
-    const thirdFight = {attacker: 15, defender: null, id: 103, victory: null};
+    const firstFight = {
+      attacker: 11,
+      defender: 12,
+      details: {attacker: {stats: validStats()}, defender: {stats: validStats()}},
+      id: 101,
+      victory: null,
+    };
+    const secondFight = {
+      attacker: 13,
+      defender: 14,
+      details: {attacker: {stats: validStats()}, defender: {stats: validStats()}},
+      id: 102,
+      victory: null,
+    };
+    const thirdFight = {
+      attacker: 15,
+      defender: null,
+      details: {attacker: {stats: validStats()}},
+      id: 103,
+      victory: null,
+    };
     const fighters = {
       find: async (fighterID) => ({
         11: {id: 11, player: 1},
@@ -36,7 +54,13 @@ describe('FightJudge.load', () => {
 describe('FightJudge.attach', () => {
   it('stores a new unresolved fight by all participant player IDs', async () => {
     const judge = new FightJudge();
-    const fight = {attacker: 11, defender: 12, id: 101, victory: null};
+    const fight = {
+      attacker: 11,
+      defender: 12,
+      details: {attacker: {stats: validStats()}, defender: {stats: validStats()}},
+      id: 101,
+      victory: null,
+    };
     const fighters = {
       find: async (fighterID) => ({
         11: {id: 11, player: 1},
@@ -98,16 +122,16 @@ describe('FightJudge.get', () => {
     const result = judge.get(1);
 
     assert.deepEqual(result.details.attacker.calculated_stats, {
-      attack: 19 + Math.log(23) + Math.log(Math.log(11)) + 17,
-      defense: 19 + Math.log(11) + Math.log(Math.log(23)),
-      health: 7 * 7 * 13,
-      power: (29 + Math.log(19)) * Math.log(23),
+      attack: 39n,
+      defense: 22n,
+      health: 637n,
+      power: 62n,
     });
     assert.deepEqual(result.details.defender.calculated_stats, {
-      attack: 47 + Math.log(53) + Math.log(Math.log(31)) + 43,
-      defense: 47 + Math.log(31) + Math.log(Math.log(53)),
-      health: 37 * 37 * 41,
-      power: (59 + Math.log(47)) * Math.log(53),
+      attack: 93n,
+      defense: 50n,
+      health: 56129n,
+      power: 122n,
     });
   });
 
@@ -156,14 +180,74 @@ describe('FightJudge.get', () => {
     assert.notEqual(firstAttack, secondAttack);
     assert.equal(
       secondAttack,
-      60 + Math.log(70) + Math.log(Math.log(10)) + 13,
+      76n,
+    );
+  });
+
+  it('throws when attacker stats are missing', async () => {
+    const judge = new FightJudge();
+    const fight = {attacker: 11, details: {attacker: {}}, id: 103, victory: null};
+    const fighters = {
+      find: async (fighterID) => ({
+        11: {id: 11, player: 1},
+      }[fighterID] ?? null),
+    };
+
+    await judge.attach(fighters, fight);
+
+    assert.throws(
+      () => judge.get(1),
+      {name: 'TypeError', message: 'invalid-fight-stats'},
+    );
+  });
+
+  it('throws when defender exists and defender stats are missing', async () => {
+    const judge = new FightJudge();
+    const fight = {
+      attacker: 11,
+      defender: 12,
+      details: {
+        attacker: {
+          stats: {
+            agility: '11',
+            constitution: '7',
+            durability: '13',
+            reach: '17',
+            skill: '19',
+            stamina: '23',
+            strength: '29',
+          },
+        },
+        defender: {},
+      },
+      id: 104,
+      victory: null,
+    };
+    const fighters = {
+      find: async (fighterID) => ({
+        11: {id: 11, player: 1},
+        12: {id: 12, player: 2},
+      }[fighterID] ?? null),
+    };
+
+    await judge.attach(fighters, fight);
+
+    assert.throws(
+      () => judge.get(1),
+      {name: 'TypeError', message: 'invalid-fight-stats'},
     );
   });
 });
 
 describe('attachFightJudge', () => {
   it('loads unresolved fights into app.fightJudge on server ready', async () => {
-    const unresolvedFight = {attacker: 9, defender: null, id: 5, victory: null};
+    const unresolvedFight = {
+      attacker: 9,
+      defender: null,
+      details: {attacker: {stats: validStats()}},
+      id: 5,
+      victory: null,
+    };
     const {knex} = mockKnexMulti([
       [unresolvedFight],
       {id: 9, player: 4},
@@ -178,3 +262,15 @@ describe('attachFightJudge', () => {
     await app.close();
   });
 });
+
+function validStats() {
+  return {
+    agility: '11',
+    constitution: '7',
+    durability: '13',
+    reach: '17',
+    skill: '19',
+    stamina: '23',
+    strength: '29',
+  };
+}
