@@ -1,6 +1,6 @@
 import {redirect, useNavigate} from 'react-router-dom';
 
-import {loadPlayerToken} from '@/actions/websockets/token.js';
+import {loadPlayerToken} from '@/actions/websockets/state/token.js';
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';
 
