@@ -1,0 +1,14 @@
+.actionButton {
+  min-width: 4.25rem;
+}
+
+.idleActive {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.idleActive:hover {
+  background-color: var(--color-gold);
+  border-color: var(--color-gold);
+  color: var(--color-on-gold);
+}
