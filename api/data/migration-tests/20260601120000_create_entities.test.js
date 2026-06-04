@@ -2,17 +2,12 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import {down, up} from '../migrations/20260601120000_create_entities.js';
+import createMockKnex from './mock-knex.js';
 
 
 describe('20260601120000_create_entities migration', () => {
   it('creates entities with player or fighter ownership foreign keys', async () => {
-    const calls = [];
-    const knex = {
-      raw: async (sql) => {
-        calls.push(sql);
-        return [];
-      },
-    };
+    const {calls, knex} = createMockKnex();
 
     await up(knex);
 
@@ -25,13 +20,7 @@ describe('20260601120000_create_entities migration', () => {
   });
 
   it('drops entities on rollback', async () => {
-    const calls = [];
-    const knex = {
-      raw: async (sql) => {
-        calls.push(sql);
-        return [];
-      },
-    };
+    const {calls, knex} = createMockKnex();
 
     await down(knex);
 
