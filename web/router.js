@@ -12,6 +12,7 @@ const router = createBrowserRouter([
     children: [
       {element: <Game />, index: true, loader: fighterSelectLoader},
       {path: 'edit-user', lazy: lazyPage(() => import('./pages/EditUser/index.js'))},
+      {path: 'server-down', lazy: lazyPage(() => import('./pages/ServerDown.js'))},
       gameLayoutRoutes,
       {path: '*', element: <NotFound />},
     ],

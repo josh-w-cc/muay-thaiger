@@ -105,6 +105,19 @@ describe('player websocket helpers', () => {
     expect(routerNavigate).not.toHaveBeenCalled();
   });
 
+  it('redirects to /server-down with a hard reload on WebSocket error', () => {
+    Object.defineProperty(globalThis.window, 'location', {
+      configurable: true,
+      value: {href: 'http://localhost/'},
+      writable: true,
+    });
+    const socket = connectSocketOnAppLoad();
+
+    socket.onerror(new Event('error'));
+
+    expect(globalThis.window.location.href).toBe('/server-down');
+  });
+
   it('clears invalid token and redirects to / with hard reload', () => {
     Object.defineProperty(globalThis.window, 'location', {
       configurable: true,
