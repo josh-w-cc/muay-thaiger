@@ -25,29 +25,80 @@ describe('FightJudge.load', () => {
 
     await judge.load({fighters, fights});
 
-    assert.equal(judge.get(1), firstFight);
-    assert.equal(judge.get(2), firstFight);
-    assert.equal(judge.get(3), secondFight);
-    assert.equal(judge.get(4), thirdFight);
+    assert.equal(judge.get(1).id, firstFight.id);
+    assert.equal(judge.get(2).id, firstFight.id);
+    assert.equal(judge.get(3).id, secondFight.id);
+    assert.equal(judge.get(4).id, thirdFight.id);
     assert.equal(judge.get(999), null);
   });
 });
 
 describe('FightJudge.attach', () => {
+  const twoPlayerFighters = {
+    find: async (fighterID) => ({
+      11: {id: 11, player: 1},
+      12: {id: 12, player: 2},
+    }[fighterID] ?? null),
+  };
+
   it('stores a new unresolved fight by all participant player IDs', async () => {
     const judge = new FightJudge();
     const fight = {attacker: 11, defender: 12, id: 101, victory: null};
-    const fighters = {
+
+    await judge.attach(twoPlayerFighters, fight);
+
+    assert.equal(judge.get(1).id, fight.id);
+    assert.equal(judge.get(2).id, fight.id);
+  });
+
+  it('captures null starting stats when fight has no details', async () => {
+    const judge = new FightJudge();
+    const fight = {attacker: 11, defender: 12, id: 101, victory: null};
+
+    await judge.attach(twoPlayerFighters, fight);
+
+    assert.deepEqual(judge.get(1).startingStats, {attacker: null, defender: null});
+  });
+
+  it('captures attacker and defender starting stats from fight details', async () => {
+    const judge = new FightJudge();
+    const attackerStats = {speed: 10n, vigor: 5n};
+    const defenderStats = {speed: 8n, vigor: 3n};
+    const fight = {
+      attacker: 11,
+      defender: 12,
+      details: {
+        attacker: {stats: attackerStats},
+        defender: {stats: defenderStats},
+      },
+      id: 101,
+      victory: null,
+    };
+
+    await judge.attach(twoPlayerFighters, fight);
+
+    assert.deepEqual(judge.get(1).startingStats, {attacker: attackerStats, defender: defenderStats});
+  });
+
+  it('captures attacker starting stats and null defender when fight has no defender details', async () => {
+    const judge = new FightJudge();
+    const attackerStats = {speed: 10n, vigor: 5n};
+    const fight = {
+      attacker: 11,
+      defender: null,
+      details: {attacker: {stats: attackerStats}},
+      id: 101,
+      victory: null,
+    };
+    const singlePlayerFighters = {
       find: async (fighterID) => ({
         11: {id: 11, player: 1},
-        12: {id: 12, player: 2},
       }[fighterID] ?? null),
     };
 
-    await judge.attach(fighters, fight);
+    await judge.attach(singlePlayerFighters, fight);
 
-    assert.equal(judge.get(1), fight);
-    assert.equal(judge.get(2), fight);
+    assert.deepEqual(judge.get(1).startingStats, {attacker: attackerStats, defender: null});
   });
 });
 
@@ -64,7 +115,7 @@ describe('attachFightJudge', () => {
     attachFightJudge(app);
     await app.ready();
 
-    assert.equal(app.fightJudge.get(4), unresolvedFight);
+    assert.equal(app.fightJudge.get(4).id, unresolvedFight.id);
     await app.close();
   });
 });
