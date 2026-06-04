@@ -1,12 +1,15 @@
 import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import fightersModel from '../data/models/fighters.js';
-import fightsModel from '../data/models/fights.js';
 import {applyOfflineTraining, syncPlayerState} from '../logic/player-state.js';
 
 export function attachScheduler(app) {
   const connections = app.websocketConnections;
-  const models = {fighterActions: fighterActionsModel(app.db), fighters: fightersModel(app.db), fights: fightsModel(app.db)};
+  const models = {
+    fighterActions: fighterActionsModel(app.db),
+    fighters: fightersModel(app.db),
+    fightJudge: app.fightJudge,
+  };
   const offlineTrainingScheduler = createOfflineTrainingScheduler(app.db, app.log);
   const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
 
