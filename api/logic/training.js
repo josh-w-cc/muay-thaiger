@@ -17,7 +17,14 @@ export async function applyTraining({fighterActions, fighters}, fighter) {
   const {gold, stats} = trainStats(appliedActions, fighter);
   const updatedFighter = await fighters.update(fighter.id, {gold, stats});
   await touchAppliedActions(fighterActions, actions, touchedAtByActionKey);
-  return {actions, fighter: updatedFighter};
+  const updatedActions = actions.map((action) => {
+    const touchedAt = touchedAtByActionKey.get(action.id);
+    if(touchedAt === undefined) {
+      return action;
+    }
+    return {...action, touched_at: touchedAt.toISOString()};
+  });
+  return {actions: updatedActions, fighter: updatedFighter};
 }
 
 async function touchAppliedActions(fighterActions, actions, touchedAtByActionID) {

@@ -174,7 +174,7 @@ describe('applyTraining', () => {
     assert.equal(updateCalls[0].gold, 9007199254740994n);
   });
 
-  it('returns the updated fighter and actions from the fighters model', async () => {
+  it('returns the updated fighter from the fighters model', async () => {
     const fighter = {id: 1, gold: '0', stats: BASE_STATS};
     const updatedFighter = {id: 1, gold: '0', stats: {...BASE_STATS, stamina: 1}};
     const actions = [{action: 2, fighter: 1, id: 5, touched_at: getOffsetDate(-1000)}];
@@ -187,7 +187,37 @@ describe('applyTraining', () => {
     const result = await applyTraining({fighterActions, fighters}, fighter);
 
     assert.equal(result.fighter, updatedFighter);
-    assert.equal(result.actions, actions);
+  });
+
+  it('returns actions with updated touched_at after applying training', async () => {
+    const fighter = {id: 1, gold: '0', stats: {...BASE_STATS, vitality: 2n}};
+    const now = Date.now();
+    const actions = [{action: 2, fighter: 1, id: 5, touched_at: new Date(now - 1000).toISOString()}];
+    const fighterActions = {
+      listByFighterID: async () => actions,
+      touch: async () => null,
+    };
+    const fighters = {update: async () => ({...fighter})};
+
+    const result = await applyTraining({fighterActions, fighters}, fighter);
+
+    assert.equal(result.actions.length, 1);
+    assert.notEqual(result.actions[0].touched_at, actions[0].touched_at);
+    assert.ok(Date.parse(result.actions[0].touched_at) > Date.parse(actions[0].touched_at));
+  });
+
+  it('returns actions unchanged when no training was applied', async () => {
+    const fighter = {id: 1, gold: '0', stats: BASE_STATS};
+    const actions = [{action: 2, fighter: 1, id: 5, touched_at: new Date().toISOString()}];
+    const fighterActions = {
+      listByFighterID: async () => actions,
+      touch: async () => null,
+    };
+    const fighters = {update: async () => ({...fighter})};
+
+    const result = await applyTraining({fighterActions, fighters}, fighter);
+
+    assert.equal(result.actions[0].touched_at, actions[0].touched_at);
   });
 
   it('skips unknown action IDs without error', async () => {
