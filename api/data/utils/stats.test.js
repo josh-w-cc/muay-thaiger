@@ -3,7 +3,6 @@ import {describe, it} from 'node:test';
 
 import {castStats, castStatsRows, serializeStats} from './stats.js';
 
-
 describe('castStats', () => {
   it('converts stats values from strings to BigInt', () => {
     const row = {id: 1, stats: {speed: '10', vigor: '9'}};
