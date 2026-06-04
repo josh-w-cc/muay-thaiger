@@ -1,6 +1,7 @@
 import {redirect} from 'react-router-dom';
 
 import {loadPlayerToken} from '@/actions/websockets/state/token.js';
+import loadMoves from '@/data/movesLoader.js';
 import useRacesStore from '@/data/races.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import FighterSelect from '../FighterSelect';
@@ -14,6 +15,7 @@ export async function fighterSelectLoader() {
   if(hasPlayerToken()) {
     return redirect('/hub');
   }
+  await loadMoves();
   return loadRaces();
 }
 

@@ -56,7 +56,6 @@ function serializeParticipantDetails(participant) {
     moves: serializeMoves(participant.moves),
     race: participant.race,
     seed: randomInt(2 ** 32),
-    starting_stats: serializeStats(participant.stats),
     stats: serializeStats(participant.stats),
   };
 }
