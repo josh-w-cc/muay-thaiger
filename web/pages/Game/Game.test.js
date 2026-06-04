@@ -195,6 +195,20 @@ describe('Game', () => {
     expect(socketURL.protocol).toBe('ws:');
   });
 
+  it('renders a websocket connection error instead of fighter select when socket connection fails', async () => {
+    const gameModule = await import('./index.js');
+
+    const {unmount} = renderGame({gameModule});
+    const socket = globalThis.WebSocket.mock.results[0].value;
+    await act(async () => {
+      socket.onerror(new Event('error'));
+    });
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Failed to connect to server.');
+    expect(screen.queryByRole('button', {name: 'Fighter Select'})).not.toBeInTheDocument();
+    unmount();
+  });
+
   it('uses the secure websocket protocol on https pages', async () => {
     const secureWindow = Object.create(window);
     Object.defineProperty(secureWindow, 'location', {

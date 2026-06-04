@@ -12,6 +12,7 @@ import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './state/token.js';
 import {
   connectSocketOnAppLoad,
+  getHasConnectionError,
   resetSocketState,
   sendCommand,
 } from './index.js';
@@ -356,5 +357,15 @@ describe('player websocket helpers', () => {
     expect(debugSpy).toHaveBeenCalledWith('WebSocket recv cmd:', 'noop');
     expect(warnSpy).toHaveBeenCalledTimes(1);
     expect(warnSpy).toHaveBeenCalledWith('Unknown websocket cmd:', 'noop');
+  });
+
+  it('sets connection failure state when websocket reports an error', () => {
+    const socket = connectSocketOnAppLoad();
+
+    socket.onerror(new Event('error'));
+    expect(getHasConnectionError()).toBe(true);
+
+    socket.onopen();
+    expect(getHasConnectionError()).toBe(false);
   });
 });

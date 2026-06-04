@@ -6,7 +6,9 @@ import {loadPlayerToken} from '@/actions/websockets/state/token.js';
 import {isSocketReady} from '@/actions/websockets/state/websocketState.js';
 let reconnectSocketTimeout = null;
 let socket = null;
+let hasConnectionError = false;
 const SOCKET_INACTIVITY_MILLISECONDS = 15 * 60 * 1000;
+const WEBSOCKET_CONNECTION_ERROR_EVENT = 'websocket-connection-error';
 
 export const connectSocketOnAppLoad = connectSocket;
 export function resetSocketState() {
@@ -15,6 +17,11 @@ export function resetSocketState() {
   reconnectSocketTimeout = null;
   resetAuthState();
   socket = null;
+  setConnectionError(false);
+}
+
+export function getHasConnectionError() {
+  return hasConnectionError;
 }
 
 export function sendCommand(command) {
@@ -37,10 +44,7 @@ function connectSocket() {
   const socketURL = createWebSocketURL();
   socket = new WebSocket(socketURL);
   console.info('WebSocket connecting:', socketURL);
-  socket.onopen = () => console.info('WebSocket open');
-  socket.onclose = () => console.info('WebSocket closed');
-  socket.onerror = (event) => console.error('WebSocket error:', event);
-  socket.onmessage = generateOnSocketMessageFn(socket, scheduleSocketReconnectTimeout);
+  addSocketHandlers(socket);
   scheduleSocketReconnectTimeout();
   return socket;
 }
@@ -65,4 +69,25 @@ function getOpenSocket() {
     return socket;
   }
   return connectSocket();
+}
+
+function addSocketHandlers(socket) {
+  socket.onopen = () => {
+    setConnectionError(false);
+    console.info('WebSocket open');
+  };
+  socket.onclose = () => console.info('WebSocket closed');
+  socket.onerror = (event) => {
+    setConnectionError(true);
+    console.error('WebSocket error:', event);
+  };
+  socket.onmessage = generateOnSocketMessageFn(socket, scheduleSocketReconnectTimeout);
+}
+
+function setConnectionError(value) {
+  if(hasConnectionError === value) {
+    return;
+  }
+  hasConnectionError = value;
+  window.dispatchEvent(new CustomEvent(WEBSOCKET_CONNECTION_ERROR_EVENT, {detail: value}));
 }
