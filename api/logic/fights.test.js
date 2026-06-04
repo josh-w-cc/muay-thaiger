@@ -9,139 +9,151 @@ const HIGH_RANK_BOT_STAT = (10n ** 33n).toString();
 
 describe('createFight', () => {
   it('creates a gold fight with captured attacker stats and low-rank bot defender stats', async () => {
-    const create = createCallTracker();
-    const attach = createCallTracker();
-    const createdFight = {attacker: 9, defender: null, id: 3, reason: 'gold'};
-    const fighter = {
-      anima: 11,
-      constitution: 12,
-      durability: 13,
-      id: 9,
-      race: 2,
-      reach: 14,
-      skill: 15,
-      speed: 16,
-      stamina: 17,
-      vigor: 18,
-      vitality: 19,
-    };
-    const fighterMoves = {
-      listEnabledByFighterID: async () => [{move: MOVE_IDS.wildPunch}, {move: MOVE_IDS.wildKick}],
-      touchLastUsedByFighterID: async () => {},
-    };
-    const fighters = {findCurrentByPlayerID: async () => fighter};
-    const fights = {
-      create: async (fightData) => {
-        create(fightData);
-        return createdFight;
-      },
-    };
-    const fightJudge = {attach};
-
-    await createFight({fighterMoves, fighters, fights, fightJudge}, 1, 'gold');
-
-    assert.equal(create.calls.length, 1);
-    assert.deepEqual(create.calls[0][0], {
-      attacker: {
+    const dateNow = Date.now;
+    Date.now = () => 1234567890000;
+    try {
+      const create = createCallTracker();
+      const attach = createCallTracker();
+      const createdFight = {attacker: 9, defender: null, id: 3, reason: 'gold'};
+      const fighter = {
+        anima: 11,
+        constitution: 12,
+        durability: 13,
         id: 9,
-        moves: [1, 2],
         race: 2,
-        stats: {
-          agility: '0',
-          anima: '11',
-          constitution: '12',
-          durability: '13',
-          reach: '14',
-          skill: '15',
-          speed: '16',
-          stamina: '17',
-          strength: '0',
-          vigor: '18',
-          vitality: '19',
+        reach: 14,
+        skill: 15,
+        speed: 16,
+        stamina: 17,
+        vigor: 18,
+        vitality: 19,
+      };
+      const fighterMoves = {
+        listEnabledByFighterID: async () => [{move: MOVE_IDS.wildPunch}, {move: MOVE_IDS.wildKick}],
+      };
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fights = {
+        create: async (fightData) => {
+          create(fightData);
+          return createdFight;
         },
-      },
-      defender: {
-        id: null,
-        moves: [1, 2],
-        race: 1,
-        stats: {
-          agility: '100',
-          anima: '100',
-          constitution: '100',
-          durability: '100',
-          reach: '100',
-          skill: '100',
-          speed: '100',
-          stamina: '100',
-          strength: '100',
-          vigor: '100',
-          vitality: '100',
+      };
+      const fightJudge = {attach};
+
+      await createFight({fighterMoves, fighters, fights, fightJudge}, 1, 'gold');
+
+      assert.equal(create.calls.length, 1);
+      assert.deepEqual(create.calls[0][0], {
+        attacker: {
+          id: 9,
+          moves: [{id: 1, lastUsed: 1234567890}, {id: 2, lastUsed: 1234567890}],
+          race: 2,
+          stats: {
+            agility: '0',
+            anima: '11',
+            constitution: '12',
+            durability: '13',
+            reach: '14',
+            skill: '15',
+            speed: '16',
+            stamina: '17',
+            strength: '0',
+            vigor: '18',
+            vitality: '19',
+          },
         },
-      },
-      rank: '',
-      reason: 'gold',
-    });
-    assert.deepEqual(attach.calls, [[fighters, createdFight]]);
+        defender: {
+          id: null,
+          moves: [{id: 1, lastUsed: null}, {id: 2, lastUsed: null}],
+          race: 1,
+          stats: {
+            agility: '100',
+            anima: '100',
+            constitution: '100',
+            durability: '100',
+            reach: '100',
+            skill: '100',
+            speed: '100',
+            stamina: '100',
+            strength: '100',
+            vigor: '100',
+            vitality: '100',
+          },
+        },
+        rank: '',
+        reason: 'gold',
+      });
+      assert.deepEqual(attach.calls, [[fighters, createdFight]]);
+    }
+    finally {
+      Date.now = dateNow;
+    }
   });
 
   it('creates a gold fight with ranked bot defender stats', async () => {
-    const create = createCallTracker();
-    const fighter = {id: 9, race: 2};
-    const fighterMoves = {
-      listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
-      touchLastUsedByFighterID: async () => {},
-    };
-    const fighters = {findCurrentByPlayerID: async () => fighter};
-    const fights = {create};
+    const dateNow = Date.now;
+    Date.now = () => 1234567890000;
+    try {
+      const create = createCallTracker();
+      const fighter = {id: 9, race: 2};
+      const fighterMoves = {
+        listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
+      };
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fights = {create};
 
-    await createFight({fighterMoves, fighters, fights}, 1, 'gold', 'AAAAA');
+      await createFight({fighterMoves, fighters, fights}, 1, 'gold', 'AAAAA');
 
-    assert.deepEqual(create.calls[0][0], {
-      attacker: {
-        id: 9,
-        moves: [2],
-        race: 2,
-        stats: {
-          agility: '0',
-          anima: '0',
-          constitution: '0',
-          durability: '0',
-          reach: '0',
-          skill: '0',
-          speed: '0',
-          stamina: '0',
-          strength: '0',
-          vigor: '0',
-          vitality: '0',
+      assert.deepEqual(create.calls[0][0], {
+        attacker: {
+          id: 9,
+          moves: [{id: 2, lastUsed: 1234567890}],
+          race: 2,
+          stats: {
+            agility: '0',
+            anima: '0',
+            constitution: '0',
+            durability: '0',
+            reach: '0',
+            skill: '0',
+            speed: '0',
+            stamina: '0',
+            strength: '0',
+            vigor: '0',
+            vitality: '0',
+          },
         },
-      },
-      defender: {
-        id: null,
-        moves: [1, 2],
-        race: 1,
-        stats: {
-          agility: HIGH_RANK_BOT_STAT,
-          anima: HIGH_RANK_BOT_STAT,
-          constitution: HIGH_RANK_BOT_STAT,
-          durability: HIGH_RANK_BOT_STAT,
-          reach: HIGH_RANK_BOT_STAT,
-          skill: HIGH_RANK_BOT_STAT,
-          speed: HIGH_RANK_BOT_STAT,
-          stamina: HIGH_RANK_BOT_STAT,
-          strength: HIGH_RANK_BOT_STAT,
-          vigor: HIGH_RANK_BOT_STAT,
-          vitality: HIGH_RANK_BOT_STAT,
+        defender: {
+          id: null,
+          moves: [{id: 1, lastUsed: null}, {id: 2, lastUsed: null}],
+          race: 1,
+          stats: {
+            agility: HIGH_RANK_BOT_STAT,
+            anima: HIGH_RANK_BOT_STAT,
+            constitution: HIGH_RANK_BOT_STAT,
+            durability: HIGH_RANK_BOT_STAT,
+            reach: HIGH_RANK_BOT_STAT,
+            skill: HIGH_RANK_BOT_STAT,
+            speed: HIGH_RANK_BOT_STAT,
+            stamina: HIGH_RANK_BOT_STAT,
+            strength: HIGH_RANK_BOT_STAT,
+            vigor: HIGH_RANK_BOT_STAT,
+            vitality: HIGH_RANK_BOT_STAT,
+          },
         },
-      },
-      rank: 'AAAAA',
-      reason: 'gold',
-    });
+        rank: 'AAAAA',
+        reason: 'gold',
+      });
+    }
+    finally {
+      Date.now = dateNow;
+    }
   });
 
   it('treats Z rank as stronger than ZZ for gold bots', async () => {
     const create = createCallTracker();
     const fighter = {id: 9, race: 2};
-    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
+    const fighterMoves = {listEnabledByFighterID: async () => []};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 
@@ -151,37 +163,43 @@ describe('createFight', () => {
   });
 
   it('creates a rank fight without defender starting stats', async () => {
-    const create = createCallTracker();
-    const attach = createCallTracker();
-    const createdFight = {attacker: 9, defender: null, id: 4, reason: 'rank'};
-    const fighter = {id: 9, race: 2};
-    const fighterMoves = {
-      listEnabledByFighterID: async () => [{move: MOVE_IDS.wildPunch}],
-      touchLastUsedByFighterID: async () => {},
-    };
-    const fighters = {findCurrentByPlayerID: async () => fighter};
-    const fights = {
-      create: async (fightData) => {
-        create(fightData);
-        return createdFight;
-      },
-    };
-    const fightJudge = {attach};
+    const dateNow = Date.now;
+    Date.now = () => 1234567890000;
+    try {
+      const create = createCallTracker();
+      const attach = createCallTracker();
+      const createdFight = {attacker: 9, defender: null, id: 4, reason: 'rank'};
+      const fighter = {id: 9, race: 2};
+      const fighterMoves = {
+        listEnabledByFighterID: async () => [{move: MOVE_IDS.wildPunch}],
+      };
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fights = {
+        create: async (fightData) => {
+          create(fightData);
+          return createdFight;
+        },
+      };
+      const fightJudge = {attach};
 
-    await createFight({fighterMoves, fighters, fights, fightJudge}, 1, 'rank');
+      await createFight({fighterMoves, fighters, fights, fightJudge}, 1, 'rank');
 
-    assert.equal(create.calls.length, 1);
-    assert.equal(create.calls[0][0].attacker.race, 2);
-    assert.deepEqual(create.calls[0][0].attacker.moves, [1]);
-    assert.equal(create.calls[0][0].defender, null);
-    assert.deepEqual(attach.calls, [[fighters, createdFight]]);
+      assert.equal(create.calls.length, 1);
+      assert.equal(create.calls[0][0].attacker.race, 2);
+      assert.deepEqual(create.calls[0][0].attacker.moves, [{id: 1, lastUsed: 1234567890}]);
+      assert.equal(create.calls[0][0].defender, null);
+      assert.deepEqual(attach.calls, [[fighters, createdFight]]);
+    }
+    finally {
+      Date.now = dateNow;
+    }
   });
 
   it('attaches created fight to fightJudge when available', async () => {
     const attach = createCallTracker();
     const fighter = {id: 9};
     const createdFight = {attacker: 9, defender: null, id: 4, reason: 'rank'};
-    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
+    const fighterMoves = {listEnabledByFighterID: async () => []};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create: async () => createdFight};
     const fightJudge = {attach};
@@ -192,61 +210,67 @@ describe('createFight', () => {
   });
 
   it('uses nested fighter.stats values when top-level stats are missing', async () => {
-    const create = createCallTracker();
-    const attach = createCallTracker();
-    const createdFight = {attacker: 9, defender: null, id: 6, reason: 'gold'};
-    const fighter = {
-      id: 9,
-      race: 2,
-      stats: {
-        anima: 1n,
-        constitution: 2n,
-        durability: 3n,
-        reach: 4n,
-        skill: 5n,
-        speed: 6n,
-        stamina: 7n,
-        vigor: 8n,
-        vitality: 9n,
-      },
-    };
-    const fighterMoves = {
-      listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
-      touchLastUsedByFighterID: async () => {},
-    };
-    const fighters = {findCurrentByPlayerID: async () => fighter};
-    const fights = {
-      create: async (fightData) => {
-        create(fightData);
-        return createdFight;
-      },
-    };
-    const fightJudge = {attach};
+    const dateNow = Date.now;
+    Date.now = () => 1234567890000;
+    try {
+      const create = createCallTracker();
+      const attach = createCallTracker();
+      const createdFight = {attacker: 9, defender: null, id: 6, reason: 'gold'};
+      const fighter = {
+        id: 9,
+        race: 2,
+        stats: {
+          anima: 1n,
+          constitution: 2n,
+          durability: 3n,
+          reach: 4n,
+          skill: 5n,
+          speed: 6n,
+          stamina: 7n,
+          vigor: 8n,
+          vitality: 9n,
+        },
+      };
+      const fighterMoves = {
+        listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
+      };
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fights = {
+        create: async (fightData) => {
+          create(fightData);
+          return createdFight;
+        },
+      };
+      const fightJudge = {attach};
 
-    await createFight({fighterMoves, fighters, fights, fightJudge}, 1, 'gold');
+      await createFight({fighterMoves, fighters, fights, fightJudge}, 1, 'gold');
 
-    assert.equal(create.calls[0][0].attacker.race, 2);
-    assert.deepEqual(create.calls[0][0].attacker.moves, [2]);
-    assert.deepEqual(create.calls[0][0].attacker.stats, {
-      agility: '0',
-      anima: '1',
-      constitution: '2',
-      durability: '3',
-      reach: '4',
-      skill: '5',
-      speed: '6',
-      stamina: '7',
-      strength: '0',
-      vigor: '8',
-      vitality: '9',
-    });
-    assert.deepEqual(attach.calls, [[fighters, createdFight]]);
+      assert.equal(create.calls[0][0].attacker.race, 2);
+      assert.deepEqual(create.calls[0][0].attacker.moves, [{id: 2, lastUsed: 1234567890}]);
+      assert.deepEqual(create.calls[0][0].attacker.stats, {
+        agility: '0',
+        anima: '1',
+        constitution: '2',
+        durability: '3',
+        reach: '4',
+        skill: '5',
+        speed: '6',
+        stamina: '7',
+        strength: '0',
+        vigor: '8',
+        vitality: '9',
+      });
+      assert.deepEqual(attach.calls, [[fighters, createdFight]]);
+    }
+    finally {
+      Date.now = dateNow;
+    }
   });
 
   it('captures no attacker moves when the fighter has no enabled moves', async () => {
     const create = createCallTracker();
     const fighter = {id: 9, race: 2};
-    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
+    const fighterMoves = {listEnabledByFighterID: async () => []};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 
@@ -258,7 +282,7 @@ describe('createFight', () => {
   it('treats ZZ rank the same as an unranked gold bot', async () => {
     const create = createCallTracker();
     const fighter = {id: 9};
-    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
+    const fighterMoves = {listEnabledByFighterID: async () => []};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 
@@ -282,7 +306,7 @@ describe('createFight', () => {
   it('treats unsupported multi-character ranks the same as an unranked gold bot', async () => {
     const create = createCallTracker();
     const fighter = {id: 9};
-    const fighterMoves = {listEnabledByFighterID: async () => [], touchLastUsedByFighterID: async () => {}};
+    const fighterMoves = {listEnabledByFighterID: async () => []};
     const fighters = {findCurrentByPlayerID: async () => fighter};
     const fights = {create};
 

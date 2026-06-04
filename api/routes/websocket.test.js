@@ -420,7 +420,9 @@ describe('WebSocket /ws/connect', () => {
 
   it('creates a fight and responds to fight command for authenticated socket', async () => {
     const random = Math.random;
+    const dateNow = Date.now;
     Math.random = () => 0.5;
+    Date.now = () => 1234567890000;
     try {
       const send = createCallTracker();
       const createFight = createCallTracker();
@@ -453,7 +455,6 @@ describe('WebSocket /ws/connect', () => {
       const createdFight = {attacker: 9, defender: null, details: {attacker: {}, defender: {}}, id: 4, reason: 'gold'};
       const fighterMoves = {
         listEnabledByFighterID: async () => [{move: MOVE_IDS.wildPunch}, {move: MOVE_IDS.wildKick}],
-        touchLastUsedByFighterID: async () => {},
       };
       const fighters = {findCurrentByPlayerID: async () => fighter};
       const fights = {
@@ -469,7 +470,7 @@ describe('WebSocket /ws/connect', () => {
       assert.deepEqual(createFight.calls, [[{
         attacker: {
           id: 9,
-          moves: [1, 2],
+          moves: [{id: 1, lastUsed: 1234567890}, {id: 2, lastUsed: 1234567890}],
           race: 2,
           stats: {
             agility: '0',
@@ -487,7 +488,7 @@ describe('WebSocket /ws/connect', () => {
         },
         defender: {
           id: null,
-          moves: [1, 2],
+          moves: [{id: 1, lastUsed: null}, {id: 2, lastUsed: null}],
           race: 1,
           stats: {
             agility: '100',
@@ -515,6 +516,7 @@ describe('WebSocket /ws/connect', () => {
     }
     finally {
       Math.random = random;
+      Date.now = dateNow;
     }
   });
 
@@ -533,35 +535,41 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('creates a fight and responds to rank fight command for authenticated socket', async () => {
-    const send = createCallTracker();
-    const createFight = createCallTracker();
-    const attachFight = createCallTracker();
-    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
-    const fighter = {id: 9, player: 1, retired: false};
-    const createdFight = {attacker: 9, defender: null, details: {}, id: 5, reason: 'rank'};
-    const fighterMoves = {
-      listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
-      touchLastUsedByFighterID: async () => {},
-    };
-    const fighters = {findCurrentByPlayerID: async () => fighter};
-    const fights = {
-      create: async (fightData) => {
-        createFight(fightData);
-        return createdFight;
-      },
-    };
-    const fightJudge = {attach: attachFight};
+    const dateNow = Date.now;
+    Date.now = () => 1234567890000;
+    try {
+      const send = createCallTracker();
+      const createFight = createCallTracker();
+      const attachFight = createCallTracker();
+      const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+      const fighter = {id: 9, player: 1, retired: false};
+      const createdFight = {attacker: 9, defender: null, details: {}, id: 5, reason: 'rank'};
+      const fighterMoves = {
+        listEnabledByFighterID: async () => [{move: MOVE_IDS.wildKick}],
+      };
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fights = {
+        create: async (fightData) => {
+          createFight(fightData);
+          return createdFight;
+        },
+      };
+      const fightJudge = {attach: attachFight};
 
-    await onMessage(JSON.stringify({cmd: 'fight', reason: 'rank'}), socket, {fighterMoves, fighters, fights, fightJudge});
+      await onMessage(JSON.stringify({cmd: 'fight', reason: 'rank'}), socket, {fighterMoves, fighters, fights, fightJudge});
 
-    assert.deepEqual(createFight.calls[0][0].reason, 'rank');
-    assert.deepEqual(createFight.calls[0][0].attacker.moves, [2]);
-    assert.equal(send.calls.length, 1);
-    assert.deepEqual(JSON.parse(send.calls[0][0]), {
-      cmd: 'ok',
-      metadata: {fight: createdFight, responded_cmd: 'fight'},
-    });
-    assert.deepEqual(attachFight.calls, [[fighters, createdFight]]);
+      assert.deepEqual(createFight.calls[0][0].reason, 'rank');
+      assert.deepEqual(createFight.calls[0][0].attacker.moves, [{id: MOVE_IDS.wildKick, lastUsed: 1234567890}]);
+      assert.equal(send.calls.length, 1);
+      assert.deepEqual(JSON.parse(send.calls[0][0]), {
+        cmd: 'ok',
+        metadata: {fight: createdFight, responded_cmd: 'fight'},
+      });
+      assert.deepEqual(attachFight.calls, [[fighters, createdFight]]);
+    }
+    finally {
+      Date.now = dateNow;
+    }
   });
 
   it('does not create a fight when the authenticated player has no current fighter', async () => {
