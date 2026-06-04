@@ -144,12 +144,12 @@ describe('Train', () => {
     expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
   });
 
-  it('keeps the skill tooltip inside the mobile viewport', () => {
+  it('keeps the info tooltip inside the mobile viewport', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const modulePath = path.join(directoryPath, 'Regimen', 'SkillInfoButton.module.css');
     const source = fs.readFileSync(modulePath, 'utf8');
     const mobileTooltipRule = new RegExp([
-      '@media\\(max-width:\\s*768px\\)\\s*{',
+      '@media\\s*\\(max-width:\\s*768px\\)\\s*{',
       '[\\s\\S]*\\.infoTooltip\\s*{',
       '[\\s\\S]*left:\\s*0;',
       '[\\s\\S]*max-width:\\s*min\\(18rem,\\s*calc\\(100vw - var\\(--space-lg\\) \\* 2\\)\\);',

@@ -25,7 +25,7 @@
   z-index: 10;
 }
 
-@media(max-width: 768px) {
+@media (max-width: 768px) {
   .infoTooltip {
     left: 0;
     max-width: min(18rem, calc(100vw - var(--space-lg) * 2));
