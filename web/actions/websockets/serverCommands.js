@@ -45,6 +45,7 @@ function onPlayerState(message) {
   if(!message.fighter) {
     return;
   }
+  console.log(message)
   useFighterActionsStore.getState().setActions(Array.isArray(message.actions) ? message.actions : []);
   useFightStore.getState().syncServerState(message.fight || null);
   useFighterStore.getState().overwrite(message.fighter);
