@@ -16,6 +16,7 @@ export default [
       },
     },
     rules: {
+      'no-unused-vars': ['error', {ignoreRestSiblings: true}],
       'curly': ['error', 'all'],
       'complexity': ['error', 5],
       'max-lines': ['error', {
