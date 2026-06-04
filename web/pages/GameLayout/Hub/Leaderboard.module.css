@@ -3,13 +3,11 @@
   width: 100%;
 }
 
-.leaderboard th {
-  color: var(--color-gold);
-  font-size: 0.85rem;
-  font-weight: 600;
+.leaderboardTh {
+  composes: goldLabelBase from '../../../components/primitive/css-modules/gold-label-base.module.css';
+
   padding: var(--space-xs) var(--space-sm);
   text-align: left;
-  text-transform: uppercase;
 }
 
 .leaderboardRank {
