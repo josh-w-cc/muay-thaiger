@@ -16,17 +16,22 @@ export async function applyTraining({fighterActions, fighters}, fighter) {
   });
   const {gold, stats} = trainStats(appliedActions, fighter);
   const updatedFighter = await fighters.update(fighter.id, {gold, stats});
-  await touchAppliedActions(fighterActions, actions, touchedAtByActionKey);
-  return {actions, fighter: updatedFighter};
+  const updatedActions = await touchAppliedActions(fighterActions, actions, touchedAtByActionKey);
+  return {actions: updatedActions, fighter: updatedFighter};
 }
 
 async function touchAppliedActions(fighterActions, actions, touchedAtByActionID) {
+  const updatedActions = [];
   for(const action of actions) {
-    if(!touchedAtByActionID.has(action.id)) {
+    const touchedAt = touchedAtByActionID.get(action.id);
+    if(touchedAt === undefined) {
+      updatedActions.push(action);
       continue;
     }
-    await fighterActions.touch(action.id, touchedAtByActionID.get(action.id));
+    await fighterActions.touch(action.id, touchedAt);
+    updatedActions.push({...action, touched_at: touchedAt.toISOString()});
   }
+  return updatedActions;
 }
 
 function trainStats(actions, fighter) {
