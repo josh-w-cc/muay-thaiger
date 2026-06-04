@@ -20,7 +20,6 @@ export async function createFight({fighterMoves, fighters, fights, fightJudge}, 
 
 async function captureFightParticipant(fighterMoves, fighter) {
   const moves = await captureFightMoves(fighterMoves, fighter.id);
-  await fighterMoves.touchLastUsedByFighterID(fighter.id);
   return {
     id: fighter.id,
     moves,
@@ -36,8 +35,9 @@ function captureFightStats(fighter) {
 }
 
 async function captureFightMoves(fighterMoves, fighterID) {
+  const lastUsed = new Date().toISOString();
   const moves = await fighterMoves.listEnabledByFighterID(fighterID);
-  return moves.map(({move}) => move);
+  return moves.map(({move}) => ({move, last_used: lastUsed}));
 }
 
 function createGoldFightDefender(reason, rank) {
