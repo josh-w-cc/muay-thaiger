@@ -46,6 +46,7 @@ async function stop(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-stop-message');
   }
+  await applyCurrentTraining(models, socket.player.id);
   const fighterAction = await unregisterFighterAction(models, message, socket.player.id);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'stop'}}));
   await sendCurrentPlayerState(models, socket);
