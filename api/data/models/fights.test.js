@@ -69,7 +69,7 @@ describe('fights.findActiveByFighterID', () => {
 });
 
 describe('fights.create', () => {
-  it('inserts a fight with captured starting stats and returns the created row', async () => {
+  it('inserts a fight with captured stats and returns the created row', async () => {
     const fight = {
       attacker: {id: 1, moves: [1, 2], race: 1, stats: {speed: 10n, vigor: 9}},
       defender: {id: 2, moves: [2], race: 2, stats: {speed: '8', vigor: 7n}},
@@ -90,14 +90,12 @@ describe('fights.create', () => {
     assert.equal(inserted.reason, 'gold');
     assert.deepEqual(inserted.details.attacker.moves, ['1', '2']);
     assert.equal(inserted.details.attacker.race, 1);
-    assert.deepEqual(inserted.details.attacker.starting_stats, {speed: '10', vigor: '9'});
     assert.deepEqual(inserted.details.attacker.stats, {speed: '10', vigor: '9'});
     assert.equal(typeof inserted.details.attacker.seed, 'number');
     assert.ok(inserted.details.attacker.seed >= 0);
     assert.ok(inserted.details.attacker.seed < 2 ** 32);
     assert.deepEqual(inserted.details.defender.moves, ['2']);
     assert.equal(inserted.details.defender.race, 2);
-    assert.deepEqual(inserted.details.defender.starting_stats, {speed: '8', vigor: '7'});
     assert.deepEqual(inserted.details.defender.stats, {speed: '8', vigor: '7'});
     assert.equal(typeof inserted.details.defender.seed, 'number');
     assert.ok(inserted.details.defender.seed >= 0);
@@ -123,7 +121,6 @@ describe('fights.create', () => {
     assert.equal(inserted.reason, 'rank');
     assert.deepEqual(inserted.details.attacker.moves, ['1']);
     assert.equal(inserted.details.attacker.race, 1);
-    assert.deepEqual(inserted.details.attacker.starting_stats, {speed: '10', vigor: '9'});
     assert.deepEqual(inserted.details.attacker.stats, {speed: '10', vigor: '9'});
     assert.equal(typeof inserted.details.attacker.seed, 'number');
     assert.ok(inserted.details.attacker.seed >= 0);
