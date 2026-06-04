@@ -12,7 +12,7 @@ export default function Game() {
   const [hasConnectionError, setHasConnectionError] = useState(getHasConnectionError);
 
   useEffect(() => {
-    const onConnectionError = ({detail}) => setHasConnectionError(detail);
+    const onConnectionError = ({detail: isError}) => setHasConnectionError(isError);
     window.addEventListener('websocket-connection-error', onConnectionError);
     return () => {
       window.removeEventListener('websocket-connection-error', onConnectionError);

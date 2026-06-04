@@ -84,10 +84,10 @@ function addSocketHandlers(socket) {
   socket.onmessage = generateOnSocketMessageFn(socket, scheduleSocketReconnectTimeout);
 }
 
-function setConnectionError(value) {
-  if(hasConnectionError === value) {
+function setConnectionError(isError) {
+  if(hasConnectionError === isError) {
     return;
   }
-  hasConnectionError = value;
-  window.dispatchEvent(new CustomEvent(WEBSOCKET_CONNECTION_ERROR_EVENT, {detail: value}));
+  hasConnectionError = isError;
+  window.dispatchEvent(new CustomEvent(WEBSOCKET_CONNECTION_ERROR_EVENT, {detail: isError}));
 }
