@@ -22,6 +22,7 @@ export function sendCommand(command) {
   if(!isSocketReady(openSocket)) {
     return;
   }
+  console.debug('WebSocket send cmd:', command.cmd);
   openSocket.send(JSON.stringify(command));
 }
 
@@ -33,7 +34,12 @@ function connectSocket() {
     resetSocketState();
   }
   loadPlayerToken();
-  socket = new WebSocket(createWebSocketURL());
+  const socketURL = createWebSocketURL();
+  socket = new WebSocket(socketURL);
+  console.info('WebSocket connecting:', socketURL);
+  socket.onopen = () => console.info('WebSocket open');
+  socket.onclose = () => console.info('WebSocket closed');
+  socket.onerror = (event) => console.error('WebSocket error:', event);
   socket.onmessage = generateOnSocketMessageFn(socket, scheduleSocketReconnectTimeout);
   scheduleSocketReconnectTimeout();
   return socket;
@@ -48,6 +54,7 @@ function createWebSocketURL() {
 function scheduleSocketReconnectTimeout() {
   clearTimeout(reconnectSocketTimeout);
   reconnectSocketTimeout = setTimeout(() => {
+    console.info('WebSocket reconnecting after inactivity');
     resetSocketState();
     connectSocket();
   }, SOCKET_INACTIVITY_MILLISECONDS);
