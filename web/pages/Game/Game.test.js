@@ -6,6 +6,7 @@ import selectFighter from '@/actions/selectFighter.js';
 import {connectSocketOnAppLoad, resetSocketState} from '@/actions/websockets/index.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '@/actions/websockets/state/token.js';
 import {resetPlayerStore} from '@/data/player.js';
+import useMovesStore, {resetMovesStore} from '@/data/moves.js';
 import useRacesStore, {resetRacesStore} from '@/data/races.js';
 import Fight from '../GameLayout/Fight';
 import Hub from '../GameLayout/Hub';
@@ -106,6 +107,7 @@ describe('Game', () => {
     }
     resetSocketState();
     resetPlayerStore();
+    resetMovesStore();
     resetRacesStore();
     setLocalStorage(originalLocalStorage);
     globalThis.WebSocket = originalWebSocket;
@@ -132,12 +134,23 @@ describe('Game', () => {
   });
 
   it('loader fetches races for fighter select', async () => {
+    const moves = [{id: 1, name: 'Wild Punch'}];
     const races = [{id: 1, name: 'Tiger', stats: {speed: '4'}}];
-    fetchJSONMock.mockResolvedValue(races);
+    fetchJSONMock.mockImplementation((path) => {
+      if(path === 'moves') {
+        return Promise.resolve(moves);
+      }
+      if(path === 'race') {
+        return Promise.resolve(races);
+      }
+      return Promise.resolve([]);
+    });
     const {fighterSelectLoader} = await import('./index.js');
 
     expect(await fighterSelectLoader()).toEqual(races);
-    expect(fetchJSONMock).toHaveBeenCalledWith('race');
+    expect(fetchJSONMock).toHaveBeenNthCalledWith(1, 'moves');
+    expect(fetchJSONMock).toHaveBeenNthCalledWith(2, 'race');
+    expect(useMovesStore.getState().moves).toEqual(moves);
     expect(useRacesStore.getState().races).toEqual([
       {id: 1, name: 'Tiger', stats: {speed: 4n}},
     ]);
@@ -160,16 +173,52 @@ describe('Game', () => {
   });
 
   it('loader returns an empty list when races request fails', async () => {
+    const moves = [{id: 1, name: 'Wild Punch'}];
     useRacesStore.getState().setRaces([{id: 99, name: 'Old', stats: {speed: 4}}]);
+    useMovesStore.getState().setMoves([{id: 77, name: 'Old Move'}]);
     const {fighterSelectLoader} = await import('./index.js');
     const error = new Error('network failure');
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-    fetchJSONMock.mockRejectedValue(error);
+    fetchJSONMock.mockImplementation((path) => {
+      if(path === 'moves') {
+        return Promise.resolve(moves);
+      }
+      if(path === 'race') {
+        return Promise.reject(error);
+      }
+      return Promise.resolve([]);
+    });
 
     expect(await fighterSelectLoader()).toEqual([]);
-    expect(fetchJSONMock).toHaveBeenCalledWith('race');
+    expect(fetchJSONMock).toHaveBeenNthCalledWith(1, 'moves');
+    expect(fetchJSONMock).toHaveBeenNthCalledWith(2, 'race');
+    expect(useMovesStore.getState().moves).toEqual(moves);
     expect(consoleError).toHaveBeenCalledWith('Failed to load races', error);
     expect(useRacesStore.getState().races).toEqual([]);
+    consoleError.mockRestore();
+  });
+
+  it('loader clears moves when moves request fails', async () => {
+    const {fighterSelectLoader} = await import('./index.js');
+    const movesError = new Error('moves failure');
+    const races = [{id: 1, name: 'Tiger', stats: {speed: '4'}}];
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    useMovesStore.getState().setMoves([{id: 77, name: 'Old Move'}]);
+    fetchJSONMock.mockImplementation((path) => {
+      if(path === 'moves') {
+        return Promise.reject(movesError);
+      }
+      if(path === 'race') {
+        return Promise.resolve(races);
+      }
+      return Promise.resolve([]);
+    });
+
+    expect(await fighterSelectLoader()).toEqual(races);
+    expect(fetchJSONMock).toHaveBeenNthCalledWith(1, 'moves');
+    expect(fetchJSONMock).toHaveBeenNthCalledWith(2, 'race');
+    expect(consoleError).toHaveBeenCalledWith('Failed to load moves', movesError);
+    expect(useMovesStore.getState().moves).toEqual([]);
     consoleError.mockRestore();
   });
 
