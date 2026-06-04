@@ -72,6 +72,56 @@ describe('FightJudge.attach', () => {
     assert.deepEqual(judge.get(1).defender.startingStats, defenderStats);
   });
 
+  it('captures calculated attacker and defender stats from current fight details', async () => {
+    const judge = new FightJudge();
+    const fight = {
+      attacker: 11,
+      defender: 12,
+      details: {
+        attacker: {stats: {agility: 9999n, constitution: 2n, durability: 3n, reach: 7n, skill: 8n, stamina: 44n, strength: 9n}},
+        defender: {stats: {agility: 111n, constitution: 3n, durability: 4n, reach: 2n, skill: 5n, stamina: 22n, strength: 6n}},
+      },
+      id: 101,
+      victory: null,
+    };
+
+    await judge.attach(twoPlayerFighters, fight);
+
+    const storedFight = judge.get(1);
+    assert.deepEqual(storedFight.attacker.calculatedStats, {attack: 18n, defense: 13n, health: 12n, power: 20n});
+    assert.deepEqual(storedFight.defender.calculatedStats, {attack: 10n, defense: 9n, health: 36n, power: 14n});
+  });
+
+  it('recalculates calculated stats from updated current fight details on each get', async () => {
+    const judge = new FightJudge();
+    const fight = {
+      attacker: 11,
+      defender: null,
+      details: {
+        attacker: {stats: {agility: 111n, constitution: 2n, durability: 3n, reach: 7n, skill: 8n, stamina: 44n, strength: 9n}},
+      },
+      id: 101,
+      victory: null,
+    };
+
+    await judge.attach(twoPlayerFighters, fight);
+
+    assert.deepEqual(judge.get(1).attacker.calculatedStats, {attack: 18n, defense: 12n, health: 12n, power: 20n});
+
+    fight.details.attacker.stats.stamina = 4444n;
+
+    assert.deepEqual(judge.get(1).attacker.calculatedStats, {attack: 20n, defense: 12n, health: 12n, power: 40n});
+    assert.deepEqual(judge.get(1).attacker.startingStats, {
+      agility: 111n,
+      constitution: 2n,
+      durability: 3n,
+      reach: 7n,
+      skill: 8n,
+      stamina: 44n,
+      strength: 9n,
+    });
+  });
+
   it('omits defender from stored fight when fight has no defender details', async () => {
     const judge = new FightJudge();
     const attackerStats = {speed: 10n, vigor: 5n};

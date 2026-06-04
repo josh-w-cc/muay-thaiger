@@ -1,13 +1,11 @@
+import 'shared/bigInt.js';
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-
-
 export class FightJudge {
   #fightsByPlayerID = new Map();
 
   async load({fighters, fights}) {
     this.#fightsByPlayerID.clear();
-
     const unresolvedFights = await fights.listUnresolved();
     for(const fight of unresolvedFights) {
       await this.attach(fighters, fight);
@@ -30,14 +28,31 @@ export class FightJudge {
   }
 
   get(playerID) {
-    return this.#fightsByPlayerID.get(playerID) ?? null;
+    const fight = this.#fightsByPlayerID.get(playerID);
+    if(!fight) {
+      return null;
+    }
+    return captureCalculatedFight(fight, captureCalculatedStats(fight));
   }
+}
+
+function captureCalculatedFight(fight, calculatedStats) {
+  const result = {
+    ...fight,
+    attacker: {
+      ...fight.attacker,
+      ...calculatedStats.attacker,
+    },
+  };
+  if(fight.defender) {
+    result.defender = {...fight.defender, ...calculatedStats.defender};
+  }
+  return result;
 }
 
 export function attachFightJudge(app) {
   const judge = new FightJudge();
   const models = {fighters: fightersModel(app.db), fights: fightsModel(app.db)};
-
   app.decorate('fightJudge', judge);
   app.addHook('onReady', () => judge.load(models));
 }
@@ -45,18 +60,39 @@ export function attachFightJudge(app) {
 async function getFightPlayerIDs(fighters, fight) {
   const fighterIDs = [...new Set([fight?.attacker, fight?.defender].filter((fighterID) => fighterID != null))];
   const fighterRows = await Promise.all(fighterIDs.map((fighterID) => fighters.find(fighterID)));
-
-  return [...new Set(
-    fighterRows
-      .map((fighter) => fighter?.player)
-      .filter((playerID) => playerID != null),
-  )];
+  return [...new Set(fighterRows.map((fighter) => fighter?.player).filter((playerID) => playerID != null))];
 }
 
 function captureStartingStats(fight) {
-  const result = {attacker: {startingStats: fight.details.attacker.stats}};
-  if(fight.details.defender) {
-    result.defender = {startingStats: fight.details.defender.stats};
-  }
-  return result;
+  return {
+    attacker: {startingStats: {...fight.details.attacker.stats}},
+    ...(fight.details.defender ? {defender: {startingStats: {...fight.details.defender.stats}}} : {}),
+  };
+}
+
+function captureCalculatedStats(fight) {
+  return {
+    attacker: {calculatedStats: calculateFighterStats(fight.details.attacker.stats)},
+    ...(fight.details.defender ? {defender: {calculatedStats: calculateFighterStats(fight.details.defender.stats)}} : {}),
+  };
+}
+
+function calculateFighterStats({agility, constitution, durability, reach, skill, stamina, strength}) {
+  const [agilityValue, constitutionValue, durabilityValue, reachValue, skillValue, staminaValue, strengthValue] = [
+    agility,
+    constitution,
+    durability,
+    reach,
+    skill,
+    stamina,
+    strength,
+  ].map((value) => BigInt(value || 0));
+  const staminaLog = staminaValue.logApprox();
+  const agilityLog = agilityValue.logApprox();
+  return {
+    attack: skillValue + staminaLog + agilityLog.logApprox() + reachValue,
+    defense: skillValue + agilityLog + staminaLog.logApprox(),
+    health: constitutionValue * constitutionValue * durabilityValue,
+    power: (strengthValue + skillValue.logApprox()) * staminaLog,
+  };
 }
