@@ -2,17 +2,12 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import {down, up} from '../migrations/20260523120001_create_fighter_moves.js';
+import createMockKnex from './mock-knex.js';
 
 
 describe('20260523120001_create_fighter_moves migration', () => {
   it('creates fighter_moves with fighter/move foreign keys and enabled default false', async () => {
-    const calls = [];
-    const knex = {
-      raw: async (sql) => {
-        calls.push(sql);
-        return [];
-      },
-    };
+    const {calls, knex} = createMockKnex();
 
     await up(knex);
 
@@ -24,13 +19,7 @@ describe('20260523120001_create_fighter_moves migration', () => {
   });
 
   it('drops fighter_moves on rollback', async () => {
-    const calls = [];
-    const knex = {
-      raw: async (sql) => {
-        calls.push(sql);
-        return [];
-      },
-    };
+    const {calls, knex} = createMockKnex();
 
     await down(knex);
 

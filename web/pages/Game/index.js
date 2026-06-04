@@ -1,6 +1,6 @@
 import {redirect} from 'react-router-dom';
 
-import {loadPlayerToken} from '@/actions/websockets/token.js';
+import {loadPlayerToken} from '@/actions/websockets/state/token.js';
 import useRacesStore from '@/data/races.js';
 import {fetchJSON} from '@/utils/fetchAPI.js';
 import FighterSelect from '../FighterSelect';
