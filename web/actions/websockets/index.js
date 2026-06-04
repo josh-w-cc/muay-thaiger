@@ -39,7 +39,10 @@ function connectSocket() {
   console.info('WebSocket connecting:', socketURL);
   socket.onopen = () => console.info('WebSocket open');
   socket.onclose = () => console.info('WebSocket closed');
-  socket.onerror = (event) => console.error('WebSocket error:', event);
+  socket.onerror = (event) => {
+    console.error('WebSocket error:', event);
+    window.location.href = '/server-down';
+  };
   socket.onmessage = generateOnSocketMessageFn(socket, scheduleSocketReconnectTimeout);
   scheduleSocketReconnectTimeout();
   return socket;
