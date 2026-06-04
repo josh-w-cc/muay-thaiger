@@ -54,7 +54,7 @@ async function getFightPlayerIDs(fighters, fight) {
 
 function captureStartingStats(fight) {
   return {
-    attacker: fight.details?.attacker?.stats ?? null,
+    attacker: fight.details.attacker.stats,
     defender: fight.details?.defender?.stats ?? null,
   };
 }

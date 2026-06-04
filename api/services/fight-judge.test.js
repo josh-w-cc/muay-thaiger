@@ -9,9 +9,9 @@ import {attachFightJudge, FightJudge} from './fight-judge.js';
 describe('FightJudge.load', () => {
   it('stores unresolved fights by player ID and discards duplicate player entries', async () => {
     const judge = new FightJudge();
-    const firstFight = {attacker: 11, defender: 12, id: 101, victory: null};
-    const secondFight = {attacker: 13, defender: 14, id: 102, victory: null};
-    const thirdFight = {attacker: 15, defender: null, id: 103, victory: null};
+    const firstFight = {attacker: 11, defender: 12, details: {attacker: {stats: {}}, defender: {stats: {}}}, id: 101, victory: null};
+    const secondFight = {attacker: 13, defender: 14, details: {attacker: {stats: {}}, defender: {stats: {}}}, id: 102, victory: null};
+    const thirdFight = {attacker: 15, defender: null, details: {attacker: {stats: {}}}, id: 103, victory: null};
     const fighters = {
       find: async (fighterID) => ({
         11: {id: 11, player: 1},
@@ -43,21 +43,12 @@ describe('FightJudge.attach', () => {
 
   it('stores a new unresolved fight by all participant player IDs', async () => {
     const judge = new FightJudge();
-    const fight = {attacker: 11, defender: 12, id: 101, victory: null};
+    const fight = {attacker: 11, defender: 12, details: {attacker: {stats: {}}, defender: {stats: {}}}, id: 101, victory: null};
 
     await judge.attach(twoPlayerFighters, fight);
 
     assert.equal(judge.get(1).id, fight.id);
     assert.equal(judge.get(2).id, fight.id);
-  });
-
-  it('captures null starting stats when fight has no details', async () => {
-    const judge = new FightJudge();
-    const fight = {attacker: 11, defender: 12, id: 101, victory: null};
-
-    await judge.attach(twoPlayerFighters, fight);
-
-    assert.deepEqual(judge.get(1).startingStats, {attacker: null, defender: null});
   });
 
   it('captures attacker and defender starting stats from fight details', async () => {
@@ -104,7 +95,7 @@ describe('FightJudge.attach', () => {
 
 describe('attachFightJudge', () => {
   it('loads unresolved fights into app.fightJudge on server ready', async () => {
-    const unresolvedFight = {attacker: 9, defender: null, id: 5, victory: null};
+    const unresolvedFight = {attacker: 9, defender: null, details: {attacker: {stats: {}}}, id: 5, victory: null};
     const {knex} = mockKnexMulti([
       [unresolvedFight],
       {id: 9, player: 4},
