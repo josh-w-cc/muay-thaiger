@@ -25,7 +25,12 @@ export class FightJudge {
   }
 
   get(playerID) {
-    return this.#fightsByPlayerID.get(playerID) ?? null;
+    const fight = this.#fightsByPlayerID.get(playerID) ?? null;
+    if(!fight) {
+      return null;
+    }
+    applyCalculatedStats(fight);
+    return fight;
   }
 }
 
@@ -46,4 +51,33 @@ async function getFightPlayerIDs(fighters, fight) {
       .map((fighter) => fighter?.player)
       .filter((playerID) => playerID != null),
   )];
+}
+
+function applyCalculatedStats(fight) {
+  applyCalculatedStatsToParticipant(fight?.details?.attacker);
+  applyCalculatedStatsToParticipant(fight?.details?.defender);
+}
+
+function applyCalculatedStatsToParticipant(participant) {
+  if(!participant?.stats) {
+    return;
+  }
+  participant.calculated_stats = calculateStats(participant.stats);
+}
+
+function calculateStats(stats) {
+  const agility = Number(stats.agility);
+  const constitution = Number(stats.constitution);
+  const durability = Number(stats.durability);
+  const reach = Number(stats.reach);
+  const skill = Number(stats.skill);
+  const stamina = Number(stats.stamina);
+  const strength = Number(stats.strength);
+
+  return {
+    attack: skill + Math.log(stamina) + Math.log(Math.log(agility)) + reach,
+    defense: skill + Math.log(agility) + Math.log(Math.log(stamina)),
+    health: constitution * constitution * durability,
+    power: (strength + Math.log(skill)) * Math.log(stamina),
+  };
 }
