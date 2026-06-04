@@ -2,17 +2,12 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import {down, up} from '../migrations/20260601121000_create_components.js';
+import createMockKnex from './mock-knex.js';
 
 
 describe('20260601121000_create_components migration', () => {
   it('creates components and entity_components tables', async () => {
-    const calls = [];
-    const knex = {
-      raw: async (sql) => {
-        calls.push(sql);
-        return [];
-      },
-    };
+    const {calls, knex} = createMockKnex();
 
     await up(knex);
 
@@ -29,13 +24,7 @@ describe('20260601121000_create_components migration', () => {
   });
 
   it('drops entity_components and components on rollback', async () => {
-    const calls = [];
-    const knex = {
-      raw: async (sql) => {
-        calls.push(sql);
-        return [];
-      },
-    };
+    const {calls, knex} = createMockKnex();
 
     await down(knex);
 
