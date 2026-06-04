@@ -16,7 +16,7 @@ export class FightJudge {
 
   async attach(fighters, fight) {
     const playerIDs = await getFightPlayerIDs(fighters, fight);
-    const {attacker: _attacker, defender: _defender, ...rest} = fight;
+    const {attacker, defender, ...rest} = fight;
     const enrichedFight = {
       ...rest,
       ...captureStartingStats(fight),
