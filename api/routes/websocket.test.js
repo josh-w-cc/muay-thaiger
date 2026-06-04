@@ -122,13 +122,36 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(connections.has(socket), false);
   });
 
+  it('logs websocket connect and disconnect activity', async () => {
+    const info = createCallTracker();
+    const logger = {info};
+    const socketOn = createCallTracker();
+    const socket = {OPEN: 1, on: socketOn, readyState: 1, send: createCallTracker()};
+    const connections = new Set();
+
+    onConnect(socket, {}, connections, logger);
+
+    assert.equal(info.calls.length, 1);
+    assert.deepEqual(info.calls[0], [{connection_count: 1}, 'websocket connected']);
+
+    const closeHandler = socketOn.calls.find(([eventName]) => eventName === 'close')[1];
+    closeHandler();
+
+    assert.equal(info.calls.length, 2);
+    assert.deepEqual(info.calls[1], [{connection_count: 0}, 'websocket disconnected']);
+  });
+
   it('ignores invalid JSON auth messages', async () => {
     const send = createCallTracker();
+    const warn = createCallTracker();
+    const logger = {warn};
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage('{', socket, {});
+    await onMessage('{', socket, {}, logger);
 
     assert.equal(send.calls.length, 0);
+    assert.equal(warn.calls.length, 1);
+    assert.deepEqual(warn.calls[0], ['websocket invalid message']);
   });
 
   it('responds with token invalid message for auth commands with missing token', async () => {
@@ -357,6 +380,8 @@ describe('WebSocket /ws/connect', () => {
 
   it('sends an internal error message when a command handler throws', async () => {
     const send = createCallTracker();
+    const error = createCallTracker();
+    const logger = {error};
     const socket = {OPEN: 1, readyState: 1, send};
     const players = {
       create: async () => null,
@@ -365,10 +390,12 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players});
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players}, logger);
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'internal-error'});
+    assert.equal(error.calls.length, 1);
+    assert.equal(error.calls[0][1], 'websocket command failed');
   });
 
   it('sends error for idle command when socket has no authenticated player', async () => {

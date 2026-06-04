@@ -21,9 +21,15 @@ import {selectFighterCmd} from './clientCommands.js';
 describe('player websocket helpers', () => {
   const originalWebSocket = globalThis.WebSocket;
   const originalLocation = globalThis.window.location;
+  let debugSpy;
+  let errorSpy;
+  let infoSpy;
   let warnSpy;
 
   beforeEach(() => {
+    debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
+    errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    infoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
     warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     globalThis.WebSocket = vi.fn(function () {
       return {close: vi.fn(), readyState: 1, send: vi.fn()};
@@ -45,6 +51,9 @@ describe('player websocket helpers', () => {
       configurable: true,
       value: originalLocation,
     });
+    debugSpy.mockRestore();
+    errorSpy.mockRestore();
+    infoSpy.mockRestore();
     warnSpy.mockRestore();
   });
 
@@ -250,6 +259,7 @@ describe('player websocket helpers', () => {
     sendCommand({action_id: 2, cmd: 'idle'});
 
     expect(send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
+    expect(debugSpy).toHaveBeenCalledWith('WebSocket send cmd:', 'idle');
   });
 
   it('reconnects and sends websocket command when socket is unavailable', () => {
@@ -342,6 +352,8 @@ describe('player websocket helpers', () => {
     socket.onmessage({data: JSON.stringify({cmd: 'noop'})});
 
     expect(send).not.toHaveBeenCalled();
+    expect(debugSpy).toHaveBeenCalledWith('WebSocket recv invalid message');
+    expect(debugSpy).toHaveBeenCalledWith('WebSocket recv cmd:', 'noop');
     expect(warnSpy).toHaveBeenCalledTimes(1);
     expect(warnSpy).toHaveBeenCalledWith('Unknown websocket cmd:', 'noop');
   });

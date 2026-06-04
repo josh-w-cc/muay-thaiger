@@ -20,8 +20,10 @@ export function generateOnSocketMessageFn(socket, scheduleReconnectTimeout) {
     scheduleReconnectTimeout();
     const message = parseSocketMessage(event);
     if(!message) {
+      console.debug('WebSocket recv invalid message');
       return;
     }
+    console.debug('WebSocket recv cmd:', message.cmd);
     const onCommand = onSocketCommand[message.cmd];
     if(!onCommand) {
       console.warn('Unknown websocket cmd:', message.cmd);
