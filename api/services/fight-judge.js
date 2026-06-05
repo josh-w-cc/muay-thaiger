@@ -13,15 +13,8 @@ export class FightJudge {
 
   async attach(fighters, fight) {
     const playerIDs = await getFightPlayerIDs(fighters, fight);
-    const {attacker, defender, ...rest} = fight;
-    const enrichedFight = {
-      ...rest,
-      ...captureStartingStats(fight),
-    };
+    const enrichedFight = captureStartingStats(fight);
     for(const playerID of playerIDs) {
-      if(this.#fightsByPlayerID.has(playerID)) {
-        continue;
-      }
       this.#fightsByPlayerID.set(playerID, enrichedFight);
     }
   }
@@ -31,22 +24,28 @@ export class FightJudge {
     if(!fight) {
       return null;
     }
-    return getCalculatedFight(fight, captureCalculatedStats(fight));
+    return getCalculatedFight(fight);
   }
 }
 
-function getCalculatedFight(fight, calculatedStats) {
-  const result = {
+function getCalculatedFight(fight) {
+  const {attacker, defender, ...rest} = fight.details;
+  return {
     ...fight,
-    attacker: {
-      ...fight.attacker,
-      ...calculatedStats.attacker,
+    details: {
+      attacker: {
+        ...attacker,
+        calculatedStats: calculateFighterStats(attacker.stats),
+      },
+      ...(defender ? {
+        defender: {
+          ...defender,
+          calculatedStats: calculateFighterStats(defender.stats),
+        }
+      } : {}),
+      ...rest,
     },
   };
-  if(fight.defender) {
-    result.defender = {...fight.defender, ...calculatedStats.defender};
-  }
-  return result;
 }
 
 export function attachFightJudge(app) {
@@ -64,9 +63,22 @@ async function getFightPlayerIDs(fighters, fight) {
 }
 
 function captureStartingStats(fight) {
+  const {attacker, defender, ...rest} = fight.details;
   return {
-    attacker: {startingStats: {...fight.details.attacker.stats}},
-    ...(fight.details.defender ? {defender: {startingStats: {...fight.details.defender.stats}}} : {}),
+    ...fight,
+    details: {
+      attacker: {
+        ...attacker,
+        startingStats: {...attacker.stats},
+      },
+      ...(defender ? {
+        defender: {
+          ...defender,
+          startingStats: {...defender.stats},
+        }
+      } : {}),
+      ...rest,
+    }
   };
 }
 
