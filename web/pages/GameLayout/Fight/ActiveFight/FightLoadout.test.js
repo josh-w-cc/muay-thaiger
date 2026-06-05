@@ -26,4 +26,27 @@ describe('FightLoadout', () => {
     expect(screen.getByRole('button', {name: 'Cross'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Knee'})).toBeInTheDocument();
   });
+
+  it('uses move recovery values for tapper button durations', () => {
+    render(
+      <FightLoadout
+        details={{
+          attacker: {
+            moves: [
+              {name: 'Cross', recovery: 6},
+              {name: 'Knee', recovery: 2.5},
+            ],
+          },
+          strategy: 'Counter Rush',
+        }}
+      />,
+    );
+
+    const crossButtonFill = screen.getByRole('button', {name: 'Cross'}).querySelector('span[aria-hidden="true"]');
+    const kneeButtonFill = screen.getByRole('button', {name: 'Knee'}).querySelector('span[aria-hidden="true"]');
+    expect(crossButtonFill).not.toBeNull();
+    expect(kneeButtonFill).not.toBeNull();
+    expect(crossButtonFill).toHaveStyle({animationDuration: '6s'});
+    expect(kneeButtonFill).toHaveStyle({animationDuration: '2.5s'});
+  });
 });
