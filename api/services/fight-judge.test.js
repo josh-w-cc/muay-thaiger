@@ -33,7 +33,7 @@ describe('FightJudge.load', () => {
 
     await judge.load({fighters, fights});
 
-    assert.equal(judge.get(1).id, firstFight.id);
+    assert.equal(judge.get(1).id, secondFight.id);
     assert.equal(judge.get(2).id, firstFight.id);
     assert.equal(judge.get(3).id, secondFight.id);
     assert.equal(judge.get(4).id, thirdFight.id);
@@ -78,8 +78,8 @@ describe('FightJudge.attach', () => {
 
     await judge.attach(twoPlayerFighters, fight);
 
-    assert.deepEqual(judge.get(1).attacker.startingStats, attackerStats);
-    assert.deepEqual(judge.get(1).defender.startingStats, defenderStats);
+    assert.deepEqual(judge.get(1).details.attacker.startingStats, attackerStats);
+    assert.deepEqual(judge.get(1).details.defender.startingStats, defenderStats);
   });
 
   it('computes calculated attacker and defender stats from current fight details', async () => {
@@ -98,8 +98,8 @@ describe('FightJudge.attach', () => {
     await judge.attach(twoPlayerFighters, fight);
 
     const storedFight = judge.get(1);
-    assert.deepEqual(storedFight.attacker.calculatedStats, {attack: 18n, defense: 13n, health: 12n, power: 20n});
-    assert.deepEqual(storedFight.defender.calculatedStats, {attack: 10n, defense: 9n, health: 36n, power: 14n});
+    assert.deepEqual(storedFight.details.attacker.calculatedStats, {attack: 18n, defense: 13n, health: 12n, power: 20n});
+    assert.deepEqual(storedFight.details.defender.calculatedStats, {attack: 10n, defense: 9n, health: 36n, power: 14n});
   });
 
   it('recalculates calculated stats from updated current fight details on each get', async () => {
@@ -116,12 +116,12 @@ describe('FightJudge.attach', () => {
 
     await judge.attach(twoPlayerFighters, fight);
 
-    assert.deepEqual(judge.get(1).attacker.calculatedStats, {attack: 18n, defense: 12n, health: 12n, power: 20n});
+    assert.deepEqual(judge.get(1).details.attacker.calculatedStats, {attack: 18n, defense: 12n, health: 12n, power: 20n});
 
     fight.details.attacker.stats.stamina = 4444n;
 
-    assert.deepEqual(judge.get(1).attacker.calculatedStats, {attack: 20n, defense: 12n, health: 12n, power: 40n});
-    assert.deepEqual(judge.get(1).attacker.startingStats, {
+    assert.deepEqual(judge.get(1).details.attacker.calculatedStats, {attack: 20n, defense: 12n, health: 12n, power: 40n});
+    assert.deepEqual(judge.get(1).details.attacker.startingStats, {
       agility: 111n,
       constitution: 2n,
       durability: 3n,
@@ -150,8 +150,8 @@ describe('FightJudge.attach', () => {
 
     await judge.attach(singlePlayerFighters, fight);
 
-    assert.deepEqual(judge.get(1).attacker.startingStats, attackerStats);
-    assert.equal('defender' in judge.get(1), false);
+    assert.deepEqual(judge.get(1).details.attacker.startingStats, attackerStats);
+    assert.equal('defender' in judge.get(1).details, false);
   });
 });
 

@@ -33,19 +33,15 @@ function getCalculatedFight(fight) {
   return {
     ...fight,
     details: {
-      attacker: {
-        ...attacker,
-        calculatedStats: calculateFighterStats(attacker.stats),
-      },
-      ...(defender ? {
-        defender: {
-          ...defender,
-          calculatedStats: calculateFighterStats(defender.stats),
-        }
-      } : {}),
+      attacker: addCalculatedStats(attacker),
+      ...(defender ? {defender: addCalculatedStats(defender)} : {}),
       ...rest,
     },
   };
+}
+
+function addCalculatedStats(participant) {
+  return {...participant, calculatedStats: calculateFighterStats(participant.stats)};
 }
 
 export function attachFightJudge(app) {
@@ -67,19 +63,15 @@ function captureStartingStats(fight) {
   return {
     ...fight,
     details: {
-      attacker: {
-        ...attacker,
-        startingStats: {...attacker.stats},
-      },
-      ...(defender ? {
-        defender: {
-          ...defender,
-          startingStats: {...defender.stats},
-        }
-      } : {}),
+      attacker: addStartingStats(attacker),
+      ...(defender ? {defender: addStartingStats(defender)} : {}),
       ...rest,
-    }
+    },
   };
+}
+
+function addStartingStats(participant) {
+  return {...participant, startingStats: {...participant.stats}};
 }
 
 function calculateFighterStats({agility, constitution, durability, reach, skill, stamina, strength}) {
