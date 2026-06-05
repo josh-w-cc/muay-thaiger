@@ -1,4 +1,5 @@
 import {create} from 'zustand';
+import {parseBigIntStats} from 'shared/stats.js';
 
 const useFightStore = create((set) => createFightState(set));
 
@@ -36,5 +37,38 @@ function getServerFightState(fight) {
   return {
     ...getInitialFightState(),
     ...fight,
+    details: parseFightDetails(fight.details),
   };
+}
+
+function parseFightDetails(details) {
+  return mapParsedFields(details, ['attacker', 'defender'], parseFightParticipant);
+}
+
+function parseFightParticipant(participant) {
+  return mapParsedFields(participant, ['startingStats', 'standardStats', 'calculatedStats', 'stats'], parseFightStats);
+}
+
+function parseFightStats(stats) {
+  if(!isObject(stats)) {
+    return stats ?? null;
+  }
+  return parseBigIntStats(stats);
+}
+
+function mapParsedFields(source, keys, parser) {
+  if(!isObject(source)) {
+    return source ?? null;
+  }
+  const result = {...source};
+  for(const key of keys) {
+    if(key in source) {
+      result[key] = parser(source[key]);
+    }
+  }
+  return result;
+}
+
+function isObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }

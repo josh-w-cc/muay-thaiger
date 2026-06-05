@@ -59,4 +59,38 @@ describe('useFightStore', () => {
     expect(fight).not.toHaveProperty('messages');
     expect(fight).not.toHaveProperty('state');
   });
+
+  it('parses fight participant stats into bigints from server payloads', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          calculatedStats: {attack: '1111111', defense: 2222222},
+          standardStats: {health: '240', stamina: 150},
+          startingStats: {health: '300', stamina: 200},
+        },
+        defender: {
+          calculatedStats: {attack: '3333333', defense: 4444444},
+          startingStats: {health: 260, stamina: '210'},
+          stats: {health: '200', stamina: 180},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    const {details} = useFightStore.getState();
+
+    expect(details.attacker.startingStats.health).toBe(300n);
+    expect(details.attacker.startingStats.stamina).toBe(200n);
+    expect(details.attacker.standardStats.health).toBe(240n);
+    expect(details.attacker.standardStats.stamina).toBe(150n);
+    expect(details.attacker.calculatedStats.attack).toBe(1111111n);
+    expect(details.attacker.calculatedStats.defense).toBe(2222222n);
+    expect(details.defender.startingStats.health).toBe(260n);
+    expect(details.defender.startingStats.stamina).toBe(210n);
+    expect(details.defender.stats.health).toBe(200n);
+    expect(details.defender.stats.stamina).toBe(180n);
+    expect(details.defender.calculatedStats.attack).toBe(3333333n);
+    expect(details.defender.calculatedStats.defense).toBe(4444444n);
+  });
 });
