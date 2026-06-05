@@ -5,6 +5,7 @@ import {FIGHT_LOADOUT, TAPPER_FILL_DURATIONS} from './fightData.js';
 import css from '../Fight.module.css';
 
 const MOVE_NAME_BY_ID = Object.freeze(Object.fromEntries(MOVE_SEED_MOVES.map((move) => [move.id, move.name])));
+const UNKNOWN_MOVE_LABEL_PREFIX = 'Move ';
 
 
 export default function FightLoadout({details}) {
@@ -58,24 +59,20 @@ function getFightMoveLabel(move) {
     return null;
   }
 
-  return MOVE_NAME_BY_ID[moveID] ?? `Move ${moveID}`;
+  return MOVE_NAME_BY_ID[moveID] ?? `${UNKNOWN_MOVE_LABEL_PREFIX}${moveID}`;
 }
 
 function getMoveID(move) {
-  if(move && typeof move === 'object') {
-    return getMoveID(move.id);
+  if(move && typeof move === 'object' && 'id' in move) {
+    return getNumericMoveID(move.id);
   }
 
-  if(typeof move === 'bigint') {
-    return Number(move);
-  }
+  return getNumericMoveID(move);
+}
 
+function getNumericMoveID(move) {
   const moveID = Number(move);
-  if(Number.isFinite(moveID)) {
-    return moveID;
-  }
-
-  return null;
+  return Number.isFinite(moveID) ? moveID : null;
 }
 
 function TapperButton({delay, duration, children}) {
