@@ -129,6 +129,9 @@ describe('Fight', () => {
     const detailsPre = document.body.querySelector('pre');
     expect(detailsPre).toBeInTheDocument();
     expect(detailsPre.textContent).toBe(JSON.stringify(fightState.details, null, 2));
+    const fightSection = screen.getByText('Fight pending...').closest('section');
+    expect(fightSection).toBeInTheDocument();
+    expect(within(fightSection).getByRole('button', {name: /Strategy:/})).toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Fight!'})).not.toBeInTheDocument();
   });
 
