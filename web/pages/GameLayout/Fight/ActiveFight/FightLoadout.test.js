@@ -16,7 +16,7 @@ describe('FightLoadout', () => {
     render(
       <FightLoadout
         details={{
-          attacker: {moves: ['Cross', 'Knee']},
+          attacker: {moves: [{name: 'Cross'}, {name: 'Knee'}]},
           strategy: 'Counter Rush',
         }}
       />,

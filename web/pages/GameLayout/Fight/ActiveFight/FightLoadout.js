@@ -33,17 +33,10 @@ function getFightMoves(details) {
   if(Array.isArray(details?.attacker?.moves) && details.attacker.moves.length > 0) {
     return details.attacker.moves.map((move) => ({
       duration: getMoveRecovery(move),
-      label: getMoveLabel(move),
+      label: move.name,
     }));
   }
   return FIGHT_LOADOUT.moves.map((move) => ({label: move}));
-}
-
-function getMoveLabel(move) {
-  if(typeof move === 'string') {
-    return move;
-  }
-  return move?.name ?? String(move);
 }
 
 function getMoveRecovery(move) {
