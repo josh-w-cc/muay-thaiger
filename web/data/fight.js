@@ -42,31 +42,23 @@ function getServerFightState(fight) {
 }
 
 function parseFightDetails(details) {
-  return mapParsedFields(details, ['attacker', 'defender'], parseFightParticipant);
+  if(!isObject(details)) {
+    return details ?? null;
+  }
+  return {
+    ...details,
+    ...(details.attacker ? {attacker: parseFightParticipant(details.attacker)} : {}),
+    ...(details.defender ? {defender: parseFightParticipant(details.defender)} : {}),
+  };
 }
 
 function parseFightParticipant(participant) {
-  return mapParsedFields(participant, ['startingStats', 'standardStats', 'calculatedStats', 'stats'], parseFightStats);
-}
-
-function parseFightStats(stats) {
-  if(!isObject(stats)) {
-    return stats ?? null;
-  }
-  return parseBigIntStats(stats);
-}
-
-function mapParsedFields(source, keys, parser) {
-  if(!isObject(source)) {
-    return source ?? null;
-  }
-  const result = {...source};
-  for(const key of keys) {
-    if(key in source) {
-      result[key] = parser(source[key]);
-    }
-  }
-  return result;
+  return {
+    ...participant,
+    calculatedStats: parseBigIntStats(participant.calculatedStats),
+    startingStats: parseBigIntStats(participant.startingStats),
+    stats: parseBigIntStats(participant.stats),
+  };
 }
 
 function isObject(value) {
