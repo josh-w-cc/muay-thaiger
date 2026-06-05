@@ -26,4 +26,18 @@ describe('FightLoadout', () => {
     expect(screen.getByRole('button', {name: 'Cross'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Knee'})).toBeInTheDocument();
   });
+
+  it('renders move names when server details include move metadata objects', () => {
+    render(
+      <FightLoadout
+        details={{
+          attacker: {moves: [{id: 1, lastUsed: 1700000000}, {id: 2, lastUsed: null}]},
+          strategy: 'Counter Rush',
+        }}
+      />,
+    );
+
+    expect(screen.getByRole('button', {name: 'Wild Punch'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Wild Kick'})).toBeInTheDocument();
+  });
 });

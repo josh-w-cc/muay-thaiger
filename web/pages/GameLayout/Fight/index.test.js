@@ -87,7 +87,7 @@ describe('Fight', () => {
       details: {
         attacker: {
           calculatedStats: {attack: 1111111n, defense: 2222222n, health: 250},
-          moves: ['Jab', 'Cross'],
+          moves: [{id: 1, lastUsed: 1700000000}, {id: 2, lastUsed: null}],
           race: 1,
           startingStats: {health: 300, stamina: 200},
           stats: {health: 240, stamina: 150},
@@ -115,7 +115,7 @@ describe('Fight', () => {
     const fightSection = screen.getByText('Fight pending...').closest('section');
     expect(fightSection).toBeInTheDocument();
     expect(within(fightSection).getByRole('button', {name: 'Strategy: Server Strategy'})).toBeInTheDocument();
-    expect(within(fightSection).getByRole('button', {name: 'Jab'})).toBeInTheDocument();
+    expect(within(fightSection).getByRole('button', {name: 'Wild Punch'})).toBeInTheDocument();
     expect(within(fightSection).getByRole('img', {name: 'Tiger Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
     expect(within(fightSection).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
