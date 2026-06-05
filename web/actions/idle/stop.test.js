@@ -1,6 +1,6 @@
 import {SKILL_IDS} from 'shared/skills/index.js';
 
-import stopIdle from './stopIdle.js';
+import stopIdle from './stop.js';
 
 
 const {removeAction, removeFighterActionCmd} = vi.hoisted(() => ({
