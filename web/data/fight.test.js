@@ -60,7 +60,7 @@ describe('useFightStore', () => {
     expect(fight).not.toHaveProperty('state');
   });
 
-  it('parses fight participant stats into bigints from server payloads', () => {
+  it('parses fight participant stats into BigInts from server payloads', () => {
     useFightStore.getState().syncServerState({
       details: {
         attacker: {
