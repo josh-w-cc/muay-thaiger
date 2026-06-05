@@ -31,11 +31,11 @@ export class FightJudge {
     if(!fight) {
       return null;
     }
-    return captureCalculatedFight(fight, captureCalculatedStats(fight));
+    return getCalculatedFight(fight, captureCalculatedStats(fight));
   }
 }
 
-function captureCalculatedFight(fight, calculatedStats) {
+function getCalculatedFight(fight, calculatedStats) {
   const result = {
     ...fight,
     attacker: {
