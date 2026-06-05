@@ -105,9 +105,9 @@ describe('generateUpdateFn', () => {
 describe('generateCrudModel', () => {
   it('builds a standard CRUD model', async () => {
     const {calls, knex} = mockKnex([{id: 1, name: 'Updated'}]);
-    const model = generateCrudModel(knex, 'items', 'name');
+    const model = generateCrudModel(knex, 'items', {listOrderBy: 'name'});
 
-    assert.deepEqual(Object.keys(model).sort(), ['create', 'find', 'list', 'remove', 'update']);
+    assert.deepEqual(Object.keys(model), ['create', 'find', 'list', 'remove', 'update']);
 
     await model.list();
     await model.update(1, {name: 'Updated'});
@@ -122,8 +122,8 @@ describe('generateCrudModel', () => {
 
   it('can omit update from the model', () => {
     const {knex} = mockKnex([]);
-    const model = generateCrudModel(knex, 'events', 'created_at', {update: false});
+    const model = generateCrudModel(knex, 'events', {listOrderBy: 'created_at', update: false});
 
-    assert.deepEqual(Object.keys(model).sort(), ['create', 'find', 'list', 'remove']);
+    assert.deepEqual(Object.keys(model), ['create', 'find', 'list', 'remove']);
   });
 });

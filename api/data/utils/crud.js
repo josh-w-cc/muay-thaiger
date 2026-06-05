@@ -20,14 +20,19 @@ export function generateSearchFn(db, table) {
   return (params) => db(table).where(params);
 }
 
-export function generateCrudModel(db, table, listOrderBy, {update = true} = {}) {
-  return {
+export function generateCrudModel(db, table, {listOrderBy, update = true} = {}) {
+  const model = {
     create: generateCreateFn(db, table),
     find: generateFindFn(db, table),
     list: generateListFn(db, table, listOrderBy),
     remove: generateRemoveFn(db, table),
-    ...(update ? {update: generateUpdateFn(db, table)} : {}),
   };
+
+  if(update) {
+    model.update = generateUpdateFn(db, table);
+  }
+
+  return model;
 }
 
 export function generateUpdateFn(db, table) {
