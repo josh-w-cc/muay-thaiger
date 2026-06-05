@@ -5,60 +5,43 @@ const RACE_FIGHT_IMAGES = {1: TigerMuayThai, 2: SnowLeopardMuayThaiReady};
 const RACE_DISPLAY_NAMES = {1: 'Tiger', 2: 'Snow leopard'};
 
 export function buildCard(participant) {
-  const participantData = participant || {};
-  const raceName = getRaceName(participantData.race);
-  const calculatedStats = participantData.calculatedStats || {};
-  const stats = participantData.stats || {};
-  const startingStats = participantData.startingStats || {};
-  const hp = getHealthBar(raceName, stats, calculatedStats, startingStats);
-  const stamina = getStaminaBar(raceName, stats, startingStats);
+  const raceName = getRaceName(participant.race);
+  const hp = getHealthBar(raceName, participant);
+  const stamina = getStaminaBar(raceName, participant);
   return {
     alt: formatAltText(raceName),
-    attack: getCombatStat(calculatedStats.attack),
-    defense: getCombatStat(calculatedStats.defense),
+    attack: participant.calculatedStats.attack,
+    defense: participant.calculatedStats.defense,
     hp,
-    src: getRaceImage(participantData.race),
+    src: getRaceImage(participant.race),
     stamina,
   };
 }
 
 export function formatCombatStat(value) {
-  const normalizedValue = typeof value === 'bigint' ? value : BigInt(value || 0);
-  return normalizedValue.toFormattedNumber();
+  return BigInt(value).toFormattedNumber();
 }
 
-function getCurrentValue(primaryValue, secondaryValue, fallbackValue) {
-  const primary = toNumber(primaryValue, null);
-  if(primary !== null) {
-    return primary;
-  }
-  const secondary = toNumber(secondaryValue, null);
-  if(secondary !== null) {
-    return secondary;
-  }
-  return fallbackValue;
-}
-
-function getHealthBar(raceName, stats, calculatedStats, startingStats) {
-  const current = getCurrentValue(stats.health, calculatedStats.health, 0);
+function getHealthBar(raceName, participant) {
+  const current = toNumber(participant.stats.health);
   return {
     current,
     label: formatStatLabel(raceName, 'health'),
-    max: getMaxValue(startingStats.health, 0, current),
+    max: getMaxValue(participant.startingStats.health, current),
   };
 }
 
-function getStaminaBar(raceName, stats, startingStats) {
-  const current = getCurrentValue(stats.stamina, undefined, 0);
+function getStaminaBar(raceName, participant) {
+  const current = toNumber(participant.stats.stamina);
   return {
     current,
     label: formatStatLabel(raceName, 'stamina'),
-    max: getMaxValue(startingStats.stamina, 0, current),
+    max: getMaxValue(participant.startingStats.stamina, current),
   };
 }
 
-function getMaxValue(value, fallbackValue, currentValue) {
-  return Math.max(toNumber(value, fallbackValue), currentValue, 1);
+function getMaxValue(maxValue, currentValue) {
+  return Math.max(toNumber(maxValue), currentValue, 1);
 }
 
 function getRaceName(raceID) {
@@ -70,18 +53,13 @@ function getRaceImage(raceID) {
 }
 
 function formatAltText(raceName) {
-  return raceName ? `${raceName} Muay Thai fighter` : 'Muay Thai fighter';
+  return `${raceName} Muay Thai fighter`;
 }
 
 function formatStatLabel(raceName, statName) {
-  return raceName ? `${raceName} fighter ${statName}` : `Fighter ${statName}`;
+  return `${raceName} fighter ${statName}`;
 }
 
-function getCombatStat(value) {
-  return value ?? 0n;
-}
-
-function toNumber(value, fallbackValue = null) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : fallbackValue;
+function toNumber(value) {
+  return Number(value);
 }
