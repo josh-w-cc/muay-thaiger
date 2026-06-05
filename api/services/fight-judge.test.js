@@ -8,12 +8,18 @@ import {attachFightJudge, FightJudge} from './fight-judge.js';
 
 patchBigIntPrototype();
 
+const baseCombatStats = {agility: 1n, constitution: 1n, durability: 1n, reach: 1n, skill: 1n, stamina: 1n, strength: 1n};
+
 describe('FightJudge.load', () => {
   it('stores unresolved fights by player ID and discards duplicate player entries', async () => {
     const judge = new FightJudge();
-    const firstFight = {attacker: 11, defender: 12, details: {attacker: {stats: {}}, defender: {stats: {}}}, id: 101, victory: null};
-    const secondFight = {attacker: 13, defender: 14, details: {attacker: {stats: {}}, defender: {stats: {}}}, id: 102, victory: null};
-    const thirdFight = {attacker: 15, defender: null, details: {attacker: {stats: {}}}, id: 103, victory: null};
+    const firstFight = {
+      attacker: 11, defender: 12, details: {attacker: {stats: {...baseCombatStats}}, defender: {stats: {...baseCombatStats}}}, id: 101, victory: null,
+    };
+    const secondFight = {
+      attacker: 13, defender: 14, details: {attacker: {stats: {...baseCombatStats}}, defender: {stats: {...baseCombatStats}}}, id: 102, victory: null,
+    };
+    const thirdFight = {attacker: 15, defender: null, details: {attacker: {stats: {...baseCombatStats}}}, id: 103, victory: null};
     const fighters = {
       find: async (fighterID) => ({
         11: {id: 11, player: 1},
@@ -45,7 +51,9 @@ describe('FightJudge.attach', () => {
 
   it('stores a new unresolved fight by all participant player IDs', async () => {
     const judge = new FightJudge();
-    const fight = {attacker: 11, defender: 12, details: {attacker: {stats: {}}, defender: {stats: {}}}, id: 101, victory: null};
+    const fight = {
+      attacker: 11, defender: 12, details: {attacker: {stats: {...baseCombatStats}}, defender: {stats: {...baseCombatStats}}}, id: 101, victory: null,
+    };
 
     await judge.attach(twoPlayerFighters, fight);
 
@@ -55,8 +63,8 @@ describe('FightJudge.attach', () => {
 
   it('captures attacker and defender starting stats from fight details', async () => {
     const judge = new FightJudge();
-    const attackerStats = {speed: 10n, vigor: 5n};
-    const defenderStats = {speed: 8n, vigor: 3n};
+    const attackerStats = {...baseCombatStats, agility: 10n, stamina: 5n};
+    const defenderStats = {...baseCombatStats, agility: 8n, stamina: 3n};
     const fight = {
       attacker: 11,
       defender: 12,
@@ -126,7 +134,7 @@ describe('FightJudge.attach', () => {
 
   it('omits defender from stored fight when fight has no defender details', async () => {
     const judge = new FightJudge();
-    const attackerStats = {speed: 10n, vigor: 5n};
+    const attackerStats = {...baseCombatStats, agility: 10n, stamina: 5n};
     const fight = {
       attacker: 11,
       defender: null,
@@ -149,7 +157,7 @@ describe('FightJudge.attach', () => {
 
 describe('attachFightJudge', () => {
   it('loads unresolved fights into app.fightJudge on server ready', async () => {
-    const unresolvedFight = {attacker: 9, defender: null, details: {attacker: {stats: {}}}, id: 5, victory: null};
+    const unresolvedFight = {attacker: 9, defender: null, details: {attacker: {stats: {...baseCombatStats}}}, id: 5, victory: null};
     const {knex} = mockKnexMulti([
       [unresolvedFight],
       {id: 9, player: 4},

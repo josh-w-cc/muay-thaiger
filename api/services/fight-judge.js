@@ -78,22 +78,12 @@ function captureCalculatedStats(fight) {
 }
 
 function calculateFighterStats({agility, constitution, durability, reach, skill, stamina, strength}) {
-  const agilityValue = toBigIntOrZero(agility);
-  const constitutionValue = toBigIntOrZero(constitution);
-  const durabilityValue = toBigIntOrZero(durability);
-  const reachValue = toBigIntOrZero(reach);
-  const skillValue = toBigIntOrZero(skill);
-  const staminaValue = toBigIntOrZero(stamina);
-  const strengthValue = toBigIntOrZero(strength);
-  const staminaLogApprox = staminaValue.logApprox();
-  const agilityLogApprox = agilityValue.logApprox();
+  const staminaLogApprox = stamina.logApprox();
+  const agilityLogApprox = agility.logApprox();
   return {
-    attack: skillValue + staminaLogApprox + agilityLogApprox.logApprox() + reachValue,
-    defense: skillValue + agilityLogApprox + staminaLogApprox.logApprox(),
-    health: constitutionValue * constitutionValue * durabilityValue,
-    power: (strengthValue + skillValue.logApprox()) * staminaLogApprox,
+    attack: skill + staminaLogApprox + agilityLogApprox.logApprox() + reach,
+    defense: skill + agilityLogApprox + staminaLogApprox.logApprox(),
+    health: constitution * constitution * durability,
+    power: (strength + skill.logApprox()) * staminaLogApprox,
   };
-}
-function toBigIntOrZero(value) {
-  return BigInt(value ?? 0);
 }
