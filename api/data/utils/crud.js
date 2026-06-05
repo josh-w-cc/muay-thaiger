@@ -20,6 +20,21 @@ export function generateSearchFn(db, table) {
   return (params) => db(table).where(params);
 }
 
+export function generateCrudModel(db, table, {listOrderBy, update = true} = {}) {
+  const model = {
+    create: generateCreateFn(db, table),
+    find: generateFindFn(db, table),
+    list: generateListFn(db, table, listOrderBy),
+    remove: generateRemoveFn(db, table),
+  };
+
+  if(update) {
+    model.update = generateUpdateFn(db, table);
+  }
+
+  return model;
+}
+
 export function generateUpdateFn(db, table) {
   return (id, data) => db(table).where({id}).update(data).returning('*').then((rows) => rows[0]);
 }
