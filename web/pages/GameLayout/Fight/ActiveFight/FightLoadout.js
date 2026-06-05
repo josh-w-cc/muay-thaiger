@@ -46,16 +46,9 @@ function getLoadoutMove(moveDefinitions, moveID) {
     return {label: `${moveID}`};
   }
   return {
-    duration: getMoveRecovery(moveDefinition),
+    duration: moveDefinition.recovery,
     label: moveDefinition.name,
   };
-}
-
-function getMoveRecovery(moveDefinition) {
-  if(typeof moveDefinition?.recovery !== 'number' || moveDefinition.recovery <= 0) {
-    return undefined;
-  }
-  return moveDefinition.recovery;
 }
 
 function TapperButton({delay, duration, children}) {
