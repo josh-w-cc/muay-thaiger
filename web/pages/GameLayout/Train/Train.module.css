@@ -44,12 +44,6 @@
   gap: var(--space-xs);
 }
 
-.regimenName {
-  align-items: center;
-  display: flex;
-  gap: var(--space-xs);
-}
-
 .stats {
   composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
 }

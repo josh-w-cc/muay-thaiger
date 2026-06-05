@@ -1,0 +1,5 @@
+.regimenName {
+  align-items: center;
+  display: flex;
+  gap: var(--space-xs);
+}
