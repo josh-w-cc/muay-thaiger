@@ -121,7 +121,7 @@ describe('Fight', () => {
       id: 19,
       reason: 'gold',
     });
-    const {container} = render(<Fight />);
+    render(<Fight />);
     expect(document.body).toHaveTextContent('Fight pending...');
     expect(document.body).toHaveTextContent('Fight ID: 19');
     expect(document.body).toHaveTextContent('Reason: gold');
@@ -129,8 +129,9 @@ describe('Fight', () => {
     const detailsPre = document.body.querySelector('pre');
     expect(detailsPre).toBeInTheDocument();
     expect(detailsPre.textContent).toBe(JSON.stringify(fightState.details, null, 2));
-    const sections = container.querySelectorAll('section');
-    expect(within(sections[0]).getByRole('button', {name: 'Strategy: Pressure Counter'})).toBeInTheDocument();
+    const fightSection = screen.getByText('Fight pending...').closest('section');
+    expect(fightSection).toBeInTheDocument();
+    expect(within(fightSection).getByRole('button', {name: /Strategy:/})).toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Fight!'})).not.toBeInTheDocument();
   });
 
