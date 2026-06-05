@@ -82,13 +82,6 @@ function captureStartingStats(fight) {
   };
 }
 
-function captureCalculatedStats(fight) {
-  return {
-    attacker: {calculatedStats: calculateFighterStats(fight.details.attacker.stats)},
-    ...(fight.details.defender ? {defender: {calculatedStats: calculateFighterStats(fight.details.defender.stats)}} : {}),
-  };
-}
-
 function calculateFighterStats({agility, constitution, durability, reach, skill, stamina, strength}) {
   const staminaLogApprox = stamina.logApprox();
   const agilityLogApprox = agility.logApprox();
