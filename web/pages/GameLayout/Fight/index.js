@@ -45,13 +45,6 @@ function FightContent({fight}) {
   );
 }
 
-function formatFightDetails(details) {
-  if(details == null) {
-    return null;
-  }
-  return (<pre>{JSON.stringify(details, null, 2)}</pre>);
-}
-
 function FightMetadata({label, value}) {
   if(!value) {
     return null;
@@ -65,4 +58,11 @@ function FightMetadata({label, value}) {
       {value}
     </p>
   );
+}
+
+function formatFightDetails(details) {
+  if(details == null) {
+    return null;
+  }
+  return (<pre>{JSON.stringify(details, null, 2)}</pre>);
 }
