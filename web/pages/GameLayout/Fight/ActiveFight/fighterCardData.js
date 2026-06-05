@@ -1,10 +1,8 @@
-import {RACES} from 'shared/races.js';
-
 import SnowLeopardMuayThaiReady from '../assets/SnowLeopardMuayThaiReady.png';
 import TigerMuayThai from '../assets/TigerMuayThai.png';
 
 const RACE_FIGHT_IMAGES = {1: TigerMuayThai, 2: SnowLeopardMuayThaiReady};
-const RACE_DISPLAY_NAMES = Object.fromEntries(RACES.map((race) => [race.id, race.name.replace('Leopard', 'leopard')]));
+const RACE_DISPLAY_NAMES = {1: 'Tiger', 2: 'Snow leopard'};
 
 export function buildCard(participant, defaults) {
   const participantData = participant || {};
@@ -84,7 +82,7 @@ function getCombatStat(value, fallback) {
   return value || fallback;
 }
 
-function toNumber(value, fallbackValue = 0) {
+function toNumber(value, fallbackValue = null) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallbackValue;
 }

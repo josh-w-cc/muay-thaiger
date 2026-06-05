@@ -9,7 +9,7 @@ export default function FightLoadout({details}) {
   const moves = getFightMoves(details);
   const buttons = [
     `Strategy: ${strategy}`,
-    ...moves.map((move) => `${move}`),
+    ...moves,
   ];
 
   return (
