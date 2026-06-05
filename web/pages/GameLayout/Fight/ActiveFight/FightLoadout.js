@@ -1,12 +1,14 @@
 import Button from '@/components/Button.js';
+import useMovesStore from '@/data/moves.js';
 
 import {FIGHT_LOADOUT, TAPPER_FILL_DURATIONS} from './fightData.js';
 import css from '../Fight.module.css';
 
 
 export default function FightLoadout({details}) {
+  const moveDefinitions = useMovesStore((state) => state.moves);
   const strategy = getFightStrategy(details);
-  const moves = getFightMoves(details);
+  const moves = getFightMoves(details, moveDefinitions);
   const buttons = [
     {duration: TAPPER_FILL_DURATIONS[0], label: `Strategy: ${strategy}`},
     ...moves,
@@ -29,21 +31,31 @@ function getFightStrategy(details) {
   return details?.strategy ?? FIGHT_LOADOUT.strategy;
 }
 
-function getFightMoves(details) {
+function getFightMoves(details, moveDefinitions) {
   if(Array.isArray(details?.attacker?.moves) && details.attacker.moves.length > 0) {
     return details.attacker.moves.map((move) => ({
-      duration: getMoveRecovery(move),
-      label: move.name,
+      ...getLoadoutMove(moveDefinitions, move.id),
     }));
   }
   return FIGHT_LOADOUT.moves.map((move) => ({label: move}));
 }
 
-function getMoveRecovery(move) {
-  if(typeof move?.recovery !== 'number' || move.recovery <= 0) {
+function getLoadoutMove(moveDefinitions, moveID) {
+  const moveDefinition = moveDefinitions.find((move) => move.id === moveID);
+  if(!moveDefinition) {
+    return {label: `${moveID}`};
+  }
+  return {
+    duration: getMoveRecovery(moveDefinition),
+    label: moveDefinition.name,
+  };
+}
+
+function getMoveRecovery(moveDefinition) {
+  if(typeof moveDefinition?.recovery !== 'number' || moveDefinition.recovery <= 0) {
     return undefined;
   }
-  return move.recovery;
+  return moveDefinition.recovery;
 }
 
 function TapperButton({delay, duration, children}) {

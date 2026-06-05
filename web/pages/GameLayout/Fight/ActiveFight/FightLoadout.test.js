@@ -1,9 +1,19 @@
 import {render, screen} from '@testing-library/react';
-import {describe, expect, it} from 'vitest';
+import {beforeEach, describe, expect, it} from 'vitest';
+import useMovesStore, {resetMovesStore} from '@/data/moves.js';
 
 import FightLoadout from './FightLoadout.js';
 
+
 describe('FightLoadout', () => {
+  beforeEach(() => {
+    resetMovesStore();
+    useMovesStore.getState().setMoves([
+      {id: 1, name: 'Cross', recovery: 6},
+      {id: 2, name: 'Knee', recovery: 2.5},
+    ]);
+  });
+
   it('renders fallback strategy and moves when details are missing', () => {
     render(<FightLoadout />);
 
@@ -16,7 +26,7 @@ describe('FightLoadout', () => {
     render(
       <FightLoadout
         details={{
-          attacker: {moves: [{name: 'Cross'}, {name: 'Knee'}]},
+          attacker: {moves: [{id: 1, lastUsed: 123}, {id: 2, lastUsed: 456}]},
           strategy: 'Counter Rush',
         }}
       />,
@@ -33,8 +43,8 @@ describe('FightLoadout', () => {
         details={{
           attacker: {
             moves: [
-              {name: 'Cross', recovery: 6},
-              {name: 'Knee', recovery: 2.5},
+              {id: 1, lastUsed: 123},
+              {id: 2, lastUsed: 456},
             ],
           },
           strategy: 'Counter Rush',
