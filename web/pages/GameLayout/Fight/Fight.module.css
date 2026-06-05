@@ -141,10 +141,11 @@
 }
 
 @keyframes tapperFill {
-  0% { transform: scaleX(1); }
-  75% { transform: scaleX(0); }
-  90% { transform: scaleX(0); }
+  0%,
   100% { transform: scaleX(1); }
+
+  75%,
+  90% { transform: scaleX(0); }
 }
 
 .tapperButton:hover {
