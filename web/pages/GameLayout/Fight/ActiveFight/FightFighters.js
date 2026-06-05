@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+import {buildCard, formatCombatStat} from './fighterCardData.js';
 
 import SnowLeopardMuayThaiReady from '../assets/SnowLeopardMuayThaiReady.png';
 import TigerMuayThai from '../assets/TigerMuayThai.png';
@@ -24,6 +25,7 @@ const tigerCard = {
   src: TigerMuayThai,
   stamina: FIGHT_FIGHTER_STAMINA,
 };
+
 const opponentCard = {
   alt: 'Snow leopard Muay Thai fighter',
   attack: FIGHT_OPPONENT_ATTACK,
@@ -35,18 +37,21 @@ const opponentCard = {
   stamina: FIGHT_OPPONENT_STAMINA,
 };
 
-export default function FightFighters() {
+export default function FightFighters({details}) {
+  const attackerCard = buildCard(details?.attacker, tigerCard);
+  const defenderCard = buildCard(details?.defender, opponentCard);
+
   return (
     <>
       <div className={css.fightFighters}>
-        <FightFighterCard {...tigerCard} />
+        <FightFighterCard {...attackerCard} />
         <div aria-orientation="vertical" className={css.fightFighterDivider} role="separator" />
-        <FightFighterCard {...opponentCard} />
+        <FightFighterCard {...defenderCard} />
       </div>
       <div className={css.fightFighterStatsRow}>
-        <FightFighterStats attack={tigerCard.attack} defense={tigerCard.defense} />
+        <FightFighterStats attack={attackerCard.attack} defense={attackerCard.defense} />
         <div aria-hidden className={css.fightFighterStatsDividerSpacer} />
-        <FightFighterStats attack={opponentCard.attack} defense={opponentCard.defense} />
+        <FightFighterStats attack={defenderCard.attack} defense={defenderCard.defense} />
       </div>
     </>
   );
@@ -69,23 +74,26 @@ function FightFighterCard({alt, className, hp, mirror, src, stamina}) {
 function FightFighterStats({attack, defense}) {
   return (
     <div className={css.fightFighterStats}>
-      <span>{`A: ${attack.toFormattedNumber()}`}</span>
-      <span>{`D: ${defense.toFormattedNumber()}`}</span>
+      <span>{`A: ${formatCombatStat(attack)}`}</span>
+      <span>{`D: ${formatCombatStat(defense)}`}</span>
     </div>
   );
 }
 
 function FightStatBar({barClassName, current, label, max}) {
+  const normalizedMax = Math.max(max, 1);
+  const width = Math.round((current / normalizedMax) * 100);
+
   return (
     <div
       aria-label={label}
-      aria-valuemax={max}
+      aria-valuemax={normalizedMax}
       aria-valuemin={0}
       aria-valuenow={current}
       className={barClassName}
       role="progressbar"
     >
-      <div className={css.fill} style={{width: `${Math.round((current / max) * 100)}%`}} />
+      <div className={css.fill} style={{width: `${width}%`}} />
     </div>
   );
 }

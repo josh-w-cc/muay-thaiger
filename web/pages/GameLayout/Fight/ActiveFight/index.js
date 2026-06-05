@@ -3,12 +3,12 @@ import FightFighters from './FightFighters.js';
 import FightLoadout from './FightLoadout.js';
 
 
-export default function ActiveFight() {
+export default function ActiveFight({details}) {
   return (
     <>
-      <FightLoadout />
-      <FightFighters />
-      <FightFeed />
+      <FightLoadout details={details} />
+      <FightFighters details={details} />
+      <FightFeed details={details} />
     </>
   );
 }
