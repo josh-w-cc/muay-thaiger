@@ -38,7 +38,7 @@ function FightContent({fight}) {
   return (
     <>
       <p>Fight pending...</p>
-      <ActiveFight />
+      {fight.details && <ActiveFight details={fight.details} />}
       <FightMetadata label="Fight ID" value={fight.id} />
       <FightMetadata label="Reason" value={fight.reason} />
       <FightMetadata label="Created" value={fight.created_at} />

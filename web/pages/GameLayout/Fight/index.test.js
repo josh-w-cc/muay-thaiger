@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import sectionCss from '@/components/primitive/Section.module.css';
 import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
 import TigerMuayThai from './assets/TigerMuayThai.png';
-import css from './Fight.module.css';
 import Fight from './index.js';
 
 
@@ -69,40 +68,8 @@ describe('Fight', () => {
     expect(glorySection).toBeInTheDocument();
     expect(glorySection).toHaveClass(sectionCss.section);
     expect(within(glorySection).getByRole('heading', {name: 'Fight for Glory'})).toBeInTheDocument();
-    expect(within(glorySection).getByText('Strategy: Pressure Counter')).toBeInTheDocument();
-    expect(within(glorySection).getByRole('img', {name: 'Tiger Muay Thai fighter'}))
-      .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
-    expect(within(glorySection).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
-      .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
-    const healthBars = within(glorySection).getAllByRole('progressbar');
-    expect(healthBars).toHaveLength(4);
-    expect(within(glorySection).getByRole('progressbar', {name: 'Tiger fighter health'})).toBeInTheDocument();
-    expect(within(glorySection).getByRole('progressbar', {name: 'Snow leopard fighter health'})).toBeInTheDocument();
-    expect(within(glorySection).getByRole('progressbar', {name: 'Tiger fighter stamina'})).toBeInTheDocument();
-    expect(within(glorySection).getByRole('progressbar', {name: 'Snow leopard fighter stamina'})).toBeInTheDocument();
-    expect(within(glorySection).getAllByRole('separator')).toHaveLength(1);
-    expect(within(glorySection).getByRole('separator')).toHaveClass(css.fightFighterDivider);
-    const fighterCards = glorySection.querySelectorAll(`.${css.fightFighter}`);
-    fighterCards.forEach((card) => {
-      expect(card).not.toHaveTextContent('A:');
-      expect(card).not.toHaveTextContent('D:');
-    });
-    expect(within(glorySection).getByRole('button', {name: 'Strategy: Pressure Counter'})).toHaveClass(css.tapperButton);
-    expect(glorySection).toHaveTextContent('A: 7.50e6');
-    expect(glorySection).toHaveTextContent('D: 6.00e6');
-    expect(glorySection).toHaveTextContent('A: 6.50e6');
-    expect(glorySection).toHaveTextContent('D: 8.00e6');
-    expect(glorySection).toHaveTextContent('Tiger throws Jab');
-    expect(glorySection).toHaveTextContent('Lands for 18 damage!');
-    expect(glorySection).toHaveTextContent('Snow Leopard throws Roundhouse');
-    expect(glorySection).toHaveTextContent('Misses clean.');
-    within(glorySection).getAllByText('Tiger', {selector: 'strong'})
-      .forEach((element) => expect(element).toHaveClass(css.fightFeedAttackerSelf));
-    within(glorySection).getAllByText('Snow Leopard', {selector: 'strong'})
-      .forEach((element) => expect(element).toHaveClass(css.fightFeedAttackerEnemy));
-    const feedItems = within(glorySection).getAllByRole('listitem');
-    expect(feedItems.length).toBeGreaterThanOrEqual(12);
-    expect(feedItems[0]).toHaveClass(css.fightFeedItem);
+    expect(within(glorySection).queryByRole('button', {name: /Strategy:/})).not.toBeInTheDocument();
+    expect(within(glorySection).queryAllByRole('progressbar')).toHaveLength(0);
   });
 
   it('sends a fight command when clicking Fight', async () => {
@@ -117,7 +84,23 @@ describe('Fight', () => {
   it('shows active fight details from the server fight payload', () => {
     Object.assign(fightState, {
       created_at: '2026-06-01T00:00:00.000Z',
-      details: {attacker: {hp: 100}, round: 1},
+      details: {
+        attacker: {
+          calculatedStats: {attack: 1111111n, defense: 2222222n, health: 250},
+          moves: ['Jab', 'Cross'],
+          race: 1,
+          startingStats: {health: 300, stamina: 200},
+          stats: {health: 240, stamina: 150},
+        },
+        defender: {
+          calculatedStats: {attack: 3333333n, defense: 4444444n, health: 260},
+          race: 2,
+          startingStats: {health: 260, stamina: 210},
+          stats: {health: 200, stamina: 180},
+        },
+        feed: [{attacker: 'Tiger', isSelf: true, move: 'Jab', result: 'Lands for 10!'}],
+        strategy: 'Server Strategy',
+      },
       id: 19,
       reason: 'gold',
     });
@@ -131,7 +114,22 @@ describe('Fight', () => {
     expect(detailsPre.textContent).toBe(JSON.stringify(fightState.details, null, 2));
     const fightSection = screen.getByText('Fight pending...').closest('section');
     expect(fightSection).toBeInTheDocument();
-    expect(within(fightSection).getByRole('button', {name: /Strategy:/})).toBeInTheDocument();
+    expect(within(fightSection).getByRole('button', {name: 'Strategy: Server Strategy'})).toBeInTheDocument();
+    expect(within(fightSection).getByRole('button', {name: 'Jab'})).toBeInTheDocument();
+    expect(within(fightSection).getByRole('img', {name: 'Tiger Muay Thai fighter'}))
+      .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
+    expect(within(fightSection).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
+      .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
+    expect(within(fightSection).getByRole('progressbar', {name: 'Tiger fighter stamina'})).toHaveAttribute('aria-valuenow', '150');
+    expect(within(fightSection).getByRole('progressbar', {name: 'Tiger fighter health'})).toHaveAttribute('aria-valuenow', '240');
+    expect(within(fightSection).getByRole('progressbar', {name: 'Snow leopard fighter health'})).toHaveAttribute('aria-valuenow', '200');
+    expect(fightSection).toHaveTextContent('A: 1.11e6');
+    expect(fightSection).toHaveTextContent('D: 2.22e6');
+    expect(fightSection).toHaveTextContent('A: 3.33e6');
+    expect(fightSection).toHaveTextContent('D: 4.44e6');
+    expect(fightSection).toHaveTextContent('Tiger throws Jab — Lands for 10!');
+    const glorySection = screen.getByRole('heading', {name: 'Fight for Glory'}).closest('section');
+    expect(within(glorySection).queryByRole('button', {name: /Strategy:/})).not.toBeInTheDocument();
     expect(screen.queryByRole('button', {name: 'Fight!'})).not.toBeInTheDocument();
   });
 
@@ -149,5 +147,6 @@ describe('Fight', () => {
     expect(document.body).toHaveTextContent('Reason: gold');
     expect(document.body).toHaveTextContent('Created: 2026-06-01T00:00:00.000Z');
     expect(document.body).not.toHaveTextContent('Details:');
+    expect(screen.queryByRole('button', {name: /Strategy:/})).not.toBeInTheDocument();
   });
 });

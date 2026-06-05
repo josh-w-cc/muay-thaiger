@@ -2,11 +2,13 @@ import {FIGHT_FEED} from './FightFeedData.js';
 import css from '../Fight.module.css';
 
 
-export default function FightFeed() {
+export default function FightFeed({details}) {
+  const feedItems = getFightFeed(details);
+
   return (
     <div className={css.fightFeed}>
       <ul className={css.fightFeedList}>
-        {FIGHT_FEED.map((item, index) => <FightFeedItem item={item} key={index} />)}
+        {feedItems.map((item, index) => <FightFeedItem item={item} key={index} />)}
       </ul>
     </div>
   );
@@ -24,4 +26,11 @@ function FightFeedItem({item}) {
       {item.result}
     </li>
   );
+}
+
+function getFightFeed(details) {
+  if(Array.isArray(details?.feed) && details.feed.length > 0) {
+    return details.feed;
+  }
+  return FIGHT_FEED;
 }
