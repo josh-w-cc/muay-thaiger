@@ -28,7 +28,7 @@ Use npm scripts (not `npx playwright ...`) so the config in `config/` is always 
 | Lint Playwright package (auto-fix) | `npm run lint --prefix playwright` |
 | Lint Playwright package (read-only, CI parity) | `npm run lint:ci --prefix playwright` |
 | Lint all packages | `npm run lint` |
-| Run root test suite (API + web only) | `npm test` |
+| Run root test suite (API + shared + web) | `npm test` |
 
 ## Infrastructure
 
