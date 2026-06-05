@@ -25,7 +25,14 @@ describe('useFightStore', () => {
 
     useFightStore.getState().syncServerState({
       created_at: '2026-06-01T00:00:00.000Z',
-      details: {round: 1},
+      details: {
+        attacker: {
+          calculatedStats: {},
+          startingStats: {},
+          stats: {},
+        },
+        round: 1,
+      },
       id: 44,
       rank: 'bronze',
       reason: 'gold',
@@ -45,6 +52,13 @@ describe('useFightStore', () => {
 
   it('clears fight state when the server sends no fight', () => {
     useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          calculatedStats: {},
+          startingStats: {},
+          stats: {},
+        },
+      },
       id: 44,
       reason: 'gold',
       victory: 9,
