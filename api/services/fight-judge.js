@@ -71,7 +71,13 @@ function captureStartingStats(fight) {
 }
 
 function addStartingStats(participant) {
-  return {...participant, startingStats: {...participant.stats}};
+  return {
+    ...participant,
+    startingStats: {
+      ...participant.stats,
+      health: calculateFighterStats(participant.stats).health,
+    },
+  };
 }
 
 function calculateFighterStats({agility, constitution, durability, reach, skill, stamina, strength}) {
