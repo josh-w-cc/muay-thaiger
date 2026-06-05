@@ -1,7 +1,7 @@
 import {SKILL_IDS} from 'shared/skills/index.js';
 
 import startIdle from '@/actions/idle/startIdle.js';
-import stopIdle from '@/actions/stopIdle.js';
+import stopIdle from '@/actions/idle/stopIdle.js';
 
 
 export function isActionEnabled(actions, skillKey) {
