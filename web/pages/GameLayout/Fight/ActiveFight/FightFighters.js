@@ -1,45 +1,10 @@
 import classnames from 'classnames';
 import {buildCard, formatCombatStat} from './fighterCardData.js';
 
-import SnowLeopardMuayThaiReady from '../assets/SnowLeopardMuayThaiReady.png';
-import TigerMuayThai from '../assets/TigerMuayThai.png';
-
-import {
-  FIGHT_FIGHTER_ATTACK,
-  FIGHT_FIGHTER_DEFENSE,
-  FIGHT_FIGHTER_HP,
-  FIGHT_FIGHTER_STAMINA,
-  FIGHT_OPPONENT_ATTACK,
-  FIGHT_OPPONENT_DEFENSE,
-  FIGHT_OPPONENT_HP,
-  FIGHT_OPPONENT_STAMINA,
-} from './fightData.js';
 import css from '../Fight.module.css';
 
-const tigerCard = {
-  alt: 'Tiger Muay Thai fighter',
-  attack: FIGHT_FIGHTER_ATTACK,
-  className: css.fightFighterLeft,
-  defense: FIGHT_FIGHTER_DEFENSE,
-  hp: FIGHT_FIGHTER_HP,
-  src: TigerMuayThai,
-  stamina: FIGHT_FIGHTER_STAMINA,
-};
-
-const opponentCard = {
-  alt: 'Snow leopard Muay Thai fighter',
-  attack: FIGHT_OPPONENT_ATTACK,
-  className: css.fightFighterRight,
-  defense: FIGHT_OPPONENT_DEFENSE,
-  hp: FIGHT_OPPONENT_HP,
-  mirror: true,
-  src: SnowLeopardMuayThaiReady,
-  stamina: FIGHT_OPPONENT_STAMINA,
-};
-
 export default function FightFighters({details}) {
-  const attackerCard = buildCard(details?.attacker, tigerCard);
-  const defenderCard = buildCard(details?.defender, opponentCard);
+  const {attackerCard, defenderCard} = getFighterCards(details);
 
   return (
     <>
@@ -55,6 +20,20 @@ export default function FightFighters({details}) {
       </div>
     </>
   );
+}
+
+function getFighterCards(details) {
+  return {
+    attackerCard: {
+      ...buildCard(details?.attacker),
+      className: css.fightFighterLeft,
+    },
+    defenderCard: {
+      ...buildCard(details?.defender),
+      className: css.fightFighterRight,
+      mirror: true,
+    },
+  };
 }
 
 function FightFighterCard({alt, className, hp, mirror, src, stamina}) {

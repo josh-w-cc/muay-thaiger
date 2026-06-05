@@ -4,9 +4,24 @@ import {describe, expect, it} from 'vitest';
 import FightFighters from './FightFighters.js';
 import css from '../Fight.module.css';
 
+const details = {
+  attacker: {
+    calculatedStats: {attack: 1111111n, defense: 2222222n, health: 170},
+    race: 1,
+    startingStats: {health: 200, stamina: 200},
+    stats: {health: 170, stamina: 150},
+  },
+  defender: {
+    calculatedStats: {attack: 3333333n, defense: 4444444n, health: 143},
+    race: 2,
+    startingStats: {health: 200, stamina: 200},
+    stats: {health: 143, stamina: 180},
+  },
+};
+
 describe('FightFighters', () => {
   it('renders stamina progress bars for both fighters', () => {
-    render(<FightFighters />);
+    render(<FightFighters details={details} />);
 
     expect(screen.getByRole('progressbar', {name: 'Tiger fighter stamina'})).toHaveAttribute('aria-valuenow', '150');
     expect(screen.getByRole('progressbar', {name: 'Tiger fighter stamina'})).toHaveAttribute('aria-valuemax', '200');
@@ -17,7 +32,7 @@ describe('FightFighters', () => {
   });
 
   it('uses stamina bar classes for the rendered stamina progress bars', () => {
-    render(<FightFighters />);
+    render(<FightFighters details={details} />);
 
     const tigerStaminaBar = screen.getByRole('progressbar', {name: 'Tiger fighter stamina'});
     const tigerStaminaBarFill = tigerStaminaBar.querySelector('div');

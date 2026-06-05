@@ -4,21 +4,20 @@ import TigerMuayThai from '../assets/TigerMuayThai.png';
 const RACE_FIGHT_IMAGES = {1: TigerMuayThai, 2: SnowLeopardMuayThaiReady};
 const RACE_DISPLAY_NAMES = {1: 'Tiger', 2: 'Snow leopard'};
 
-export function buildCard(participant, defaults) {
+export function buildCard(participant) {
   const participantData = participant || {};
   const raceName = getRaceName(participantData.race);
   const calculatedStats = participantData.calculatedStats || {};
   const stats = participantData.stats || {};
   const startingStats = participantData.startingStats || {};
-  const hp = getHealthBar(raceName, stats, calculatedStats, startingStats, defaults.hp);
-  const stamina = getStaminaBar(raceName, stats, startingStats, defaults.stamina);
+  const hp = getHealthBar(raceName, stats, calculatedStats, startingStats);
+  const stamina = getStaminaBar(raceName, stats, startingStats);
   return {
-    ...defaults,
-    alt: formatAltText(raceName, defaults.alt),
-    attack: getCombatStat(calculatedStats.attack, defaults.attack),
-    defense: getCombatStat(calculatedStats.defense, defaults.defense),
+    alt: formatAltText(raceName),
+    attack: getCombatStat(calculatedStats.attack),
+    defense: getCombatStat(calculatedStats.defense),
     hp,
-    src: getRaceImage(participantData.race, defaults.src),
+    src: getRaceImage(participantData.race),
     stamina,
   };
 }
@@ -40,21 +39,21 @@ function getCurrentValue(primaryValue, secondaryValue, fallbackValue) {
   return fallbackValue;
 }
 
-function getHealthBar(raceName, stats, calculatedStats, startingStats, defaults) {
-  const current = getCurrentValue(stats.health, calculatedStats.health, defaults.current);
+function getHealthBar(raceName, stats, calculatedStats, startingStats) {
+  const current = getCurrentValue(stats.health, calculatedStats.health, 0);
   return {
     current,
-    label: formatStatLabel(raceName, 'health', defaults.label),
-    max: getMaxValue(startingStats.health, defaults.max, current),
+    label: formatStatLabel(raceName, 'health'),
+    max: getMaxValue(startingStats.health, 0, current),
   };
 }
 
-function getStaminaBar(raceName, stats, startingStats, defaults) {
-  const current = getCurrentValue(stats.stamina, undefined, defaults.current);
+function getStaminaBar(raceName, stats, startingStats) {
+  const current = getCurrentValue(stats.stamina, undefined, 0);
   return {
     current,
-    label: formatStatLabel(raceName, 'stamina', defaults.label),
-    max: getMaxValue(startingStats.stamina, defaults.max, current),
+    label: formatStatLabel(raceName, 'stamina'),
+    max: getMaxValue(startingStats.stamina, 0, current),
   };
 }
 
@@ -66,20 +65,20 @@ function getRaceName(raceID) {
   return RACE_DISPLAY_NAMES[raceID];
 }
 
-function getRaceImage(raceID, fallback) {
-  return RACE_FIGHT_IMAGES[raceID] || fallback;
+function getRaceImage(raceID) {
+  return RACE_FIGHT_IMAGES[raceID];
 }
 
-function formatAltText(raceName, fallback) {
-  return raceName ? `${raceName} Muay Thai fighter` : fallback;
+function formatAltText(raceName) {
+  return raceName ? `${raceName} Muay Thai fighter` : 'Muay Thai fighter';
 }
 
-function formatStatLabel(raceName, statName, fallback) {
-  return raceName ? `${raceName} fighter ${statName}` : fallback;
+function formatStatLabel(raceName, statName) {
+  return raceName ? `${raceName} fighter ${statName}` : `Fighter ${statName}`;
 }
 
-function getCombatStat(value, fallback) {
-  return value || fallback;
+function getCombatStat(value) {
+  return value ?? 0n;
 }
 
 function toNumber(value, fallbackValue = null) {
