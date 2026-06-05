@@ -42,12 +42,9 @@ function getServerFightState(fight) {
 }
 
 function parseFightDetails(details) {
-  if(!isObject(details)) {
-    return details ?? null;
-  }
   return {
     ...details,
-    ...(details.attacker ? {attacker: parseFightParticipant(details.attacker)} : {}),
+    attacker: parseFightParticipant(details.attacker),
     ...(details.defender ? {defender: parseFightParticipant(details.defender)} : {}),
   };
 }
@@ -59,8 +56,4 @@ function parseFightParticipant(participant) {
     startingStats: parseBigIntStats(participant.startingStats),
     stats: parseBigIntStats(participant.stats),
   };
-}
-
-function isObject(value) {
-  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
