@@ -2,6 +2,7 @@ import 'shared/bigInt.js';
 
 import {render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import useMovesStore, {resetMovesStore} from '@/data/moves.js';
 
 import sectionCss from '@/components/primitive/Section.module.css';
 import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
@@ -37,6 +38,11 @@ vi.mock('./ZerothFight.js', () => ({
 
 describe('Fight', () => {
   beforeEach(() => {
+    resetMovesStore();
+    useMovesStore.getState().setMoves([
+      {id: 1, name: 'Jab', recovery: 3},
+      {id: 2, name: 'Cross', recovery: 4},
+    ]);
     needsZerothFight.mockReturnValue(false);
     Object.assign(fightState, {
       id: null,
@@ -87,7 +93,7 @@ describe('Fight', () => {
       details: {
         attacker: {
           calculatedStats: {attack: 1111111n, defense: 2222222n, health: 250},
-          moves: ['Jab', 'Cross'],
+          moves: [{id: 1, lastUsed: 123}, {id: 2, lastUsed: 456}],
           race: 1,
           startingStats: {health: 300, stamina: 200},
           stats: {health: 240, stamina: 150},
