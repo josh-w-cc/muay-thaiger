@@ -53,6 +53,7 @@ function serializeFightDetails(attacker, defender) {
 function serializeParticipantDetails(participant) {
   validateParticipantDetails(participant);
   return {
+    moveCount: participant.moveCount ?? 0,
     moves: participant.moves,
     race: participant.race,
     seed: randomInt(2 ** 32),

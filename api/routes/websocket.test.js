@@ -470,6 +470,7 @@ describe('WebSocket /ws/connect', () => {
       assert.deepEqual(createFight.calls, [[{
         attacker: {
           id: 9,
+          moveCount: 0,
           moves: [{id: 1, lastUsed: 1234567890}, {id: 2, lastUsed: 1234567890}],
           race: 2,
           stats: {
@@ -488,6 +489,7 @@ describe('WebSocket /ws/connect', () => {
         },
         defender: {
           id: null,
+          moveCount: 0,
           moves: [{id: 1, lastUsed: null}, {id: 2, lastUsed: null}],
           race: 1,
           stats: {

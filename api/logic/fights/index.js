@@ -22,6 +22,7 @@ async function captureFightParticipant(fighterMoves, fighter) {
   const moves = await captureFightMoves(fighterMoves, fighter.id);
   return {
     id: fighter.id,
+    moveCount: 0,
     moves,
     race: fighter.race,
     stats: captureFightStats(fighter),

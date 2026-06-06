@@ -46,6 +46,7 @@ describe('createFight', () => {
       assert.deepEqual(create.calls[0][0], {
         attacker: {
           id: 9,
+          moveCount: 0,
           moves: [{id: 1, lastUsed: 1234567890}, {id: 2, lastUsed: 1234567890}],
           race: 2,
           stats: {
@@ -64,6 +65,7 @@ describe('createFight', () => {
         },
         defender: {
           id: null,
+          moveCount: 0,
           moves: [{id: 1, lastUsed: null}, {id: 2, lastUsed: null}],
           race: 1,
           stats: {
@@ -107,6 +109,7 @@ describe('createFight', () => {
       assert.deepEqual(create.calls[0][0], {
         attacker: {
           id: 9,
+          moveCount: 0,
           moves: [{id: 2, lastUsed: 1234567890}],
           race: 2,
           stats: {
@@ -125,6 +128,7 @@ describe('createFight', () => {
         },
         defender: {
           id: null,
+          moveCount: 0,
           moves: [{id: 1, lastUsed: null}, {id: 2, lastUsed: null}],
           race: 1,
           stats: {
@@ -186,6 +190,7 @@ describe('createFight', () => {
 
       assert.equal(create.calls.length, 1);
       assert.equal(create.calls[0][0].attacker.race, 2);
+      assert.equal(create.calls[0][0].attacker.moveCount, 0);
       assert.deepEqual(create.calls[0][0].attacker.moves, [{id: 1, lastUsed: 1234567890}]);
       assert.equal(create.calls[0][0].defender, null);
       assert.deepEqual(attach.calls, [[fighters, createdFight]]);
