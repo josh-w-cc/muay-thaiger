@@ -1,4 +1,5 @@
 import {createCommandError} from './command-errors.js';
+// Limit per-message click bursts to keep move processing bounded server-side.
 const MAX_MOVE_CLICKS = 200;
 
 export function normalizeMoveMessage(message) {
