@@ -99,15 +99,17 @@ describe('useFighterActionsStore', () => {
   });
 
   it('transfers touched_at to next remaining action when removing the action with the latest touched_at', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.500Z'));
     useFighterActionsStore.getState().setActions([
-      {action: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
-      {action: 6, id: 2, touched_at: '2026-01-01T00:00:00.005Z'},
+      {action: 2, id: 1, touched_at: '3026-01-01T00:00:00.111Z'},
+      {action: 6, id: 2, touched_at: '3026-01-01T00:00:00.005Z'},
     ]);
 
     useFighterActionsStore.getState().removeAction(2);
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
+      expect.objectContaining({action: 6, id: 2, touched_at: '3026-01-01T00:00:00.111Z'}),
     ]);
   });
 
@@ -165,17 +167,19 @@ describe('useFighterActionsStore', () => {
   });
 
   it('transfers touched_at to the action with the highest remaining touched_at among multiple candidates', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.500Z'));
     useFighterActionsStore.getState().setActions([
-      {action: 6, id: 2, touched_at: '2026-01-01T00:00:00.050Z'},
-      {action: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'},
-      {action: 2, id: 1, touched_at: '2026-01-01T00:00:00.111Z'},
+      {action: 6, id: 2, touched_at: '3026-01-01T00:00:00.050Z'},
+      {action: 6, id: 3, touched_at: '3026-01-01T00:00:00.005Z'},
+      {action: 2, id: 1, touched_at: '3026-01-01T00:00:00.111Z'},
     ]);
 
     useFighterActionsStore.getState().removeAction(2);
 
     expect(useFighterActionsStore.getState().actions).toEqual([
-      expect.objectContaining({action: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'}),
-      expect.objectContaining({action: 6, id: 3, touched_at: '2026-01-01T00:00:00.005Z'}),
+      expect.objectContaining({action: 6, id: 2, touched_at: '3026-01-01T00:00:00.111Z'}),
+      expect.objectContaining({action: 6, id: 3, touched_at: '3026-01-01T00:00:00.005Z'}),
     ]);
   });
 
