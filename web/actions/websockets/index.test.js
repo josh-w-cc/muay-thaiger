@@ -187,7 +187,19 @@ describe('player websocket helpers', () => {
       data: JSON.stringify({
         cmd: 'player_state',
         actions: [{action: 2, id: 11}],
-        fight: {id: 88, reason: 'gold', rank: 'bronze', victory: 9},
+        fight: {
+          details: {
+            attacker: {
+              calculatedStats: {},
+              startingStats: {},
+              stats: {},
+            },
+          },
+          id: 88,
+          reason: 'gold',
+          rank: 'bronze',
+          victory: 9,
+        },
         fighter: {
           gold: '250',
           id: 9,
