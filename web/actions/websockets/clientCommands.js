@@ -3,10 +3,11 @@ import {
   routeToHubIfAuthorized,
 } from '@/actions/websockets/auth.js';
 import {connectSocketOnAppLoad, sendCommand} from '@/actions/websockets/index.js';
+import {TickerState} from '@/pages/Game/Ticker.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
 const MOVE_CLICK_BATCH_MILLISECONDS = 500;
-let moveBatchTimeoutID = null;
 let moveBatch = [];
+let moveBatchDelta = 0;
 let moveCount = 0;
 
 export function createFighterActionCmd(actionID) {
@@ -32,7 +33,6 @@ export function moveCmd(moveID) {
   }
   moveBatch.push({move_id: moveID, move_num: moveCount});
   moveCount += 1;
-  scheduleMoveBatch();
 }
 
 export function selectFighterCmd() {
@@ -40,15 +40,20 @@ export function selectFighterCmd() {
   routeToHubIfAuthorized();
 }
 
-function scheduleMoveBatch() {
-  if(moveBatchTimeoutID !== null) {
+function tickMoveBatch(delta) {
+  if(moveBatch.length === 0) {
+    moveBatchDelta = 0;
     return;
   }
-  moveBatchTimeoutID = setTimeout(flushMoveBatch, MOVE_CLICK_BATCH_MILLISECONDS);
+  moveBatchDelta += delta;
+  if(moveBatchDelta < MOVE_CLICK_BATCH_MILLISECONDS) {
+    return;
+  }
+  flushMoveBatch();
 }
 
 function flushMoveBatch() {
-  moveBatchTimeoutID = null;
+  moveBatchDelta = 0;
   if(moveBatch.length === 0) {
     return;
   }
@@ -56,3 +61,5 @@ function flushMoveBatch() {
   moveBatch = [];
   sendCommand({cmd: 'move', moves: currentBatch});
 }
+
+TickerState.addListener(tickMoveBatch);
