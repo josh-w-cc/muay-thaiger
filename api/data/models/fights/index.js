@@ -39,7 +39,7 @@ function serializeFightCreate({attacker, defender, rank, reason}) {
 }
 
 function serializeFightDetails(attacker, defender, rank) {
-  const detailsRank = rank === '' || rank === null || rank === undefined ? 'ZZ' : rank;
+  const detailsRank = !rank ? 'ZZ' : rank;
   const serializedAttacker = serializeParticipantDetails(attacker);
   if(!defender) {
     return {
