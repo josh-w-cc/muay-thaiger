@@ -1,5 +1,10 @@
 import {SKILLS_BY_ACTION_ID} from './skills/index.js';
-import {createTrainingTimeline as createSharedTrainingTimeline, getScheduledActions} from './trainingTimeline.js';
+import {
+  createTrainingTimeline as createSharedTrainingTimeline,
+  findLatestAction,
+  getOrderedActions,
+  getScheduledActions,
+} from './trainingTimeline.js';
 
 export function applyTrainingAction(action, fighter) {
   const skill = getTrainingSkill(action);
@@ -34,6 +39,22 @@ export function findTouchedAtTransfer(removedActions, remainingActions) {
   return {targetAction: getActionWithMaxTouchedAt(remainingActions), touchedAt: new Date(maxRemovedMs)};
 }
 
+export function findActiveTrainingAction(actions, options = {}) {
+  let now = new Date();
+  if(options.now) {
+    now = options.now;
+  }
+  const nowMs = now.getTime();
+  const scheduledActions = getScheduledTrainingActions(actions);
+  if(scheduledActions.length === 0) {
+    return null;
+  }
+  const orderedActions = getOrderedActions(scheduledActions, nowMs);
+  const {latestActionTime} = findLatestAction(orderedActions, nowMs);
+  const actionIndex = getActiveActionIndex(orderedActions, nowMs - latestActionTime);
+  return orderedActions[actionIndex].action;
+}
+
 export function getMaxTouchedAtMs(actions) {
   const values = actions.map(getTouchedAtMs).filter((ms) => ms !== null);
   return values.length ? Math.max(...values) : null;
@@ -59,6 +80,15 @@ function getActionWithMaxTouchedAt(actions) {
     }
     return actionMs >= bestMs ? action : best;
   });
+}
+
+function getActiveActionIndex(orderedActions, remainingMs) {
+  let actionIndex = 0;
+  while(remainingMs > 0 && remainingMs >= orderedActions[actionIndex].durationMs) {
+    remainingMs -= orderedActions[actionIndex].durationMs;
+    actionIndex = (actionIndex + 1) % orderedActions.length;
+  }
+  return actionIndex;
 }
 
 function getTrainingSkill(action) {
