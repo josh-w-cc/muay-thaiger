@@ -41,20 +41,20 @@ export function executeFightMove(moveDefinition, activeParticipant, opponentPart
   if(!moveDefinition?.affect) {
     return;
   }
-  const powerMultiplier = activeParticipant?.stats ? calculateFighterStats(activeParticipant.stats).power : 1n;
+  const attackerPower = activeParticipant?.stats ? calculateFighterStats(activeParticipant.stats).power : 1n;
   moveDefinition.affect(
     createMoveActor(activeParticipant),
-    createMoveActor(opponentParticipant, powerMultiplier),
+    createMoveActor(opponentParticipant, attackerPower),
   );
 }
 
-function createMoveActor(participant, damageMultiplier = 1n) {
+function createMoveActor(participant, incomingDamageScale = 1n) {
   return {
     takeDamage: (amount) => {
       if(!participant?.stats) {
         return;
       }
-      participant.stats.health -= BigInt(amount) * damageMultiplier;
+      participant.stats.health -= BigInt(amount) * incomingDamageScale;
     },
   };
 }
