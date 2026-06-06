@@ -21,6 +21,14 @@ export function removeFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'stop'});
 }
 
+export function moveCmd(moveID) {
+  if(!Number.isInteger(moveID)) {
+    console.error(`Invalid move:${moveID}`);
+    return;
+  }
+  sendCommand({cmd: 'move', move_id: moveID});
+}
+
 export function selectFighterCmd() {
   respondToAuth(connectSocketOnAppLoad());
   routeToHubIfAuthorized();

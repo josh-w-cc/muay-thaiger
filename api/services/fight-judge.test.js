@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import patchBigIntPrototype from 'shared/bigInt.js';
+import {MOVE_IDS} from 'shared/moves.js';
 
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
 import {attachFightJudge, FightJudge} from './fight-judge.js';
@@ -59,6 +60,63 @@ describe('FightJudge.attach', () => {
 
     assert.equal(judge.get(1).id, fight.id);
     assert.equal(judge.get(2).id, fight.id);
+  });
+
+  describe('FightJudge.move', () => {
+    const twoPlayerFighters = {
+      find: async (fighterID) => ({
+        11: {id: 11, player: 1},
+        12: {id: 12, player: 2},
+      }[fighterID] ?? null),
+    };
+
+    it('updates lastUsed for the active player move', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1234567890000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 1}, {id: MOVE_IDS.wildKick, lastUsed: 2}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick), true);
+        assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890);
+        assert.equal(judge.get(2).details.defender.moves[0].lastUsed, 3);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('throws when the player has no active fight move or fight', async () => {
+      const judge = new FightJudge();
+      const fight = {
+        attacker: 11,
+        defender: null,
+        details: {attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 1}], stats: {...baseCombatStats}}},
+        id: 101,
+        victory: null,
+      };
+      const singlePlayerFighters = {
+        find: async (fighterID) => ({
+          11: {id: 11, player: 1},
+        }[fighterID] ?? null),
+      };
+
+      await judge.attach(singlePlayerFighters, fight);
+
+      assert.throws(() => judge.move(1, MOVE_IDS.wildKick), /Unknown move:2/u);
+      assert.throws(() => judge.move(999, MOVE_IDS.wildPunch), /No fight for player:999/u);
+    });
   });
 
   it('captures attacker and defender starting stats from fight details', async () => {

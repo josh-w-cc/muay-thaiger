@@ -4,20 +4,21 @@ import {registerFighterAction, unregisterFighterAction} from './fighter-actions.
 import {createFight} from './fights/index.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
+const onCommand = {
+  auth,
+  fight,
+  idle,
+  move,
+  stop,
+};
 
 export async function processMessageCommand(models, message, socket) {
-  switch(message.cmd) {
-    case 'auth':
-      return auth(models, message, socket);
-    case 'fight':
-      return fight(models, message, socket);
-    case 'idle':
-      return idle(models, message, socket);
-    case 'stop':
-      return stop(models, message, socket);
-    default:
-      socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
+  const runCommand = onCommand[message.cmd];
+  if(!runCommand) {
+    socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
+    return;
   }
+  await runCommand(models, message, socket);
 }
 
 async function auth(models, message, socket) {
@@ -43,6 +44,21 @@ async function idle(models, message, socket) {
   await sendCurrentPlayerState(models, socket);
 }
 
+async function move(models, message, socket) {
+  if(!socket.player) {
+    throw createCommandError('invalid-move-message');
+  }
+  const moveID = normalizeMoveMessage(message);
+  try {
+    models.fightJudge.move(socket.player.id, moveID);
+  }
+  catch(e) {
+    console.warn(e);
+    throw createCommandError('invalid-move-message');
+  }
+  await sendCurrentPlayerState(models, socket);
+}
+
 async function stop(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-stop-message');
@@ -51,6 +67,14 @@ async function stop(models, message, socket) {
   const fighterAction = await unregisterFighterAction(models, message, socket.player.id);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'stop'}}));
   await sendCurrentPlayerState(models, socket);
+}
+
+function normalizeMoveMessage(message) {
+  const moveID = Number(message?.move_id);
+  if(!Number.isInteger(moveID)) {
+    throw createCommandError('invalid-move-message');
+  }
+  return moveID;
 }
 
 async function applyCurrentTraining(models, playerID) {

@@ -10,10 +10,11 @@ import TigerMuayThai from './assets/TigerMuayThai.png';
 import Fight from './index.js';
 
 
-const {fighter, fightState, createFightCmd, needsZerothFight} = vi.hoisted(() => ({
+const {fighter, fightState, createFightCmd, moveCmd, needsZerothFight} = vi.hoisted(() => ({
   createFightCmd: vi.fn(),
   fighter: {gold: 500, id: 1, stamina: 1, strength: 1},
   fightState: {},
+  moveCmd: vi.fn(),
   needsZerothFight: vi.fn(),
 }));
 
@@ -27,6 +28,7 @@ vi.mock('@/data/fight.js', () => ({
 
 vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFightCmd,
+  moveCmd,
 }));
 
 vi.mock('./ZerothFight.js', () => ({
