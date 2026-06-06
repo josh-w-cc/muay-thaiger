@@ -1,4 +1,5 @@
 import {createBrowserRouter} from 'react-router-dom';
+import {setWebsocketRouter} from '@/actions/websockets/state/router.js';
 
 import Game, {fighterSelectLoader} from './pages/Game/index.js';
 import gameLayoutRoutes from './pages/GameLayout/router.js';
@@ -18,6 +19,8 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+setWebsocketRouter(router);
 
 export default router;
 
