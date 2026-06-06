@@ -22,6 +22,10 @@ export function removeFighterActionCmd(actionID) {
 }
 
 export function moveCmd(moveID) {
+  if(!Number.isInteger(moveID)) {
+    console.error(`Invalid move:${moveID}`);
+    return;
+  }
   sendCommand({cmd: 'move', move_id: moveID});
 }
 
