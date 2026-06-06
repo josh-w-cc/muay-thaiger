@@ -82,7 +82,7 @@ The root `package.json` provides aggregate scripts. Subproject commands (e.g., `
 - **Object properties:** Alphabetize unless a clear priority/logical ordering exists.
 - **Size limits** (7 ± 2 rule): Keep these under their stated maximums. Use options objects, subfolders, or submodules to stay within limits.
   - AGENTS.md files: 150 lines
-  - Folder contents: 9 files or directories (test files excluded)
+  - Folder contents: 9 files or directories (test files excluded; this applies to new/actively refactored folders, and existing legacy folders may exceed this limit)
   - Function parameters: 5
   - Module exports: 9
   - Route handlers per file: 9
