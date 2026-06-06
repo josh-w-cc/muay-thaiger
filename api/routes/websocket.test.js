@@ -489,7 +489,7 @@ describe('WebSocket /ws/connect', () => {
         defender: {
           id: null,
           moves: [{id: 1, lastUsed: null}, {id: 2, lastUsed: null}],
-          race: 1,
+          race: 2,
           stats: {
             agility: '100',
             anima: '100',
