@@ -49,8 +49,11 @@ async function move(models, message, socket) {
     throw createCommandError('invalid-move-message');
   }
   const moveID = normalizeMoveMessage(message);
-  const didMove = models.fightJudge?.move(socket.player.id, moveID);
-  if(!didMove) {
+  try {
+    models.fightJudge.move(socket.player.id, moveID);
+  }
+  catch(e) {
+    console.warn(e);
     throw createCommandError('invalid-move-message');
   }
   await sendCurrentPlayerState(models, socket);
