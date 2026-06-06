@@ -1,7 +1,7 @@
 import usePlayerStore from '@/data/player.js';
-import router from '@/router.js';
 import {canRespondToAuth, getAuthResponse} from '@/actions/websockets/state/websocketState.js';
 import {clearPlayerToken, getPlayerToken, setPlayerToken} from '@/actions/websockets/state/token.js';
+import {navigateWithWebsocketRouter} from '@/actions/websockets/state/router.js';
 
 let hasReceivedAuthRequest = false;
 let hasRespondedToAuth = false;
@@ -47,5 +47,5 @@ export function routeToHubIfAuthorized() {
   if(!selectedRace || !token) {
     return;
   }
-  router.navigate('/hub');
+  navigateWithWebsocketRouter('/hub');
 }

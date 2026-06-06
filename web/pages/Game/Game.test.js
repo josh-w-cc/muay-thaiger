@@ -4,6 +4,7 @@ import {createMemoryRouter, RouterProvider, useNavigate} from 'react-router-dom'
 
 import selectFighter from '@/actions/selectFighter.js';
 import {connectSocketOnAppLoad, resetSocketState} from '@/actions/websockets/index.js';
+import {setWebsocketRouter} from '@/actions/websockets/state/router.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from '@/actions/websockets/state/token.js';
 import {resetPlayerStore} from '@/data/player.js';
 import useMovesStore, {resetMovesStore} from '@/data/moves.js';
@@ -22,9 +23,6 @@ const originalLocalStorage = globalThis.localStorage;
 const originalLocation = globalThis.window.location;
 const originalWindow = globalThis.window;
 let fetchJSONMock;
-const {routerNavigate} = vi.hoisted(() => ({
-  routerNavigate: vi.fn(),
-}));
 
 vi.mock('../FighterSelect', () => ({
   default: function MockFighterSelect() {
@@ -87,9 +85,6 @@ vi.mock('../GameLayout/Train', () => ({
 vi.mock('@/utils/fetchAPI.js', () => ({
   fetchJSON: (...args) => fetchJSONMock(...args),
 }));
-vi.mock('@/router.js', () => ({
-  default: {navigate: (...args) => routerNavigate(...args)},
-}));
 
 describe('Game', () => {
   beforeEach(() => {
@@ -109,6 +104,7 @@ describe('Game', () => {
     resetPlayerStore();
     resetMovesStore();
     resetRacesStore();
+    setWebsocketRouter(null);
     setLocalStorage(originalLocalStorage);
     globalThis.WebSocket = originalWebSocket;
     try {
@@ -552,7 +548,7 @@ function renderGame({gameModule, initialPath = '/'}) {
     ],
     {initialEntries: [initialPath]},
   );
-  routerNavigate.mockImplementation((screenPath) => router.navigate(screenPath));
+  setWebsocketRouter(router);
   connectSocketOnAppLoad();
 
   return render(
