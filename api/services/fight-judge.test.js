@@ -156,8 +156,32 @@ describe('FightJudge.attach', () => {
     await judge.attach(twoPlayerFighters, fight);
 
     const storedFight = judge.get(1);
-    assert.deepEqual(storedFight.details.attacker.calculatedStats, {attack: 18n, defense: 13n, health: 12n, power: 20n});
-    assert.deepEqual(storedFight.details.defender.calculatedStats, {attack: 10n, defense: 9n, health: 36n, power: 14n});
+    assert.deepEqual(storedFight.details.attacker.stats, {
+      agility: 9999n,
+      attack: 18n,
+      constitution: 2n,
+      defense: 13n,
+      durability: 3n,
+      health: 12n,
+      power: 20n,
+      reach: 7n,
+      skill: 8n,
+      stamina: 44n,
+      strength: 9n,
+    });
+    assert.deepEqual(storedFight.details.defender.stats, {
+      agility: 111n,
+      attack: 10n,
+      constitution: 3n,
+      defense: 9n,
+      durability: 4n,
+      health: 36n,
+      power: 14n,
+      reach: 2n,
+      skill: 5n,
+      stamina: 22n,
+      strength: 6n,
+    });
   });
 
   it('recalculates calculated stats from updated current fight details on each get', async () => {
@@ -174,11 +198,35 @@ describe('FightJudge.attach', () => {
 
     await judge.attach(twoPlayerFighters, fight);
 
-    assert.deepEqual(judge.get(1).details.attacker.calculatedStats, {attack: 18n, defense: 12n, health: 12n, power: 20n});
+    assert.deepEqual(judge.get(1).details.attacker.stats, {
+      agility: 111n,
+      attack: 18n,
+      constitution: 2n,
+      defense: 12n,
+      durability: 3n,
+      health: 12n,
+      power: 20n,
+      reach: 7n,
+      skill: 8n,
+      stamina: 44n,
+      strength: 9n,
+    });
 
     fight.details.attacker.stats.stamina = 4444n;
 
-    assert.deepEqual(judge.get(1).details.attacker.calculatedStats, {attack: 20n, defense: 12n, health: 12n, power: 40n});
+    assert.deepEqual(judge.get(1).details.attacker.stats, {
+      agility: 111n,
+      attack: 20n,
+      constitution: 2n,
+      defense: 12n,
+      durability: 3n,
+      health: 12n,
+      power: 40n,
+      reach: 7n,
+      skill: 8n,
+      stamina: 4444n,
+      strength: 9n,
+    });
     assert.deepEqual(judge.get(1).details.attacker.startingStats, {
       agility: 111n,
       constitution: 2n,
