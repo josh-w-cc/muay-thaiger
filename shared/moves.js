@@ -7,17 +7,19 @@ export const MOVE_IDS = Object.freeze({
 
 export const MOVE_DEFINITIONS = Object.freeze({
   wildPunch: {
-    affect: (opponent) => {
+    affect: (_fighter, opponent) => {
       opponent.takeDamage(2);
     },
     recovery: 3,
+    staminaCost: 10,
     name: 'Wild Punch',
   },
   wildKick: {
-    affect: (opponent) => {
+    affect: (_fighter, opponent) => {
       opponent.takeDamage(3);
     },
     recovery: 5,
+    staminaCost: 20,
     name: 'Wild Kick',
   },
 });
