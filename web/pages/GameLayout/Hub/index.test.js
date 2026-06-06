@@ -1,6 +1,7 @@
 import {render, screen, within} from '@testing-library/react';
 
 import Hub from './index.js';
+import css from './Hub.module.css';
 
 
 const fighter = vi.hoisted(() => ({
@@ -43,7 +44,7 @@ describe('Hub', () => {
     expect(container.querySelectorAll('dl > div')).toHaveLength(detailFieldCount);
     expect(container.querySelector('br')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', {name: 'Events:'})).not.toBeInTheDocument();
-    expect(screen.getByRole('list')).toBeInTheDocument();
+    expect(screen.getByRole('list')).toHaveClass(css.events);
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
     expect(screen.getByText('Technique: Flying Knee Drill')).toBeInTheDocument();
     expect(screen.getByText('Lumpinee Rookie Cup')).toBeInTheDocument();
