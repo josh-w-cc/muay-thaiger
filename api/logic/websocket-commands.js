@@ -4,6 +4,7 @@ import {registerFighterAction, unregisterFighterAction} from './fighter-actions.
 import {createFight} from './fights/index.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
+const MAX_MOVE_CLICKS = 200;
 const onCommand = {
   auth,
   fight,
@@ -48,9 +49,11 @@ async function move(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-move-message');
   }
-  const moveID = normalizeMoveMessage(message);
+  const {clicks, moveID} = normalizeMoveMessage(message);
   try {
-    models.fightJudge.move(socket.player.id, moveID);
+    for(let clickCount = 0; clickCount < clicks; clickCount += 1) {
+      models.fightJudge.move(socket.player.id, moveID);
+    }
   }
   catch(e) {
     console.warn(e);
@@ -74,7 +77,11 @@ function normalizeMoveMessage(message) {
   if(!Number.isInteger(moveID)) {
     throw createCommandError('invalid-move-message');
   }
-  return moveID;
+  const clicks = message?.clicks === undefined ? 1 : Number(message.clicks);
+  if(!Number.isInteger(clicks) || clicks < 1 || clicks > MAX_MOVE_CLICKS) {
+    throw createCommandError('invalid-move-message');
+  }
+  return {clicks, moveID};
 }
 
 async function applyCurrentTraining(models, playerID) {
