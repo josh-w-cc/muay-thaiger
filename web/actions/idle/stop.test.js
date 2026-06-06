@@ -30,8 +30,8 @@ describe('stopIdle', () => {
     expect(removeFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
 
-  it('does not remove or send a command when the skill id is invalid', () => {
-    stopIdle({skillKey: 'invalid'});
+  it('throws and does not remove or send a command when the skill id is invalid', () => {
+    expect(() => stopIdle({skillKey: 'invalid'})).toThrow('Unknown skill!?');
 
     expect(removeAction).not.toHaveBeenCalled();
     expect(removeFighterActionCmd).not.toHaveBeenCalled();
