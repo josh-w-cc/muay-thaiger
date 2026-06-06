@@ -2,6 +2,7 @@ import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
 import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
 import {createFight} from './fights/index.js';
+import {normalizeMoveMessage} from './websocket-move-message.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
 const onCommand = {
@@ -11,7 +12,6 @@ const onCommand = {
   move,
   stop,
 };
-
 export async function processMessageCommand(models, message, socket) {
   const runCommand = onCommand[message.cmd];
   if(!runCommand) {
@@ -48,9 +48,11 @@ async function move(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-move-message');
   }
-  const moveID = normalizeMoveMessage(message);
+  const {moveIDs} = normalizeMoveMessage(message);
   try {
-    models.fightJudge.move(socket.player.id, moveID);
+    for(const moveID of moveIDs) {
+      models.fightJudge.move(socket.player.id, moveID);
+    }
   }
   catch(e) {
     console.warn(e);
@@ -67,14 +69,6 @@ async function stop(models, message, socket) {
   const fighterAction = await unregisterFighterAction(models, message, socket.player.id);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'stop'}}));
   await sendCurrentPlayerState(models, socket);
-}
-
-function normalizeMoveMessage(message) {
-  const moveID = Number(message?.move_id);
-  if(!Number.isInteger(moveID)) {
-    throw createCommandError('invalid-move-message');
-  }
-  return moveID;
 }
 
 async function applyCurrentTraining(models, playerID) {
