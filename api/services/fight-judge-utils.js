@@ -1,12 +1,4 @@
-import {MOVE_DEFINITIONS, MOVE_IDS} from 'shared/moves.js';
-
-const MOVE_DEFINITIONS_BY_ID = Object.freeze(
-  Object.fromEntries(
-    Object.entries(MOVE_IDS)
-      .map(([name, id]) => [id, MOVE_DEFINITIONS[name]])
-      .filter(([, moveDefinition]) => Boolean(moveDefinition)),
-  ),
-);
+import {MOVE_DEFINITIONS_BY_ID} from 'shared/moves.js';
 
 export async function getFightParticipants(fighters, fight) {
   const participants = await Promise.all([

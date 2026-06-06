@@ -1,7 +1,7 @@
 import {deepEqual, equal} from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {MOVE_DEFINITIONS, MOVE_IDS, MOVE_SEED_MOVES} from './moves.js';
+import {MOVE_DEFINITIONS, MOVE_DEFINITIONS_BY_ID, MOVE_IDS, MOVE_SEED_MOVES} from './moves.js';
 
 
 describe('MOVE_IDS', () => {
@@ -46,5 +46,12 @@ describe('MOVE_DEFINITIONS', () => {
     equal(MOVE_DEFINITIONS.wildKick.recovery, 5);
     equal(MOVE_DEFINITIONS.wildKick.staminaCost, 20);
     equal(MOVE_DEFINITIONS.wildKick.duration, undefined);
+  });
+});
+
+describe('MOVE_DEFINITIONS_BY_ID', () => {
+  it('maps move IDs to their move definitions', () => {
+    equal(MOVE_DEFINITIONS_BY_ID[MOVE_IDS.wildPunch], MOVE_DEFINITIONS.wildPunch);
+    equal(MOVE_DEFINITIONS_BY_ID[MOVE_IDS.wildKick], MOVE_DEFINITIONS.wildKick);
   });
 });

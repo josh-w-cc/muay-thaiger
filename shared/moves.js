@@ -24,4 +24,12 @@ export const MOVE_DEFINITIONS = Object.freeze({
   },
 });
 
+export const MOVE_DEFINITIONS_BY_ID = Object.freeze(
+  Object.fromEntries(
+    Object.entries(MOVE_IDS)
+      .map(([name, id]) => [id, MOVE_DEFINITIONS[name]])
+      .filter(([, moveDefinition]) => Boolean(moveDefinition)),
+  ),
+);
+
 export const MOVE_SEED_MOVES = createSeedEntries(MOVE_DEFINITIONS, MOVE_IDS);
