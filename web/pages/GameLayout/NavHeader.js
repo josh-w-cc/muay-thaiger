@@ -4,12 +4,14 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import Button from '@/components/Button.js';
 import FightButton from './assets/FightButton.png';
 import HubButton from './assets/HubButton.png';
+import RuesiButton from './assets/RuesiButton.png';
 import ShopButton from './assets/ShopButton.png';
 import TrainButton from './assets/TrainButton.png';
 
 import css from './NavHeader.module.css';
 
 const NAVIGATION_ITEMS = [
+  {icon: RuesiButton, label: 'Ruesi', route: '/ruesi'},
   {icon: FightButton, label: 'Fight', route: '/fight'},
   {icon: HubButton, label: 'Hub', route: '/hub'},
   {icon: TrainButton, label: 'Train', route: '/train'},
