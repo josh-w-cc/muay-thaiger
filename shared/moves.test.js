@@ -40,11 +40,11 @@ describe('MOVE_DEFINITIONS', () => {
   it('defines expected metadata for initial moves', () => {
     equal(MOVE_DEFINITIONS.wildPunch.name, 'Wild Punch');
     equal(MOVE_DEFINITIONS.wildPunch.recovery, 3);
-    equal(MOVE_DEFINITIONS.wildPunch.staminaCost, 1);
+    equal(MOVE_DEFINITIONS.wildPunch.staminaCost, 10);
     equal(MOVE_DEFINITIONS.wildPunch.duration, undefined);
     equal(MOVE_DEFINITIONS.wildKick.name, 'Wild Kick');
     equal(MOVE_DEFINITIONS.wildKick.recovery, 5);
-    equal(MOVE_DEFINITIONS.wildKick.staminaCost, 2);
+    equal(MOVE_DEFINITIONS.wildKick.staminaCost, 20);
     equal(MOVE_DEFINITIONS.wildKick.duration, undefined);
   });
 });
