@@ -1,5 +1,13 @@
 import {MOVE_DEFINITIONS, MOVE_IDS} from 'shared/moves.js';
 
+const MOVE_DEFINITIONS_BY_ID = Object.freeze(
+  Object.fromEntries(
+    Object.entries(MOVE_IDS)
+      .map(([name, id]) => [id, MOVE_DEFINITIONS[name]])
+      .filter(([, moveDefinition]) => Boolean(moveDefinition)),
+  ),
+);
+
 export async function getFightParticipants(fighters, fight) {
   const participants = await Promise.all([
     getFightParticipant(fighters, fight?.attacker, 'attacker'),
@@ -22,11 +30,11 @@ export function calculateFighterStats({agility, constitution, durability, reach,
 }
 
 export function getMoveDefinition(moveID) {
-  const moveName = Object.entries(MOVE_IDS).find(([, id]) => id === moveID)?.[0];
-  if(!moveName || !MOVE_DEFINITIONS[moveName]) {
+  const moveDefinition = MOVE_DEFINITIONS_BY_ID[moveID];
+  if(!moveDefinition) {
     throw new Error(`Unknown move:${moveID}`);
   }
-  return MOVE_DEFINITIONS[moveName];
+  return moveDefinition;
 }
 
 export function executeFightMove(moveDefinition, activeParticipant, opponentParticipant) {

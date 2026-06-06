@@ -59,7 +59,11 @@ function getCalculatedFight(fight) {
 
 function addCalculatedStats(participant) {
   const calculatedStats = calculateFighterStats(participant.stats);
-  return {...participant, calculatedStats, stats: {...calculatedStats, ...participant.stats}};
+  const stats = {...participant.stats, ...calculatedStats};
+  if(participant.stats.health != null) {
+    stats.health = participant.stats.health;
+  }
+  return {...participant, calculatedStats, stats};
 }
 
 export function attachFightJudge(app) {
