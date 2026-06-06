@@ -5,8 +5,8 @@ import getActionIDBySkillKey from './getActionIDBySkillKey.js';
 
 export default function stopIdle({skillKey}) {
   const actionID = getActionIDBySkillKey(skillKey);
-  if(!actionID) {
-    throw new Error('Unknown skill!?');
+  if(actionID === null) {
+    return;
   }
   useFighterActionsStore.getState().removeAction(actionID);
   removeFighterActionCmd(actionID);
