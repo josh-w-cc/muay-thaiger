@@ -1,7 +1,13 @@
 const createBrowserRouter = vi.fn((routes) => routes);
+const {setWebsocketRouter} = vi.hoisted(() => ({
+  setWebsocketRouter: vi.fn(),
+}));
 
 vi.mock('react-router-dom', () => ({
   createBrowserRouter,
+}));
+vi.mock('@/actions/websockets/state/router.js', () => ({
+  setWebsocketRouter,
 }));
 
 vi.mock('./pages/NotFound.js', () => ({
@@ -57,5 +63,6 @@ describe('router', () => {
       'train',
       '*',
     ]);
+    expect(setWebsocketRouter).toHaveBeenCalledWith(routes);
   });
 });
