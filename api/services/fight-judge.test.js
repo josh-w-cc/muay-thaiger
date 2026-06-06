@@ -97,7 +97,7 @@ describe('FightJudge.attach', () => {
       }
     });
 
-    it('returns false when the player has no active fight move', async () => {
+    it('throws when the player has no active fight move or fight', async () => {
       const judge = new FightJudge();
       const fight = {
         attacker: 11,
@@ -114,8 +114,8 @@ describe('FightJudge.attach', () => {
 
       await judge.attach(singlePlayerFighters, fight);
 
-      assert.equal(judge.move(1, MOVE_IDS.wildKick), false);
-      assert.equal(judge.move(999, MOVE_IDS.wildPunch), false);
+      assert.throws(() => judge.move(1, MOVE_IDS.wildKick), /Unknown move:2/u);
+      assert.throws(() => judge.move(999, MOVE_IDS.wildPunch), /No fight for player:999/u);
     });
   });
 
