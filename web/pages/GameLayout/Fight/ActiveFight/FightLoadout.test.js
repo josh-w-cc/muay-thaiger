@@ -47,6 +47,19 @@ describe('FightLoadout', () => {
     expect(screen.getByRole('button', {name: 'Knee'})).toBeInTheDocument();
   });
 
+  it('renders unknown move ids when a move definition is missing', () => {
+    render(
+      <FightLoadout
+        details={{
+          attacker: {moves: [{id: 99, lastUsed: 123}]},
+          strategy: 'Counter Rush',
+        }}
+      />,
+    );
+
+    expect(screen.getByRole('button', {name: '99'})).toBeInTheDocument();
+  });
+
   it('uses move recovery values for tapper button durations', () => {
     render(
       <FightLoadout

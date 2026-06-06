@@ -45,6 +45,20 @@ describe('client websocket commands', () => {
     expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', move_id: 3});
   });
 
+  it('logs and skips move command when move id is invalid', async () => {
+    const {moveCmd} = await import('./clientCommands.js');
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      moveCmd('3');
+
+      expect(consoleError).toHaveBeenCalledWith('Invalid move:3');
+      expect(sendCommand).not.toHaveBeenCalled();
+    }
+    finally {
+      consoleError.mockRestore();
+    }
+  });
+
   it('sends a fight command with reason and rank', async () => {
     const {createFightCmd} = await import('./clientCommands.js');
 
