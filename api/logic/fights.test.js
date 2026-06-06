@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import {MOVE_IDS} from 'shared/moves.js';
+import {RACES} from 'shared/races.js';
 import createCallTracker from '../utils/test/createCallTracker.js';
 import {createFight} from './fights/index.js';
 
@@ -158,7 +159,7 @@ describe('createFight', () => {
 
   it('creates a gold fight with a random bot defender race', async () => {
     const mathRandom = Math.random;
-    Math.random = () => 0.999;
+    Math.random = () => (RACES.length > 1 ? (RACES.length - 1) / RACES.length : 0);
     try {
       const create = createCallTracker();
       const fighter = {id: 9, race: 2};
@@ -168,7 +169,7 @@ describe('createFight', () => {
 
       await createFight({fighterMoves, fighters, fights}, 1, 'gold');
 
-      assert.equal(create.calls[0][0].defender.race, 2);
+      assert.equal(create.calls[0][0].defender.race, RACES[RACES.length - 1].id);
     }
     finally {
       Math.random = mathRandom;

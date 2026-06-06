@@ -60,5 +60,5 @@ function getBotRankScore(normalizedRank) {
 }
 
 function getRandomBotRace() {
-  return BOT_RACE_IDS[Math.floor(Math.random() * BOT_RACE_IDS.length)] ?? BOT_RACE_IDS[0];
+  return BOT_RACE_IDS[Math.floor(Math.random() * BOT_RACE_IDS.length)];
 }
