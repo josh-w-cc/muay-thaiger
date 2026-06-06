@@ -6,16 +6,14 @@ import css from '../Fight.module.css';
 
 const details = {
   attacker: {
-    calculatedStats: {attack: 1111111n, defense: 2222222n, health: 170},
     race: 1,
-    startingStats: {health: 200, stamina: 200},
-    stats: {health: 170, stamina: 150},
+    startingStats: {health: 200n, stamina: 200n},
+    stats: {attack: 1111111n, defense: 2222222n, health: 170n, stamina: 150n},
   },
   defender: {
-    calculatedStats: {attack: 3333333n, defense: 4444444n, health: 143},
     race: 2,
-    startingStats: {health: 200, stamina: 200},
-    stats: {health: 143, stamina: 180},
+    startingStats: {health: 200n, stamina: 200n},
+    stats: {attack: 3333333n, defense: 4444444n, health: 143n, stamina: 180n},
   },
 };
 

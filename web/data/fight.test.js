@@ -78,14 +78,12 @@ describe('useFightStore', () => {
     useFightStore.getState().syncServerState({
       details: {
         attacker: {
-          calculatedStats: {attack: '1111111', defense: 2222222},
           startingStats: {health: '300', stamina: 200},
-          stats: {health: '240', stamina: 150},
+          stats: {attack: '1111111', defense: 2222222, health: '240', stamina: 150},
         },
         defender: {
-          calculatedStats: {attack: '3333333', defense: 4444444},
           startingStats: {health: 260, stamina: '210'},
-          stats: {health: '200', stamina: 180},
+          stats: {attack: '3333333', defense: 4444444, health: '200', stamina: 180},
         },
       },
       id: 44,
@@ -98,13 +96,13 @@ describe('useFightStore', () => {
     expect(details.attacker.startingStats.stamina).toBe(200n);
     expect(details.attacker.stats.health).toBe(240n);
     expect(details.attacker.stats.stamina).toBe(150n);
-    expect(details.attacker.calculatedStats.attack).toBe(1111111n);
-    expect(details.attacker.calculatedStats.defense).toBe(2222222n);
+    expect(details.attacker.stats.attack).toBe(1111111n);
+    expect(details.attacker.stats.defense).toBe(2222222n);
     expect(details.defender.startingStats.health).toBe(260n);
     expect(details.defender.startingStats.stamina).toBe(210n);
     expect(details.defender.stats.health).toBe(200n);
     expect(details.defender.stats.stamina).toBe(180n);
-    expect(details.defender.calculatedStats.attack).toBe(3333333n);
-    expect(details.defender.calculatedStats.defense).toBe(4444444n);
+    expect(details.defender.stats.attack).toBe(3333333n);
+    expect(details.defender.stats.defense).toBe(4444444n);
   });
 });
