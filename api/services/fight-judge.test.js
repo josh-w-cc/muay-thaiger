@@ -91,7 +91,7 @@ describe('FightJudge.attach', () => {
         assert.equal(judge.move(1, MOVE_IDS.wildKick), true);
         assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890);
         assert.equal(judge.get(1).details.attacker.moveCount, 1);
-        assert.equal(judge.get(1).details.defender.stats.health, -2n);
+        assert.equal(judge.get(1).details.defender.stats.health, -5n);
         assert.equal(judge.get(2).details.defender.moves[0].lastUsed, 3);
         assert.equal(judge.get(2).details.defender.moveCount, 0);
       }
