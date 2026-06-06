@@ -79,6 +79,7 @@ function captureStartingStats(fight) {
 function addStartingStats(participant) {
   return {
     ...participant,
+    moveCount: 0,
     startingStats: {
       ...participant.stats,
       health: calculateFighterStats(participant.stats).health,

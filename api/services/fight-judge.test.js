@@ -138,6 +138,8 @@ describe('FightJudge.attach', () => {
 
     assert.deepEqual(judge.get(1).details.attacker.startingStats, {...attackerStats, health: 1n});
     assert.deepEqual(judge.get(1).details.defender.startingStats, {...defenderStats, health: 1n});
+    assert.equal(judge.get(1).details.attacker.moveCount, 0);
+    assert.equal(judge.get(1).details.defender.moveCount, 0);
   });
 
   it('computes calculated attacker and defender stats from current fight details', async () => {
@@ -258,6 +260,7 @@ describe('FightJudge.attach', () => {
     await judge.attach(singlePlayerFighters, fight);
 
     assert.deepEqual(judge.get(1).details.attacker.startingStats, {...attackerStats, health: 1n});
+    assert.equal(judge.get(1).details.attacker.moveCount, 0);
     assert.equal('defender' in judge.get(1).details, false);
   });
 });
