@@ -29,7 +29,7 @@ export class FightJudge {
   move(playerID, moveID) {
     const move = getFightMove(this.#fightsByPlayerID.get(playerID), moveID);
     if(!move) {
-      throw new Error('invalid-move-cmd');
+      return false;
     }
     move.lastUsed = Math.floor(Date.now() / 1000);
     return true;
