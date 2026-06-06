@@ -30,7 +30,7 @@ function FightLoadoutButtons({buttons}) {
           delay={buttonIndex * 0.4}
           duration={button.duration ?? TAPPER_FILL_DURATIONS[buttonIndex]}
           key={button.label}
-          onClick={Number.isInteger(button.moveID) ? () => moveCmd(button.moveID) : undefined}
+          onClick={() => moveCmd(button.moveID)}
         >
           {button.label}
         </TapperButton>
