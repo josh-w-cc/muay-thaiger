@@ -5,6 +5,7 @@ import {
   applyTrainingAction,
   applyTrainingActions,
   createTrainingTimeline,
+  findActiveTrainingAction,
   findTouchedAtTransfer,
   getMaxTouchedAtMs,
   getScheduledTrainingActions,
@@ -132,6 +133,29 @@ describe('getMaxTouchedAtMs', () => {
 describe('findTouchedAtTransfer', () => {
   it('returns null when remaining actions list is empty', () => {
     equal(findTouchedAtTransfer([{touched_at: '2026-01-01T00:00:00.111Z'}], []), null);
+  });
+
+  describe('findActiveTrainingAction', () => {
+    it('returns null when there are no scheduled training actions', () => {
+      equal(findActiveTrainingAction([{action: 999}]), null);
+    });
+
+    it('returns oldest scheduled action when latest touched_at is in the future', () => {
+      const oldest = {action: 2, touched_at: '3026-01-01T00:00:00.000Z'};
+      const newest = {action: 6, touched_at: '3026-01-01T00:00:00.100Z'};
+
+      equal(findActiveTrainingAction([newest, oldest]), oldest);
+    });
+
+    it('returns the action currently in progress', () => {
+      const first = {action: 2, touched_at: '2026-01-01T00:00:00.000Z'};
+      const second = {action: 6, touched_at: '2026-01-01T00:00:01.000Z'};
+
+      equal(
+        findActiveTrainingAction([first, second], {now: new Date('2026-01-01T00:00:02.000Z')}),
+        second,
+      );
+    });
   });
 
   it('returns null when removed actions have no valid touched_at', () => {

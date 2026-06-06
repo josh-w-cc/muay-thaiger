@@ -1,5 +1,10 @@
 import {SKILLS_BY_ACTION_ID} from './skills/index.js';
-import {createTrainingTimeline as createSharedTrainingTimeline, getScheduledActions} from './trainingTimeline.js';
+import {
+  createTrainingTimeline as createSharedTrainingTimeline,
+  findLatestAction,
+  getOrderedActions,
+  getScheduledActions,
+} from './trainingTimeline.js';
 
 export function applyTrainingAction(action, fighter) {
   const skill = getTrainingSkill(action);
@@ -32,6 +37,23 @@ export function findTouchedAtTransfer(removedActions, remainingActions) {
     return null;
   }
   return {targetAction: getActionWithMaxTouchedAt(remainingActions), touchedAt: new Date(maxRemovedMs)};
+}
+
+export function findActiveTrainingAction(actions, {now = new Date()} = {}) {
+  const nowMs = now.getTime();
+  const scheduledActions = getScheduledTrainingActions(actions);
+  if(!scheduledActions.length) {
+    return null;
+  }
+  const orderedActions = getOrderedActions(scheduledActions, nowMs);
+  const {latestActionTime} = findLatestAction(orderedActions, nowMs);
+  let remainingMs = nowMs - latestActionTime;
+  let actionIndex = 0;
+  while(remainingMs > 0 && remainingMs >= orderedActions[actionIndex].durationMs) {
+    remainingMs -= orderedActions[actionIndex].durationMs;
+    actionIndex = (actionIndex + 1) % orderedActions.length;
+  }
+  return orderedActions[actionIndex].action;
 }
 
 export function getMaxTouchedAtMs(actions) {
