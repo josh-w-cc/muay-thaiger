@@ -60,13 +60,12 @@ function FightFighterStats({attack, defense}) {
 }
 
 function FightStatBar({barClassName, current, label, max}) {
-  const normalizedMax = Math.max(max, 1);
-  const width = Math.round((current / normalizedMax) * 100);
+  const width = (current / max) * 100n;
 
   return (
     <div
       aria-label={label}
-      aria-valuemax={normalizedMax}
+      aria-valuemax={max}
       aria-valuemin={0}
       aria-valuenow={current}
       className={barClassName}

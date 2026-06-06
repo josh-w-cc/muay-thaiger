@@ -41,7 +41,7 @@ function getCalculatedFight(fight) {
 }
 
 function addCalculatedStats(participant) {
-  return {...participant, calculatedStats: calculateFighterStats(participant.stats)};
+  return {...participant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
 }
 
 export function attachFightJudge(app) {
