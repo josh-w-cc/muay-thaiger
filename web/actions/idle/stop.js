@@ -1,12 +1,11 @@
-import {SKILL_IDS} from 'shared/skills/index.js';
-
 import {removeFighterActionCmd} from '@/actions/websockets/clientCommands.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
+import getActionIDBySkillKey from './getActionIDBySkillKey.js';
 
 
 export default function stopIdle({skillKey}) {
-  const actionID = SKILL_IDS[skillKey];
-  if(!Number.isInteger(actionID)) {
+  const actionID = getActionIDBySkillKey(skillKey);
+  if(actionID === null) {
     return;
   }
   useFighterActionsStore.getState().removeAction(actionID);
