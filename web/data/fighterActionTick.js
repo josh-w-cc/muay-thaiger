@@ -17,7 +17,11 @@ export function runFighterActionTick(actions) {
   ));
 }
 
-export function transferLatestTouchedAt(removedActions, remainingActions) {
+export function transferLatestTouchedAt(removedActions, remainingActions, wasActiveRemoved = false) {
+  if(wasActiveRemoved) {
+    const touchedAt = new Date().toISOString();
+    return remainingActions.map((action) => ({...action, touched_at: touchedAt}));
+  }
   const transfer = findTouchedAtTransfer(removedActions, remainingActions);
   if(!transfer) {
     return remainingActions;

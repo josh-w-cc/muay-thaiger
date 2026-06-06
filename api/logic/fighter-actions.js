@@ -1,5 +1,5 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills/index.js';
-import {findTouchedAtTransfer, getMaxTouchedAtMs} from 'shared/training.js';
+import {findActiveTrainingAction, findTouchedAtTransfer, getMaxTouchedAtMs} from 'shared/training.js';
 import {createCommandError} from './command-errors.js';
 
 export async function registerFighterAction({fighterActions, fighters}, message, playerID) {
@@ -27,10 +27,11 @@ export async function unregisterFighterAction({fighterActions, fighters}, messag
     throw createCommandError('invalid-stop-message');
   }
   const actions = await fighterActions.listByFighterID(currentFighter.id);
+  const activeAction = findActiveTrainingAction(actions);
   const matchingActions = actions.filter((action) => action.action === normalizedMessage.action_id);
   const remainingActions = actions.filter((action) => action.action !== normalizedMessage.action_id);
   await Promise.all(matchingActions.map((action) => fighterActions.remove(action.id)));
-  await transferLatestTouchedAt(fighterActions, matchingActions, remainingActions);
+  await transferLatestTouchedAt(fighterActions, matchingActions, remainingActions, activeAction);
   return {action_id: normalizedMessage.action_id};
 }
 
@@ -60,7 +61,12 @@ function normalizeMessage(message, errorCode) {
   };
 }
 
-async function transferLatestTouchedAt(fighterActions, removedActions, remainingActions) {
+async function transferLatestTouchedAt(fighterActions, removedActions, remainingActions, activeAction) {
+  if(activeAction && removedActions.includes(activeAction)) {
+    const now = new Date();
+    await Promise.all(remainingActions.map((action) => fighterActions.touch(action.id, now)));
+    return;
+  }
   const transfer = findTouchedAtTransfer(removedActions, remainingActions);
   if(!transfer) {
     return;
