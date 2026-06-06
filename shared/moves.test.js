@@ -25,12 +25,13 @@ describe('MOVE_SEED_MOVES', () => {
 describe('MOVE_DEFINITIONS', () => {
   it('applies each move affect to the opponent', () => {
     const calls = [];
+    const fighter = {};
     const opponent = {
       takeDamage: (amount) => calls.push(amount),
     };
 
     for(const move of Object.values(MOVE_DEFINITIONS)) {
-      move.affect(opponent);
+      move.affect(fighter, opponent);
     }
 
     deepEqual(calls, [2, 3]);
@@ -39,9 +40,11 @@ describe('MOVE_DEFINITIONS', () => {
   it('defines expected metadata for initial moves', () => {
     equal(MOVE_DEFINITIONS.wildPunch.name, 'Wild Punch');
     equal(MOVE_DEFINITIONS.wildPunch.recovery, 3);
+    equal(MOVE_DEFINITIONS.wildPunch.staminaCost, 1);
     equal(MOVE_DEFINITIONS.wildPunch.duration, undefined);
     equal(MOVE_DEFINITIONS.wildKick.name, 'Wild Kick');
     equal(MOVE_DEFINITIONS.wildKick.recovery, 5);
+    equal(MOVE_DEFINITIONS.wildKick.staminaCost, 2);
     equal(MOVE_DEFINITIONS.wildKick.duration, undefined);
   });
 });
