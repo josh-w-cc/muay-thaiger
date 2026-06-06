@@ -21,6 +21,10 @@ export function removeFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'stop'});
 }
 
+export function moveCmd(moveID) {
+  sendCommand({cmd: 'move', move_id: moveID});
+}
+
 export function selectFighterCmd() {
   respondToAuth(connectSocketOnAppLoad());
   routeToHubIfAuthorized();

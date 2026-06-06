@@ -1,5 +1,7 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
+import {calculateFighterStats, getFightParticipants} from './fight-judge-utils.js';
+
 export class FightJudge {
   #fightsByPlayerID = new Map();
 
@@ -12,19 +14,25 @@ export class FightJudge {
   }
 
   async attach(fighters, fight) {
-    const playerIDs = await getFightPlayerIDs(fighters, fight);
+    const participants = await getFightParticipants(fighters, fight);
     const enrichedFight = captureStartingStats(fight);
-    for(const playerID of playerIDs) {
-      this.#fightsByPlayerID.set(playerID, enrichedFight);
+    for(const participant of participants) {
+      this.#fightsByPlayerID.set(participant.playerID, {fight: enrichedFight, role: participant.role});
     }
   }
 
   get(playerID) {
-    const fight = this.#fightsByPlayerID.get(playerID);
-    if(!fight) {
-      return null;
+    const participantFight = this.#fightsByPlayerID.get(playerID);
+    return participantFight ? getCalculatedFight(participantFight.fight) : null;
+  }
+
+  move(playerID, moveID) {
+    const move = getFightMove(this.#fightsByPlayerID.get(playerID), moveID);
+    if(!move) {
+      return false;
     }
-    return getCalculatedFight(fight);
+    move.lastUsed = Math.floor(Date.now() / 1000);
+    return true;
   }
 }
 
@@ -41,7 +49,8 @@ function getCalculatedFight(fight) {
 }
 
 function addCalculatedStats(participant) {
-  return {...participant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
+  const calculatedStats = calculateFighterStats(participant.stats);
+  return {...participant, calculatedStats, stats: {...participant.stats, ...calculatedStats}};
 }
 
 export function attachFightJudge(app) {
@@ -49,13 +58,6 @@ export function attachFightJudge(app) {
   const models = {fighters: fightersModel(app.db), fights: fightsModel(app.db)};
   app.decorate('fightJudge', judge);
   app.addHook('onReady', () => judge.load(models));
-}
-
-async function getFightPlayerIDs(fighters, fight) {
-  const fighterIDs = [...new Set([fight?.attacker, fight?.defender].filter((fighterID) => fighterID != null))];
-  const fighterRows = await Promise.all(fighterIDs.map((fighterID) => fighters.find(fighterID)));
-  const playerIDs = fighterRows.map((fighter) => fighter?.player).filter((playerID) => playerID != null);
-  return [...new Set(playerIDs)];
 }
 
 function captureStartingStats(fight) {
@@ -80,13 +82,21 @@ function addStartingStats(participant) {
   };
 }
 
-function calculateFighterStats({agility, constitution, durability, reach, skill, stamina, strength}) {
-  const staminaLogApprox = stamina.logApprox();
-  const agilityLogApprox = agility.logApprox();
-  return {
-    attack: skill + staminaLogApprox + agilityLogApprox.logApprox() + reach,
-    defense: skill + agilityLogApprox + staminaLogApprox.logApprox(),
-    health: constitution * constitution * durability,
-    power: (strength + skill.logApprox()) * staminaLogApprox,
-  };
+function getFightMove(participantFight, moveID) {
+  return findMove(getParticipantMoves(participantFight), moveID);
+}
+
+function getParticipantMoves(participantFight) {
+  if(!participantFight) {
+    return null;
+  }
+  const participant = participantFight.fight.details?.[participantFight.role];
+  return Array.isArray(participant?.moves) ? participant.moves : null;
+}
+
+function findMove(moves, moveID) {
+  if(!moves) {
+    return null;
+  }
+  return moves.find(({id}) => id === moveID) || null;
 }

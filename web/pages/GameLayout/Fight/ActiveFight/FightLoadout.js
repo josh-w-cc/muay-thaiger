@@ -1,5 +1,6 @@
 import Button from '@/components/Button.js';
 import useMovesStore from '@/data/moves.js';
+import {moveCmd} from '@/actions/websockets/clientCommands.js';
 
 import {FIGHT_LOADOUT, TAPPER_FILL_DURATIONS} from './fightData.js';
 import css from '../Fight.module.css';
@@ -16,13 +17,24 @@ export default function FightLoadout({details}) {
 
   return (
     <div className={css.fightLoadout}>
-      <div className={css.fightLoadoutButtons}>
-        {buttons.map((button, buttonIndex) => (
-          <TapperButton delay={buttonIndex * 0.4} duration={button.duration ?? TAPPER_FILL_DURATIONS[buttonIndex]} key={button.label}>
-            {button.label}
-          </TapperButton>
-        ))}
-      </div>
+      <FightLoadoutButtons buttons={buttons} />
+    </div>
+  );
+}
+
+function FightLoadoutButtons({buttons}) {
+  return (
+    <div className={css.fightLoadoutButtons}>
+      {buttons.map((button, buttonIndex) => (
+        <TapperButton
+          delay={buttonIndex * 0.4}
+          duration={button.duration ?? TAPPER_FILL_DURATIONS[buttonIndex]}
+          key={button.label}
+          onClick={Number.isInteger(button.moveID) ? () => moveCmd(button.moveID) : undefined}
+        >
+          {button.label}
+        </TapperButton>
+      ))}
     </div>
   );
 }
@@ -35,6 +47,7 @@ function getFightMoves(details, moveDefinitions) {
   if(Array.isArray(details?.attacker?.moves) && details.attacker.moves.length > 0) {
     return details.attacker.moves.map((move) => ({
       ...getLoadoutMove(moveDefinitions, move.id),
+      moveID: move.id,
     }));
   }
   return FIGHT_LOADOUT.moves.map((move) => ({label: move}));
@@ -51,9 +64,9 @@ function getLoadoutMove(moveDefinitions, moveID) {
   };
 }
 
-function TapperButton({delay, duration, children}) {
+function TapperButton({delay, duration, children, onClick}) {
   return (
-    <Button className={css.tapperButton}>
+    <Button className={css.tapperButton} onClick={onClick}>
       <span
         aria-hidden="true"
         className={css.tapperButtonFill}

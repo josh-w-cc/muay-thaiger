@@ -619,6 +619,63 @@ describe('WebSocket /ws/connect', () => {
     }
   });
 
+  it('sends error for move command when socket has no authenticated player', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, readyState: 1, send};
+
+    await onMessage(JSON.stringify({cmd: 'move', move_id: 1}), socket, {});
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-move-message'});
+  });
+
+  it('routes move commands to fightJudge and sends updated player state', async () => {
+    const dateNow = Date.now;
+    Date.now = () => 1234567890000;
+    try {
+      const send = createCallTracker();
+      const move = createCallTracker();
+      const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+      const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
+      const fight = {
+        attacker: 9,
+        defender: null,
+        details: {attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 1}, {id: MOVE_IDS.wildKick, lastUsed: 2}]}},
+        id: 4,
+        reason: 'gold',
+      };
+      const fighterActions = {listByFighterID: async () => []};
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fightJudge = {
+        get: (playerID) => (playerID === 1 ? fight : null),
+        move: (playerID, moveID) => {
+          move(playerID, moveID);
+          const matchingMove = fight.details.attacker.moves.find((fightMove) => fightMove.id === moveID);
+          if(!matchingMove) {
+            return false;
+          }
+          matchingMove.lastUsed = Math.floor(Date.now() / 1000);
+          return true;
+        },
+      };
+
+      await onMessage(JSON.stringify({cmd: 'move', move_id: MOVE_IDS.wildKick}), socket, {fighterActions, fighters, fightJudge});
+
+      assert.deepEqual(move.calls, [[1, MOVE_IDS.wildKick]]);
+      assert.equal(send.calls.length, 1);
+      assert.deepEqual(JSON.parse(send.calls[0][0]), {
+        actions: [],
+        cmd: 'player_state',
+        fight,
+        fighter,
+      });
+      assert.equal(fight.details.attacker.moves[1].lastUsed, 1234567890);
+    }
+    finally {
+      Date.now = dateNow;
+    }
+  });
+
   it('does not respond to idle messages when the player has no current fighter', async () => {
     const send = createCallTracker();
     const create = createCallTracker();
