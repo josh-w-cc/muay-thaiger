@@ -10,7 +10,9 @@ const HIGH_RANK_BOT_STAT = (10n ** 33n).toString();
 describe('createFight', () => {
   it('creates a gold fight with captured attacker stats and low-rank bot defender stats', async () => {
     const dateNow = Date.now;
+    const mathRandom = Math.random;
     Date.now = () => 1234567890000;
+    Math.random = () => 0;
     try {
       const create = createCallTracker();
       const attach = createCallTracker();
@@ -87,12 +89,15 @@ describe('createFight', () => {
     }
     finally {
       Date.now = dateNow;
+      Math.random = mathRandom;
     }
   });
 
   it('creates a gold fight with ranked bot defender stats', async () => {
     const dateNow = Date.now;
+    const mathRandom = Math.random;
     Date.now = () => 1234567890000;
+    Math.random = () => 0;
     try {
       const create = createCallTracker();
       const fighter = {id: 9, race: 2};
@@ -147,6 +152,26 @@ describe('createFight', () => {
     }
     finally {
       Date.now = dateNow;
+      Math.random = mathRandom;
+    }
+  });
+
+  it('creates a gold fight with a random bot defender race', async () => {
+    const mathRandom = Math.random;
+    Math.random = () => 0.999;
+    try {
+      const create = createCallTracker();
+      const fighter = {id: 9, race: 2};
+      const fighterMoves = {listEnabledByFighterID: async () => []};
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fights = {create};
+
+      await createFight({fighterMoves, fighters, fights}, 1, 'gold');
+
+      assert.equal(create.calls[0][0].defender.race, 2);
+    }
+    finally {
+      Math.random = mathRandom;
     }
   });
 

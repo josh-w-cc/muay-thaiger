@@ -1,11 +1,12 @@
 import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
 import {MOVE_IDS} from 'shared/moves.js';
+import {RACES} from 'shared/races.js';
 
 const BOT_BASE_STAT = 100n;
 const BOT_MOVE_IDS = [MOVE_IDS.wildPunch, MOVE_IDS.wildKick];
 const BOT_RANK_MULTIPLIER_BASE = 10n;
 const BOT_RANK_MULTIPLIER_DIVISOR = 4n;
-const BOT_RACE = 1;
+const BOT_RACE_IDS = RACES.map(({id}) => id);
 const BOT_SINGLE_CHAR_RANK_PATTERN = /^[A-Z]$/;
 const BOT_MULTI_CHAR_RANK_PATTERN = /^(?:ZZ|A{2,5})$/;
 const RANK_Z_CHAR_CODE = 'Z'.charCodeAt(0);
@@ -14,7 +15,7 @@ export function createBot(rank) {
   return {
     id: null,
     moves: BOT_MOVE_IDS.map((id) => ({id, lastUsed: null})),
-    race: BOT_RACE,
+    race: getRandomBotRace(),
     stats: createBotStats(rank),
   };
 }
@@ -56,4 +57,8 @@ function getBotRankScore(normalizedRank) {
     (total, character) => total + BigInt(RANK_Z_CHAR_CODE - character.charCodeAt(0)),
     0n,
   );
+}
+
+function getRandomBotRace() {
+  return BOT_RACE_IDS[Math.floor(Math.random() * BOT_RACE_IDS.length)] ?? BOT_RACE_IDS[0];
 }
