@@ -70,7 +70,7 @@ describe('FightJudge.attach', () => {
       }[fighterID] ?? null),
     };
 
-    it('updates lastUsed for the active player move', async () => {
+    it('updates lastUsed and applies move effects for the active player move', async () => {
       const dateNow = Date.now;
       Date.now = () => 1234567890000;
       try {
@@ -90,7 +90,10 @@ describe('FightJudge.attach', () => {
 
         assert.equal(judge.move(1, MOVE_IDS.wildKick), true);
         assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890);
+        assert.equal(judge.get(1).details.attacker.moveCount, 1);
+        assert.equal(judge.get(1).details.defender.stats.health, -2n);
         assert.equal(judge.get(2).details.defender.moves[0].lastUsed, 3);
+        assert.equal(judge.get(2).details.defender.moveCount, 0);
       }
       finally {
         Date.now = dateNow;

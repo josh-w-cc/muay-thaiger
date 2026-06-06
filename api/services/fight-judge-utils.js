@@ -1,3 +1,5 @@
+import {MOVE_DEFINITIONS, MOVE_IDS} from 'shared/moves.js';
+
 export async function getFightParticipants(fighters, fight) {
   const participants = await Promise.all([
     getFightParticipant(fighters, fight?.attacker, 'attacker'),
@@ -16,6 +18,35 @@ export function calculateFighterStats({agility, constitution, durability, reach,
     defense: skill + agilityLogApprox + staminaLogApprox.logApprox(),
     health: constitution * constitution * durability,
     power: (strength + skill.logApprox()) * staminaLogApprox,
+  };
+}
+
+export function getMoveDefinition(moveID) {
+  const moveName = Object.entries(MOVE_IDS).find(([, id]) => id === moveID)?.[0];
+  if(!moveName || !MOVE_DEFINITIONS[moveName]) {
+    throw new Error(`Unknown move:${moveID}`);
+  }
+  return MOVE_DEFINITIONS[moveName];
+}
+
+export function executeFightMove(moveDefinition, activeParticipant, opponentParticipant) {
+  if(!moveDefinition?.affect) {
+    return;
+  }
+  moveDefinition.affect(
+    createMoveActor(activeParticipant),
+    createMoveActor(opponentParticipant),
+  );
+}
+
+function createMoveActor(participant) {
+  return {
+    takeDamage: (amount) => {
+      if(!participant?.stats) {
+        return;
+      }
+      participant.stats.health -= BigInt(amount);
+    },
   };
 }
 
