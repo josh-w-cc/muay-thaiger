@@ -165,6 +165,7 @@ describe('fights.create', () => {
     assert.deepEqual(inserted.details.defender.moves, [2]);
     assert.equal(inserted.details.defender.race, 2);
     assert.deepEqual(inserted.details.defender.stats, {speed: '8', vigor: '7'});
+    assert.equal(inserted.details.rank, 'bronze');
     assert.equal(typeof inserted.details.defender.seed, 'number');
     assert.ok(inserted.details.defender.seed >= 0);
     assert.ok(inserted.details.defender.seed < 2 ** 32);
@@ -194,6 +195,7 @@ describe('fights.create', () => {
     assert.ok(inserted.details.attacker.seed >= 0);
     assert.ok(inserted.details.attacker.seed < 2 ** 32);
     assert.equal(inserted.details.defender, undefined);
+    assert.equal(inserted.details.rank, 'ZZ');
   });
 
   it('throws when attacker stats are missing', async () => {
