@@ -16,9 +16,7 @@ function normalizeMoveList(moves) {
     throw createCommandError('invalid-move-message');
   }
   validateMoveListSize(moves.length);
-  const normalizedMoves = moves.map(normalizeMoveListEntry);
-  validateMoveNumSequence(normalizedMoves);
-  return normalizedMoves;
+  return moves.map(normalizeMoveListEntry);
 }
 
 function validateMoveListSize(moveListLength) {
@@ -32,16 +30,6 @@ function normalizeMoveListEntry(move) {
     moveID: normalizeMoveID(move?.move_id),
     moveNum: normalizeMoveNum(move?.move_num),
   };
-}
-
-function validateMoveNumSequence(normalizedMoves) {
-  for(let moveIndex = 1; moveIndex < normalizedMoves.length; moveIndex += 1) {
-    const previousMoveNum = normalizedMoves[moveIndex - 1].moveNum;
-    const currentMoveNum = normalizedMoves[moveIndex].moveNum;
-    if(currentMoveNum !== previousMoveNum + 1) {
-      throw createCommandError('invalid-move-message');
-    }
-  }
 }
 
 function normalizeMoveID(rawMoveID) {
