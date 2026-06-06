@@ -1,7 +1,7 @@
 import Section from '@/components/primitive/Section.js';
 
 import FighterDetails from './FighterDetails.js';
-import Leaderboard from './Leaderboard.js';
+import Leaderboard from './Leaderboard/index.js';
 import css from './Hub.module.css';
 
 const EVENTS = [
