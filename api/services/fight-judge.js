@@ -27,9 +27,13 @@ export class FightJudge {
   }
 
   move(playerID, moveID) {
-    const move = getFightMove(this.#fightsByPlayerID.get(playerID), moveID);
+    const fight = this.#fightsByPlayerID.get(playerID);
+    if(!fight) {
+      throw new Error(`No fight for player:${playerID}`);
+    }
+    const move = getFightMove(fight, moveID);
     if(!move) {
-      return false;
+      throw new Error(`Unknown move:${moveID}`);
     }
     move.lastUsed = Math.floor(Date.now() / 1000);
     return true;
@@ -83,9 +87,6 @@ function addStartingStats(participant) {
 }
 
 function getFightMove(participantFight, moveID) {
-  if(!participantFight) {
-    return null;
-  }
   const moves = participantFight.fight.details[participantFight.role].moves;
   return moves.find(({id}) => id === moveID) || null;
 }
