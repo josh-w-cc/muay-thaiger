@@ -1,6 +1,6 @@
 import {render, screen, within} from '@testing-library/react';
 
-import FighterDetails from './FighterDetails.js';
+import FighterDetails from '../FighterDetails.js';
 
 
 const fighter = vi.hoisted(() => ({
