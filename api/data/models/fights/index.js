@@ -28,7 +28,7 @@ export default function fights(db) {
 }
 
 function serializeFightCreate({attacker, defender, rank, reason}) {
-  const details = serializeFightDetails(attacker, defender);
+  const details = serializeFightDetails(attacker, defender, rank);
   return {
     attacker: attacker.id,
     defender: defender?.id ?? null,
@@ -38,15 +38,20 @@ function serializeFightCreate({attacker, defender, rank, reason}) {
   };
 }
 
-function serializeFightDetails(attacker, defender) {
+function serializeFightDetails(attacker, defender, rank) {
+  const detailsRank = !rank ? 'ZZ' : rank;
   const serializedAttacker = serializeParticipantDetails(attacker);
   if(!defender) {
-    return {attacker: serializedAttacker};
+    return {
+      attacker: serializedAttacker,
+      rank: detailsRank,
+    };
   }
 
   return {
     attacker: serializedAttacker,
     defender: serializeParticipantDetails(defender),
+    rank: detailsRank,
   };
 }
 

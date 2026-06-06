@@ -16,9 +16,14 @@ vi.mock('@/actions/websockets/index.js', () => ({
 }));
 
 describe('client websocket commands', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
     vi.resetModules();
+    vi.useRealTimers();
   });
 
   it('sends an idle command', async () => {
@@ -37,12 +42,48 @@ describe('client websocket commands', () => {
     expect(sendCommand).toHaveBeenCalledWith({action_id: 2, cmd: 'stop'});
   });
 
-  it('sends a move command', async () => {
+  it('sends a move command as a batched move list payload', async () => {
     const {moveCmd} = await import('./clientCommands.js');
 
     moveCmd(3);
 
-    expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', move_id: 3});
+    expect(sendCommand).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 3, move_num: 0}]});
+  });
+
+  it('batches repeated clicks for the same move as separate move entries', async () => {
+    const {moveCmd} = await import('./clientCommands.js');
+
+    moveCmd(3);
+    moveCmd(3);
+    moveCmd(3);
+
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledTimes(1);
+    expect(sendCommand).toHaveBeenCalledWith({
+      cmd: 'move',
+      moves: [{move_id: 3, move_num: 0}, {move_id: 3, move_num: 1}, {move_id: 3, move_num: 2}],
+    });
+  });
+
+  it('batches clicks for multiple moves in the same flush window with increasing move numbers', async () => {
+    const {moveCmd} = await import('./clientCommands.js');
+
+    moveCmd(2);
+    moveCmd(3);
+    moveCmd(2);
+
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledTimes(1);
+    expect(sendCommand).toHaveBeenCalledWith({
+      cmd: 'move',
+      moves: [{move_id: 2, move_num: 0}, {move_id: 3, move_num: 1}, {move_id: 2, move_num: 2}],
+    });
   });
 
   it('logs and skips move command when move id is invalid', async () => {
