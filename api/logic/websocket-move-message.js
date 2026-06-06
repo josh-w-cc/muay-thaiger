@@ -2,29 +2,16 @@ import {createCommandError} from './command-errors.js';
 const MAX_MOVES_PER_MESSAGE = 200;
 
 export function normalizeMoveMessage(message) {
-  const moveEntries = normalizeMoveEntries(message);
+  const moveEntries = normalizeMoveList(message?.moves);
   return {
     moveIDs: moveEntries.map(({moveID}) => moveID),
   };
 }
 
-function normalizeMoveEntries(message) {
-  if(message?.moves === undefined) {
-    return normalizeLegacyMoveEntries(message);
-  }
-  if(!Array.isArray(message.moves)) {
+function normalizeMoveList(moves) {
+  if(!Array.isArray(moves)) {
     throw createCommandError('invalid-move-message');
   }
-  return normalizeMoveList(message.moves);
-}
-
-function normalizeLegacyMoveEntries(message) {
-  const moveID = normalizeMoveID(message?.move_id);
-  const clicks = normalizeMoveClicks(message?.clicks);
-  return Array.from({length: clicks}, () => ({moveID}));
-}
-
-function normalizeMoveList(moves) {
   validateMoveListSize(moves.length);
   const normalizedMoves = moves.map(normalizeMoveListEntry);
   validateMoveNumSequence(normalizedMoves);
@@ -60,17 +47,6 @@ function normalizeMoveID(rawMoveID) {
     throw createCommandError('invalid-move-message');
   }
   return moveID;
-}
-
-function normalizeMoveClicks(rawClicks) {
-  const clicks = Number(rawClicks ?? 1);
-  if(!Number.isInteger(clicks)) {
-    throw createCommandError('invalid-move-message');
-  }
-  if(clicks < 1 || clicks > MAX_MOVES_PER_MESSAGE) {
-    throw createCommandError('invalid-move-message');
-  }
-  return clicks;
 }
 
 function normalizeMoveNum(rawMoveNum) {

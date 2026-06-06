@@ -623,7 +623,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage(JSON.stringify({cmd: 'move', move_id: 1}), socket, {});
+    await onMessage(JSON.stringify({cmd: 'move', moves: [{move_id: 1, move_num: 0}]}), socket, {});
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-move-message'});
@@ -659,7 +659,10 @@ describe('WebSocket /ws/connect', () => {
         },
       };
 
-      await onMessage(JSON.stringify({cmd: 'move', move_id: MOVE_IDS.wildKick}), socket, {fighterActions, fighters, fightJudge});
+      await onMessage(JSON.stringify({
+        cmd: 'move',
+        moves: [{move_id: MOVE_IDS.wildKick, move_num: 10}],
+      }), socket, {fighterActions, fighters, fightJudge});
 
       assert.deepEqual(move.calls, [[1, MOVE_IDS.wildKick]]);
       assert.equal(send.calls.length, 1);
@@ -728,6 +731,16 @@ describe('WebSocket /ws/connect', () => {
     finally {
       Date.now = dateNow;
     }
+  });
+
+  it('sends error when move command uses legacy move_id payload', async () => {
+    const send = createCallTracker();
+    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+
+    await onMessage(JSON.stringify({cmd: 'move', move_id: MOVE_IDS.wildKick}), socket, {});
+
+    assert.equal(send.calls.length, 1);
+    assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-move-message'});
   });
 
   it('does not respond to idle messages when the player has no current fighter', async () => {
