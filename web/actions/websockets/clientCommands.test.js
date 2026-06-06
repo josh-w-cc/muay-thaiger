@@ -42,7 +42,7 @@ describe('client websocket commands', () => {
     expect(sendCommand).toHaveBeenCalledWith({action_id: 2, cmd: 'stop'});
   });
 
-  it('sends a move command as a batched click payload', async () => {
+  it('sends a move command as a batched move list payload', async () => {
     const {moveCmd} = await import('./clientCommands.js');
 
     moveCmd(3);
@@ -51,10 +51,10 @@ describe('client websocket commands', () => {
 
     vi.advanceTimersByTime(500);
 
-    expect(sendCommand).toHaveBeenCalledWith({clicks: 1, cmd: 'move', move_id: 3});
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 3, move_num: 0}]});
   });
 
-  it('combines repeated clicks for the same move into one batched command', async () => {
+  it('batches repeated clicks for the same move as separate move entries', async () => {
     const {moveCmd} = await import('./clientCommands.js');
 
     moveCmd(3);
@@ -64,10 +64,13 @@ describe('client websocket commands', () => {
     vi.advanceTimersByTime(500);
 
     expect(sendCommand).toHaveBeenCalledTimes(1);
-    expect(sendCommand).toHaveBeenCalledWith({clicks: 3, cmd: 'move', move_id: 3});
+    expect(sendCommand).toHaveBeenCalledWith({
+      cmd: 'move',
+      moves: [{move_id: 3, move_num: 0}, {move_id: 3, move_num: 1}, {move_id: 3, move_num: 2}],
+    });
   });
 
-  it('batches clicks for multiple moves in the same flush window', async () => {
+  it('batches clicks for multiple moves in the same flush window with increasing move numbers', async () => {
     const {moveCmd} = await import('./clientCommands.js');
 
     moveCmd(2);
@@ -76,9 +79,11 @@ describe('client websocket commands', () => {
 
     vi.advanceTimersByTime(500);
 
-    expect(sendCommand).toHaveBeenCalledTimes(2);
-    expect(sendCommand).toHaveBeenNthCalledWith(1, {clicks: 2, cmd: 'move', move_id: 2});
-    expect(sendCommand).toHaveBeenNthCalledWith(2, {clicks: 1, cmd: 'move', move_id: 3});
+    expect(sendCommand).toHaveBeenCalledTimes(1);
+    expect(sendCommand).toHaveBeenCalledWith({
+      cmd: 'move',
+      moves: [{move_id: 2, move_num: 0}, {move_id: 3, move_num: 1}, {move_id: 2, move_num: 2}],
+    });
   });
 
   it('logs and skips move command when move id is invalid', async () => {

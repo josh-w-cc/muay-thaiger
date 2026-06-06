@@ -1,12 +1,57 @@
 import {createCommandError} from './command-errors.js';
-// Limit per-message click bursts to keep move processing bounded server-side.
-const MAX_MOVE_CLICKS = 200;
+const MAX_MOVES_PER_MESSAGE = 200;
 
 export function normalizeMoveMessage(message) {
+  const moveEntries = normalizeMoveEntries(message);
   return {
-    clicks: normalizeMoveClicks(message?.clicks),
-    moveID: normalizeMoveID(message?.move_id),
+    moveIDs: moveEntries.map(({moveID}) => moveID),
   };
+}
+
+function normalizeMoveEntries(message) {
+  if(message?.moves === undefined) {
+    return normalizeLegacyMoveEntries(message);
+  }
+  if(!Array.isArray(message.moves)) {
+    throw createCommandError('invalid-move-message');
+  }
+  return normalizeMoveList(message.moves);
+}
+
+function normalizeLegacyMoveEntries(message) {
+  const moveID = normalizeMoveID(message?.move_id);
+  const clicks = normalizeMoveClicks(message?.clicks);
+  return Array.from({length: clicks}, () => ({moveID}));
+}
+
+function normalizeMoveList(moves) {
+  validateMoveListSize(moves.length);
+  const normalizedMoves = moves.map(normalizeMoveListEntry);
+  validateMoveNumSequence(normalizedMoves);
+  return normalizedMoves;
+}
+
+function validateMoveListSize(moveListLength) {
+  if(moveListLength < 1 || moveListLength > MAX_MOVES_PER_MESSAGE) {
+    throw createCommandError('invalid-move-message');
+  }
+}
+
+function normalizeMoveListEntry(move) {
+  return {
+    moveID: normalizeMoveID(move?.move_id),
+    moveNum: normalizeMoveNum(move?.move_num),
+  };
+}
+
+function validateMoveNumSequence(normalizedMoves) {
+  for(let moveIndex = 1; moveIndex < normalizedMoves.length; moveIndex += 1) {
+    const previousMoveNum = normalizedMoves[moveIndex - 1].moveNum;
+    const currentMoveNum = normalizedMoves[moveIndex].moveNum;
+    if(currentMoveNum !== previousMoveNum + 1) {
+      throw createCommandError('invalid-move-message');
+    }
+  }
 }
 
 function normalizeMoveID(rawMoveID) {
@@ -22,8 +67,16 @@ function normalizeMoveClicks(rawClicks) {
   if(!Number.isInteger(clicks)) {
     throw createCommandError('invalid-move-message');
   }
-  if(clicks < 1 || clicks > MAX_MOVE_CLICKS) {
+  if(clicks < 1 || clicks > MAX_MOVES_PER_MESSAGE) {
     throw createCommandError('invalid-move-message');
   }
   return clicks;
+}
+
+function normalizeMoveNum(rawMoveNum) {
+  const moveNum = Number(rawMoveNum);
+  if(!Number.isInteger(moveNum) || moveNum < 0) {
+    throw createCommandError('invalid-move-message');
+  }
+  return moveNum;
 }

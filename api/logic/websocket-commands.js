@@ -48,9 +48,9 @@ async function move(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-move-message');
   }
-  const {clicks, moveID} = normalizeMoveMessage(message);
+  const {moveIDs} = normalizeMoveMessage(message);
   try {
-    for(let clickCount = 0; clickCount < clicks; clickCount += 1) {
+    for(const moveID of moveIDs) {
       models.fightJudge.move(socket.player.id, moveID);
     }
   }

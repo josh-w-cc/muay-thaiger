@@ -676,7 +676,7 @@ describe('WebSocket /ws/connect', () => {
     }
   });
 
-  it('applies batched move clicks when move command includes click count', async () => {
+  it('applies batched move list entries when move command includes move numbers', async () => {
     const dateNow = Date.now;
     Date.now = () => 1234567890000;
     try {
@@ -706,7 +706,14 @@ describe('WebSocket /ws/connect', () => {
         },
       };
 
-      await onMessage(JSON.stringify({clicks: 3, cmd: 'move', move_id: MOVE_IDS.wildKick}), socket, {fighterActions, fighters, fightJudge});
+      await onMessage(JSON.stringify({
+        cmd: 'move',
+        moves: [
+          {move_id: MOVE_IDS.wildKick, move_num: 10},
+          {move_id: MOVE_IDS.wildKick, move_num: 11},
+          {move_id: MOVE_IDS.wildKick, move_num: 12},
+        ],
+      }), socket, {fighterActions, fighters, fightJudge});
 
       assert.deepEqual(move.calls, [[1, MOVE_IDS.wildKick], [1, MOVE_IDS.wildKick], [1, MOVE_IDS.wildKick]]);
       assert.equal(send.calls.length, 1);

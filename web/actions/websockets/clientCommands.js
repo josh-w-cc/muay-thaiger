@@ -6,7 +6,8 @@ import {connectSocketOnAppLoad, sendCommand} from '@/actions/websockets/index.js
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
 const MOVE_CLICK_BATCH_MILLISECONDS = 500;
 let moveBatchTimeoutID = null;
-let moveClicksByID = new Map();
+let moveBatch = [];
+let moveCount = 0;
 
 export function createFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'idle'});
@@ -29,7 +30,8 @@ export function moveCmd(moveID) {
     console.error(`Invalid move:${moveID}`);
     return;
   }
-  moveClicksByID.set(moveID, (moveClicksByID.get(moveID) ?? 0) + 1);
+  moveBatch.push({move_id: moveID, move_num: moveCount});
+  moveCount += 1;
   scheduleMoveBatch();
 }
 
@@ -47,12 +49,10 @@ function scheduleMoveBatch() {
 
 function flushMoveBatch() {
   moveBatchTimeoutID = null;
-  if(moveClicksByID.size === 0) {
+  if(moveBatch.length === 0) {
     return;
   }
-  const currentBatch = moveClicksByID;
-  moveClicksByID = new Map();
-  for(const [moveID, clicks] of currentBatch.entries()) {
-    sendCommand({clicks, cmd: 'move', move_id: moveID});
-  }
+  const currentBatch = moveBatch;
+  moveBatch = [];
+  sendCommand({cmd: 'move', moves: currentBatch});
 }
