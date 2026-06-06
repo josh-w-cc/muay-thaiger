@@ -623,7 +623,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
 
-    await onMessage(JSON.stringify({cmd: 'move', moves: [{move_id: 1, move_num: 0}]}), socket, {});
+    await onMessage(JSON.stringify({cmd: 'move', moves: [{move_id: MOVE_IDS.wildKick, move_num: 0}]}), socket, {});
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'error', error: 'invalid-move-message'});

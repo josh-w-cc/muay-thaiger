@@ -2,6 +2,9 @@ import {createCommandError} from './command-errors.js';
 const MAX_MOVES_PER_MESSAGE = 200;
 
 export function normalizeMoveMessage(message) {
+  if(!message || typeof message !== 'object') {
+    throw createCommandError('invalid-move-message');
+  }
   const moveEntries = normalizeMoveList(message?.moves);
   return {
     moveIDs: moveEntries.map(({moveID}) => moveID),
