@@ -10,8 +10,8 @@ export function buildCard(participant) {
   const stamina = getStaminaBar(raceName, participant);
   return {
     alt: formatAltText(raceName),
-    attack: participant.calculatedStats.attack,
-    defense: participant.calculatedStats.defense,
+    attack: participant.stats.attack,
+    defense: participant.stats.defense,
     hp,
     src: RACE_FIGHT_IMAGES[participant.race],
     stamina,

@@ -52,7 +52,6 @@ function parseFightDetails(details) {
 function parseFightParticipant(participant) {
   return {
     ...participant,
-    calculatedStats: parseBigIntStats(participant.calculatedStats),
     startingStats: parseBigIntStats(participant.startingStats),
     stats: parseBigIntStats(participant.stats),
   };

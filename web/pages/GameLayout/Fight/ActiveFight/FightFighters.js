@@ -60,7 +60,7 @@ function FightFighterStats({attack, defense}) {
 }
 
 function FightStatBar({barClassName, current, label, max}) {
-  const width = (current / max) * 100;
+  const width = (current / max) * 100n;
 
   return (
     <div
