@@ -60,9 +60,7 @@ function getCalculatedFight(fight) {
 function addCalculatedStats(participant) {
   const calculatedStats = calculateFighterStats(participant.stats);
   const stats = {...participant.stats, ...calculatedStats};
-  if(participant.stats.health != null) {
-    stats.health = participant.stats.health;
-  }
+  stats.health = participant.stats.health;
   return {...participant, calculatedStats, stats};
 }
 
