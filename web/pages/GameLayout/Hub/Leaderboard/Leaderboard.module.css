@@ -4,7 +4,7 @@
 }
 
 .leaderboardTh {
-  composes: goldLabelBase from '../../../components/primitive/css-modules/gold-label-base.module.css';
+  composes: goldLabelBase from '../../../../components/primitive/css-modules/gold-label-base.module.css';
 
   padding: var(--space-xs) var(--space-sm);
   text-align: left;
