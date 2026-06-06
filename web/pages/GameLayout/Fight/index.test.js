@@ -92,17 +92,15 @@ describe('Fight', () => {
       created_at: '2026-06-01T00:00:00.000Z',
       details: {
         attacker: {
-          calculatedStats: {attack: 1111111n, defense: 2222222n, health: 250},
           moves: [{id: 1, lastUsed: 123}, {id: 2, lastUsed: 456}],
           race: 1,
-          startingStats: {health: 300, stamina: 200},
-          stats: {health: 240, stamina: 150},
+          startingStats: {health: 300n, stamina: 200n},
+          stats: {attack: 1111111n, defense: 2222222n, health: 240n, stamina: 150n},
         },
         defender: {
-          calculatedStats: {attack: 3333333n, defense: 4444444n, health: 260},
           race: 2,
-          startingStats: {health: 260, stamina: 210},
-          stats: {health: 200, stamina: 180},
+          startingStats: {health: 260n, stamina: 210n},
+          stats: {attack: 3333333n, defense: 4444444n, health: 200n, stamina: 180n},
         },
         feed: [{attacker: 'Tiger', isSelf: true, move: 'Jab', result: 'Lands for 10!'}],
         strategy: 'Server Strategy',
