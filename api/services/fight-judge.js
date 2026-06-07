@@ -47,6 +47,7 @@ export class FightJudge {
     return true;
   }
 }
+
 function getCalculatedFight(fight, participantRole) {
   const {attacker, defender, ...rest} = fight.details;
   const feed = rest.feed.map((entry) => ({...entry, isSelf: entry.actorRole === participantRole}));
@@ -60,15 +61,18 @@ function getCalculatedFight(fight, participantRole) {
     },
   };
 }
+
 function addCalculatedStats(participant) {
   return {...participant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
 }
+
 export function attachFightJudge(app) {
   const judge = new FightJudge();
   const models = {fighters: fightersModel(app.db), fights: fightsModel(app.db)};
   app.decorate('fightJudge', judge);
   app.addHook('onReady', () => judge.load(models));
 }
+
 function captureStartingStats(fight) {
   const {attacker, defender, ...rest} = fight.details;
   return {
@@ -81,6 +85,7 @@ function captureStartingStats(fight) {
     },
   };
 }
+
 function addStartingStats(participant) {
   const health = calculateFighterHealth(participant.stats);
   participant.stats.health = health;
@@ -93,8 +98,11 @@ function addStartingStats(participant) {
     },
   };
 }
+
 const getFightMove = (participantFight, moveID) => participantFight.fight.details[participantFight.role].moves.find(({id}) => id === moveID) || null;
+
 const getOpponentParticipant = (participantFight) => participantFight.fight.details[participantFight.role === 'attacker' ? 'defender' : 'attacker'];
+
 function getParticipantFight(fightsByPlayerID, playerID) {
   const participantFight = fightsByPlayerID.get(playerID);
   if(!participantFight) {
