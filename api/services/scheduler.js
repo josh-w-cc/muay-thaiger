@@ -37,6 +37,6 @@ function createPlayerStateSyncScheduler(models, connections, logger) {
     () => syncPlayerState(models, connections),
     (error) => logger.error({err: error}, 'sync-player-state failed'),
   );
-  scheduler.addSimpleIntervalJob(new SimpleIntervalJob({minutes: 1}, task));
+  scheduler.addSimpleIntervalJob(new SimpleIntervalJob({milliseconds: 500}, task));
   return scheduler;
 }
