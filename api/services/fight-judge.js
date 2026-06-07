@@ -43,8 +43,7 @@ export class FightJudge {
     const moveDefinition = getMoveDefinition(moveID);
     move.lastUsed = Date.now();
     activeParticipant.moveList.push(moveNum);
-    const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
-    const damage = executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
+    const damage = executeFightMove(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
     participantFight.fight.details.feed.push(`${activeParticipant.name} used ${moveDefinition.name} - ${damage} damage`);
     return true;
   }
@@ -104,4 +103,9 @@ function addStartingStats(participant) {
 function getFightMove(participantFight, moveID) {
   const moves = participantFight.fight.details[participantFight.role].moves;
   return moves.find(({id}) => id === moveID) || null;
+}
+
+function getOpponentParticipant(participantFight) {
+  const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
+  return participantFight.fight.details[opponentRole];
 }
