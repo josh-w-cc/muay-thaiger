@@ -1,12 +1,11 @@
 import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
-import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
-import {createFight} from './fights/index.js';
+import {registerFighterAction, unregisterFighterAction} from '../fighter/fighter-actions.js';
+import {createFight} from '../fights/index.js';
 import {attachCurrentFighter} from './socket-fighter.js';
 import {normalizeMoveMessage} from './websocket-move-message.js';
-import {getPlayerState, sendPlayerState} from './player-state.js';
-import {applyTraining} from './training.js';
-
+import {getPlayerState, sendPlayerState} from '../player/player-state.js';
+import {applyTraining} from '../training/training.js';
 const onCommand = {
   auth,
   fight,

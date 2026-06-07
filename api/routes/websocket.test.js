@@ -5,7 +5,7 @@ import websocket from '@fastify/websocket';
 import {MOVE_IDS} from 'shared/moves.js';
 
 import createCallTracker from '../utils/test/createCallTracker.js';
-import {syncActiveFighters, syncPlayerState} from '../logic/player-state.js';
+import {syncActiveFighters, syncPlayerState} from '../logic/player/player-state.js';
 import websocketRoutes, {onConnect, onMessage} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
