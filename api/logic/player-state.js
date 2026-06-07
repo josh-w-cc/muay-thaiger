@@ -71,19 +71,6 @@ async function syncPlayerSocketState({fighterActions, fightJudge, fighters}, soc
   sendPlayerState(state.actions, state.fighter, socket, state.fight);
 }
 
-async function getPlayerFighter(fighters, playerID, fighterID) {
-  console.log(playerID, fighterID)
-  const fighter = await fighters.find(fighterID);
-  if(isCurrentPlayerFighter(fighter, playerID)) {
-    return fighter;
-  }
-  return fighters.findCurrentByPlayerID(playerID);
-}
-
-function isCurrentPlayerFighter(fighter, playerID) {
-  return Boolean(fighter && fighter.player === playerID && !fighter.retired);
-}
-
 function createOfflineTrainingModels(db) {
   return {fighterActions: fighterActionsModel(db), fighters: fightersModel(db)};
 }
