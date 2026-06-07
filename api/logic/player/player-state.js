@@ -42,7 +42,7 @@ export function sendPlayerState(actions, fighter, socket, fight = null) {
 }
 
 export async function syncActiveFighters({fighterActions, fightJudge, fighters}, sockets, playerFilter) {
-  const filteredSockets = Array.from(sockets).filter((s) => playerFilter(s.player));
+  const filteredSockets = Array.from(sockets).filter((s) => playerFilter(s.player.id));
   await syncPlayerState({fighterActions, fightJudge, fighters}, new Set(filteredSockets));
 }
 
