@@ -87,7 +87,7 @@ async function sendCurrentPlayerState(models, socket) {
   if(!canSendPlayerState(models)) {
     return;
   }
-  const state = await getPlayerState(models, socket.player.id, socket.fighter);
+  const state = await getPlayerState(models, socket.player.id, socket.fighter?.id);
   if(!state) {
     delete socket.fighter;
     return;

@@ -54,20 +54,16 @@ export async function syncPlayerState({fighterActions, fightJudge, fighters}, so
     if(!socket.player) {
       continue;
     }
-    const state = await getPlayerState({fighterActions, fightJudge, fighters}, socket.player.id, socket.fighter);
-    if(!state) {
-      delete socket.fighter;
-      continue;
-    }
-    sendPlayerState(state.actions, state.fighter, socket, state.fight);
+    await syncSocketPlayerState({fighterActions, fightJudge, fighters}, socket);
   }
 }
+
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
 }
 
 async function getPlayerFighter(fighters, playerID, fighterID) {
-  if(fighterID == null) {
+  if(fighterID === null || fighterID === undefined) {
     return fighters.findCurrentByPlayerID(playerID);
   }
   const fighter = await fighters.find(fighterID);
@@ -79,6 +75,15 @@ async function getPlayerFighter(fighters, playerID, fighterID) {
 
 function isCurrentPlayerFighter(fighter, playerID) {
   return Boolean(fighter && fighter.player === playerID && !fighter.retired);
+}
+
+async function syncSocketPlayerState({fighterActions, fightJudge, fighters}, socket) {
+  const state = await getPlayerState({fighterActions, fightJudge, fighters}, socket.player.id, socket.fighter?.id);
+  if(!state) {
+    delete socket.fighter;
+    return;
+  }
+  sendPlayerState(state.actions, state.fighter, socket, state.fight);
 }
 
 function createOfflineTrainingModels(db) {

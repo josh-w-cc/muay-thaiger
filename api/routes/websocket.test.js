@@ -348,7 +348,7 @@ describe('WebSocket /ws/connect', () => {
     };
     const fightJudge = {get: () => null};
     const fighters = {
-      find: async (attachedFighter) => (attachedFighter?.id === fighter.id ? fighter : null),
+      find: async (fighterID) => (fighterID === fighter.id ? fighter : null),
       findCurrentByPlayerID: async () => fighter,
       update: async () => fighter,
     };
@@ -374,7 +374,7 @@ describe('WebSocket /ws/connect', () => {
       listByFighterID: async () => [],
     };
     const fighters = {
-      find: async (attachedFighter) => (attachedFighter?.id === fighter.id ? fighter : null),
+      find: async (fighterID) => (fighterID === fighter.id ? fighter : null),
       findCurrentByPlayerID: async () => fighter,
     };
     const fightJudge = {get: (playerID) => (playerID === 5 ? fight : null)};
@@ -953,13 +953,17 @@ describe('WebSocket /ws/connect', () => {
     const fighterRecord = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
     const updatedFighterRecord = {...fighterRecord, gold: '1'};
     const actions = [{action: 1, fighter: 9, id: 5}];
+    const fighterFindCalls = [];
     const fighterActions = {
       listByFighterID: async () => actions,
       touch: async () => null,
     };
     const fight = {attacker: 9, defender: null, details: {}, id: 12, reason: 'gold', victory: null};
     const fighters = {
-      find: async () => null,
+      find: async (fighterID) => {
+        fighterFindCalls.push(fighterID);
+        return fighterID === 9 ? fighterRecord : null;
+      },
       findCurrentByPlayerID: async (id) => {
         if(id === 1) {
           return fighterRecord;
@@ -970,7 +974,7 @@ describe('WebSocket /ws/connect', () => {
     };
     const fightJudge = {get: (playerID) => (playerID === 1 ? fight : null)};
     const sockets = new Set([
-      {OPEN: 1, player: {id: 1}, readyState: 1, send: sendOpen},
+      {OPEN: 1, fighter: fighterRecord, player: {id: 1}, readyState: 1, send: sendOpen},
       {OPEN: 1, player: {id: 2}, readyState: 1, send: sendNoFighter},
       {OPEN: 1, readyState: 1, send: createCallTracker()},
       closedSocket,
@@ -985,6 +989,7 @@ describe('WebSocket /ws/connect', () => {
       fight,
       fighter: updatedFighterRecord,
     });
+    assert.deepEqual(fighterFindCalls, [9]);
     assert.equal(sendNoFighter.calls.length, 0);
     assert.equal(sockets.has(closedSocket), false);
   });
