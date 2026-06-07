@@ -1,6 +1,6 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {calculateFighterStats, getFightParticipants} from './fight-judge-utils.js';
+import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -27,15 +27,20 @@ export class FightJudge {
   }
 
   move(playerID, moveID) {
-    const fight = this.#fightsByPlayerID.get(playerID);
-    if(!fight) {
+    const participantFight = this.#fightsByPlayerID.get(playerID);
+    if(!participantFight) {
       throw new Error(`No fight for player:${playerID}`);
     }
-    const move = getFightMove(fight, moveID);
+    const move = getFightMove(participantFight, moveID);
     if(!move) {
       throw new Error(`Unknown move:${moveID}`);
     }
+    const moveDefinition = getMoveDefinition(moveID);
     move.lastUsed = Math.floor(Date.now() / 1000);
+    const activeParticipant = participantFight.fight.details[participantFight.role];
+    const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
+    executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
+    activeParticipant.moveCount += 1;
     return true;
   }
 }
@@ -54,7 +59,8 @@ function getCalculatedFight(fight) {
 
 function addCalculatedStats(participant) {
   const calculatedStats = calculateFighterStats(participant.stats);
-  return {...participant, calculatedStats, stats: {...participant.stats, ...calculatedStats}};
+  const stats = {...participant.stats, ...calculatedStats};
+  return {...participant, stats};
 }
 
 export function attachFightJudge(app) {
@@ -77,12 +83,14 @@ function captureStartingStats(fight) {
 }
 
 function addStartingStats(participant) {
+  const health = calculateFighterHealth(participant.stats);
+  participant.stats.health = health;
   return {
     ...participant,
     moveCount: 0,
     startingStats: {
       ...participant.stats,
-      health: calculateFighterStats(participant.stats).health,
+      health,
     },
   };
 }
