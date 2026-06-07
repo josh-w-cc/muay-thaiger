@@ -12,12 +12,12 @@ export function attachScheduler(app) {
   };
   const offlineTrainingScheduler = createOfflineTrainingScheduler(app.db, app.log);
   const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
-  const activeFightStateSyncScheduler = createActiveFightPlayerStateSyncScheduler(models, connections, app.log);
+  const activeFightSyncScheduler = createActiveFightStateSyncScheduler(models, connections, app.log);
 
   app.addHook('onClose', () => {
     offlineTrainingScheduler.stop();
     stateSyncScheduler.stop();
-    activeFightStateSyncScheduler.stop();
+    activeFightSyncScheduler.stop();
   });
 }
 
@@ -43,13 +43,18 @@ function createPlayerStateSyncScheduler(models, connections, logger) {
   return scheduler;
 }
 
-function createActiveFightPlayerStateSyncScheduler(models, connections, logger) {
+function createActiveFightStateSyncScheduler(models, connections, logger) {
   const scheduler = new ToadScheduler();
+  const isActiveFightParticipant = createActiveFightParticipantFilter(models.fightJudge);
   const task = new AsyncTask(
     'sync-active-fight-player-state',
-    () => syncPlayerState(models, connections, {playerFilter: (playerID) => Boolean(models.fightJudge.get(playerID))}),
+    () => syncPlayerState(models, connections, {playerFilter: isActiveFightParticipant}),
     (error) => logger.error({err: error}, 'sync-active-fight-player-state failed'),
   );
   scheduler.addSimpleIntervalJob(new SimpleIntervalJob({milliseconds: 500}, task));
   return scheduler;
+}
+
+function createActiveFightParticipantFilter(fightJudge) {
+  return (playerID) => Boolean(fightJudge.get(playerID));
 }
