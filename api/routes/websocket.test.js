@@ -135,8 +135,8 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(info.calls.length, 1);
     assert.deepEqual(info.calls[0], [{connection_count: 1}, 'websocket connected']);
 
-    const closeHandler = socketOn.calls.find(([eventName]) => eventName === 'close')[1];
-    closeHandler();
+    const onClose = socketOn.calls.find(([eventName]) => eventName === 'close')[1];
+    onClose();
 
     assert.equal(info.calls.length, 2);
     assert.deepEqual(info.calls[1], [{connection_count: 0}, 'websocket disconnected']);
