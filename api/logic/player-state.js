@@ -18,7 +18,7 @@ export async function applyOfflineTraining(db, models = null) {
   }
 }
 
-export async function getPlayerState({fighterActions, fightJudge, fighters}, playerID, fighterID = null) {
+export async function getPlayerState({fighterActions, fightJudge, fighters}, playerID, fighterID) {
   const fighter = await getPlayerFighter(fighters, playerID, fighterID);
   if(!fighter) {
     return null;
