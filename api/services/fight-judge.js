@@ -103,7 +103,7 @@ function getFightMove(participantFight, moveID) {
 }
 
 function applyMoveStaminaCost(move, moveDefinition, activeParticipant, now) {
-  if(move.lastUsed == null || move.lastUsed <= (now - moveDefinition.recovery)) {
+  if(move.lastUsed === null || move.lastUsed === undefined || move.lastUsed <= (now - moveDefinition.recovery)) {
     return;
   }
   const staminaCost = (activeParticipant.stats.stamina * BigInt(moveDefinition.staminaCost)) / 100n;

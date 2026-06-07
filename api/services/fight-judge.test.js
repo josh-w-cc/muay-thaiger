@@ -184,6 +184,38 @@ describe('FightJudge.attach', () => {
       }
     });
 
+    it('uses a strict recovery threshold for stamina cost checks', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {
+              moves: [{id: MOVE_IDS.wildKick, lastUsed: 995}, {id: MOVE_IDS.wildPunch, lastUsed: 998}],
+              stats: {...baseCombatStats, stamina: 10n},
+            },
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 10n);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildPunch), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 9n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
     it('throws when the player has no active fight move or fight', async () => {
       const judge = new FightJudge();
       const fight = {
