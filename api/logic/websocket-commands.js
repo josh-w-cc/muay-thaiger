@@ -2,6 +2,7 @@ import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
 import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
 import {createFight} from './fights/index.js';
+import {attachCurrentFighter, getSocketFighterID} from './socket-fighter.js';
 import {normalizeMoveMessage} from './websocket-move-message.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
@@ -20,10 +21,10 @@ export async function processMessageCommand(models, message, socket) {
   }
   await runCommand(models, message, socket);
 }
-
 async function auth(models, message, socket) {
   const player = await authenticate(models, message);
   socket.player = player;
+  await attachCurrentFighter(socket, models.fighters, player.id);
   socket.send(JSON.stringify({cmd: 'auth', display_name: player.display_name, player_id: player.id, token: player.token}));
   await sendCurrentPlayerState(models, socket);
 }
@@ -86,8 +87,9 @@ async function sendCurrentPlayerState(models, socket) {
   if(!canSendPlayerState(models)) {
     return;
   }
-  const state = await getPlayerState(models, socket.player.id);
+  const state = await getPlayerState(models, socket.player.id, getSocketFighterID(socket));
   if(!state) {
+    delete socket.fighter;
     return;
   }
   sendPlayerState(state.actions, state.fighter, socket, state.fight);

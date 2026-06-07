@@ -63,6 +63,7 @@ describe('WebSocket /ws/connect', () => {
     const {knex} = mockKnexMulti([
       player,
       currentFighter,
+      currentFighter,
       [],
       currentFighter,
       [],
@@ -312,6 +313,24 @@ describe('WebSocket /ws/connect', () => {
     await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players});
 
     assert.equal(socket.player, player);
+  });
+
+  it('attaches fighter to socket after successful authentication when current fighter exists', async () => {
+    const send = createCallTracker();
+    const fighter = {id: 9, player: 5, retired: false, stats: {}};
+    const player = {id: 5, token: 'known-token'};
+    const socket = {OPEN: 1, readyState: 1, send};
+    const fighters = {
+      findCurrentByPlayerID: async (playerID) => (playerID === 5 ? fighter : null),
+    };
+    const players = {
+      create: async () => null,
+      findByToken: async (token) => (token === 'known-token' ? player : null),
+    };
+
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {fighters, players});
+
+    assert.equal(socket.fighter, fighter);
   });
 
   it('sends player_state after successful authentication when models support it', async () => {

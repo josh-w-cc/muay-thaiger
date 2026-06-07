@@ -56,6 +56,38 @@ describe('getPlayerState', () => {
     assert.deepEqual(result.actions, actions);
   });
 
+  it('reuses an attached fighter id when provided', async () => {
+    const fighter = {gold: '0', id: 9, player: 5, retired: false, stats: {}};
+    const updatedFighter = {...fighter, gold: '1'};
+    const actions = [{action: 1, fighter: 9, id: 7, touched_at: new Date().toISOString()}];
+    let findCurrentCallCount = 0;
+    let findCallCount = 0;
+    const fighterActions = {
+      listByFighterID: async () => actions,
+      touch: async () => null,
+    };
+    const fightJudge = {get: () => null};
+    const fighters = {
+      find: async (fighterID) => {
+        findCallCount += 1;
+        assert.equal(fighterID, 9);
+        return fighter;
+      },
+      findCurrentByPlayerID: async () => {
+        findCurrentCallCount += 1;
+        return null;
+      },
+      update: async () => updatedFighter,
+    };
+
+    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5, 9);
+
+    assert.equal(findCallCount, 1);
+    assert.equal(findCurrentCallCount, 0);
+    assert.equal(result.fighter, updatedFighter);
+    assert.deepEqual(result.actions, actions);
+  });
+
   it('returns actions and original fighter when no actions are present', async () => {
     const fighter = {id: 9, player: 5, retired: false, stats: {}};
     const fighterActions = {listByFighterID: async () => []};
@@ -98,6 +130,7 @@ describe('sendPlayerState', () => {
     sendPlayerState(actions, fighter, socket);
 
     assert.equal(send.calls.length, 1);
+    assert.equal(socket.fighter, fighter);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {actions, cmd: 'player_state', fighter});
   });
 
