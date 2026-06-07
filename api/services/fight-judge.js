@@ -1,6 +1,6 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
+import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -60,8 +60,7 @@ function getCalculatedFight(fight) {
 function addCalculatedStats(participant) {
   const calculatedStats = calculateFighterStats(participant.stats);
   const stats = {...participant.stats, ...calculatedStats};
-  stats.health = participant.stats.health ?? calculatedStats.health;
-  return {...participant, calculatedStats, stats};
+  return {...participant, stats};
 }
 
 export function attachFightJudge(app) {
@@ -84,14 +83,14 @@ function captureStartingStats(fight) {
 }
 
 function addStartingStats(participant) {
-  const calculatedStats = calculateFighterStats(participant.stats);
-  participant.stats.health = calculatedStats.health;
+  const health = calculateFighterHealth(participant.stats);
+  participant.stats.health = health;
   return {
     ...participant,
     moveCount: 0,
     startingStats: {
       ...participant.stats,
-      health: calculatedStats.health,
+      health,
     },
   };
 }
