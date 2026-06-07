@@ -36,9 +36,11 @@ export class FightJudge {
       throw new Error(`Unknown move:${moveID}`);
     }
     const moveDefinition = getMoveDefinition(moveID);
-    move.lastUsed = Date.now();
     const activeParticipant = participantFight.fight.details[participantFight.role];
     const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
+    const now = Date.now();
+    applyMoveStaminaCost(move, moveDefinition, activeParticipant, now);
+    move.lastUsed = now;
     executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
     activeParticipant.moveCount += 1;
     return true;
@@ -98,4 +100,12 @@ function addStartingStats(participant) {
 function getFightMove(participantFight, moveID) {
   const moves = participantFight.fight.details[participantFight.role].moves;
   return moves.find(({id}) => id === moveID) || null;
+}
+
+function applyMoveStaminaCost(move, moveDefinition, activeParticipant, now) {
+  if(move.lastUsed == null || move.lastUsed <= (now - moveDefinition.recovery)) {
+    return;
+  }
+  const staminaCost = (activeParticipant.stats.stamina * BigInt(moveDefinition.staminaCost)) / 100n;
+  activeParticipant.stats.stamina -= staminaCost;
 }
