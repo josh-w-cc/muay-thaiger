@@ -76,12 +76,16 @@
 }
 
 .fill {
-  composes: statBarFillBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
+  border-right: 1px solid black;
+  border-top-right-radius: var(--space-xl);
+  height: 100%;
 }
 
 .fightStatBar {
-  composes: statBarBase from '../../../components/primitive/css-modules/stat-bar-base.module.css';
-
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+  height: 8px;
+  overflow: hidden;
   width: 100%;
 }
 

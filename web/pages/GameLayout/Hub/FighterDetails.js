@@ -1,3 +1,4 @@
+import StatRow from '@/components/primitive/StatRow.js';
 import BaseStats from '@/data/baseStats.js';
 import useFighterStore from '@/data/fighter.js';
 
@@ -16,10 +17,7 @@ export default function FighterDetails() {
   return (
     <dl className={css.details}>
       {fields.map(({label, value}) => (
-        <div className={css.stat} key={label}>
-          <dt className={css.label}>{label}</dt>
-          <dd className={css.value}>{value}</dd>
-        </div>
+        <StatRow key={label} label={label} value={value} />
       ))}
     </dl>
   );

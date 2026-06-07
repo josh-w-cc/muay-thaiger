@@ -1,3 +1,10 @@
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0;
+}
+
 .event {
   border-bottom: 1px solid var(--color-border-subtle);
   display: flex;
@@ -18,28 +25,4 @@
 .events li:last-child {
   border-bottom: 0;
   padding-bottom: 0;
-}
-
-.details {
-  composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
-}
-
-.stat {
-  composes: statRowBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
-
-  margin: 0;
-}
-
-.label {
-  composes: statLabelBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
-}
-
-.value {
-  composes: statValueBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
-
-  margin: 0;
-}
-
-.outcome {
-  composes: goldLabelBase from '../../../components/primitive/css-modules/gold-label-base.module.css';
 }

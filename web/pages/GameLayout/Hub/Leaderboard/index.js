@@ -1,4 +1,7 @@
 import cx from 'classnames';
+
+import GoldLabel from '@/components/primitive/GoldLabel.js';
+
 import css from './Leaderboard.module.css';
 
 const LEADERBOARD = [
@@ -60,7 +63,7 @@ function LeaderboardHeader({columns}) {
   return (
     <thead>
       <tr>
-        {columns.map(({className, key, label}) => <th className={cx(css.leaderboardTh, className)} key={key}>{label}</th>)}
+        {columns.map(({className, key, label}) => <th className={cx(css.leaderboardTh, className)} key={key}><GoldLabel>{label}</GoldLabel></th>)}
       </tr>
     </thead>
   );

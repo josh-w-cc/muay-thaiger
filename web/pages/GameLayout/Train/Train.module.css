@@ -17,5 +17,8 @@
 }
 
 .stats {
-  composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0;
 }
