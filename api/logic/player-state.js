@@ -46,11 +46,11 @@ export function sendPlayerState(actions, fighter, socket, fight = null) {
 
 export async function syncPlayerState({fighterActions, fightJudge, fighters}, sockets) {
   for(const socket of sockets) {
-    if(shouldRemoveSocket(socket)) {
+    if(!isSocketOpen(socket)) {
       sockets.delete(socket);
       continue;
     }
-    if(!canSyncSocketPlayer(fightJudge, socket)) {
+    if(!hasActiveFight(fightJudge, socket)) {
       continue;
     }
     const state = await getPlayerState({fighterActions, fightJudge, fighters}, socket.player.id);
@@ -64,15 +64,8 @@ function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
 }
 
-function shouldRemoveSocket(socket) {
-  return !isSocketOpen(socket);
-}
-
-function canSyncSocketPlayer(fightJudge, socket) {
-  if(!socket.player) {
-    return false;
-  }
-  return Boolean(fightJudge?.get(socket.player.id));
+function hasActiveFight(fightJudge, socket) {
+  return Boolean(socket.player && fightJudge.get(socket.player.id));
 }
 
 function createOfflineTrainingModels(db) {

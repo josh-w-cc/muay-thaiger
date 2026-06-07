@@ -911,7 +911,7 @@ describe('WebSocket /ws/connect', () => {
     const sendOpen = createCallTracker();
     const sendNoFighter = createCallTracker();
     const sendNoFight = createCallTracker();
-    const closedSocket = {OPEN: 1, player: {id: 3}, readyState: 0, send: createCallTracker()};
+    const closedSocket = {OPEN: 1, player: {id: 4}, readyState: 0, send: createCallTracker()};
     const fighterRecord = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
     const fighterNoFight = {gold: '5', id: 10, player: 2, retired: false, stats: {}};
     const updatedFighterRecord = {...fighterRecord, gold: '1'};
@@ -936,7 +936,7 @@ describe('WebSocket /ws/connect', () => {
     const fightJudge = {get: (playerID) => (playerID === 1 ? fight : null)};
     const sockets = new Set([
       {OPEN: 1, player: {id: 1}, readyState: 1, send: sendOpen},
-      {OPEN: 1, player: {id: 2}, readyState: 1, send: sendNoFighter},
+      {OPEN: 1, player: {id: 3}, readyState: 1, send: sendNoFighter},
       {OPEN: 1, player: {id: 2}, readyState: 1, send: sendNoFight},
       {OPEN: 1, readyState: 1, send: createCallTracker()},
       closedSocket,

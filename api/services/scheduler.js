@@ -3,6 +3,8 @@ import fighterActionsModel from '../data/models/fighter-actions.js';
 import fightersModel from '../data/models/fighters.js';
 import {applyOfflineTraining, syncPlayerState} from '../logic/player-state.js';
 
+const DEFAULT_PLAYER_STATE_SYNC_INTERVAL_MS = 500;
+
 export function attachScheduler(app) {
   const connections = app.websocketConnections;
   const models = {
@@ -32,11 +34,20 @@ function createOfflineTrainingScheduler(db, logger) {
 
 function createPlayerStateSyncScheduler(models, connections, logger) {
   const scheduler = new ToadScheduler();
+  const syncIntervalMs = getPlayerStateSyncIntervalMs();
   const task = new AsyncTask(
     'sync-player-state',
     () => syncPlayerState(models, connections),
     (error) => logger.error({err: error}, 'sync-player-state failed'),
   );
-  scheduler.addSimpleIntervalJob(new SimpleIntervalJob({milliseconds: 500}, task));
+  scheduler.addSimpleIntervalJob(new SimpleIntervalJob({milliseconds: syncIntervalMs}, task));
   return scheduler;
+}
+
+function getPlayerStateSyncIntervalMs() {
+  const intervalMs = Number.parseInt(process.env.PLAYER_STATE_SYNC_INTERVAL_MS, 10);
+  if(Number.isInteger(intervalMs) && intervalMs > 0) {
+    return intervalMs;
+  }
+  return DEFAULT_PLAYER_STATE_SYNC_INTERVAL_MS;
 }
