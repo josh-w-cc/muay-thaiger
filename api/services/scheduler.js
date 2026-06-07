@@ -1,7 +1,7 @@
 import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import fightersModel from '../data/models/fighters.js';
-import {applyOfflineTraining, syncPlayerState} from '../logic/player-state.js';
+import {applyOfflineTraining, syncActiveFighters, syncPlayerState} from '../logic/player-state.js';
 
 export function attachScheduler(app) {
   const connections = app.websocketConnections;
@@ -12,10 +12,12 @@ export function attachScheduler(app) {
   };
   const offlineTrainingScheduler = createOfflineTrainingScheduler(app.db, app.log);
   const stateSyncScheduler = createPlayerStateSyncScheduler(models, connections, app.log);
+  const activeFightSyncScheduler = createActiveFightStateSyncScheduler(models, connections, app.log);
 
   app.addHook('onClose', () => {
     offlineTrainingScheduler.stop();
     stateSyncScheduler.stop();
+    activeFightSyncScheduler.stop();
   });
 }
 
@@ -39,4 +41,20 @@ function createPlayerStateSyncScheduler(models, connections, logger) {
   );
   scheduler.addSimpleIntervalJob(new SimpleIntervalJob({minutes: 1}, task));
   return scheduler;
+}
+
+function createActiveFightStateSyncScheduler(models, connections, logger) {
+  const scheduler = new ToadScheduler();
+  const isActiveFightParticipant = createActiveFightParticipantFilter(models.fightJudge);
+  const task = new AsyncTask(
+    'sync-active-fight-player-state',
+    () => syncActiveFighters(models, connections, isActiveFightParticipant),
+    (error) => logger.error({err: error}, 'sync-active-fight-player-state failed'),
+  );
+  scheduler.addSimpleIntervalJob(new SimpleIntervalJob({milliseconds: 500}, task));
+  return scheduler;
+}
+
+function createActiveFightParticipantFilter(fightJudge) {
+  return (playerID) => Boolean(fightJudge.get(playerID));
 }
