@@ -43,7 +43,7 @@ export class FightJudge {
     const damage = executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
     activeParticipant.moveCount += 1;
     participantFight.fight.details.feed.push(
-      {attacker: activeParticipant.name, actorRole: participantFight.role, move: moveDefinition.name, result: `${damage} damage`},
+      {actorRole: participantFight.role, attacker: activeParticipant.name, move: moveDefinition.name, result: `${damage} damage`},
     );
     return true;
   }
