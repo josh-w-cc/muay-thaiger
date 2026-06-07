@@ -1,7 +1,7 @@
 import {AsyncTask, SimpleIntervalJob, ToadScheduler} from 'toad-scheduler';
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import fightersModel from '../data/models/fighters.js';
-import {applyOfflineTraining, syncPlayerState} from '../logic/player-state.js';
+import {applyOfflineTraining, syncActiveFighters, syncPlayerState} from '../logic/player-state.js';
 
 export function attachScheduler(app) {
   const connections = app.websocketConnections;
@@ -48,7 +48,7 @@ function createActiveFightStateSyncScheduler(models, connections, logger) {
   const isActiveFightParticipant = createActiveFightParticipantFilter(models.fightJudge);
   const task = new AsyncTask(
     'sync-active-fight-player-state',
-    () => syncPlayerState(models, connections, {playerFilter: isActiveFightParticipant}),
+    () => syncActiveFighters(models, connections, isActiveFightParticipant),
     (error) => logger.error({err: error}, 'sync-active-fight-player-state failed'),
   );
   scheduler.addSimpleIntervalJob(new SimpleIntervalJob({milliseconds: 500}, task));
