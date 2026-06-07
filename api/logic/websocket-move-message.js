@@ -7,7 +7,7 @@ export function normalizeMoveMessage(message) {
   }
   const moveEntries = normalizeMoveList(message?.moves);
   return {
-    moveIDs: moveEntries.map(({moveID}) => moveID),
+    moves: moveEntries,
   };
 }
 

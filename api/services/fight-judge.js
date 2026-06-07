@@ -26,10 +26,14 @@ export class FightJudge {
     return participantFight ? getCalculatedFight(participantFight.fight) : null;
   }
 
-  move(playerID, moveID) {
+  move(playerID, moveID, moveNum) {
     const participantFight = this.#fightsByPlayerID.get(playerID);
     if(!participantFight) {
       throw new Error(`No fight for player:${playerID}`);
+    }
+    const activeParticipant = participantFight.fight.details[participantFight.role];
+    if(activeParticipant.moveList.includes(moveNum)) {
+      return false;
     }
     const move = getFightMove(participantFight, moveID);
     if(!move) {
@@ -37,10 +41,9 @@ export class FightJudge {
     }
     const moveDefinition = getMoveDefinition(moveID);
     move.lastUsed = Date.now();
-    const activeParticipant = participantFight.fight.details[participantFight.role];
+    activeParticipant.moveList.push(moveNum);
     const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
     executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
-    activeParticipant.moveCount += 1;
     return true;
   }
 }
@@ -87,7 +90,7 @@ function addStartingStats(participant) {
   participant.stats.health = health;
   return {
     ...participant,
-    moveCount: 0,
+    moveList: [],
     startingStats: {
       ...participant.stats,
       health,

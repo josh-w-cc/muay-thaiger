@@ -679,8 +679,8 @@ describe('WebSocket /ws/connect', () => {
       };
       const fightJudge = {
         get: (playerID) => (playerID === 1 ? fight : null),
-        move: (playerID, moveID) => {
-          move(playerID, moveID);
+        move: (playerID, moveID, moveNum) => {
+          move(playerID, moveID, moveNum);
           const matchingMove = fight.details.attacker.moves.find((fightMove) => fightMove.id === moveID);
           if(!matchingMove) {
             return false;
@@ -695,7 +695,7 @@ describe('WebSocket /ws/connect', () => {
         moves: [{move_id: MOVE_IDS.wildKick, move_num: 10}],
       }), socket, {fighterActions, fighters, fightJudge});
 
-      assert.deepEqual(move.calls, [[1, MOVE_IDS.wildKick]]);
+      assert.deepEqual(move.calls, [[1, MOVE_IDS.wildKick, 10]]);
       assert.equal(send.calls.length, 1);
       assert.deepEqual(JSON.parse(send.calls[0][0]), {
         actions: [],
@@ -732,8 +732,8 @@ describe('WebSocket /ws/connect', () => {
       };
       const fightJudge = {
         get: (playerID) => (playerID === 1 ? fight : null),
-        move: (playerID, moveID) => {
-          move(playerID, moveID);
+        move: (playerID, moveID, moveNum) => {
+          move(playerID, moveID, moveNum);
           const matchingMove = fight.details.attacker.moves.find((fightMove) => fightMove.id === moveID);
           if(!matchingMove) {
             return false;
@@ -752,7 +752,7 @@ describe('WebSocket /ws/connect', () => {
         ],
       }), socket, {fighterActions, fighters, fightJudge});
 
-      assert.deepEqual(move.calls, [[1, MOVE_IDS.wildKick], [1, MOVE_IDS.wildKick], [1, MOVE_IDS.wildKick]]);
+      assert.deepEqual(move.calls, [[1, MOVE_IDS.wildKick, 10], [1, MOVE_IDS.wildKick, 11], [1, MOVE_IDS.wildKick, 12]]);
       assert.equal(send.calls.length, 1);
       assert.deepEqual(JSON.parse(send.calls[0][0]), {
         actions: [],
