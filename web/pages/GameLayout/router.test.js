@@ -3,6 +3,12 @@ const {gameLayoutComponent, gameLayoutLoader} = vi.hoisted(() => ({
   gameLayoutLoader: vi.fn(),
 }));
 
+const {redirect} = vi.hoisted(() => ({
+  redirect: vi.fn(),
+}));
+
+vi.mock('react-router-dom', () => ({redirect}));
+
 vi.mock('./Fallback.js', () => ({
   default: () => <div />,
 }));
@@ -19,15 +25,25 @@ describe('GameLayout router', () => {
 
   it('defines the grouped child routes for the game layout', async () => {
     const {default: gameLayoutRoute} = await import('./router.js');
+    const pathRoutes = gameLayoutRoute.children.filter(({path}) => path);
 
     expect(gameLayoutRoute.Component).toBe(gameLayoutComponent);
     expect(gameLayoutRoute.loader).toBe(gameLayoutLoader);
-    expect(gameLayoutRoute.children.map(({path}) => path)).toEqual([
+    expect(pathRoutes.map(({path}) => path)).toEqual([
       'fight',
       'hub',
       'shop',
       'train',
       '*',
     ]);
+  });
+
+  it('redirects to /fight from the index route', async () => {
+    const {default: gameLayoutRoute} = await import('./router.js');
+    const indexRoute = gameLayoutRoute.children.find(({index}) => index);
+
+    expect(indexRoute).toBeDefined();
+    indexRoute.loader();
+    expect(redirect).toHaveBeenCalledWith('/fight');
   });
 });
