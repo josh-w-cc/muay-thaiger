@@ -30,9 +30,6 @@ export function getMoveDefinition(moveID) {
 }
 
 export function executeFightMove(moveDefinition, activeParticipant, opponentParticipant) {
-  if(!moveDefinition?.affect) {
-    return;
-  }
   const attackerPower = activeParticipant?.stats ? calculateFighterStats(activeParticipant.stats).power : 1n;
   moveDefinition.affect(
     createMoveActor(activeParticipant),
@@ -43,9 +40,6 @@ export function executeFightMove(moveDefinition, activeParticipant, opponentPart
 function createMoveActor(participant, incomingDamageScale = 1n) {
   return {
     takeDamage: (amount) => {
-      if(!participant?.stats) {
-        return;
-      }
       participant.stats.health -= BigInt(amount) * incomingDamageScale;
     },
   };
