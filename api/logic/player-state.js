@@ -67,6 +67,9 @@ function isSocketOpen(socket) {
 }
 
 async function getPlayerFighter(fighters, playerID, fighterID) {
+  if(fighterID == null) {
+    return fighters.findCurrentByPlayerID(playerID);
+  }
   const fighter = await fighters.find(fighterID);
   if(isCurrentPlayerFighter(fighter, playerID)) {
     return fighter;

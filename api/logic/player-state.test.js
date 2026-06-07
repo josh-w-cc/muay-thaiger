@@ -40,19 +40,24 @@ describe('getPlayerState', () => {
     const fighter = {gold: '0', id: 9, player: 5, retired: false, stats: {}};
     const updatedFighter = {...fighter, gold: '1'};
     const actions = [{action: 1, fighter: 9, id: 7, touched_at: new Date().toISOString()}];
+    let findCallCount = 0;
     const fighterActions = {
       listByFighterID: async () => actions,
       touch: async () => null,
     };
     const fightJudge = {get: () => null};
     const fighters = {
-      find: async () => null,
+      find: async () => {
+        findCallCount += 1;
+        return null;
+      },
       findCurrentByPlayerID: async () => fighter,
       update: async () => updatedFighter,
     };
 
     const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5);
 
+    assert.equal(findCallCount, 0);
     assert.equal(result.fighter, updatedFighter);
     assert.deepEqual(result.actions, actions);
   });
