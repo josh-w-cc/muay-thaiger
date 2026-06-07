@@ -973,7 +973,9 @@ describe('WebSocket /ws/connect', () => {
         }
         return null;
       },
-      update: async () => updatedFighterRecord,
+      update: async () => {
+        throw new Error('fighters.update should not be called during active fights');
+      },
     };
     const fightJudge = {get: (playerID) => (playerID === 1 ? fight : null)};
     const sockets = new Set([

@@ -87,15 +87,14 @@ function shouldSyncOfflineFighter(fighter) {
 async function pauseScheduledActions({fighterActions}, fighter) {
   const actions = await fighterActions.listByFighterID(fighter.id);
   const scheduledActionIDs = new Set(
-    getScheduledTrainingActions(actions).map(({action}) => action.id),
+    getScheduledTrainingActions(actions).map(({action: scheduledAction}) => scheduledAction.id),
   );
   if(!scheduledActionIDs.size) {
     return actions;
   }
+  const scheduledActions = actions.filter((action) => scheduledActionIDs.has(action.id));
   const touchedAt = new Date();
-  await Promise.all(actions
-    .filter((action) => scheduledActionIDs.has(action.id))
-    .map((action) => fighterActions.touch(action.id, touchedAt)));
+  await Promise.all(scheduledActions.map((action) => fighterActions.touch(action.id, touchedAt)));
   return actions.map((action) => (
     scheduledActionIDs.has(action.id)
       ? {...action, touched_at: touchedAt.toISOString()}
