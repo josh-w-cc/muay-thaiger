@@ -18,11 +18,7 @@ export async function applyOfflineTraining(db, models = null) {
   }
 }
 
-export async function getPlayerState({fighterActions, fightJudge, fighters}, playerID, fighterID) {
-  const fighter = await getPlayerFighter(fighters, playerID, fighterID);
-  if(!fighter) {
-    return null;
-  }
+export async function getPlayerState({fighterActions, fightJudge, fighters}, playerID, fighter) {
   const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
   const state = {actions, fighter: updatedFighter};
   const fight = getActiveFight(fightJudge, playerID);
@@ -45,6 +41,11 @@ export function sendPlayerState(actions, fighter, socket, fight = null) {
   socket.send(JSON.stringify(payload));
 }
 
+export async function syncActiveFighters({fighterActions, fightJudge, fighters}, sockets, playerFilter) {
+  const filteredSockets = Array.from(sockets).filter((s) => playerFilter(s.player));
+  await syncPlayerState({fighterActions, fightJudge, fighters}, new Set(filteredSockets));
+}
+
 export async function syncPlayerState({fighterActions, fightJudge, fighters}, sockets) {
   for(const socket of sockets) {
     if(!isSocketOpen(socket)) {
@@ -54,28 +55,20 @@ export async function syncPlayerState({fighterActions, fightJudge, fighters}, so
     if(!socket.player) {
       continue;
     }
-    const state = await getPlayerState({fighterActions, fightJudge, fighters}, socket.player.id, socket.fighter);
-    if(!state) {
-      delete socket.fighter;
-      continue;
-    }
-    sendPlayerState(state.actions, state.fighter, socket, state.fight);
+    await syncPlayerSocketState({fighterActions, fightJudge, fighters}, socket);
   }
 }
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
 }
 
-async function getPlayerFighter(fighters, playerID, fighterID) {
-  const fighter = await fighters.find(fighterID);
-  if(isCurrentPlayerFighter(fighter, playerID)) {
-    return fighter;
+async function syncPlayerSocketState({fighterActions, fightJudge, fighters}, socket) {
+  const state = await getPlayerState({fighterActions, fightJudge, fighters}, socket.player.id, socket.fighter);
+  if(!state) {
+    delete socket.fighter;
+    return;
   }
-  return fighters.findCurrentByPlayerID(playerID);
-}
-
-function isCurrentPlayerFighter(fighter, playerID) {
-  return Boolean(fighter && fighter.player === playerID && !fighter.retired);
+  sendPlayerState(state.actions, state.fighter, socket, state.fight);
 }
 
 function createOfflineTrainingModels(db) {

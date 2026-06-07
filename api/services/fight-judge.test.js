@@ -100,6 +100,12 @@ describe('FightJudge.attach', () => {
         12: {id: 12, player: 2},
       }[fighterID] ?? null),
     };
+    const namedTwoPlayerFighters = {
+      find: async (fighterID) => ({
+        11: {id: 11, player: 1, display_name: 'Tiger'},
+        12: {id: 12, player: 2, display_name: 'Snow Leopard'},
+      }[fighterID] ?? null),
+    };
 
     it('updates lastUsed and applies move effects for the active player move', async () => {
       const dateNow = Date.now;
@@ -169,6 +175,28 @@ describe('FightJudge.attach', () => {
 
       assert.throws(() => judge.move(1, 999), /Unknown move:999/u);
     });
+
+    it('adds a feed entry when a move is executed', async () => {
+      const judge = new FightJudge();
+      const fight = {
+        attacker: 11,
+        defender: 12,
+        details: {
+          attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1}], stats: {...baseCombatStats}},
+          defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats}},
+        },
+        id: 101,
+        victory: null,
+      };
+
+      await judge.attach(namedTwoPlayerFighters, fight);
+
+      judge.move(1, MOVE_IDS.wildKick);
+      assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick - 6 damage']);
+
+      judge.move(2, MOVE_IDS.wildPunch);
+      assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick - 6 damage', 'Snow Leopard used Wild Punch - 4 damage']);
+    });
   });
 
   it('captures attacker and defender starting stats from fight details', async () => {
@@ -192,6 +220,7 @@ describe('FightJudge.attach', () => {
     assert.deepEqual(judge.get(1).details.defender.startingStats, {...defenderStats, health: 1n});
     assert.equal(judge.get(1).details.attacker.moveCount, 0);
     assert.equal(judge.get(1).details.defender.moveCount, 0);
+    assert.deepEqual(judge.get(1).details.feed, []);
   });
 
   it('computes calculated attacker and defender stats from current fight details', async () => {

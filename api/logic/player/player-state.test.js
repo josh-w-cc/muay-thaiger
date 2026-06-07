@@ -51,40 +51,33 @@ describe('getPlayerState', () => {
       update: async () => updatedFighter,
     };
 
-    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5);
+    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5, fighter);
 
     assert.equal(result.fighter, updatedFighter);
     assert.deepEqual(result.actions, actions);
   });
 
-  it('reuses an attached fighter id when provided', async () => {
+  it('uses attached fighter data when provided', async () => {
     const fighter = {gold: '0', id: 9, player: 5, retired: false, stats: {}};
     const updatedFighter = {...fighter, gold: '1'};
     const actions = [{action: 1, fighter: 9, id: 7, touched_at: new Date().toISOString()}];
-    let findCurrentCallCount = 0;
-    let findCallCount = 0;
     const fighterActions = {
       listByFighterID: async () => actions,
       touch: async () => null,
     };
     const fightJudge = {get: () => null};
     const fighters = {
-      find: async (fighterID) => {
-        findCallCount += 1;
-        assert.equal(fighterID, 9);
-        return fighter;
+      find: async () => {
+        throw new Error('fighters.find should not be called');
       },
       findCurrentByPlayerID: async () => {
-        findCurrentCallCount += 1;
-        return null;
+        throw new Error('fighters.findCurrentByPlayerID should not be called');
       },
       update: async () => updatedFighter,
     };
 
-    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5, 9);
+    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5, fighter);
 
-    assert.equal(findCallCount, 1);
-    assert.equal(findCurrentCallCount, 0);
     assert.equal(result.fighter, updatedFighter);
     assert.deepEqual(result.actions, actions);
   });
@@ -98,7 +91,7 @@ describe('getPlayerState', () => {
       findCurrentByPlayerID: async () => fighter,
     };
 
-    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5);
+    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5, fighter);
 
     assert.deepEqual(result, {actions: [], fighter});
   });
@@ -113,20 +106,22 @@ describe('getPlayerState', () => {
     };
     const fightJudge = {get: (playerID) => (playerID === 5 ? fight : null)};
 
-    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5);
+    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5, fighter);
 
     assert.deepEqual(result, {actions: [], fight, fighter});
   });
 
-  it('returns null when the player has no current fighter', async () => {
-    const fighters = {
-      find: async () => null,
-      findCurrentByPlayerID: async () => null,
+  it('throws when no fighter is provided', async () => {
+    const fighterActions = {
+      listByFighterID: async () => [],
     };
+    const fightJudge = {get: () => null};
+    const fighters = {};
 
-    const result = await getPlayerState({fighters}, 5);
-
-    assert.equal(result, null);
+    await assert.rejects(
+      () => getPlayerState({fighterActions, fightJudge, fighters}, 5),
+      TypeError,
+    );
   });
 });
 
