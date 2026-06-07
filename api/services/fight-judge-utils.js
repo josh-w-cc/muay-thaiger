@@ -40,17 +40,17 @@ export function executeFightMove(moveDefinition, activeParticipant, opponentPart
   );
 }
 
-export function moveRequiresStamina(move, moveDefinition, now) {
+export function isMoveInRecovery(move, moveDefinition, now) {
   return move.lastUsed != null && move.lastUsed > now - moveDefinition.recovery;
 }
 
 export function applyMoveStaminaCost(participant, moveDefinition) {
-  const staminaCost = participant.stats.stamina * BigInt(moveDefinition.staminaCost) / 100n;
+  const staminaCost = divideAndRoundUp(participant.stats.stamina * BigInt(moveDefinition.staminaCost), 100n);
   participant.stats.stamina -= staminaCost;
 }
 
 export function applyMoveStaminaCostIfNeeded(move, moveDefinition, participant, now) {
-  if(moveRequiresStamina(move, moveDefinition, now)) {
+  if(isMoveInRecovery(move, moveDefinition, now)) {
     applyMoveStaminaCost(participant, moveDefinition);
   }
 }
@@ -77,4 +77,8 @@ async function getFightParticipant(fighters, fighterID, role) {
     return null;
   }
   return {playerID: fighter.player, role};
+}
+
+function divideAndRoundUp(value, divisor) {
+  return (value + divisor - 1n) / divisor;
 }

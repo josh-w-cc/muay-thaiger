@@ -5,7 +5,7 @@ import patchBigIntPrototype from 'shared/bigInt.js';
 import {MOVE_IDS} from 'shared/moves.js';
 
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
-import {executeFightMove} from './fight-judge-utils.js';
+import {applyMoveStaminaCost, executeFightMove} from './fight-judge-utils.js';
 import {attachFightJudge, FightJudge} from './fight-judge.js';
 
 patchBigIntPrototype();
@@ -52,6 +52,14 @@ describe('executeFightMove', () => {
     executeFightMove(moveDefinition, activeParticipant, opponentParticipant);
 
     assert.equal(opponentParticipant.stats.health, 8n);
+  });
+
+  it('rounds stamina cost up for percentage-based costs', () => {
+    const participant = {stats: {stamina: 50n}};
+
+    applyMoveStaminaCost(participant, {staminaCost: 19});
+
+    assert.equal(participant.stats.stamina, 40n);
   });
 });
 
