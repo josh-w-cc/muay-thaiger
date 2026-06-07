@@ -68,11 +68,13 @@ function getLoadoutMove(moveDefinitions, moveID) {
 
 function TapperButton({delay, duration, children, lastUsed, onClick}) {
   const animationDelay = getAnimationDelay(delay, lastUsed);
+  const animationKey = getAnimationKey(delay, lastUsed);
   return (
     <Button className={css.tapperButton} onClick={onClick}>
       <span
         aria-hidden="true"
         className={css.tapperButtonFill}
+        key={animationKey}
         style={{animationDelay, animationDuration: `${duration ?? TAPPER_FILL_DURATIONS.at(-1)}s`}}
       />
       <span className={css.tapperButtonLabel}>{children}</span>
@@ -87,4 +89,12 @@ function getAnimationDelay(delay, lastUsed) {
     return `-${elapsed}s`;
   }
   return `${delay}s`;
+}
+
+function getAnimationKey(delay, lastUsed) {
+  const lastUsedTime = Number(lastUsed);
+  if(Number.isFinite(lastUsedTime)) {
+    return `last-used-${lastUsedTime}`;
+  }
+  return `delay-${delay}`;
 }
