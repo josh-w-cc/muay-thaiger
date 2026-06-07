@@ -495,7 +495,7 @@ describe('WebSocket /ws/connect', () => {
       assert.deepEqual(createFight.calls, [[{
         attacker: {
           id: 9,
-          moves: [{id: 1, lastUsed: 1234567890}, {id: 2, lastUsed: 1234567890}],
+          moves: [{id: 1, lastUsed: 1234567890000}, {id: 2, lastUsed: 1234567890000}],
           race: 2,
           stats: {
             agility: '0',
@@ -584,7 +584,7 @@ describe('WebSocket /ws/connect', () => {
       await onMessage(JSON.stringify({cmd: 'fight', reason: 'rank'}), socket, {fighterMoves, fighters, fights, fightJudge});
 
       assert.deepEqual(createFight.calls[0][0].reason, 'rank');
-      assert.deepEqual(createFight.calls[0][0].attacker.moves, [{id: MOVE_IDS.wildKick, lastUsed: 1234567890}]);
+      assert.deepEqual(createFight.calls[0][0].attacker.moves, [{id: MOVE_IDS.wildKick, lastUsed: 1234567890000}]);
       assert.equal(send.calls.length, 1);
       assert.deepEqual(JSON.parse(send.calls[0][0]), {
         cmd: 'ok',
@@ -685,7 +685,7 @@ describe('WebSocket /ws/connect', () => {
           if(!matchingMove) {
             return false;
           }
-          matchingMove.lastUsed = Math.floor(Date.now() / 1000);
+          matchingMove.lastUsed = Date.now();
           return true;
         },
       };
@@ -703,7 +703,7 @@ describe('WebSocket /ws/connect', () => {
         fight,
         fighter,
       });
-      assert.equal(fight.details.attacker.moves[1].lastUsed, 1234567890);
+      assert.equal(fight.details.attacker.moves[1].lastUsed, 1234567890000);
     }
     finally {
       Date.now = dateNow;
@@ -738,7 +738,7 @@ describe('WebSocket /ws/connect', () => {
           if(!matchingMove) {
             return false;
           }
-          matchingMove.lastUsed = Math.floor(Date.now() / 1000);
+          matchingMove.lastUsed = Date.now();
           return true;
         },
       };
@@ -760,7 +760,7 @@ describe('WebSocket /ws/connect', () => {
         fight,
         fighter,
       });
-      assert.equal(fight.details.attacker.moves[1].lastUsed, 1234567890);
+      assert.equal(fight.details.attacker.moves[1].lastUsed, 1234567890000);
     }
     finally {
       Date.now = dateNow;
