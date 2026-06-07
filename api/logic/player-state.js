@@ -18,8 +18,8 @@ export async function applyOfflineTraining(db, models = null) {
   }
 }
 
-export async function getPlayerState({fighterActions, fightJudge, fighters}, playerID) {
-  const fighter = await fighters.findCurrentByPlayerID(playerID);
+export async function getPlayerState({fighterActions, fightJudge, fighters}, playerID, fighterID) {
+  const fighter = await getPlayerFighter(fighters, playerID, fighterID);
   if(!fighter) {
     return null;
   }
@@ -37,6 +37,7 @@ function getActiveFight(fightJudge, playerID) {
 }
 
 export function sendPlayerState(actions, fighter, socket, fight = null) {
+  socket.fighter = fighter;
   const payload = {actions, cmd: 'player_state', fighter};
   if(fight) {
     payload.fight = fight;
@@ -53,15 +54,28 @@ export async function syncPlayerState({fighterActions, fightJudge, fighters}, so
     if(!socket.player) {
       continue;
     }
-    const state = await getPlayerState({fighterActions, fightJudge, fighters}, socket.player.id);
-    if(state) {
-      sendPlayerState(state.actions, state.fighter, socket, state.fight);
+    const state = await getPlayerState({fighterActions, fightJudge, fighters}, socket.player.id, socket.fighter);
+    if(!state) {
+      delete socket.fighter;
+      continue;
     }
+    sendPlayerState(state.actions, state.fighter, socket, state.fight);
   }
 }
-
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
+}
+
+async function getPlayerFighter(fighters, playerID, fighterID) {
+  const fighter = await fighters.find(fighterID);
+  if(isCurrentPlayerFighter(fighter, playerID)) {
+    return fighter;
+  }
+  return fighters.findCurrentByPlayerID(playerID);
+}
+
+function isCurrentPlayerFighter(fighter, playerID) {
+  return Boolean(fighter && fighter.player === playerID && !fighter.retired);
 }
 
 function createOfflineTrainingModels(db) {
@@ -69,15 +83,9 @@ function createOfflineTrainingModels(db) {
 }
 
 function getOfflineTrainingModels(db, models) {
-  if(models) {
-    return models;
-  }
-  return createOfflineTrainingModels(db);
+  return models || createOfflineTrainingModels(db);
 }
 
 function shouldSyncOfflineFighter(fighter) {
-  if(!fighter) {
-    return false;
-  }
-  return !fighter.retired;
+  return Boolean(fighter && !fighter.retired);
 }

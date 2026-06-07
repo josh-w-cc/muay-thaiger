@@ -111,7 +111,7 @@ describe('FightJudge.attach', () => {
 
     it('updates lastUsed and applies move effects for the active player move', async () => {
       const dateNow = Date.now;
-      Date.now = () => 1234567890000;
+      Date.now = () => 1234567890123;
       try {
         const judge = new FightJudge();
         const fight = {
@@ -128,7 +128,7 @@ describe('FightJudge.attach', () => {
         await judge.attach(twoPlayerFighters, fight);
 
         assert.equal(judge.move(1, MOVE_IDS.wildKick), true);
-        assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890000);
+        assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890123);
         assert.equal(judge.get(1).details.attacker.moveCount, 1);
         assert.equal(judge.get(1).details.defender.stats.health, -5n);
         assert.equal(judge.get(2).details.defender.moves[0].lastUsed, 3);
