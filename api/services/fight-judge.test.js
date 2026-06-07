@@ -5,6 +5,7 @@ import patchBigIntPrototype from 'shared/bigInt.js';
 import {MOVE_IDS} from 'shared/moves.js';
 
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
+import {executeFightMove} from './fight-judge-utils.js';
 import {attachFightJudge, FightJudge} from './fight-judge.js';
 
 patchBigIntPrototype();
@@ -42,6 +43,18 @@ describe('FightJudge.load', () => {
   });
 });
 
+describe('executeFightMove', () => {
+  it('uses unscaled incoming damage when active participant stats are missing', () => {
+    const activeParticipant = {};
+    const opponentParticipant = {stats: {health: 10n}};
+    const moveDefinition = {affect: (_fighter, opponent) => opponent.takeDamage(2)};
+
+    executeFightMove(moveDefinition, activeParticipant, opponentParticipant);
+
+    assert.equal(opponentParticipant.stats.health, 8n);
+  });
+});
+
 describe('FightJudge.attach', () => {
   const twoPlayerFighters = {
     find: async (fighterID) => ({
@@ -62,6 +75,24 @@ describe('FightJudge.attach', () => {
     assert.equal(judge.get(2).id, fight.id);
   });
 
+  it('does not attach player mappings for fighters with no player', async () => {
+    const judge = new FightJudge();
+    const fightersWithMissingPlayer = {
+      find: async (fighterID) => ({
+        11: {id: 11, player: null},
+        12: {id: 12, player: 2},
+      }[fighterID] ?? null),
+    };
+    const fight = {
+      attacker: 11, defender: 12, details: {attacker: {stats: {...baseCombatStats}}, defender: {stats: {...baseCombatStats}}}, id: 101, victory: null,
+    };
+
+    await judge.attach(fightersWithMissingPlayer, fight);
+
+    assert.equal(judge.get(1), null);
+    assert.equal(judge.get(2).id, fight.id);
+  });
+
   describe('FightJudge.move', () => {
     const twoPlayerFighters = {
       find: async (fighterID) => ({
@@ -70,7 +101,7 @@ describe('FightJudge.attach', () => {
       }[fighterID] ?? null),
     };
 
-    it('updates lastUsed for the active player move', async () => {
+    it('updates lastUsed and applies move effects for the active player move', async () => {
       const dateNow = Date.now;
       Date.now = () => 1234567890000;
       try {
@@ -90,7 +121,10 @@ describe('FightJudge.attach', () => {
 
         assert.equal(judge.move(1, MOVE_IDS.wildKick), true);
         assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890);
+        assert.equal(judge.get(1).details.attacker.moveCount, 1);
+        assert.equal(judge.get(1).details.defender.stats.health, -5n);
         assert.equal(judge.get(2).details.defender.moves[0].lastUsed, 3);
+        assert.equal(judge.get(2).details.defender.moveCount, 0);
       }
       finally {
         Date.now = dateNow;
@@ -116,6 +150,24 @@ describe('FightJudge.attach', () => {
 
       assert.throws(() => judge.move(1, MOVE_IDS.wildKick), /Unknown move:2/u);
       assert.throws(() => judge.move(999, MOVE_IDS.wildPunch), /No fight for player:999/u);
+    });
+
+    it('throws when executing a move with an ID not defined in shared moves', async () => {
+      const judge = new FightJudge();
+      const fight = {
+        attacker: 11,
+        defender: 12,
+        details: {
+          attacker: {moves: [{id: 999, lastUsed: 1}], stats: {...baseCombatStats}},
+          defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+        },
+        id: 101,
+        victory: null,
+      };
+
+      await judge.attach(twoPlayerFighters, fight);
+
+      assert.throws(() => judge.move(1, 999), /Unknown move:999/u);
     });
   });
 
