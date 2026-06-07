@@ -34,16 +34,20 @@ export function getMoveDefinition(moveID) {
 
 export function executeFightMove(moveDefinition, activeParticipant, opponentParticipant) {
   const attackerPower = activeParticipant?.stats ? calculateFighterStats(activeParticipant.stats).power : 1n;
+  let damage = 0n;
   moveDefinition.affect(
     createMoveActor(activeParticipant),
-    createMoveActor(opponentParticipant, attackerPower),
+    createMoveActor(opponentParticipant, attackerPower, (d) => { damage += d; }),
   );
+  return damage;
 }
 
-function createMoveActor(participant, incomingDamageScale = 1n) {
+function createMoveActor(participant, incomingDamageScale = 1n, onDamage = null) {
   return {
     takeDamage: (amount) => {
-      participant.stats.health -= BigInt(amount) * incomingDamageScale;
+      const damage = BigInt(amount) * incomingDamageScale;
+      participant.stats.health -= damage;
+      onDamage?.(damage);
     },
   };
 }
@@ -56,5 +60,5 @@ async function getFightParticipant(fighters, fighterID, role) {
   if(fighter?.player == null) {
     return null;
   }
-  return {playerID: fighter.player, role};
+  return {playerID: fighter.player, role, displayName: fighter.display_name};
 }
