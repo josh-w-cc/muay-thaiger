@@ -1,6 +1,6 @@
-import fighterActionsModel from '../data/models/fighter-actions.js';
-import fightersModel from '../data/models/fighters.js';
-import {applyTraining} from './training.js';
+import fighterActionsModel from '../../data/models/fighter-actions.js';
+import fightersModel from '../../data/models/fighters.js';
+import {applyTraining} from '../training/training.js';
 
 const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 
