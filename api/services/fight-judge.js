@@ -85,9 +85,7 @@ function captureStartingStats(fight) {
 
 function addStartingStats(participant) {
   const calculatedStats = calculateFighterStats(participant.stats);
-  if(participant.stats.health == null) {
-    participant.stats.health = calculatedStats.health;
-  }
+  participant.stats.health = calculatedStats.health;
   return {
     ...participant,
     moveCount: 0,
