@@ -5,11 +5,12 @@ import websocket from '@fastify/websocket';
 import {MOVE_IDS} from 'shared/moves.js';
 
 import createCallTracker from '../utils/test/createCallTracker.js';
-import {syncPlayerState} from '../logic/player-state.js';
+import {syncActiveFighters, syncPlayerState} from '../logic/player-state.js';
 import websocketRoutes, {onConnect, onMessage} from '../routes/websocket.js';
 import {mockKnex, mockKnexMulti} from '../data/utils/mock-knex.js';
 
 const RACE_DEFAULT_STATS = {anima: 2, durability: 2, reach: 1, speed: 2, vigor: 1, vitality: 1};
+const MOCK_NON_TRAINING_ACTION_ID = 99;
 
 describe('WebSocket /ws/connect', () => {
   it('sends an auth request when the websocket connects', async () => {
@@ -31,47 +32,16 @@ describe('WebSocket /ws/connect', () => {
   });
 
   it('sends auth confirmation with player token after receiving an auth new response', async () => {
-    const {knex} = mockKnex([{display_name: 'Player-12345678', id: 1, token: 'generated-token'}]);
-    const app = Fastify();
-    app.decorate('db', knex);
-    app.decorate('fightJudge', {get: () => null});
-    app.decorate('websocketConnections', new Set());
-    await app.register(websocket);
-    await app.register(websocketRoutes, {prefix: '/ws'});
-    await app.ready();
-
-    const socket = await app.injectWS('/ws/connect');
-    await readMessage(socket);
-    const [authMessage, playerStateMessage] = await sendAndReadMessages(
-      socket,
-      {cmd: 'auth', race: 2, token: 'new'},
-      2,
-    );
-
-    assert.equal(authMessage.cmd, 'auth');
-    assert.equal(authMessage.player_id, 1);
-    assert.equal(authMessage.token, 'generated-token');
-    assert.equal(playerStateMessage.cmd, 'player_state');
-    socket.terminate();
-    await app.close();
-  });
-
-  it('creates a fighter action and sends it back from /ws/connect on a valid idle message', async () => {
-    const created = {id: 1, action: 2, fighter: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
-    const currentFighter = {id: 3, player: 8, retired: false};
-    const player = {id: 8, token: 'player-token'};
+    const player = {display_name: 'Player-12345678', id: 1, token: 'generated-token'};
+    const fighter = {gold: '0', id: 3, player: 1, retired: false, stats: {}};
     const {knex} = mockKnexMulti([
-      player,
-      currentFighter,
-      currentFighter,
+      {id: 2, stats: RACE_DEFAULT_STATS},
+      [player],
+      [fighter],
+      [{enabled: true, fighter: 3, move: MOVE_IDS.wildPunch}],
+      [{enabled: true, fighter: 3, move: MOVE_IDS.wildKick}],
+      fighter,
       [],
-      currentFighter,
-      [],
-      currentFighter,
-      [],
-      [created],
-      currentFighter,
-      [created],
     ]);
     const app = Fastify();
     app.decorate('db', knex);
@@ -83,7 +53,45 @@ describe('WebSocket /ws/connect', () => {
 
     const socket = await app.injectWS('/ws/connect');
     await readMessage(socket);
-    await sendAndReadMessages(socket, {cmd: 'auth', token: 'player-token'}, 2);
+    const [authMessage] = await sendAndReadMessages(
+      socket,
+      {cmd: 'auth', race: 2, token: 'new'},
+      1,
+    );
+
+    assert.equal(authMessage.cmd, 'auth');
+    assert.equal(authMessage.player_id, 1);
+    assert.equal(authMessage.token, 'generated-token');
+    socket.terminate();
+    await app.close();
+  });
+
+  it('creates a fighter action and sends it back from /ws/connect on a valid idle message', async () => {
+    const created = {id: 1, action: 2, fighter: 3, created_at: '2026-01-01T00:00:00.000Z', touched_at: '2026-01-01T00:00:00.000Z'};
+    const currentFighter = {gold: '0', id: 3, player: 8, retired: false, stats: {}};
+    const player = {id: 8, token: 'player-token'};
+    const {knex} = mockKnexMulti([
+      player,
+      currentFighter,
+      [],
+      currentFighter,
+      [],
+      currentFighter,
+      [],
+      [created],
+      [],
+    ]);
+    const app = Fastify();
+    app.decorate('db', knex);
+    app.decorate('fightJudge', {get: () => null});
+    app.decorate('websocketConnections', new Set());
+    await app.register(websocket);
+    await app.register(websocketRoutes, {prefix: '/ws'});
+    await app.ready();
+
+    const socket = await app.injectWS('/ws/connect');
+    await readMessage(socket);
+    await sendAndReadMessages(socket, {cmd: 'auth', token: 'player-token'}, 1);
     socket.send(JSON.stringify({action_id: 2, cmd: 'idle'}));
     const message = await readMessage(socket);
 
@@ -616,8 +624,8 @@ describe('WebSocket /ws/connect', () => {
     Math.random = () => 0.5;
     try {
       const send = createCallTracker();
-      const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
       const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
+      const socket = {OPEN: 1, fighter, player: {id: 1}, readyState: 1, send};
       const createdFight = {attacker: 9, defender: null, details: {attacker: {}, defender: {}}, id: 4, reason: 'gold'};
       const fighterActions = {listByFighterID: async () => []};
       const fighterMoves = {listEnabledByFighterID: async () => []};
@@ -663,8 +671,8 @@ describe('WebSocket /ws/connect', () => {
     try {
       const send = createCallTracker();
       const move = createCallTracker();
-      const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
       const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
+      const socket = {OPEN: 1, fighter, player: {id: 1}, readyState: 1, send};
       const fight = {
         attacker: 9,
         defender: null,
@@ -716,8 +724,8 @@ describe('WebSocket /ws/connect', () => {
     try {
       const send = createCallTracker();
       const move = createCallTracker();
-      const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
       const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
+      const socket = {OPEN: 1, fighter, player: {id: 1}, readyState: 1, send};
       const fight = {
         attacker: 9,
         defender: null,
@@ -795,7 +803,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const created = {action: 1, fighter: 9, id: 4};
     const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
-    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+    const socket = {OPEN: 1, fighter, player: {id: 1}, readyState: 1, send};
     const fighterActions = {
       create: async () => created,
       listByFighterID: async () => [],
@@ -870,14 +878,14 @@ describe('WebSocket /ws/connect', () => {
     const remove = createCallTracker();
     let listCallCount = 0;
     const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
-    const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+    const socket = {OPEN: 1, fighter, player: {id: 1}, readyState: 1, send};
     const fighterActions = {
       listByFighterID: async () => {
         listCallCount += 1;
         if(listCallCount === 3) {
           return [];
         }
-        return [{action: 1, id: 4}, {action: 2, id: 5}, {action: 1, id: 6}];
+        return [{action: 1, id: 4}, {action: MOCK_NON_TRAINING_ACTION_ID, id: 5}, {action: 1, id: 6}];
       },
       remove,
       touch: async () => null,
@@ -954,7 +962,7 @@ describe('WebSocket /ws/connect', () => {
     const updatedFighterRecord = {...fighterRecord, gold: '1'};
     const actions = [{action: 1, fighter: 9, id: 5}];
     const fighterActions = {
-      listByFighterID: async () => actions,
+      listByFighterID: async (fighterID) => (fighterID === 9 ? actions : []),
       touch: async () => null,
     };
     const fight = {attacker: 9, defender: null, details: {}, id: 12, reason: 'gold', victory: null};
@@ -970,8 +978,8 @@ describe('WebSocket /ws/connect', () => {
     };
     const fightJudge = {get: (playerID) => (playerID === 1 ? fight : null)};
     const sockets = new Set([
-      {OPEN: 1, player: {id: 1}, readyState: 1, send: sendOpen},
-      {OPEN: 1, player: {id: 2}, readyState: 1, send: sendNoFighter},
+      {OPEN: 1, fighter: fighterRecord, player: {id: 1}, readyState: 1, send: sendOpen},
+      {OPEN: 1, fighter: {gold: '0', id: 10, player: 2, retired: false, stats: {}}, player: {id: 2}, readyState: 1, send: sendNoFighter},
       {OPEN: 1, readyState: 1, send: createCallTracker()},
       closedSocket,
     ]);
@@ -985,7 +993,7 @@ describe('WebSocket /ws/connect', () => {
       fight,
       fighter: updatedFighterRecord,
     });
-    assert.equal(sendNoFighter.calls.length, 0);
+    assert.equal(sendNoFighter.calls.length, 1);
     assert.equal(sockets.has(closedSocket), false);
   });
 
@@ -1015,14 +1023,14 @@ describe('WebSocket /ws/connect', () => {
     };
     const fightJudge = {get: (playerID) => (playerID === 1 ? fight : null)};
     const sockets = new Set([
-      {OPEN: 1, player: {id: 1}, readyState: 1, send: sendInFight},
-      {OPEN: 1, player: {id: 2}, readyState: 1, send: sendNoFight},
+      {OPEN: 1, fighter: fighterRecord, player: {id: 1}, readyState: 1, send: sendInFight},
+      {OPEN: 1, fighter: {gold: '0', id: 10, player: 2, retired: false, stats: {}}, player: {id: 2}, readyState: 1, send: sendNoFight},
     ]);
 
-    await syncPlayerState(
+    await syncActiveFighters(
       {fighterActions, fightJudge, fighters},
       sockets,
-      {playerFilter: (playerID) => Boolean(fightJudge.get(playerID))},
+      (player) => Boolean(fightJudge.get(player.id)),
     );
 
     assert.equal(sendInFight.calls.length, 1);
