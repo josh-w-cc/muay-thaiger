@@ -114,6 +114,8 @@ describe('useFighterActionsStore', () => {
   });
 
   it('does not change touched_at when removed action does not have the latest touched_at', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:01.500Z'));
     useFighterActionsStore.getState().setActions([
       {action: 2, id: 1, touched_at: '2026-01-01T00:00:00.005Z'},
       {action: 6, id: 2, touched_at: '2026-01-01T00:00:00.111Z'},
