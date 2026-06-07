@@ -35,7 +35,7 @@ function captureFightStats(fighter) {
 }
 
 async function captureFightMoves(fighterMoves, fighterID) {
-  const lastUsed = Math.floor(Date.now() / 1000);
+  const lastUsed = Date.now();
   const moves = await fighterMoves.listEnabledByFighterID(fighterID);
   return moves.map(({move}) => ({id: move, lastUsed}));
 }
