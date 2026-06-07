@@ -40,6 +40,26 @@ export function executeFightMove(moveDefinition, activeParticipant, opponentPart
   );
 }
 
+export function moveRequiresStamina(move, moveDefinition, now) {
+  return move.lastUsed != null && move.lastUsed > now - moveDefinition.recovery;
+}
+
+export function applyMoveStaminaCost(participant, moveDefinition) {
+  const staminaCost = participant.stats.stamina * BigInt(moveDefinition.staminaCost) / 100n;
+  participant.stats.stamina -= staminaCost;
+}
+
+export function applyMoveStaminaCostIfNeeded(move, moveDefinition, participant, now) {
+  if(moveRequiresStamina(move, moveDefinition, now)) {
+    applyMoveStaminaCost(participant, moveDefinition);
+  }
+}
+
+export function getFightMove(participantFight, moveID) {
+  const moves = participantFight.fight.details[participantFight.role].moves;
+  return moves.find(({id}) => id === moveID) || null;
+}
+
 function createMoveActor(participant, incomingDamageScale = 1n) {
   return {
     takeDamage: (amount) => {

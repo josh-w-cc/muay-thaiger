@@ -1,6 +1,7 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
+import {applyMoveStaminaCostIfNeeded, calculateFighterHealth, calculateFighterStats, executeFightMove,
+  getFightMove, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -22,8 +23,8 @@ export class FightJudge {
   }
 
   get(playerID) {
-    const participantFight = this.#fightsByPlayerID.get(playerID);
-    return participantFight ? getCalculatedFight(participantFight.fight) : null;
+    const fight = this.#fightsByPlayerID.get(playerID)?.fight;
+    return fight ? getCalculatedFight(fight) : null;
   }
 
   move(playerID, moveID) {
@@ -36,9 +37,11 @@ export class FightJudge {
       throw new Error(`Unknown move:${moveID}`);
     }
     const moveDefinition = getMoveDefinition(moveID);
-    move.lastUsed = Math.floor(Date.now() / 1000);
+    const now = Math.floor(Date.now() / 1000);
     const activeParticipant = participantFight.fight.details[participantFight.role];
     const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
+    applyMoveStaminaCostIfNeeded(move, moveDefinition, activeParticipant, now);
+    move.lastUsed = now;
     executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
     activeParticipant.moveCount += 1;
     return true;
@@ -58,9 +61,7 @@ function getCalculatedFight(fight) {
 }
 
 function addCalculatedStats(participant) {
-  const calculatedStats = calculateFighterStats(participant.stats);
-  const stats = {...participant.stats, ...calculatedStats};
-  return {...participant, stats};
+  return {...participant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
 }
 
 export function attachFightJudge(app) {
@@ -93,9 +94,4 @@ function addStartingStats(participant) {
       health,
     },
   };
-}
-
-function getFightMove(participantFight, moveID) {
-  const moves = participantFight.fight.details[participantFight.role].moves;
-  return moves.find(({id}) => id === moveID) || null;
 }

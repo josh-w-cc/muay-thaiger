@@ -131,6 +131,58 @@ describe('FightJudge.attach', () => {
       }
     });
 
+    it('reduces stamina by the move percentage when reused during recovery', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1234567890000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1234567886}], stats: {...baseCombatStats, stamina: 50n}},
+            defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+        judge.move(1, MOVE_IDS.wildKick);
+
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 40n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('does not reduce stamina when the move is outside its recovery window', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1234567890000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1234567885}], stats: {...baseCombatStats, stamina: 50n}},
+            defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+        judge.move(1, MOVE_IDS.wildKick);
+
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 50n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
     it('throws when the player has no active fight move or fight', async () => {
       const judge = new FightJudge();
       const fight = {
