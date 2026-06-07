@@ -1030,7 +1030,7 @@ describe('WebSocket /ws/connect', () => {
     await syncActiveFighters(
       {fighterActions, fightJudge, fighters},
       sockets,
-      (player) => Boolean(fightJudge.get(player.id)),
+      (playerId) => Boolean(fightJudge.get(playerId)),
     );
 
     assert.equal(sendInFight.calls.length, 1);
