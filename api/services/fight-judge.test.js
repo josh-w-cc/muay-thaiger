@@ -75,7 +75,7 @@ describe('FightJudge.attach', () => {
     assert.equal(judge.get(2).id, fight.id);
   });
 
-  it('ignores fight participants whose fighter has no player', async () => {
+  it('does not attach player mappings for fighters with no player', async () => {
     const judge = new FightJudge();
     const fightersWithMissingPlayer = {
       find: async (fighterID) => ({
