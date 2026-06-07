@@ -30,9 +30,11 @@ export async function getPlayerState({fighterActions, fightJudge, fighters}, pla
   }
   return state;
 }
+
 function getActiveFight(fightJudge, playerID) {
   return fightJudge.get(playerID);
 }
+
 export function sendPlayerState(actions, fighter, socket, fight = null) {
   socket.fighter = fighter;
   const payload = {actions, cmd: 'player_state', fighter};
@@ -41,6 +43,7 @@ export function sendPlayerState(actions, fighter, socket, fight = null) {
   }
   socket.send(JSON.stringify(payload));
 }
+
 export async function syncPlayerState({fighterActions, fightJudge, fighters}, sockets) {
   for(const socket of sockets) {
     if(!isSocketOpen(socket)) {
@@ -50,7 +53,7 @@ export async function syncPlayerState({fighterActions, fightJudge, fighters}, so
     if(!socket.player) {
       continue;
     }
-    const state = await getPlayerState({fighterActions, fightJudge, fighters}, socket.player.id, getSocketFighterID(socket));
+    const state = await getPlayerState({fighterActions, fightJudge, fighters}, socket.player.id, socket.fighter);
     if(!state) {
       delete socket.fighter;
       continue;
@@ -61,6 +64,7 @@ export async function syncPlayerState({fighterActions, fightJudge, fighters}, so
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
 }
+
 async function getPlayerFighter(fighters, playerID, fighterID) {
   const fighter = await findAttachedFighter(fighters, fighterID);
   if(isCurrentPlayerFighter(fighter, playerID)) {
@@ -68,12 +72,14 @@ async function getPlayerFighter(fighters, playerID, fighterID) {
   }
   return typeof fighters.findCurrentByPlayerID !== 'function' ? null : fighters.findCurrentByPlayerID(playerID);
 }
+
 async function findAttachedFighter(fighters, fighterID) {
   if(!Number.isInteger(fighterID) || typeof fighters.find !== 'function') {
     return null;
   }
   return fighters.find(fighterID);
 }
+
 function isCurrentPlayerFighter(fighter, playerID) {
   return Boolean(fighter && fighter.player === playerID && !fighter.retired);
 }
