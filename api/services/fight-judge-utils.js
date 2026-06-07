@@ -10,13 +10,16 @@ export async function getFightParticipants(fighters, fight) {
   return [...uniqueByPlayerID.values()];
 }
 
-export function calculateFighterStats({agility, constitution, durability, reach, skill, stamina, strength}) {
+export function calculateFighterHealth({constitution, durability}) {
+  return constitution * constitution * durability;
+}
+
+export function calculateFighterStats({agility, reach, skill, stamina, strength}) {
   const staminaLogApprox = stamina.logApprox();
   const agilityLogApprox = agility.logApprox();
   return {
     attack: skill + staminaLogApprox + agilityLogApprox.logApprox() + reach,
     defense: skill + agilityLogApprox + staminaLogApprox.logApprox(),
-    health: constitution * constitution * durability,
     power: (strength + skill.logApprox()) * staminaLogApprox,
   };
 }
