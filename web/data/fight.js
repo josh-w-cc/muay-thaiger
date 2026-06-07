@@ -1,4 +1,5 @@
 import {create} from 'zustand';
+import {parseBigIntStats} from 'shared/stats.js';
 
 const useFightStore = create((set) => createFightState(set));
 
@@ -36,5 +37,22 @@ function getServerFightState(fight) {
   return {
     ...getInitialFightState(),
     ...fight,
+    details: parseFightDetails(fight.details),
+  };
+}
+
+function parseFightDetails(details) {
+  return {
+    ...details,
+    attacker: parseFightParticipant(details.attacker),
+    ...(details.defender ? {defender: parseFightParticipant(details.defender)} : {}),
+  };
+}
+
+function parseFightParticipant(participant) {
+  return {
+    ...participant,
+    startingStats: parseBigIntStats(participant.startingStats),
+    stats: parseBigIntStats(participant.stats),
   };
 }

@@ -1,17 +1,26 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
+import patchBigIntPrototype from 'shared/bigInt.js';
+import {MOVE_IDS} from 'shared/moves.js';
 
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
 import {attachFightJudge, FightJudge} from './fight-judge.js';
 
+patchBigIntPrototype();
+
+const baseCombatStats = {agility: 1n, constitution: 1n, durability: 1n, reach: 1n, skill: 1n, stamina: 1n, strength: 1n};
 
 describe('FightJudge.load', () => {
   it('stores unresolved fights by player ID and discards duplicate player entries', async () => {
     const judge = new FightJudge();
-    const firstFight = {attacker: 11, defender: 12, details: {attacker: {stats: {}}, defender: {stats: {}}}, id: 101, victory: null};
-    const secondFight = {attacker: 13, defender: 14, details: {attacker: {stats: {}}, defender: {stats: {}}}, id: 102, victory: null};
-    const thirdFight = {attacker: 15, defender: null, details: {attacker: {stats: {}}}, id: 103, victory: null};
+    const firstFight = {
+      attacker: 11, defender: 12, details: {attacker: {stats: {...baseCombatStats}}, defender: {stats: {...baseCombatStats}}}, id: 101, victory: null,
+    };
+    const secondFight = {
+      attacker: 13, defender: 14, details: {attacker: {stats: {...baseCombatStats}}, defender: {stats: {...baseCombatStats}}}, id: 102, victory: null,
+    };
+    const thirdFight = {attacker: 15, defender: null, details: {attacker: {stats: {...baseCombatStats}}}, id: 103, victory: null};
     const fighters = {
       find: async (fighterID) => ({
         11: {id: 11, player: 1},
@@ -25,7 +34,7 @@ describe('FightJudge.load', () => {
 
     await judge.load({fighters, fights});
 
-    assert.equal(judge.get(1).id, firstFight.id);
+    assert.equal(judge.get(1).id, secondFight.id);
     assert.equal(judge.get(2).id, firstFight.id);
     assert.equal(judge.get(3).id, secondFight.id);
     assert.equal(judge.get(4).id, thirdFight.id);
@@ -43,7 +52,9 @@ describe('FightJudge.attach', () => {
 
   it('stores a new unresolved fight by all participant player IDs', async () => {
     const judge = new FightJudge();
-    const fight = {attacker: 11, defender: 12, details: {attacker: {stats: {}}, defender: {stats: {}}}, id: 101, victory: null};
+    const fight = {
+      attacker: 11, defender: 12, details: {attacker: {stats: {...baseCombatStats}}, defender: {stats: {...baseCombatStats}}}, id: 101, victory: null,
+    };
 
     await judge.attach(twoPlayerFighters, fight);
 
@@ -51,10 +62,67 @@ describe('FightJudge.attach', () => {
     assert.equal(judge.get(2).id, fight.id);
   });
 
+  describe('FightJudge.move', () => {
+    const twoPlayerFighters = {
+      find: async (fighterID) => ({
+        11: {id: 11, player: 1},
+        12: {id: 12, player: 2},
+      }[fighterID] ?? null),
+    };
+
+    it('updates lastUsed for the active player move', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1234567890000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 1}, {id: MOVE_IDS.wildKick, lastUsed: 2}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick), true);
+        assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890);
+        assert.equal(judge.get(2).details.defender.moves[0].lastUsed, 3);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('throws when the player has no active fight move or fight', async () => {
+      const judge = new FightJudge();
+      const fight = {
+        attacker: 11,
+        defender: null,
+        details: {attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 1}], stats: {...baseCombatStats}}},
+        id: 101,
+        victory: null,
+      };
+      const singlePlayerFighters = {
+        find: async (fighterID) => ({
+          11: {id: 11, player: 1},
+        }[fighterID] ?? null),
+      };
+
+      await judge.attach(singlePlayerFighters, fight);
+
+      assert.throws(() => judge.move(1, MOVE_IDS.wildKick), /Unknown move:2/u);
+      assert.throws(() => judge.move(999, MOVE_IDS.wildPunch), /No fight for player:999/u);
+    });
+  });
+
   it('captures attacker and defender starting stats from fight details', async () => {
     const judge = new FightJudge();
-    const attackerStats = {speed: 10n, vigor: 5n};
-    const defenderStats = {speed: 8n, vigor: 3n};
+    const attackerStats = {...baseCombatStats, agility: 10n, stamina: 5n};
+    const defenderStats = {...baseCombatStats, agility: 8n, stamina: 3n};
     const fight = {
       attacker: 11,
       defender: 12,
@@ -68,13 +136,114 @@ describe('FightJudge.attach', () => {
 
     await judge.attach(twoPlayerFighters, fight);
 
-    assert.deepEqual(judge.get(1).attacker.startingStats, attackerStats);
-    assert.deepEqual(judge.get(1).defender.startingStats, defenderStats);
+    assert.deepEqual(judge.get(1).details.attacker.startingStats, {...attackerStats, health: 1n});
+    assert.deepEqual(judge.get(1).details.defender.startingStats, {...defenderStats, health: 1n});
+    assert.equal(judge.get(1).details.attacker.moveCount, 0);
+    assert.equal(judge.get(1).details.defender.moveCount, 0);
+  });
+
+  it('computes calculated attacker and defender stats from current fight details', async () => {
+    const judge = new FightJudge();
+    const fight = {
+      attacker: 11,
+      defender: 12,
+      details: {
+        attacker: {stats: {agility: 9999n, constitution: 2n, durability: 3n, reach: 7n, skill: 8n, stamina: 44n, strength: 9n}},
+        defender: {stats: {agility: 111n, constitution: 3n, durability: 4n, reach: 2n, skill: 5n, stamina: 22n, strength: 6n}},
+      },
+      id: 101,
+      victory: null,
+    };
+
+    await judge.attach(twoPlayerFighters, fight);
+
+    const storedFight = judge.get(1);
+    assert.deepEqual(storedFight.details.attacker.stats, {
+      agility: 9999n,
+      attack: 18n,
+      constitution: 2n,
+      defense: 13n,
+      durability: 3n,
+      health: 12n,
+      power: 20n,
+      reach: 7n,
+      skill: 8n,
+      stamina: 44n,
+      strength: 9n,
+    });
+    assert.deepEqual(storedFight.details.defender.stats, {
+      agility: 111n,
+      attack: 10n,
+      constitution: 3n,
+      defense: 9n,
+      durability: 4n,
+      health: 36n,
+      power: 14n,
+      reach: 2n,
+      skill: 5n,
+      stamina: 22n,
+      strength: 6n,
+    });
+  });
+
+  it('recalculates calculated stats from updated current fight details on each get', async () => {
+    const judge = new FightJudge();
+    const fight = {
+      attacker: 11,
+      defender: null,
+      details: {
+        attacker: {stats: {agility: 111n, constitution: 2n, durability: 3n, reach: 7n, skill: 8n, stamina: 44n, strength: 9n}},
+      },
+      id: 101,
+      victory: null,
+    };
+
+    await judge.attach(twoPlayerFighters, fight);
+
+    assert.deepEqual(judge.get(1).details.attacker.stats, {
+      agility: 111n,
+      attack: 18n,
+      constitution: 2n,
+      defense: 12n,
+      durability: 3n,
+      health: 12n,
+      power: 20n,
+      reach: 7n,
+      skill: 8n,
+      stamina: 44n,
+      strength: 9n,
+    });
+
+    fight.details.attacker.stats.stamina = 4444n;
+
+    assert.deepEqual(judge.get(1).details.attacker.stats, {
+      agility: 111n,
+      attack: 20n,
+      constitution: 2n,
+      defense: 12n,
+      durability: 3n,
+      health: 12n,
+      power: 40n,
+      reach: 7n,
+      skill: 8n,
+      stamina: 4444n,
+      strength: 9n,
+    });
+    assert.deepEqual(judge.get(1).details.attacker.startingStats, {
+      agility: 111n,
+      constitution: 2n,
+      durability: 3n,
+      health: 12n,
+      reach: 7n,
+      skill: 8n,
+      stamina: 44n,
+      strength: 9n,
+    });
   });
 
   it('omits defender from stored fight when fight has no defender details', async () => {
     const judge = new FightJudge();
-    const attackerStats = {speed: 10n, vigor: 5n};
+    const attackerStats = {...baseCombatStats, agility: 10n, stamina: 5n};
     const fight = {
       attacker: 11,
       defender: null,
@@ -90,14 +259,15 @@ describe('FightJudge.attach', () => {
 
     await judge.attach(singlePlayerFighters, fight);
 
-    assert.deepEqual(judge.get(1).attacker.startingStats, attackerStats);
-    assert.equal('defender' in judge.get(1), false);
+    assert.deepEqual(judge.get(1).details.attacker.startingStats, {...attackerStats, health: 1n});
+    assert.equal(judge.get(1).details.attacker.moveCount, 0);
+    assert.equal('defender' in judge.get(1).details, false);
   });
 });
 
 describe('attachFightJudge', () => {
   it('loads unresolved fights into app.fightJudge on server ready', async () => {
-    const unresolvedFight = {attacker: 9, defender: null, details: {attacker: {stats: {}}}, id: 5, victory: null};
+    const unresolvedFight = {attacker: 9, defender: null, details: {attacker: {stats: {...baseCombatStats}}}, id: 5, victory: null};
     const {knex} = mockKnexMulti([
       [unresolvedFight],
       {id: 9, player: 4},

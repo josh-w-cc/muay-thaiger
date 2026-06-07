@@ -3,7 +3,12 @@ import {
   routeToHubIfAuthorized,
 } from '@/actions/websockets/auth.js';
 import {connectSocketOnAppLoad, sendCommand} from '@/actions/websockets/index.js';
+import {TickerState} from '@/pages/Game/Ticker.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
+const MOVE_CLICK_BATCH_MILLISECONDS = 500;
+let moveBatch = [];
+let moveBatchDelta = 0;
+let moveCount = 0;
 
 export function createFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'idle'});
@@ -21,7 +26,40 @@ export function removeFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'stop'});
 }
 
+export function moveCmd(moveID) {
+  if(!Number.isInteger(moveID)) {
+    console.error(`Invalid move:${moveID}`);
+    return;
+  }
+  moveBatch.push({move_id: moveID, move_num: moveCount});
+  moveCount += 1;
+}
+
 export function selectFighterCmd() {
   respondToAuth(connectSocketOnAppLoad());
   routeToHubIfAuthorized();
 }
+
+function tickMoveBatch(delta) {
+  if(moveBatch.length === 0) {
+    moveBatchDelta = 0;
+    return;
+  }
+  moveBatchDelta += delta;
+  if(moveBatchDelta < MOVE_CLICK_BATCH_MILLISECONDS) {
+    return;
+  }
+  flushMoveBatch();
+}
+
+function flushMoveBatch() {
+  moveBatchDelta = 0;
+  if(moveBatch.length === 0) {
+    return;
+  }
+  const currentBatch = moveBatch;
+  moveBatch = [];
+  sendCommand({cmd: 'move', moves: currentBatch});
+}
+
+TickerState.addListener(tickMoveBatch);

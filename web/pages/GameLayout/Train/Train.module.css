@@ -11,42 +11,8 @@
   grid-template-columns: minmax(0, 1fr) auto auto;
 }
 
-.regimenProgressFill {
-  background: linear-gradient(90deg, var(--color-red), var(--color-gold));
-  border-radius: var(--radius-sm);
-  height: 100%;
-}
-
-.regimenProgressLabel {
-  color: var(--color-gold);
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-
-.regimenProgressLabelDisabled {
-  color: var(--color-muted);
-}
-
-.regimenProgressTrack {
-  background-color: var(--color-muted);
-  border: 1px solid var(--color-gold);
-  border-radius: var(--radius-sm);
-  height: 12px;
-  overflow: hidden;
-}
-
-.regimenProgressTrackDisabled {
-  border-color: var(--color-muted);
-}
-
 .regimenRow {
   display: grid;
-  gap: var(--space-xs);
-}
-
-.regimenName {
-  align-items: center;
-  display: flex;
   gap: var(--space-xs);
 }
 

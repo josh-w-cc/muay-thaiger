@@ -1,3 +1,18 @@
+export function generateCrudModel(db, table, {listOrderBy, update = true} = {}) {
+  const model = {
+    create: generateCreateFn(db, table),
+    find: generateFindFn(db, table),
+    list: generateListFn(db, table, listOrderBy),
+    remove: generateRemoveFn(db, table),
+  };
+
+  if(update) {
+    model.update = generateUpdateFn(db, table);
+  }
+
+  return model;
+}
+
 export function generateCreateFn(db, table) {
   return (data) => db(table).insert(data).returning('*').then((rows) => rows[0]);
 }

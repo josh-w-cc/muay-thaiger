@@ -2,22 +2,23 @@ import {authenticate} from './auth.js';
 import {createCommandError} from './command-errors.js';
 import {registerFighterAction, unregisterFighterAction} from './fighter-actions.js';
 import {createFight} from './fights/index.js';
+import {normalizeMoveMessage} from './websocket-move-message.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
-
+const onCommand = {
+  auth,
+  fight,
+  idle,
+  move,
+  stop,
+};
 export async function processMessageCommand(models, message, socket) {
-  switch(message.cmd) {
-    case 'auth':
-      return auth(models, message, socket);
-    case 'fight':
-      return fight(models, message, socket);
-    case 'idle':
-      return idle(models, message, socket);
-    case 'stop':
-      return stop(models, message, socket);
-    default:
-      socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
+  const runCommand = onCommand[message.cmd];
+  if(!runCommand) {
+    socket.send(JSON.stringify({cmd: 'error', error: 'invalid-cmd'}));
+    return;
   }
+  await runCommand(models, message, socket);
 }
 
 async function auth(models, message, socket) {
@@ -40,6 +41,23 @@ async function idle(models, message, socket) {
   await applyCurrentTraining(models, socket.player.id);
   const fighterAction = await registerFighterAction(models, message, socket.player.id);
   socket.send(JSON.stringify({cmd: 'ok', metadata: {fighterAction, responded_cmd: 'idle'}}));
+  await sendCurrentPlayerState(models, socket);
+}
+
+async function move(models, message, socket) {
+  if(!socket.player) {
+    throw createCommandError('invalid-move-message');
+  }
+  const {moveIDs} = normalizeMoveMessage(message);
+  try {
+    for(const moveID of moveIDs) {
+      models.fightJudge.move(socket.player.id, moveID);
+    }
+  }
+  catch(e) {
+    console.warn(e);
+    throw createCommandError('invalid-move-message');
+  }
   await sendCurrentPlayerState(models, socket);
 }
 

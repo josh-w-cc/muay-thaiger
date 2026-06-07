@@ -4,6 +4,7 @@ import {createFightCmd} from '@/actions/websockets/clientCommands.js';
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';
 
+import ActiveFight from './ActiveFight/index.js';
 import FightForGlory from './FightForGlory/index.js';
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
 
@@ -37,6 +38,7 @@ function FightContent({fight}) {
   return (
     <>
       <p>Fight pending...</p>
+      {fight.details && <ActiveFight details={fight.details} />}
       <FightMetadata label="Fight ID" value={fight.id} />
       <FightMetadata label="Reason" value={fight.reason} />
       <FightMetadata label="Created" value={fight.created_at} />

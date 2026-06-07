@@ -1,15 +1,13 @@
 const {routerNavigate} = vi.hoisted(() => ({
   routerNavigate: vi.fn(),
 }));
-vi.mock('@/router.js', () => ({
-  default: {navigate: routerNavigate},
-}));
 
 import useFighterActionsStore, {resetFighterActionsStore} from '@/data/fighterActions.js';
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
 import useFightStore, {resetFightStore} from '@/data/fight.js';
 import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './state/token.js';
+import {setWebsocketRouter} from './state/router.js';
 import {
   connectSocketOnAppLoad,
   resetSocketState,
@@ -27,6 +25,7 @@ describe('player websocket helpers', () => {
   let warnSpy;
 
   beforeEach(() => {
+    setWebsocketRouter({navigate: routerNavigate});
     debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
     errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     infoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
@@ -46,6 +45,7 @@ describe('player websocket helpers', () => {
     resetFightStore();
     resetPlayerStore();
     resetSocketState();
+    setWebsocketRouter(null);
     globalThis.WebSocket = originalWebSocket;
     Object.defineProperty(globalThis.window, 'location', {
       configurable: true,
@@ -187,7 +187,19 @@ describe('player websocket helpers', () => {
       data: JSON.stringify({
         cmd: 'player_state',
         actions: [{action: 2, id: 11}],
-        fight: {id: 88, reason: 'gold', rank: 'bronze', victory: 9},
+        fight: {
+          details: {
+            attacker: {
+              calculatedStats: {},
+              startingStats: {},
+              stats: {},
+            },
+          },
+          id: 88,
+          reason: 'gold',
+          rank: 'bronze',
+          victory: 9,
+        },
         fighter: {
           gold: '250',
           id: 9,

@@ -28,7 +28,7 @@ export default function fights(db) {
 }
 
 function serializeFightCreate({attacker, defender, rank, reason}) {
-  const details = serializeFightDetails(attacker, defender);
+  const details = serializeFightDetails(attacker, defender, rank);
   return {
     attacker: attacker.id,
     defender: defender?.id ?? null,
@@ -38,22 +38,27 @@ function serializeFightCreate({attacker, defender, rank, reason}) {
   };
 }
 
-function serializeFightDetails(attacker, defender) {
+function serializeFightDetails(attacker, defender, rank) {
+  const detailsRank = !rank ? 'ZZ' : rank;
   const serializedAttacker = serializeParticipantDetails(attacker);
   if(!defender) {
-    return {attacker: serializedAttacker};
+    return {
+      attacker: serializedAttacker,
+      rank: detailsRank,
+    };
   }
 
   return {
     attacker: serializedAttacker,
     defender: serializeParticipantDetails(defender),
+    rank: detailsRank,
   };
 }
 
 function serializeParticipantDetails(participant) {
   validateParticipantDetails(participant);
   return {
-    moves: serializeMoves(participant.moves),
+    moves: participant.moves,
     race: participant.race,
     seed: randomInt(2 ** 32),
     stats: serializeStats(participant.stats),
@@ -75,19 +80,9 @@ function hasStats(stats) {
 }
 
 function serializeStats(stats) {
-  if(!stats || typeof stats !== 'object' || Array.isArray(stats)) {
-    return {};
-  }
-
   return Object.fromEntries(
     Object.entries(stats).map(([key, value]) => [key, value.toString()]),
   );
-}
-
-function serializeMoves(moves) {
-  return Array.isArray(moves)
-    ? moves.map((move) => move.toString())
-    : [];
 }
 
 async function findActiveFightByFighterID(db, fighterID) {

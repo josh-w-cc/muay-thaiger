@@ -1,6 +1,6 @@
 import {SKILL_IDS} from 'shared/skills/index.js';
 
-import startIdle from './startIdle.js';
+import startIdle from './start.js';
 
 
 const {addAction, createFighterActionCmd} = vi.hoisted(() => ({
@@ -30,8 +30,8 @@ describe('startIdle', () => {
     expect(createFighterActionCmd).toHaveBeenCalledWith(SKILL_IDS.begging);
   });
 
-  it('does not enqueue or send a command when the skill id is invalid', () => {
-    startIdle({skillKey: 'invalid'});
+  it('throws and does not enqueue or send a command when the skill id is invalid', () => {
+    expect(() => startIdle({skillKey: 'invalid'})).toThrow('Unknown skill!?');
 
     expect(addAction).not.toHaveBeenCalled();
     expect(createFighterActionCmd).not.toHaveBeenCalled();
