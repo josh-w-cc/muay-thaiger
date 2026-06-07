@@ -152,7 +152,7 @@ describe('FightJudge.attach', () => {
       assert.throws(() => judge.move(999, MOVE_IDS.wildPunch), /No fight for player:999/u);
     });
 
-    it('throws when a fight move ID is not defined in shared moves', async () => {
+    it('throws when executing a move with an ID not defined in shared moves', async () => {
       const judge = new FightJudge();
       const fight = {
         attacker: 11,
