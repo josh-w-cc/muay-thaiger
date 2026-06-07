@@ -1,4 +1,3 @@
-import {FIGHT_FEED} from './FightFeedData.js';
 import css from '../Fight.module.css';
 
 
@@ -30,7 +29,7 @@ function FightFeedItem({item}) {
 
 function getFightFeed(details) {
   if(Array.isArray(details?.feed) && details.feed.length > 0) {
-    return details.feed;
+    return [...details.feed].reverse();
   }
-  return FIGHT_FEED;
+  return [];
 }
