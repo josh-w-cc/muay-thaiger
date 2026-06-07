@@ -13,6 +13,7 @@ const onCommand = {
   move,
   stop,
 };
+
 export async function processMessageCommand(models, message, socket) {
   const runCommand = onCommand[message.cmd];
   if(!runCommand) {
@@ -21,6 +22,7 @@ export async function processMessageCommand(models, message, socket) {
   }
   await runCommand(models, message, socket);
 }
+
 async function auth(models, message, socket) {
   const player = await authenticate(models, message);
   socket.player = player;
@@ -49,10 +51,10 @@ async function move(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-move-message');
   }
-  const {moveIDs} = normalizeMoveMessage(message);
+  const moves = normalizeMoveMessage(message);
   try {
-    for(const moveID of moveIDs) {
-      models.fightJudge.move(socket.player.id, moveID);
+    for(const {moveID, moveNum} of moves) {
+      models.fightJudge.move(socket.player.id, moveID, moveNum);
     }
   }
   catch(e) {
