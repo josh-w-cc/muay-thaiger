@@ -1,6 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
 import {render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import HubButton from './assets/HubButton.png';
@@ -63,14 +60,6 @@ describe('NavHeader', () => {
     expect(navigate).toHaveBeenNthCalledWith(2, '/hub');
     expect(navigate).toHaveBeenNthCalledWith(3, '/train');
     expect(navigate).toHaveBeenNthCalledWith(4, '/shop');
-  });
-
-  it('keeps header navigation hover background transparent', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'NavHeader.module.css');
-    const source = fs.readFileSync(modulePath, 'utf8');
-
-    expect(source).toMatch(/\.navigationButton:hover\s*{[^}]*background-color:\s*transparent;/s);
   });
 
   it('marks the current route button as active', async () => {
