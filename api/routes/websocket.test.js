@@ -733,6 +733,61 @@ describe('WebSocket /ws/connect', () => {
     }
   });
 
+  it('applies all duplicate move ids in move number order', async () => {
+    const dateNow = Date.now;
+    Date.now = () => 1234567890000;
+    try {
+      const send = createCallTracker();
+      const move = createCallTracker();
+      const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
+      const fighter = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
+      const fight = {
+        attacker: 9,
+        defender: null,
+        details: {attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 1}, {id: MOVE_IDS.wildKick, lastUsed: 2}]}},
+        id: 4,
+        reason: 'gold',
+      };
+      const fighterActions = {listByFighterID: async () => []};
+      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fightJudge = {
+        get: (playerID) => (playerID === 1 ? fight : null),
+        move: (playerID, moveID) => {
+          move(playerID, moveID);
+          const matchingMove = fight.details.attacker.moves.find((fightMove) => fightMove.id === moveID);
+          if(!matchingMove) {
+            return false;
+          }
+          matchingMove.lastUsed = Math.floor(Date.now() / 1000);
+          return true;
+        },
+      };
+
+      await onMessage(JSON.stringify({
+        cmd: 'move',
+        moves: [
+          {move_id: MOVE_IDS.wildPunch, move_num: 11},
+          {move_id: MOVE_IDS.wildKick, move_num: 10},
+          {move_id: MOVE_IDS.wildPunch, move_num: 12},
+        ],
+      }), socket, {fighterActions, fighters, fightJudge});
+
+      assert.deepEqual(move.calls, [[1, MOVE_IDS.wildKick], [1, MOVE_IDS.wildPunch], [1, MOVE_IDS.wildPunch]]);
+      assert.equal(send.calls.length, 1);
+      assert.deepEqual(JSON.parse(send.calls[0][0]), {
+        actions: [],
+        cmd: 'player_state',
+        fight,
+        fighter,
+      });
+      assert.equal(fight.details.attacker.moves[0].lastUsed, 1234567890);
+      assert.equal(fight.details.attacker.moves[1].lastUsed, 1234567890);
+    }
+    finally {
+      Date.now = dateNow;
+    }
+  });
+
   it('sends error when move command uses legacy move_id payload', async () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, player: {id: 1}, readyState: 1, send};
