@@ -6,6 +6,7 @@ import {attachCurrentFighter} from './socket-fighter.js';
 import {normalizeMoveMessage} from './websocket-move-message.js';
 import {getPlayerState, sendPlayerState} from './player-state.js';
 import {applyTraining} from './training.js';
+
 const onCommand = {
   auth,
   fight,
@@ -13,6 +14,7 @@ const onCommand = {
   move,
   stop,
 };
+
 export async function processMessageCommand(models, message, socket) {
   const runCommand = onCommand[message.cmd];
   if(!runCommand) {
@@ -21,6 +23,7 @@ export async function processMessageCommand(models, message, socket) {
   }
   await runCommand(models, message, socket);
 }
+
 async function auth(models, message, socket) {
   const player = await authenticate(models, message);
   socket.player = player;
@@ -49,7 +52,7 @@ async function move(models, message, socket) {
   if(!socket.player) {
     throw createCommandError('invalid-move-message');
   }
-  const {moves} = normalizeMoveMessage(message);
+  const moves = normalizeMoveMessage(message);
   try {
     for(const {moveID, moveNum} of moves) {
       models.fightJudge.move(socket.player.id, moveID, moveNum);
