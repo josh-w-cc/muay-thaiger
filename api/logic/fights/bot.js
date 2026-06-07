@@ -20,7 +20,7 @@ export function createBot(rank) {
   };
 }
 
-export function createBotStats(rank) {
+function createBotStats(rank) {
   const baseStat = BOT_BASE_STAT * getBotRankMultiplier(rank);
   return Object.fromEntries(
     FIGHTER_STAT_KEYS.map((stat) => [stat, baseStat.toString()]),
