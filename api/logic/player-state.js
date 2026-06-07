@@ -1,6 +1,7 @@
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import fightersModel from '../data/models/fighters.js';
 import {applyTraining} from './training.js';
+
 const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 
 export async function applyOfflineTraining(db, models = null) {
@@ -66,18 +67,11 @@ function isSocketOpen(socket) {
 }
 
 async function getPlayerFighter(fighters, playerID, fighterID) {
-  const fighter = await findAttachedFighter(fighters, fighterID);
+  const fighter = await fighters.find(fighterID);
   if(isCurrentPlayerFighter(fighter, playerID)) {
     return fighter;
   }
-  return typeof fighters.findCurrentByPlayerID !== 'function' ? null : fighters.findCurrentByPlayerID(playerID);
-}
-
-async function findAttachedFighter(fighters, fighterID) {
-  if(!Number.isInteger(fighterID) || typeof fighters.find !== 'function') {
-    return null;
-  }
-  return fighters.find(fighterID);
+  return fighters.findCurrentByPlayerID(playerID);
 }
 
 function isCurrentPlayerFighter(fighter, playerID) {
