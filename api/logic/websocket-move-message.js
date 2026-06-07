@@ -5,10 +5,7 @@ export function normalizeMoveMessage(message) {
   if(!message || typeof message !== 'object') {
     throw createCommandError('invalid-move-message');
   }
-  const moveEntries = normalizeMoveList(message?.moves);
-  return {
-    moves: moveEntries,
-  };
+  return normalizeMoveList(message?.moves);
 }
 
 function normalizeMoveList(moves) {
