@@ -199,7 +199,10 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const socket = {OPEN: 1, readyState: 1, send};
     const fighterMoves = {create: async () => null};
-    const fighters = {create: async () => ({id: 1})};
+    const fighters = {
+      create: async () => ({id: 1}),
+      findCurrentByPlayerID: async () => null,
+    };
     const races = {find: async () => ({id: 2, stats: RACE_DEFAULT_STATS})};
     const player = {display_name: 'Player-abcdefgh', id: 1, token: 'player-uuid-token'};
     const players = {create: async () => player};
@@ -285,6 +288,7 @@ describe('WebSocket /ws/connect', () => {
     const send = createCallTracker();
     const player = {display_name: 'Player-known', id: 5, token: 'known-token'};
     const socket = {OPEN: 1, readyState: 1, send};
+    const fighters = {findCurrentByPlayerID: async () => null};
     const players = {
       create: async () => null,
       findByToken: async (token) => {
@@ -295,7 +299,7 @@ describe('WebSocket /ws/connect', () => {
       },
     };
 
-    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {players});
+    await onMessage(JSON.stringify({cmd: 'auth', token: 'known-token'}), socket, {fighters, players});
 
     assert.equal(send.calls.length, 1);
     assert.deepEqual(JSON.parse(send.calls[0][0]), {cmd: 'auth', display_name: 'Player-known', player_id: 5, token: 'known-token'});
@@ -344,6 +348,7 @@ describe('WebSocket /ws/connect', () => {
     };
     const fightJudge = {get: () => null};
     const fighters = {
+      find: async (attachedFighter) => (attachedFighter?.id === fighter.id ? fighter : null),
       findCurrentByPlayerID: async () => fighter,
       update: async () => fighter,
     };
@@ -369,6 +374,7 @@ describe('WebSocket /ws/connect', () => {
       listByFighterID: async () => [],
     };
     const fighters = {
+      find: async (attachedFighter) => (attachedFighter?.id === fighter.id ? fighter : null),
       findCurrentByPlayerID: async () => fighter,
     };
     const fightJudge = {get: (playerID) => (playerID === 5 ? fight : null)};
@@ -615,7 +621,10 @@ describe('WebSocket /ws/connect', () => {
       const createdFight = {attacker: 9, defender: null, details: {attacker: {}, defender: {}}, id: 4, reason: 'gold'};
       const fighterActions = {listByFighterID: async () => []};
       const fighterMoves = {listEnabledByFighterID: async () => []};
-      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fighters = {
+        find: async () => null,
+        findCurrentByPlayerID: async () => fighter,
+      };
       const fights = {create: async () => createdFight};
       const fightJudge = {attach: async () => null, get: (playerID) => (playerID === 1 ? createdFight : null)};
 
@@ -664,7 +673,10 @@ describe('WebSocket /ws/connect', () => {
         reason: 'gold',
       };
       const fighterActions = {listByFighterID: async () => []};
-      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fighters = {
+        find: async () => null,
+        findCurrentByPlayerID: async () => fighter,
+      };
       const fightJudge = {
         get: (playerID) => (playerID === 1 ? fight : null),
         move: (playerID, moveID) => {
@@ -714,7 +726,10 @@ describe('WebSocket /ws/connect', () => {
         reason: 'gold',
       };
       const fighterActions = {listByFighterID: async () => []};
-      const fighters = {findCurrentByPlayerID: async () => fighter};
+      const fighters = {
+        find: async () => null,
+        findCurrentByPlayerID: async () => fighter,
+      };
       const fightJudge = {
         get: (playerID) => (playerID === 1 ? fight : null),
         move: (playerID, moveID) => {
@@ -786,7 +801,10 @@ describe('WebSocket /ws/connect', () => {
       listByFighterID: async () => [],
     };
     const fightJudge = {get: () => null};
-    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fighters = {
+      find: async () => null,
+      findCurrentByPlayerID: async () => fighter,
+    };
 
     await onMessage(JSON.stringify({action_id: 1, cmd: 'idle'}), socket, {fighterActions, fightJudge, fighters});
 
@@ -821,6 +839,7 @@ describe('WebSocket /ws/connect', () => {
     };
     const fightJudge = {get: () => null};
     const fighters = {
+      find: async () => null,
       findCurrentByPlayerID: async () => fighter,
       update: async () => {
         callOrder.push('update');
@@ -865,6 +884,7 @@ describe('WebSocket /ws/connect', () => {
     };
     const fightJudge = {get: () => null};
     const fighters = {
+      find: async () => null,
       findCurrentByPlayerID: async () => fighter,
       update: async () => fighter,
     };
@@ -939,6 +959,7 @@ describe('WebSocket /ws/connect', () => {
     };
     const fight = {attacker: 9, defender: null, details: {}, id: 12, reason: 'gold', victory: null};
     const fighters = {
+      find: async () => null,
       findCurrentByPlayerID: async (id) => {
         if(id === 1) {
           return fighterRecord;

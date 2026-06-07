@@ -46,6 +46,7 @@ describe('getPlayerState', () => {
     };
     const fightJudge = {get: () => null};
     const fighters = {
+      find: async () => null,
       findCurrentByPlayerID: async () => fighter,
       update: async () => updatedFighter,
     };
@@ -92,7 +93,10 @@ describe('getPlayerState', () => {
     const fighter = {id: 9, player: 5, retired: false, stats: {}};
     const fighterActions = {listByFighterID: async () => []};
     const fightJudge = {get: () => null};
-    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fighters = {
+      find: async () => null,
+      findCurrentByPlayerID: async () => fighter,
+    };
 
     const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5);
 
@@ -103,7 +107,10 @@ describe('getPlayerState', () => {
     const fighter = {id: 9, player: 5, retired: false, stats: {}};
     const fight = {attacker: 9, defender: null, details: {}, id: 3, reason: 'gold', victory: null};
     const fighterActions = {listByFighterID: async () => []};
-    const fighters = {findCurrentByPlayerID: async () => fighter};
+    const fighters = {
+      find: async () => null,
+      findCurrentByPlayerID: async () => fighter,
+    };
     const fightJudge = {get: (playerID) => (playerID === 5 ? fight : null)};
 
     const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5);
@@ -112,7 +119,10 @@ describe('getPlayerState', () => {
   });
 
   it('returns null when the player has no current fighter', async () => {
-    const fighters = {findCurrentByPlayerID: async () => null};
+    const fighters = {
+      find: async () => null,
+      findCurrentByPlayerID: async () => null,
+    };
 
     const result = await getPlayerState({fighters}, 5);
 
