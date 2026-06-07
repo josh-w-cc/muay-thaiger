@@ -7,6 +7,7 @@ import Section from '@/components/primitive/Section.js';
 import ActiveFight from './ActiveFight/index.js';
 import FightForGlory from './FightForGlory/index.js';
 import ZerothFight, {needsZerothFight} from './ZerothFight.js';
+import css from './Fight.module.css';
 
 
 export default function FightMenu() {
@@ -66,5 +67,5 @@ function formatFightDetails(details) {
   if(details == null) {
     return null;
   }
-  return (<pre>{JSON.stringify(details, null, 2)}</pre>);
+  return (<pre className={css.fightDetailsValue}>{JSON.stringify(details, null, 2)}</pre>);
 }
