@@ -21,7 +21,7 @@ export default function fighters(db) {
     findCurrentByPlayerID: generateFindCurrentByPlayerIDFn(db),
     list: async (direction) => castFighterRows(await list(direction)),
     remove: generateRemoveFn(db, 'fighters'),
-    update: (id, data) => update(id, serializeFighterStats(data)),
+    update: async (id, data) => castFighter(await update(id, serializeFighterStats(data))),
   };
 }
 
