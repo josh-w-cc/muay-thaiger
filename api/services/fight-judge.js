@@ -17,6 +17,7 @@ export class FightJudge {
     const participants = await getFightParticipants(fighters, fight);
     const enrichedFight = captureStartingStats(fight);
     for(const participant of participants) {
+      enrichedFight.details[participant.role].name = participant.displayName;
       this.#fightsByPlayerID.set(participant.playerID, {fight: enrichedFight, role: participant.role});
     }
   }
@@ -43,7 +44,8 @@ export class FightJudge {
     move.lastUsed = Date.now();
     activeParticipant.moveList.push(moveNum);
     const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
-    executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
+    const damage = executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
+    participantFight.fight.details.feed.push(`${activeParticipant.name} used ${moveDefinition.name} - ${damage} damage`);
     return true;
   }
 }
@@ -81,6 +83,7 @@ function captureStartingStats(fight) {
       attacker: addStartingStats(attacker),
       ...(defender ? {defender: addStartingStats(defender)} : {}),
       ...rest,
+      feed: [],
     },
   };
 }
