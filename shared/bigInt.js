@@ -1,5 +1,3 @@
-patchBigIntPrototype();
-
 export default function patchBigIntPrototype() {
   defineMethod('logApprox', logApprox);
   defineMethod('toFormattedNumber', toFormattedNumber);
@@ -36,3 +34,5 @@ function toFormattedNumber() {
 function toJSON() {
   return this.toString();
 }
+
+patchBigIntPrototype();
