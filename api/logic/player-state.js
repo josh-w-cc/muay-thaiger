@@ -1,7 +1,6 @@
 import fighterActionsModel from '../data/models/fighter-actions.js';
 import fightersModel from '../data/models/fighters.js';
 import {applyTraining} from './training.js';
-import {getSocketFighterID} from './socket-fighter.js';
 const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 
 export async function applyOfflineTraining(db, models = null) {
