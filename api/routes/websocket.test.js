@@ -959,7 +959,6 @@ describe('WebSocket /ws/connect', () => {
     const sendNoFighter = createCallTracker();
     const closedSocket = {OPEN: 1, player: {id: 3}, readyState: 0, send: createCallTracker()};
     const fighterRecord = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
-    const updatedFighterRecord = {...fighterRecord, gold: '1'};
     const actions = [{action: 1, fighter: 9, id: 5}];
     const fighterActions = {
       listByFighterID: async (fighterID) => (fighterID === 9 ? actions : []),
@@ -984,15 +983,22 @@ describe('WebSocket /ws/connect', () => {
       closedSocket,
     ]);
 
+    const startedAt = Date.now();
+
     await syncPlayerState({fighterActions, fightJudge, fighters}, sockets);
+    const endedAt = Date.now();
 
     assert.equal(sendOpen.calls.length, 1);
-    assert.deepEqual(JSON.parse(sendOpen.calls[0][0]), {
-      actions,
-      cmd: 'player_state',
-      fight,
-      fighter: updatedFighterRecord,
-    });
+    const sentState = JSON.parse(sendOpen.calls[0][0]);
+    assert.equal(sentState.cmd, 'player_state');
+    assert.deepEqual(sentState.fight, fight);
+    assert.deepEqual(sentState.fighter, fighterRecord);
+    assert.equal(sentState.actions.length, 1);
+    assert.equal(sentState.actions[0].action, actions[0].action);
+    assert.equal(sentState.actions[0].id, actions[0].id);
+    assert.equal(sentState.actions[0].fighter, actions[0].fighter);
+    const touchedAtMs = Date.parse(sentState.actions[0].touched_at);
+    assert.ok(touchedAtMs >= startedAt && touchedAtMs <= endedAt);
     assert.equal(sendNoFighter.calls.length, 1);
     assert.equal(sockets.has(closedSocket), false);
   });
