@@ -1,6 +1,7 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
+import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition,
+  markMoveUsed} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -17,6 +18,7 @@ export class FightJudge {
     const participants = await getFightParticipants(fighters, fight);
     const enrichedFight = captureStartingStats(fight);
     for(const participant of participants) {
+      enrichedFight.details[participant.role].name = participant.displayName;
       this.#fightsByPlayerID.set(participant.playerID, {fight: enrichedFight, role: participant.role});
     }
   }
@@ -26,23 +28,24 @@ export class FightJudge {
     return participantFight ? getCalculatedFight(participantFight.fight) : null;
   }
 
-  move(playerID, moveID) {
+  move(playerID, moveID, moveNum) {
     const participantFight = this.#fightsByPlayerID.get(playerID);
     if(!participantFight) {
       throw new Error(`No fight for player:${playerID}`);
+    }
+    const activeParticipant = participantFight.fight.details[participantFight.role];
+    if(activeParticipant.moveList.includes(moveNum)) {
+      return false;
     }
     const move = getFightMove(participantFight, moveID);
     if(!move) {
       throw new Error(`Unknown move:${moveID}`);
     }
     const moveDefinition = getMoveDefinition(moveID);
-    const activeParticipant = participantFight.fight.details[participantFight.role];
-    const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
-    const now = Date.now();
-    applyMoveStaminaCost(move, moveDefinition, activeParticipant, now);
-    move.lastUsed = now;
-    executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
-    activeParticipant.moveCount += 1;
+    markMoveUsed(move, moveDefinition, activeParticipant);
+    activeParticipant.moveList.push(moveNum);
+    const damage = executeFightMove(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
+    participantFight.fight.details.feed.push(`${activeParticipant.name} used ${moveDefinition.name} - ${damage} damage`);
     return true;
   }
 }
@@ -80,6 +83,7 @@ function captureStartingStats(fight) {
       attacker: addStartingStats(attacker),
       ...(defender ? {defender: addStartingStats(defender)} : {}),
       ...rest,
+      feed: [],
     },
   };
 }
@@ -89,7 +93,7 @@ function addStartingStats(participant) {
   participant.stats.health = health;
   return {
     ...participant,
-    moveCount: 0,
+    moveList: [],
     startingStats: {
       ...participant.stats,
       health,
@@ -102,10 +106,7 @@ function getFightMove(participantFight, moveID) {
   return moves.find(({id}) => id === moveID) || null;
 }
 
-function applyMoveStaminaCost(move, moveDefinition, activeParticipant, now) {
-  if(move.lastUsed === null || move.lastUsed === undefined || move.lastUsed <= (now - moveDefinition.recovery)) {
-    return;
-  }
-  const staminaCost = (activeParticipant.stats.stamina * BigInt(moveDefinition.staminaCost)) / 100n;
-  activeParticipant.stats.stamina -= staminaCost;
+function getOpponentParticipant(participantFight) {
+  const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
+  return participantFight.fight.details[opponentRole];
 }

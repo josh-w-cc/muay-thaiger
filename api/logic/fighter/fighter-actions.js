@@ -1,6 +1,6 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills/index.js';
 import {findActiveTrainingAction, findTouchedAtTransfer, getMaxTouchedAtMs} from 'shared/training.js';
-import {createCommandError} from './command-errors.js';
+import {createCommandError} from '../websocket/command-errors.js';
 
 export async function registerFighterAction({fighterActions, fighters}, message, playerID) {
   const normalizedMessage = normalizeMessage(message, 'invalid-idle-message');

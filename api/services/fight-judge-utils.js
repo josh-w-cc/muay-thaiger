@@ -32,18 +32,30 @@ export function getMoveDefinition(moveID) {
   return moveDefinition;
 }
 
-export function executeFightMove(moveDefinition, activeParticipant, opponentParticipant) {
-  const attackerPower = activeParticipant?.stats ? calculateFighterStats(activeParticipant.stats).power : 1n;
-  moveDefinition.affect(
-    createMoveActor(activeParticipant),
-    createMoveActor(opponentParticipant, attackerPower),
-  );
+export function markMoveUsed(move, moveDefinition, activeParticipant) {
+  const now = Date.now();
+  if(move.lastUsed != null && move.lastUsed > (now - moveDefinition.recovery)) {
+    activeParticipant.stats.stamina -= (activeParticipant.stats.stamina * BigInt(moveDefinition.staminaCost)) / 100n;
+  }
+  move.lastUsed = now;
 }
 
-function createMoveActor(participant, incomingDamageScale = 1n) {
+export function executeFightMove(moveDefinition, activeParticipant, opponentParticipant) {
+  const attackerPower = activeParticipant?.stats ? calculateFighterStats(activeParticipant.stats).power : 1n;
+  let damage = 0n;
+  moveDefinition.affect(
+    createMoveActor(activeParticipant),
+    createMoveActor(opponentParticipant, attackerPower, (d) => { damage += d; }),
+  );
+  return damage;
+}
+
+function createMoveActor(participant, incomingDamageScale = 1n, onDamage = null) {
   return {
     takeDamage: (amount) => {
-      participant.stats.health -= BigInt(amount) * incomingDamageScale;
+      const damage = BigInt(amount) * incomingDamageScale;
+      participant.stats.health -= damage;
+      onDamage?.(damage);
     },
   };
 }
@@ -56,5 +68,5 @@ async function getFightParticipant(fighters, fighterID, role) {
   if(fighter?.player == null) {
     return null;
   }
-  return {playerID: fighter.player, role};
+  return {playerID: fighter.player, role, displayName: fighter.display_name};
 }

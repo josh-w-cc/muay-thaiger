@@ -7,6 +7,12 @@ import Tiger from './assets/Tiger.png';
 
 let selectMock;
 
+function resetRaces() {
+  act(() => {
+    resetRacesStore();
+  });
+}
+
 vi.mock('@/actions/selectFighter.js', () => ({
   default: (...args) => selectMock(...args),
 }));
@@ -14,16 +20,12 @@ vi.mock('@/actions/selectFighter.js', () => ({
 describe('FighterSelect', () => {
   beforeEach(() => {
     selectMock = vi.fn();
-    act(() => {
-      resetRacesStore();
-    });
+    resetRaces();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
-    act(() => {
-      resetRacesStore();
-    });
+    resetRaces();
   });
 
   it('renders races and selects the chosen race', async () => {
