@@ -192,10 +192,10 @@ describe('FightJudge.attach', () => {
       await judge.attach(namedTwoPlayerFighters, fight);
 
       judge.move(1, MOVE_IDS.wildKick);
-      assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick: 6 damage']);
+      assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick - 6 damage']);
 
       judge.move(2, MOVE_IDS.wildPunch);
-      assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick: 6 damage', 'Snow Leopard used Wild Punch: 4 damage']);
+      assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick - 6 damage', 'Snow Leopard used Wild Punch - 4 damage']);
     });
   });
 
