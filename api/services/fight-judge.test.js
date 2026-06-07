@@ -5,6 +5,7 @@ import patchBigIntPrototype from 'shared/bigInt.js';
 import {MOVE_IDS} from 'shared/moves.js';
 
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
+import {executeFightMove} from './fight-judge-utils.js';
 import {attachFightJudge, FightJudge} from './fight-judge.js';
 
 patchBigIntPrototype();
@@ -42,6 +43,18 @@ describe('FightJudge.load', () => {
   });
 });
 
+describe('executeFightMove', () => {
+  it('uses unscaled incoming damage when active participant stats are missing', () => {
+    const activeParticipant = {};
+    const opponentParticipant = {stats: {health: 10n}};
+    const moveDefinition = {affect: (_fighter, opponent) => opponent.takeDamage(2)};
+
+    executeFightMove(moveDefinition, activeParticipant, opponentParticipant);
+
+    assert.equal(opponentParticipant.stats.health, 8n);
+  });
+});
+
 describe('FightJudge.attach', () => {
   const twoPlayerFighters = {
     find: async (fighterID) => ({
@@ -59,6 +72,24 @@ describe('FightJudge.attach', () => {
     await judge.attach(twoPlayerFighters, fight);
 
     assert.equal(judge.get(1).id, fight.id);
+    assert.equal(judge.get(2).id, fight.id);
+  });
+
+  it('ignores fight participants whose fighter has no player', async () => {
+    const judge = new FightJudge();
+    const fightersWithMissingPlayer = {
+      find: async (fighterID) => ({
+        11: {id: 11, player: null},
+        12: {id: 12, player: 2},
+      }[fighterID] ?? null),
+    };
+    const fight = {
+      attacker: 11, defender: 12, details: {attacker: {stats: {...baseCombatStats}}, defender: {stats: {...baseCombatStats}}}, id: 101, victory: null,
+    };
+
+    await judge.attach(fightersWithMissingPlayer, fight);
+
+    assert.equal(judge.get(1), null);
     assert.equal(judge.get(2).id, fight.id);
   });
 
@@ -119,6 +150,24 @@ describe('FightJudge.attach', () => {
 
       assert.throws(() => judge.move(1, MOVE_IDS.wildKick), /Unknown move:2/u);
       assert.throws(() => judge.move(999, MOVE_IDS.wildPunch), /No fight for player:999/u);
+    });
+
+    it('throws when a fight move ID is not defined in shared moves', async () => {
+      const judge = new FightJudge();
+      const fight = {
+        attacker: 11,
+        defender: 12,
+        details: {
+          attacker: {moves: [{id: 999, lastUsed: 1}], stats: {...baseCombatStats}},
+          defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+        },
+        id: 101,
+        victory: null,
+      };
+
+      await judge.attach(twoPlayerFighters, fight);
+
+      assert.throws(() => judge.move(1, 999), /Unknown move:999/u);
     });
   });
 
