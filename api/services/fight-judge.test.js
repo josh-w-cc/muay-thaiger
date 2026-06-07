@@ -125,12 +125,12 @@ describe('FightJudge.attach', () => {
 
         await judge.attach(twoPlayerFighters, fight);
 
-        assert.equal(judge.move(1, MOVE_IDS.wildKick), true);
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
         assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890123);
-        assert.equal(judge.get(1).details.attacker.moveCount, 1);
+        assert.deepEqual(judge.get(1).details.attacker.moveList, [10]);
         assert.equal(judge.get(1).details.defender.stats.health, -5n);
         assert.equal(judge.get(2).details.defender.moves[0].lastUsed, 3);
-        assert.equal(judge.get(2).details.defender.moveCount, 0);
+        assert.deepEqual(judge.get(2).details.defender.moveList, []);
       }
       finally {
         Date.now = dateNow;
@@ -154,8 +154,8 @@ describe('FightJudge.attach', () => {
 
       await judge.attach(singlePlayerFighters, fight);
 
-      assert.throws(() => judge.move(1, MOVE_IDS.wildKick), /Unknown move:2/u);
-      assert.throws(() => judge.move(999, MOVE_IDS.wildPunch), /No fight for player:999/u);
+      assert.throws(() => judge.move(1, MOVE_IDS.wildKick, 0), /Unknown move:2/u);
+      assert.throws(() => judge.move(999, MOVE_IDS.wildPunch, 0), /No fight for player:999/u);
     });
 
     it('throws when executing a move with an ID not defined in shared moves', async () => {
@@ -173,7 +173,35 @@ describe('FightJudge.attach', () => {
 
       await judge.attach(twoPlayerFighters, fight);
 
-      assert.throws(() => judge.move(1, 999), /Unknown move:999/u);
+      assert.throws(() => judge.move(1, 999, 0), /Unknown move:999/u);
+    });
+
+    it('discards duplicate moveNum entries', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1234567890123;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 2}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), false);
+        assert.deepEqual(judge.get(1).details.attacker.moveList, [10]);
+        assert.equal(judge.get(1).details.defender.stats.health, -5n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
     });
 
     it('adds a feed entry when a move is executed', async () => {
@@ -191,10 +219,10 @@ describe('FightJudge.attach', () => {
 
       await judge.attach(namedTwoPlayerFighters, fight);
 
-      judge.move(1, MOVE_IDS.wildKick);
+      judge.move(1, MOVE_IDS.wildKick, 10);
       assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick - 6 damage']);
 
-      judge.move(2, MOVE_IDS.wildPunch);
+      judge.move(2, MOVE_IDS.wildPunch, 11);
       assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick - 6 damage', 'Snow Leopard used Wild Punch - 4 damage']);
     });
   });
@@ -218,8 +246,8 @@ describe('FightJudge.attach', () => {
 
     assert.deepEqual(judge.get(1).details.attacker.startingStats, {...attackerStats, health: 1n});
     assert.deepEqual(judge.get(1).details.defender.startingStats, {...defenderStats, health: 1n});
-    assert.equal(judge.get(1).details.attacker.moveCount, 0);
-    assert.equal(judge.get(1).details.defender.moveCount, 0);
+    assert.deepEqual(judge.get(1).details.attacker.moveList, []);
+    assert.deepEqual(judge.get(1).details.defender.moveList, []);
     assert.deepEqual(judge.get(1).details.feed, []);
   });
 
@@ -341,7 +369,7 @@ describe('FightJudge.attach', () => {
     await judge.attach(singlePlayerFighters, fight);
 
     assert.deepEqual(judge.get(1).details.attacker.startingStats, {...attackerStats, health: 1n});
-    assert.equal(judge.get(1).details.attacker.moveCount, 0);
+    assert.deepEqual(judge.get(1).details.attacker.moveList, []);
     assert.equal('defender' in judge.get(1).details, false);
   });
 });
