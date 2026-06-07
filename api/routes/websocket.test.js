@@ -988,6 +988,46 @@ describe('WebSocket /ws/connect', () => {
     assert.equal(sendNoFighter.calls.length, 0);
     assert.equal(sockets.has(closedSocket), false);
   });
+
+  it('syncs only players accepted by sync filter', async () => {
+    const sendInFight = createCallTracker();
+    const sendNoFight = createCallTracker();
+    const fighterRecord = {gold: '0', id: 9, player: 1, retired: false, stats: {}};
+    const updatedFighterRecord = {...fighterRecord, gold: '1'};
+    const actions = [{action: 1, fighter: 9, id: 5}];
+    const fighterActions = {
+      listByFighterID: async () => actions,
+      touch: async () => null,
+    };
+    const fight = {attacker: 9, defender: null, details: {}, id: 12, reason: 'gold', victory: null};
+    const fighters = {
+      find: async () => null,
+      findCurrentByPlayerID: async (id) => {
+        if(id === 1) {
+          return fighterRecord;
+        }
+        if(id === 2) {
+          return {gold: '0', id: 10, player: 2, retired: false, stats: {}};
+        }
+        return null;
+      },
+      update: async () => updatedFighterRecord,
+    };
+    const fightJudge = {get: (playerID) => (playerID === 1 ? fight : null)};
+    const sockets = new Set([
+      {OPEN: 1, player: {id: 1}, readyState: 1, send: sendInFight},
+      {OPEN: 1, player: {id: 2}, readyState: 1, send: sendNoFight},
+    ]);
+
+    await syncPlayerState(
+      {fighterActions, fightJudge, fighters},
+      sockets,
+      {playerFilter: (playerID) => Boolean(fightJudge.get(playerID))},
+    );
+
+    assert.equal(sendInFight.calls.length, 1);
+    assert.equal(sendNoFight.calls.length, 0);
+  });
 });
 
 async function readMessage(socket) {
