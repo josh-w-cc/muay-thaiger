@@ -41,7 +41,7 @@ export function executeFightMove(moveDefinition, activeParticipant, opponentPart
 }
 
 export function isMoveInRecovery(move, moveDefinition, now) {
-  return move.lastUsed != null && move.lastUsed > now - moveDefinition.recovery;
+  return move.lastUsed != null && move.lastUsed > now - moveDefinition.recovery * 1000;
 }
 
 export function applyMoveStaminaCost(participant, moveDefinition) {

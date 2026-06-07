@@ -128,7 +128,7 @@ describe('FightJudge.attach', () => {
         await judge.attach(twoPlayerFighters, fight);
 
         assert.equal(judge.move(1, MOVE_IDS.wildKick), true);
-        assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890);
+        assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890000);
         assert.equal(judge.get(1).details.attacker.moveCount, 1);
         assert.equal(judge.get(1).details.defender.stats.health, -5n);
         assert.equal(judge.get(2).details.defender.moves[0].lastUsed, 3);
@@ -148,7 +148,7 @@ describe('FightJudge.attach', () => {
           attacker: 11,
           defender: 12,
           details: {
-            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1234567886}], stats: {...baseCombatStats, stamina: 50n}},
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1234567886000}], stats: {...baseCombatStats, stamina: 50n}},
             defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
           },
           id: 101,
@@ -174,7 +174,7 @@ describe('FightJudge.attach', () => {
           attacker: 11,
           defender: 12,
           details: {
-            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1234567885}], stats: {...baseCombatStats, stamina: 50n}},
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1234567885000}], stats: {...baseCombatStats, stamina: 50n}},
             defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
           },
           id: 101,

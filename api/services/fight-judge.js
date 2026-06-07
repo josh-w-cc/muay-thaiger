@@ -37,7 +37,7 @@ export class FightJudge {
       throw new Error(`Unknown move:${moveID}`);
     }
     const moveDefinition = getMoveDefinition(moveID);
-    const now = Math.floor(Date.now() / 1000);
+    const now = Date.now();
     const activeParticipant = participantFight.fight.details[participantFight.role];
     const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
     applyMoveStaminaCostIfNeeded(move, moveDefinition, activeParticipant, now);
