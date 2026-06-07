@@ -192,10 +192,54 @@ describe('FightJudge.attach', () => {
       await judge.attach(namedTwoPlayerFighters, fight);
 
       judge.move(1, MOVE_IDS.wildKick);
-      assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick - 6 damage']);
+      assert.deepEqual(judge.get(1).details.feed, [{
+        actorRole: 'attacker',
+        attacker: 'Tiger',
+        isSelf: true,
+        move: 'Wild Kick',
+        result: '6 damage',
+      }]);
+      assert.deepEqual(judge.get(2).details.feed, [{
+        actorRole: 'attacker',
+        attacker: 'Tiger',
+        isSelf: false,
+        move: 'Wild Kick',
+        result: '6 damage',
+      }]);
 
       judge.move(2, MOVE_IDS.wildPunch);
-      assert.deepEqual(judge.get(1).details.feed, ['Tiger used Wild Kick - 6 damage', 'Snow Leopard used Wild Punch - 4 damage']);
+      assert.deepEqual(judge.get(1).details.feed, [
+        {
+          actorRole: 'attacker',
+          attacker: 'Tiger',
+          isSelf: true,
+          move: 'Wild Kick',
+          result: '6 damage',
+        },
+        {
+          actorRole: 'defender',
+          attacker: 'Snow Leopard',
+          isSelf: false,
+          move: 'Wild Punch',
+          result: '4 damage',
+        },
+      ]);
+      assert.deepEqual(judge.get(2).details.feed, [
+        {
+          actorRole: 'attacker',
+          attacker: 'Tiger',
+          isSelf: false,
+          move: 'Wild Kick',
+          result: '6 damage',
+        },
+        {
+          actorRole: 'defender',
+          attacker: 'Snow Leopard',
+          isSelf: true,
+          move: 'Wild Punch',
+          result: '4 damage',
+        },
+      ]);
     });
   });
 

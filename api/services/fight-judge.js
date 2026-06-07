@@ -24,7 +24,7 @@ export class FightJudge {
 
   get(playerID) {
     const participantFight = this.#fightsByPlayerID.get(playerID);
-    return participantFight ? getCalculatedFight(participantFight.fight) : null;
+    return participantFight ? getCalculatedFight(participantFight.fight, participantFight.role) : null;
   }
 
   move(playerID, moveID) {
@@ -42,19 +42,23 @@ export class FightJudge {
     const opponentRole = participantFight.role === 'attacker' ? 'defender' : 'attacker';
     const damage = executeFightMove(moveDefinition, activeParticipant, participantFight.fight.details[opponentRole]);
     activeParticipant.moveCount += 1;
-    participantFight.fight.details.feed.push(`${activeParticipant.name} used ${moveDefinition.name} - ${damage} damage`);
+    participantFight.fight.details.feed.push(
+      {attacker: activeParticipant.name, actorRole: participantFight.role, move: moveDefinition.name, result: `${damage} damage`},
+    );
     return true;
   }
 }
 
-function getCalculatedFight(fight) {
+function getCalculatedFight(fight, participantRole) {
   const {attacker, defender, ...rest} = fight.details;
+  const feed = rest.feed.map((entry) => ({...entry, isSelf: entry.actorRole === participantRole}));
   return {
     ...fight,
     details: {
       attacker: addCalculatedStats(attacker),
       ...(defender ? {defender: addCalculatedStats(defender)} : {}),
       ...rest,
+      feed,
     },
   };
 }
