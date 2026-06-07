@@ -3,8 +3,8 @@ import {describe, it} from 'node:test';
 
 import {MOVE_IDS} from 'shared/moves.js';
 import {RACES} from 'shared/races.js';
-import createCallTracker from '../utils/test/createCallTracker.js';
-import {createFight} from './fights/index.js';
+import createCallTracker from '../../utils/test/createCallTracker.js';
+import {createFight} from './index.js';
 
 const HIGH_RANK_BOT_STAT = (10n ** 33n).toString();
 
