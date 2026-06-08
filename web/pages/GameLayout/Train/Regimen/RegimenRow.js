@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React from 'react';
 
 import RegimenActionButton from './RegimenActionButton.js';
 import RegimenName from './RegimenName.js';
@@ -7,7 +7,7 @@ import RegimenProgress from './RegimenProgress.js';
 import css from '../Train.module.css';
 
 export default function RegimenRow({actionEnabled, progress, skill, skillKey}) {
-  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
   return (
     <div className={css.regimenRow}>
