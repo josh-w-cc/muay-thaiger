@@ -8,6 +8,7 @@ import sectionCss from '@/components/primitive/Section.module.css';
 import SnowLeopardMuayThaiReady from './assets/SnowLeopardMuayThaiReady.png';
 import TigerMuayThai from './assets/TigerMuayThai.png';
 import Fight from './index.js';
+import css from './Fight.module.css';
 
 
 const {fighter, fightState, createFightCmd, moveCmd, needsZerothFight} = vi.hoisted(() => ({
@@ -117,6 +118,7 @@ describe('Fight', () => {
     expect(document.body).toHaveTextContent('Created: 2026-06-01T00:00:00.000Z');
     const detailsPre = document.body.querySelector('pre');
     expect(detailsPre).toBeInTheDocument();
+    expect(detailsPre).toHaveClass(css.fightDetailsJson);
     expect(detailsPre.textContent).toBe(JSON.stringify(fightState.details, null, 2));
     const fightSection = screen.getByText('Fight pending...').closest('section');
     expect(fightSection).toBeInTheDocument();
