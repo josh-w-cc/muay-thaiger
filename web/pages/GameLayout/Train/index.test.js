@@ -67,6 +67,18 @@ vi.mock('shared/skills/index.js', async () => {
     },
   };
 });
+
+vi.mock('shared/skills/ids.js', async () => {
+  const actual = await vi.importActual('shared/skills/ids.js');
+
+  return {
+    SKILL_IDS: {
+      ...actual.SKILL_IDS,
+      begging: 99,
+    },
+  };
+});
+
 vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFighterActionCmd: (...args) => createFighterActionCmd(...args),
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
