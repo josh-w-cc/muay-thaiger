@@ -1,3 +1,4 @@
+import {isValidElement} from 'react';
 import useFighterStore from '@/data/fighter.js';
 import useFightStore from '@/data/fight.js';
 import {createFightCmd} from '@/actions/websockets/clientCommands.js';
@@ -53,14 +54,15 @@ function FightMetadata({label, value}) {
     return null;
   }
 
-  return (
-    <p>
-      {label}
-      :
-      {' '}
-      {value}
-    </p>
-  );
+  const labelText = `${label}:`;
+  return isValidElement(value)
+    ? (
+        <div>
+          <p>{labelText}</p>
+          {value}
+        </div>
+      )
+    : (<p>{`${labelText} ${value}`}</p>);
 }
 
 function formatFightDetails(details) {
