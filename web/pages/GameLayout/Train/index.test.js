@@ -160,6 +160,17 @@ describe('Train', () => {
     expect(source).toMatch(mobileTooltipRule);
   });
 
+  it('keeps regimen styles in the Regimen CSS module', () => {
+    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
+    const regimenPath = path.join(directoryPath, 'Regimen', 'index.js');
+    const regimenCssPath = path.join(directoryPath, 'Regimen', 'Regimen.module.css');
+    const regimenSource = fs.readFileSync(regimenPath, 'utf8');
+    const regimenCssSource = fs.readFileSync(regimenCssPath, 'utf8');
+
+    expect(regimenSource).toContain('import css from \'./Regimen.module.css\';');
+    expect(regimenCssSource).toMatch(/\.regimen\s*{/);
+  });
+
   it('shows gray progress bar for inactive skills', () => {
     fighterActions.actions = [];
     render(<Train />);
