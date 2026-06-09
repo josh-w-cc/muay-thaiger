@@ -72,8 +72,31 @@ describe('client websocket commands', () => {
 
     moveCmd(3);
 
-    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 3, lastUsed: 12_345}, {id: 4, lastUsed: 200}]);
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 3, lastUsed: 12_845}, {id: 4, lastUsed: 200}]);
     expect(sendCommand).not.toHaveBeenCalled();
+  });
+
+  it('adds a pending feed item when a move name is provided', async () => {
+    const {moveCmd} = await import('./clientCommands.js');
+    const {default: useFightStore} = await import('@/data/fight.js');
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Tiger',
+          moves: [{id: 3, lastUsed: 100}],
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    moveCmd(3, 'Knee');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([
+      {attacker: 'Tiger', isSelf: true, move: 'Knee'},
+    ]);
   });
 
   it('batches repeated clicks for the same move as separate move entries', async () => {
