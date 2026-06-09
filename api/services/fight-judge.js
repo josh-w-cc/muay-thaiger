@@ -45,9 +45,9 @@ export class FightJudge {
       return false;
     }
     activeParticipant.moveList.push(moveNum);
-    const damage = executeFightMove(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
+    const result = getMoveResult(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
     participantFight.fight.details.feed.push(
-      {actorRole: participantFight.role, attacker: activeParticipant.name, move: moveDefinition.name, result: `${damage} damage`},
+      {actorRole: participantFight.role, attacker: activeParticipant.name, move: moveDefinition.name, result},
     );
     return true;
   }
@@ -91,4 +91,20 @@ const getFightMoveOrThrow = (participantFight, moveID) => getFightMove(participa
 
 function getParticipantFight(fightsByPlayerID, playerID) {
   return fightsByPlayerID.get(playerID) ?? fail(`No fight for player:${playerID}`);
+}
+
+function getMoveResult(moveDefinition, activeParticipant, opponentParticipant) {
+  if(!isMoveHit(activeParticipant, opponentParticipant)) {
+    return 'blocked';
+  }
+  const damage = executeFightMove(moveDefinition, activeParticipant, opponentParticipant);
+  return `${damage} damage`;
+}
+
+function isMoveHit(activeParticipant, opponentParticipant) {
+  const attack = calculateFighterStats(activeParticipant.stats).attack;
+  const defense = calculateFighterStats(opponentParticipant.stats).defense;
+  const attackRoll = Number(attack.logApprox()) * Math.random();
+  const defenseRoll = Number(defense.logApprox()) * Math.random();
+  return attackRoll > defenseRoll;
 }
