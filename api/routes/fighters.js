@@ -1,4 +1,4 @@
-import fightersModel from '../data/models/fighters.js';
+import fightersModel from '#api/data/models/fighters.js';
 
 
 /**
