@@ -13,14 +13,19 @@ export function resetFightStore() {
 function createFightState(set, fight = null) {
   return {
     ...getServerFightState(fight),
+    pendingFeed: [],
     ...createFightActions(set),
   };
 }
 
 function createFightActions(set) {
   return {
+    addPendingFeedItem: (moveName) => set((state) => addPendingFeedItem(state, moveName)),
     markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed)),
-    syncServerState: (nextFight) => set((state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set)}), true),
+    syncServerState: (nextFight) => set(
+      (state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set), pendingFeed: []}),
+      true,
+    ),
   };
 }
 
@@ -62,6 +67,20 @@ function parseFightParticipant(participant) {
     ...participant,
     startingStats: parseBigIntStats(participant.startingStats),
     stats: parseBigIntStats(participant.stats),
+  };
+}
+
+function getAttackerName(state) {
+  return state.details?.attacker?.name;
+}
+
+function addPendingFeedItem(state, moveName) {
+  const attackerName = getAttackerName(state);
+  if(!attackerName || !moveName) {
+    return state;
+  }
+  return {
+    pendingFeed: [...state.pendingFeed, {attacker: attackerName, isSelf: true, move: moveName}],
   };
 }
 
