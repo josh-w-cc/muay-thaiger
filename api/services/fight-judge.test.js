@@ -55,7 +55,7 @@ describe('executeFightMove', () => {
   });
 
   describe('markMoveUsed', () => {
-    it('rejects move usage when stamina would drop below zero', () => {
+    it('rejects move usage when stamina cost exceeds available stamina', () => {
       const dateNow = Date.now;
       Date.now = () => 1000;
       try {
