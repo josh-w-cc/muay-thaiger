@@ -1,6 +1,7 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
+import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition,
+  markMoveUsed} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -41,7 +42,7 @@ export class FightJudge {
       throw new Error(`Unknown move:${moveID}`);
     }
     const moveDefinition = getMoveDefinition(moveID);
-    move.lastUsed = Date.now();
+    markMoveUsed(move, moveDefinition, activeParticipant);
     activeParticipant.moveList.push(moveNum);
     const damage = executeFightMove(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
     participantFight.fight.details.feed.push(`${activeParticipant.name} used ${moveDefinition.name} - ${damage} damage`);

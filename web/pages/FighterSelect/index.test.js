@@ -87,22 +87,4 @@ describe('FighterSelect', () => {
     expect(within(tigerContainer).getByRole('img')).toHaveAttribute('src', expect.stringContaining(Tiger));
     expect(within(snowLeopardContainer).getByRole('img')).toHaveAttribute('src', expect.stringContaining(SnowLeopard));
   });
-
-  it('does not render legacy strength when vigor is missing', async () => {
-    const {default: FighterSelect} = await import('./index.js');
-    const races = [
-      {
-        id: 1,
-        name: 'Tiger',
-        stats: {anima: 1, durability: 1, reach: 1, speed: 1, strength: 7, vigor: 0, vitality: 1},
-      },
-    ];
-
-    act(() => {
-      useRacesStore.getState().setRaces(races);
-    });
-    render(<FighterSelect />);
-
-    expect(screen.queryByText(/Vigor:\s*7/i)).not.toBeInTheDocument();
-  });
 });

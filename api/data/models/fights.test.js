@@ -116,6 +116,16 @@ describe('fights.findActiveByFighterID', () => {
 });
 
 describe('fights.create', () => {
+  const assertInvalidFightStats = async (fight) => {
+    const {knex} = mockKnex({id: 1});
+    const fights = fightsModel(knex);
+
+    await assert.rejects(
+      fights.create(fight),
+      {name: 'TypeError', message: 'invalid-fight-stats'},
+    );
+  };
+
   it('returns attacker and defender stats as BigInt', async () => {
     const createdFight = {
       id: 1,
@@ -199,65 +209,35 @@ describe('fights.create', () => {
   });
 
   it('throws when attacker stats are missing', async () => {
-    const {knex} = mockKnex({id: 1});
-    const fights = fightsModel(knex);
-
-    await assert.rejects(
-      fights.create({attacker: {id: 1}, reason: 'gold'}),
-      {name: 'TypeError', message: 'invalid-fight-stats'},
-    );
+    await assertInvalidFightStats({attacker: {id: 1}, reason: 'gold'});
   });
 
   it('throws when attacker is missing', async () => {
-    const {knex} = mockKnex({id: 1});
-    const fights = fightsModel(knex);
-
-    await assert.rejects(
-      fights.create({attacker: null, reason: 'gold'}),
-      {name: 'TypeError', message: 'invalid-fight-stats'},
-    );
+    await assertInvalidFightStats({attacker: null, reason: 'gold'});
   });
 
   it('throws when attacker race is missing', async () => {
-    const {knex} = mockKnex({id: 1});
-    const fights = fightsModel(knex);
-
-    await assert.rejects(
-      fights.create({
-        attacker: {id: 1, stats: {speed: 10}},
-        defender: {id: 2, race: 2, stats: {speed: 8}},
-        reason: 'gold',
-      }),
-      {name: 'TypeError', message: 'invalid-fight-stats'},
-    );
+    await assertInvalidFightStats({
+      attacker: {id: 1, stats: {speed: 10}},
+      defender: {id: 2, race: 2, stats: {speed: 8}},
+      reason: 'gold',
+    });
   });
 
   it('throws when defender race is missing', async () => {
-    const {knex} = mockKnex({id: 1});
-    const fights = fightsModel(knex);
-
-    await assert.rejects(
-      fights.create({
-        attacker: {id: 1, race: 1, stats: {speed: 10}},
-        defender: {id: 2, stats: {speed: 8}},
-        reason: 'gold',
-      }),
-      {name: 'TypeError', message: 'invalid-fight-stats'},
-    );
+    await assertInvalidFightStats({
+      attacker: {id: 1, race: 1, stats: {speed: 10}},
+      defender: {id: 2, stats: {speed: 8}},
+      reason: 'gold',
+    });
   });
 
   it('throws when defender stats are blank', async () => {
-    const {knex} = mockKnex({id: 1});
-    const fights = fightsModel(knex);
-
-    await assert.rejects(
-      fights.create({
-        attacker: {id: 1, race: 1, stats: {speed: 10}},
-        defender: {id: 2, race: 2, stats: {}},
-        reason: 'gold',
-      }),
-      {name: 'TypeError', message: 'invalid-fight-stats'},
-    );
+    await assertInvalidFightStats({
+      attacker: {id: 1, race: 1, stats: {speed: 10}},
+      defender: {id: 2, race: 2, stats: {}},
+      reason: 'gold',
+    });
   });
 });
 
