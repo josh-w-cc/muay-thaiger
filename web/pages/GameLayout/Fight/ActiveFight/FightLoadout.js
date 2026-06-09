@@ -32,7 +32,7 @@ function FightLoadoutButtons({buttons, onMove}) {
           lastUsed={button.lastUsed}
           duration={button.duration ?? TAPPER_FILL_DURATIONS[buttonIndex]}
           key={button.label}
-          onClick={() => (moveCmd(button.moveID), button.moveID !== undefined && onMove?.())}
+          onClick={() => (moveCmd(button.moveID, button.label), button.moveID !== undefined && onMove?.())}
         >
           {button.label}
         </TapperButton>
