@@ -8,7 +8,11 @@ export function resetFightStore() {
   useFightStore.setState(createFightState(useFightStore.setState), true);
 }
 function createFightState(set, fight = null) {
-  return {...getServerFightState(fight), pendingFeed: [], ...createFightActions(set)};
+  return {
+    ...getServerFightState(fight),
+    pendingFeed: [],
+    ...createFightActions(set),
+  };
 }
 function createFightActions(set) {
   return {
@@ -21,7 +25,13 @@ function createFightActions(set) {
   };
 }
 function getInitialFightState() {
-  return {attacker: null, created_at: null, defender: null, details: null, id: null, rank: null, reason: null, updated_at: null, victory: null};
+  return {
+    attacker: null, created_at: null,
+    defender: null, details: null,
+    id: null, rank: null,
+    reason: null, updated_at: null,
+    victory: null,
+  };
 }
 function getServerFightState(fight) {
   if(!fight || typeof fight !== 'object') {
@@ -41,7 +51,11 @@ function parseFightDetails(details) {
   };
 }
 function parseFightParticipant(participant) {
-  return {...participant, startingStats: parseBigIntStats(participant.startingStats), stats: parseBigIntStats(participant.stats)};
+  return {
+    ...participant,
+    startingStats: parseBigIntStats(participant.startingStats),
+    stats: parseBigIntStats(participant.stats),
+  };
 }
 function getAttackerName(state) {
   return state.details?.attacker?.name;
@@ -51,7 +65,9 @@ function addPendingFeedItem(state, moveName) {
   if(!attackerName || !moveName) {
     return state;
   }
-  return {pendingFeed: [...state.pendingFeed, {attacker: attackerName, isSelf: true, move: moveName}]};
+  return {
+    pendingFeed: [...state.pendingFeed, {attacker: attackerName, isSelf: true, move: moveName}],
+  };
 }
 function markMoveUsed(state, moveID, lastUsed) {
   const moves = getMarkedMoves(state.details?.attacker?.moves, moveID, lastUsed);
