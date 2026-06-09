@@ -1,4 +1,4 @@
-.statListBase {
+.verticalListBase {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);

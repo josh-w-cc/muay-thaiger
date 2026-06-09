@@ -7,7 +7,7 @@
 }
 
 .events {
-  composes: statListBase from '../../../components/primitive/css-modules/stat-list-base.module.css';
+  composes: verticalListBase from '../../../components/primitive/css-modules/vertical-list-base.module.css';
 
   list-style: none;
   padding: 0;
