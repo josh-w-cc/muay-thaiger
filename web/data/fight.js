@@ -5,7 +5,6 @@ import {getMarkedMoveState} from './fightMoveUsage.js';
 import {MOVE_CLICK_BATCH_MILLISECONDS} from '@/actions/websockets/clientCommands.js';
 
 const useFightStore = create((set) => createFightState(set));
-
 export default useFightStore;
 
 export function resetFightStore() {
@@ -42,14 +41,10 @@ function createFightActions(set) {
 
 function getInitialFightState() {
   return {
-    attacker: null,
-    created_at: null,
-    defender: null,
-    details: null,
-    id: null,
-    rank: null,
-    reason: null,
-    updated_at: null,
+    attacker: null, created_at: null,
+    defender: null, details: null,
+    id: null, rank: null,
+    reason: null, updated_at: null,
     victory: null,
   };
 }
@@ -103,7 +98,6 @@ function markMoveUsed(state, moveID, lastUsed) {
   if(!markedMoveState.attacker) {
     return state;
   }
-
   return {
     details: {
       ...state.details,
