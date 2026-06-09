@@ -12,6 +12,19 @@ patchBigIntPrototype();
 
 const baseCombatStats = {agility: 1n, constitution: 1n, durability: 1n, reach: 1n, skill: 1n, stamina: 1n, strength: 1n};
 
+function setHitRollSequence() {
+  setRandomSequence(0.9, 0.1);
+}
+
+function setMissRollSequence() {
+  setRandomSequence(0.1, 0.9);
+}
+
+function setRandomSequence(attackerRoll, defenderRoll) {
+  let randomCount = 0;
+  Math.random = () => (++randomCount % 2 === 1 ? attackerRoll : defenderRoll);
+}
+
 describe('FightJudge.load', () => {
   it('stores unresolved fights by player ID and discards duplicate player entries', async () => {
     const judge = new FightJudge();
@@ -112,7 +125,7 @@ describe('FightJudge.attach', () => {
   const mathRandom = Math.random;
 
   beforeEach(() => {
-    setRandomSequence(0.9, 0.1);
+    setHitRollSequence();
   });
 
   afterEach(() => {
@@ -581,7 +594,7 @@ describe('FightJudge.attach', () => {
     it('marks misses as blocked while still charging stamina', async () => {
       const dateNow = Date.now;
       Date.now = () => 10_000;
-      setRandomSequence(0.1, 0.9);
+      setMissRollSequence();
       try {
         const judge = new FightJudge();
         const fight = {
@@ -637,11 +650,6 @@ describe('FightJudge.attach', () => {
     assert.deepEqual(judge.get(1).details.defender.moveList, []);
     assert.deepEqual(judge.get(1).details.feed, []);
   });
-
-  function setRandomSequence(attackerRoll, defenderRoll) {
-    let randomCount = 0;
-    Math.random = () => (++randomCount % 2 === 1 ? attackerRoll : defenderRoll);
-  }
 
   it('computes calculated attacker and defender stats from current fight details', async () => {
     const judge = new FightJudge();
