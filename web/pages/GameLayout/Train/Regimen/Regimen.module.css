@@ -1,0 +1,5 @@
+.regimen {
+  display: grid;
+  gap: var(--space-sm);
+  margin: 0;
+}

@@ -1,4 +1,4 @@
-import {SKILL_IDS} from 'shared/skills/index.js';
+import {SKILL_IDS} from 'shared/skills/ids.js';
 
 
 export default function getActionIDBySkillKey(skillKey) {
