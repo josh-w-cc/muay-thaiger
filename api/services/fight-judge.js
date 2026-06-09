@@ -9,6 +9,7 @@ import {
   getParticipantFight,
   removeFightByID,
 } from './fight-judge-state.js';
+import {recoverFightStamina} from './fight-stamina.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -39,11 +40,15 @@ export class FightJudge {
 
   get(playerID) {
     const participantFight = this.#fightsByPlayerID.get(playerID);
+    if(participantFight) {
+      recoverFightStamina(participantFight.fight);
+    }
     return participantFight ? getCalculatedFight(participantFight.fight, participantFight.role) : null;
   }
 
   move(playerID, moveID, moveNum) {
     const participantFight = getParticipantFight(this.#fightsByPlayerID, playerID);
+    recoverFightStamina(participantFight.fight);
     const activeParticipant = participantFight.fight.details[participantFight.role];
     if(participantFight.fight.victory != null || activeParticipant.moveList.includes(moveNum)) {
       return false;

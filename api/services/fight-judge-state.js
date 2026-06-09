@@ -1,4 +1,5 @@
-import {calculateFighterHealth, calculateFighterStats} from './fight-judge-utils.js';
+import {calculateFighterStats} from './fight-judge-utils.js';
+export {captureStartingStats} from './fight-starting-stats.js';
 
 export function getCalculatedFight(fight, participantRole) {
   const {attacker, defender, ...rest} = fight.details;
@@ -10,19 +11,6 @@ export function getCalculatedFight(fight, participantRole) {
       ...(defender ? {defender: addCalculatedStats(defender)} : {}),
       ...rest,
       feed,
-    },
-  };
-}
-
-export function captureStartingStats(fight) {
-  const {attacker, defender, ...rest} = fight.details;
-  return {
-    ...fight,
-    details: {
-      attacker: addStartingStats(attacker),
-      ...(defender ? {defender: addStartingStats(defender)} : {}),
-      ...rest,
-      feed: [],
     },
   };
 }
@@ -54,20 +42,8 @@ export function removeFightByID(fightsByPlayerID, fightID) {
 }
 
 function addCalculatedStats(participant) {
-  return {...participant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
-}
-
-function addStartingStats(participant) {
-  const health = calculateFighterHealth(participant.stats);
-  participant.stats.health = health;
-  return {
-    ...participant,
-    moveList: [],
-    startingStats: {
-      ...participant.stats,
-      health,
-    },
-  };
+  const {staminaRecoveredAt, staminaRecoveryRemainder, ...visibleParticipant} = participant;
+  return {...visibleParticipant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
 }
 
 function fail(message) {

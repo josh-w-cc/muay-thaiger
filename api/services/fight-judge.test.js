@@ -227,7 +227,10 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 5_001}], stats: {...baseCombatStats, stamina: 11n}},
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+            defender: {
+              moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}],
+              stats: {...baseCombatStats, constitution: 20n, durability: 20n},
+            },
           },
           id: 101,
           victory: null,
@@ -269,6 +272,108 @@ describe('FightJudge.attach', () => {
 
         assert.equal(judge.move(1, MOVE_IDS.wildPunch, 11), true);
         assert.equal(judge.get(1).details.attacker.stats.stamina, 9n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('recovers stamina over elapsed seconds before applying a move', async () => {
+      const dateNow = Date.now;
+      let now = 1000;
+      Date.now = () => now;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], stats: {...baseCombatStats, stamina: 100n}},
+            defender: {
+              moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}],
+              stats: {...baseCombatStats, constitution: 20n, durability: 20n},
+            },
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 80n);
+
+        now = 6000;
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 11), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 85n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('accumulates fractional stamina recovery and caps at starting stamina', async () => {
+      const dateNow = Date.now;
+      let now = 1000;
+      Date.now = () => now;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 999}], stats: {...baseCombatStats, stamina: 17n}},
+            defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildPunch, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 16n);
+
+        now = 6000;
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 16n);
+
+        now = 7000;
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 17n);
+
+        now = 60000;
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 17n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('skips recovery when starting stamina metadata is missing', async () => {
+      const dateNow = Date.now;
+      let now = 1000;
+      Date.now = () => now;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 999}], stats: {...baseCombatStats, stamina: 17n}},
+            defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildPunch, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 16n);
+
+        judge.get(1).details.attacker.startingStats.stamina = null;
+        now = 60000;
+
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 16n);
       }
       finally {
         Date.now = dateNow;
