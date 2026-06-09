@@ -1,3 +1,6 @@
+import {parseJSON} from 'shared/json.js';
+
+
 export function canRespondToAuth({hasReceivedAuthRequest, hasRespondedToAuth, selectedRace, socket, token}) {
   return isAuthHandshakePending({hasReceivedAuthRequest, hasRespondedToAuth}) && hasAuthResponseData({selectedRace, token}) && isSocketReady(socket);
 }
@@ -10,12 +13,7 @@ export function getAuthResponse({selectedRace, token}) {
 }
 
 export function parseSocketMessage(event) {
-  try {
-    return JSON.parse(event.data);
-  }
-  catch {
-    return null;
-  }
+  return parseJSON(event.data);
 }
 
 export function isSocketReady(socket) {

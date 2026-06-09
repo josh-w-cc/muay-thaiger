@@ -4,6 +4,7 @@ import fighterMovesModel from '../data/models/fighter-moves.js';
 import fightsModel from '../data/models/fights/index.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
+import {parseJSON} from 'shared/json.js';
 import {processMessageCommand} from '../logic/websocket/websocket-commands.js';
 
 
@@ -71,12 +72,7 @@ function isSocketOpen(socket) {
 }
 
 function parseMessage(raw) {
-  try {
-    return JSON.parse(raw);
-  }
-  catch {
-    return null;
-  }
+  return parseJSON(raw);
 }
 
 function resolveCommandError(error) {
