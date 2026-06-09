@@ -162,7 +162,9 @@ describe('FightJudge.attach', () => {
 
     it('updates lastUsed and applies move effects for the active player move', async () => {
       const dateNow = Date.now;
+      const random = Math.random;
       Date.now = () => 1234567890123;
+      Math.random = () => 0.25;
       try {
         const judge = new FightJudge();
         const fight = {
@@ -188,6 +190,7 @@ describe('FightJudge.attach', () => {
       }
       finally {
         Date.now = dateNow;
+        Math.random = random;
       }
     });
 
@@ -345,7 +348,9 @@ describe('FightJudge.attach', () => {
 
     it('discards duplicate moveNum entries', async () => {
       const dateNow = Date.now;
+      const random = Math.random;
       Date.now = () => 1234567890123;
+      Math.random = () => 0.25;
       try {
         const judge = new FightJudge();
         const fight = {
@@ -368,73 +373,81 @@ describe('FightJudge.attach', () => {
       }
       finally {
         Date.now = dateNow;
+        Math.random = random;
       }
     });
 
     it('adds a feed entry when a move is executed', async () => {
-      const judge = new FightJudge();
-      const fight = {
-        attacker: 11,
-        defender: 12,
-        details: {
-          attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1}], stats: {...baseCombatStats}},
-          defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats}},
-        },
-        id: 101,
-        victory: null,
-      };
+      const random = Math.random;
+      Math.random = () => 0.25;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
 
-      await judge.attach(namedTwoPlayerFighters, fight);
+        await judge.attach(namedTwoPlayerFighters, fight);
 
-      judge.move(1, MOVE_IDS.wildKick, 10);
-      assert.deepEqual(judge.get(1).details.feed, [{
-        actorRole: 'attacker',
-        attacker: 'Tiger',
-        isSelf: true,
-        move: 'Wild Kick',
-        result: '6 damage',
-      }]);
-      assert.deepEqual(judge.get(2).details.feed, [{
-        actorRole: 'attacker',
-        attacker: 'Tiger',
-        isSelf: false,
-        move: 'Wild Kick',
-        result: '6 damage',
-      }]);
-
-      judge.move(2, MOVE_IDS.wildPunch, 11);
-      assert.deepEqual(judge.get(1).details.feed, [
-        {
+        judge.move(1, MOVE_IDS.wildKick, 10);
+        assert.deepEqual(judge.get(1).details.feed, [{
           actorRole: 'attacker',
           attacker: 'Tiger',
           isSelf: true,
           move: 'Wild Kick',
           result: '6 damage',
-        },
-        {
-          actorRole: 'defender',
-          attacker: 'Snow Leopard',
-          isSelf: false,
-          move: 'Wild Punch',
-          result: '4 damage',
-        },
-      ]);
-      assert.deepEqual(judge.get(2).details.feed, [
-        {
+        }]);
+        assert.deepEqual(judge.get(2).details.feed, [{
           actorRole: 'attacker',
           attacker: 'Tiger',
           isSelf: false,
           move: 'Wild Kick',
           result: '6 damage',
-        },
-        {
-          actorRole: 'defender',
-          attacker: 'Snow Leopard',
-          isSelf: true,
-          move: 'Wild Punch',
-          result: '4 damage',
-        },
-      ]);
+        }]);
+
+        judge.move(2, MOVE_IDS.wildPunch, 11);
+        assert.deepEqual(judge.get(1).details.feed, [
+          {
+            actorRole: 'attacker',
+            attacker: 'Tiger',
+            isSelf: true,
+            move: 'Wild Kick',
+            result: '6 damage',
+          },
+          {
+            actorRole: 'defender',
+            attacker: 'Snow Leopard',
+            isSelf: false,
+            move: 'Wild Punch',
+            result: '4 damage',
+          },
+        ]);
+        assert.deepEqual(judge.get(2).details.feed, [
+          {
+            actorRole: 'attacker',
+            attacker: 'Tiger',
+            isSelf: false,
+            move: 'Wild Kick',
+            result: '6 damage',
+          },
+          {
+            actorRole: 'defender',
+            attacker: 'Snow Leopard',
+            isSelf: true,
+            move: 'Wild Punch',
+            result: '4 damage',
+          },
+        ]);
+      }
+      finally {
+        Math.random = random;
+      }
     });
   });
 
