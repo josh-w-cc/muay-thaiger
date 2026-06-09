@@ -1,7 +1,7 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
 import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition,
-  markMoveUsed} from './fight-judge-utils.js';
+  markMoveUsed, rollFightMoveHit} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -40,10 +40,10 @@ export class FightJudge {
       return false;
     }
     activeParticipant.moveList.push(moveNum);
-    const damage = executeFightMove(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
-    participantFight.fight.details.feed.push(
-      {actorRole: participantFight.role, attacker: activeParticipant.name, move: moveDefinition.name, result: `${damage} damage`},
-    );
+    const opponentParticipant = getOpponentParticipant(participantFight);
+    const didHit = rollFightMoveHit(activeParticipant, opponentParticipant);
+    const damage = didHit ? executeFightMove(moveDefinition, activeParticipant, opponentParticipant) : 0n;
+    addFightFeedEntry(participantFight, activeParticipant, moveDefinition, damage, didHit);
     return true;
   }
 }
@@ -89,19 +89,20 @@ function captureStartingStats(fight) {
 function addStartingStats(participant) {
   const health = calculateFighterHealth(participant.stats);
   participant.stats.health = health;
-  return {
-    ...participant,
-    moveList: [],
-    startingStats: {
-      ...participant.stats,
-      health,
-    },
-  };
+  return {...participant, moveList: [], startingStats: {...participant.stats, health}};
 }
 
 const getFightMove = (participantFight, moveID) => participantFight.fight.details[participantFight.role].moves.find(({id}) => id === moveID) || null;
 
 const getOpponentParticipant = (participantFight) => participantFight.fight.details[participantFight.role === 'attacker' ? 'defender' : 'attacker'];
+function addFightFeedEntry(participantFight, activeParticipant, moveDefinition, damage, didHit) {
+  participantFight.fight.details.feed.push({
+    actorRole: participantFight.role,
+    attacker: activeParticipant.name,
+    move: moveDefinition.name,
+    result: didHit ? `${damage} damage` : 'miss',
+  });
+}
 
 function fail(message) {
   throw new Error(message);

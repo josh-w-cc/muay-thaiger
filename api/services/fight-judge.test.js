@@ -436,6 +436,47 @@ describe('FightJudge.attach', () => {
         },
       ]);
     });
+
+    it('records a miss and still consumes stamina when the attack roll loses', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], seed: 5, stats: {...baseCombatStats, stamina: 10n}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], seed: 0, stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(namedTwoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 8n);
+        assert.equal(judge.get(1).details.defender.stats.health, 1n);
+        assert.deepEqual(judge.get(1).details.feed, [{
+          actorRole: 'attacker',
+          attacker: 'Tiger',
+          isSelf: true,
+          move: 'Wild Kick',
+          result: 'miss',
+        }]);
+        assert.deepEqual(judge.get(2).details.feed, [{
+          actorRole: 'attacker',
+          attacker: 'Tiger',
+          isSelf: false,
+          move: 'Wild Kick',
+          result: 'miss',
+        }]);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
   });
 
   it('captures attacker and defender starting stats from fight details', async () => {

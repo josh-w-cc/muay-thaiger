@@ -1,4 +1,5 @@
 import {MOVE_DEFINITIONS_BY_ID} from 'shared/moves.js';
+import createPRNG from 'shared/prng.js';
 
 export async function getFightParticipants(fighters, fight) {
   const participants = await Promise.all([
@@ -58,6 +59,15 @@ export function executeFightMove(moveDefinition, activeParticipant, opponentPart
     createMoveActor(opponentParticipant, attackerPower, (d) => { damage += d; }),
   );
   return damage;
+}
+
+export function rollFightMoveHit(activeParticipant, opponentParticipant) {
+  const nextRandom = createPRNG(activeParticipant?.seed ?? 0);
+  const attackLogApprox = calculateFighterStats(activeParticipant.stats).attack.logApprox();
+  const defenseLogApprox = calculateFighterStats(opponentParticipant.stats).defense.logApprox();
+  const attackRoll = Number(attackLogApprox) * nextRandom();
+  const defenseRoll = Number(defenseLogApprox) * nextRandom();
+  return attackRoll > defenseRoll;
 }
 
 function createMoveActor(participant, incomingDamageScale = 1n, onDamage = null) {
