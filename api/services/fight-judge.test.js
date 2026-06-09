@@ -140,14 +140,14 @@ describe('FightJudge.attach', () => {
 
     it('does not consume stamina when move recovery has elapsed', async () => {
       const dateNow = Date.now;
-      Date.now = () => 1000;
+      Date.now = () => 10_000;
       try {
         const judge = new FightJudge();
         const fight = {
           attacker: 11,
           defender: 12,
           details: {
-            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 997}], stats: {...baseCombatStats, stamina: 10n}},
+            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 7_000}], stats: {...baseCombatStats, stamina: 10n}},
             defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
           },
           id: 101,
@@ -166,14 +166,14 @@ describe('FightJudge.attach', () => {
 
     it('consumes stamina as a percentage when move is reused inside recovery', async () => {
       const dateNow = Date.now;
-      Date.now = () => 1000;
+      Date.now = () => 10_000;
       try {
         const judge = new FightJudge();
         const fight = {
           attacker: 11,
           defender: 12,
           details: {
-            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], stats: {...baseCombatStats, stamina: 11n}},
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 5_001}], stats: {...baseCombatStats, stamina: 11n}},
             defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
           },
           id: 101,
@@ -192,7 +192,7 @@ describe('FightJudge.attach', () => {
 
     it('uses a strict recovery threshold for stamina cost checks', async () => {
       const dateNow = Date.now;
-      Date.now = () => 1000;
+      Date.now = () => 10_000;
       try {
         const judge = new FightJudge();
         const fight = {
@@ -200,7 +200,7 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {
-              moves: [{id: MOVE_IDS.wildKick, lastUsed: 995}, {id: MOVE_IDS.wildPunch, lastUsed: 998}],
+              moves: [{id: MOVE_IDS.wildKick, lastUsed: 5_000}, {id: MOVE_IDS.wildPunch, lastUsed: 7_001}],
               stats: {...baseCombatStats, stamina: 10n},
             },
             defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},

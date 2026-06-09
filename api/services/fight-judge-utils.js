@@ -34,7 +34,7 @@ export function getMoveDefinition(moveID) {
 
 export function markMoveUsed(move, moveDefinition, activeParticipant) {
   const now = Date.now();
-  if(move.lastUsed != null && move.lastUsed > (now - moveDefinition.recovery)) {
+  if(move.lastUsed != null && move.lastUsed > (now - (moveDefinition.recovery * 1000))) {
     activeParticipant.stats.stamina -= (activeParticipant.stats.stamina * BigInt(moveDefinition.staminaCost)) / 100n;
   }
   move.lastUsed = now;

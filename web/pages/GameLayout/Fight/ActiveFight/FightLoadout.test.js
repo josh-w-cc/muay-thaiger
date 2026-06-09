@@ -126,4 +126,19 @@ describe('FightLoadout', () => {
     expect(updatedCrossFill).toHaveStyle({animationDelay: '-0.5s'});
     expect(updatedCrossFill).not.toBe(originalCrossFill);
   });
+
+  it('stops move fill animation after recovery has elapsed', () => {
+    render(
+      <FightLoadout
+        details={{
+          attacker: {moves: [{id: 1, lastUsed: 3_000}]},
+          strategy: 'Counter Rush',
+        }}
+      />,
+    );
+
+    const crossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
+
+    expect(crossFill).toHaveStyle({animationName: 'none', transform: 'scaleX(0)'});
+  });
 });
