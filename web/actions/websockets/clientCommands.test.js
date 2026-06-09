@@ -54,6 +54,28 @@ describe('client websocket commands', () => {
     expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 3, move_num: 0}]});
   });
 
+  it('updates the active fight move lastUsed on the client before the batch is sent', async () => {
+    const {moveCmd} = await import('./clientCommands.js');
+    const {default: useFightStore} = await import('@/data/fight.js');
+    vi.setSystemTime(12_345);
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          moves: [{id: 3, lastUsed: 100}, {id: 4, lastUsed: 200}],
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    moveCmd(3);
+
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 3, lastUsed: 12_345}, {id: 4, lastUsed: 200}]);
+    expect(sendCommand).not.toHaveBeenCalled();
+  });
+
   it('batches repeated clicks for the same move as separate move entries', async () => {
     const {moveCmd} = await import('./clientCommands.js');
 
