@@ -47,7 +47,7 @@ export function markMoveUsed(move, moveDefinition, activeParticipant) {
 }
 
 function applyStaminaCost(moveDefinition, activeParticipant) {
-  const maxStamina = activeParticipant.startingStats?.stamina ?? activeParticipant.stats.stamina;
+  const maxStamina = activeParticipant.startingStats.stamina;
   const remainingStamina = activeParticipant.stats.stamina - (maxStamina * BigInt(moveDefinition.staminaCost)) / 100n;
   if(remainingStamina < 0n) {
     return false;

@@ -61,7 +61,7 @@ describe('executeFightMove', () => {
       try {
         const move = {lastUsed: 999};
         const moveDefinition = {recovery: 5, staminaCost: 200};
-        const activeParticipant = {stats: {stamina: 1n}};
+        const activeParticipant = {startingStats: {stamina: 1n}, stats: {stamina: 1n}};
 
         assert.equal(markMoveUsed(move, moveDefinition, activeParticipant), false);
         assert.equal(activeParticipant.stats.stamina, 1n);
