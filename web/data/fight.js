@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 import {parseBigIntStats} from 'shared/stats.js';
 import {mergeFightState} from './fightStateMerge.js';
-import {MOVE_CLICK_BATCH_MILLISECONDS} from "@/actions/websockets/clientCommands.js";
+import {MOVE_CLICK_BATCH_MILLISECONDS} from '@/actions/websockets/clientCommands.js';
 
 const useFightStore = create((set) => createFightState(set));
 
