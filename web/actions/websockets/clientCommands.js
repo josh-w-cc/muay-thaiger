@@ -7,6 +7,7 @@ import useFightStore from '@/data/fight.js';
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
 export const MOVE_CLICK_BATCH_MILLISECONDS = 500;
+export const TOO_TIRED_STAMINA_NEEDED_MESSAGE = 'too tired, stanima needed';
 let moveBatch = [];
 let moveBatchDelta = 0;
 let moveCount = 0;
@@ -32,11 +33,12 @@ export function moveCmd(moveID, moveName) {
     console.error(`Invalid move:${moveID}`);
     return;
   }
-  if(!useFightStore.getState().markMoveUsed(moveID)) {
-    return;
-  }
-  if(moveName) {
+  const canUseMove = useFightStore.getState().markMoveUsed(moveID);
+  if(canUseMove && moveName) {
     useFightStore.getState().addPendingFeedItem(moveName);
+  }
+  if(!canUseMove) {
+    useFightStore.getState().addPendingFeedItem(TOO_TIRED_STAMINA_NEEDED_MESSAGE);
   }
   moveBatch.push({move_id: moveID, move_num: moveCount});
   moveCount += 1;

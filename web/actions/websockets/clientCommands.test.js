@@ -76,14 +76,15 @@ describe('client websocket commands', () => {
     expect(sendCommand).not.toHaveBeenCalled();
   });
 
-  it('does not queue or send a move when client stamina is insufficient', async () => {
-    const {moveCmd} = await import('./clientCommands.js');
+  it('queues and sends a move when client stamina is insufficient but keeps local state untouched', async () => {
+    const {moveCmd, TOO_TIRED_STAMINA_NEEDED_MESSAGE} = await import('./clientCommands.js');
     const {default: useFightStore} = await import('@/data/fight.js');
-    vi.setSystemTime(10_000);
+    const now = Date.now();
     useFightStore.getState().syncServerState({
       details: {
         attacker: {
-          moves: [{id: 2, lastUsed: 9_000}],
+          name: 'Tiger',
+          moves: [{id: 2, lastUsed: now - 1_000}],
           startingStats: {stamina: 100n},
           stats: {stamina: 10n},
         },
@@ -95,9 +96,12 @@ describe('client websocket commands', () => {
     moveCmd(2);
     vi.advanceTimersByTime(500);
 
-    expect(sendCommand).not.toHaveBeenCalled();
-    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 2, lastUsed: 9_000}]);
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 2, move_num: 0}]});
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 2, lastUsed: now - 1_000}]);
     expect(useFightStore.getState().details.attacker.stats.stamina).toBe(10n);
+    expect(useFightStore.getState().pendingFeed).toEqual([
+      {attacker: 'Tiger', isSelf: true, move: TOO_TIRED_STAMINA_NEEDED_MESSAGE},
+    ]);
   });
 
   it('adds a pending feed item when a move name is provided', async () => {
