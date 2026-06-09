@@ -1,5 +1,6 @@
 import {create} from 'zustand';
 import {parseBigIntStats} from 'shared/stats.js';
+import {mergeFightState} from './fightStateMerge.js';
 
 const useFightStore = create((set) => createFightState(set));
 
@@ -12,8 +13,14 @@ export function resetFightStore() {
 function createFightState(set, fight = null) {
   return {
     ...getServerFightState(fight),
+    ...createFightActions(set),
+  };
+}
+
+function createFightActions(set) {
+  return {
     markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed)),
-    syncServerState: (nextFight) => set(createFightState(set, nextFight), true),
+    syncServerState: (nextFight) => set((state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set)}), true),
   };
 }
 
