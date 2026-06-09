@@ -6,6 +6,7 @@ import {getRemainingStaminaAfterCost, getStaminaCostFromPercentage, isMoveInReco
 describe('isMoveInRecoveryWindow', () => {
   it('returns true only when last used is strictly inside recovery window', () => {
     equal(isMoveInRecoveryWindow(7_001, 3, 10_000), true);
+    equal(isMoveInRecoveryWindow(10_000, 3, 10_000), true);
     equal(isMoveInRecoveryWindow(7_000, 3, 10_000), false);
   });
 
