@@ -39,10 +39,11 @@ describe('001-fighters seed', () => {
         .map(([, table]) => table),
       ['moves', 'actions', 'races'],
     );
+    const sequenceResets = calls
+      .filter(([type]) => type === 'raw')
+      .map((call) => call[2][0]);
     assert.deepEqual(
-      calls
-        .filter(([type]) => type === 'raw')
-        .map(([, , [table]]) => table),
+      sequenceResets,
       ['actions', 'moves', 'races'],
     );
   });
