@@ -289,6 +289,38 @@ describe('FightJudge.attach', () => {
       }
     });
 
+    it('skips recovery when starting stamina metadata is missing', async () => {
+      const dateNow = Date.now;
+      let now = 1000;
+      Date.now = () => now;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 999}], stats: {...baseCombatStats, stamina: 17n}},
+            defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildPunch, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 16n);
+
+        judge.get(1).details.attacker.startingStats.stamina = null;
+        now = 60000;
+
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 16n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
     it('throws when the player has no active fight move or fight', async () => {
       const judge = new FightJudge();
       const fight = {
