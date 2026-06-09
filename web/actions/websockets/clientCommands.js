@@ -27,12 +27,15 @@ export function removeFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'stop'});
 }
 
-export function moveCmd(moveID) {
+export function moveCmd(moveID, moveName) {
   if(!Number.isInteger(moveID)) {
     console.error(`Invalid move:${moveID}`);
     return;
   }
   useFightStore.getState().markMoveUsed(moveID);
+  if(moveName) {
+    useFightStore.getState().addPendingFeedItem(moveName);
+  }
   moveBatch.push({move_id: moveID, move_num: moveCount});
   moveCount += 1;
 }
