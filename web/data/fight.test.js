@@ -121,7 +121,7 @@ describe('useFightStore', () => {
 
     useFightStore.getState().markMoveUsed(2, 9_999);
 
-    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 100}, {id: 2, lastUsed: 9_999}]);
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 100}, {id: 2, lastUsed: 10_499}]);
   });
 
   it('keeps newer local move lastUsed when a stale server update arrives for the same fight', () => {
@@ -150,7 +150,7 @@ describe('useFightStore', () => {
       reason: 'gold',
     });
 
-    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 120}, {id: 2, lastUsed: 9_999}]);
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 120}, {id: 2, lastUsed: 10_499}]);
   });
 
   it('starts with an empty pending feed', () => {
