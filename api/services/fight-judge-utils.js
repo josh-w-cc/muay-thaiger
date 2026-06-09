@@ -39,7 +39,8 @@ export function markMoveUsed(move, moveDefinition, activeParticipant) {
     return false;
   }
   if(move.lastUsed != null && move.lastUsed > (now - (moveDefinition.recovery * 1000))) {
-    const staminaCost = (currentStamina * BigInt(moveDefinition.staminaCost)) / 100n;
+    const maxStamina = activeParticipant.startingStats?.stamina ?? currentStamina;
+    const staminaCost = (maxStamina * BigInt(moveDefinition.staminaCost)) / 100n;
     const remainingStamina = currentStamina - staminaCost;
     if(remainingStamina < 0n) {
       return false;

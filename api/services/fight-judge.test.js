@@ -243,6 +243,38 @@ describe('FightJudge.attach', () => {
       }
     });
 
+    it('computes stamina cost as a percentage of max stamina, not current stamina', async () => {
+      const dateNow = Date.now;
+      let now = 1000;
+      Date.now = () => now;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], stats: {...baseCombatStats, stamina: 100n}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        // First use: 20% of max (100n) = 20n cost → 80n remaining
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 80n);
+
+        // Second use while still in recovery (same timestamp, no regen): cost should be 20% of max (100n) = 20n, not 20% of current (80n) = 16n
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 11), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 60n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
     it('uses a strict recovery threshold for stamina cost checks', async () => {
       const dateNow = Date.now;
       Date.now = () => 10_000;
