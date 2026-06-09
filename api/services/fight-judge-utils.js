@@ -61,12 +61,14 @@ export function executeFightMove(moveDefinition, activeParticipant, opponentPart
   return damage;
 }
 
-export function rollFightMoveHit(activeParticipant, opponentParticipant) {
-  const nextRandom = createPRNG(activeParticipant?.seed ?? 0);
-  const attackLogApprox = calculateFighterStats(activeParticipant.stats).attack.logApprox();
-  const defenseLogApprox = calculateFighterStats(opponentParticipant.stats).defense.logApprox();
-  const attackRoll = Number(attackLogApprox) * nextRandom();
-  const defenseRoll = Number(defenseLogApprox) * nextRandom();
+export function rollFightMoveHit(activeParticipant, opponentParticipant, seed) {
+  const random = createPRNG(seed ?? 0);
+  const attackerStats = calculateFighterStats(activeParticipant.stats);
+  const defenderStats = calculateFighterStats(opponentParticipant.stats);
+  const attackLogApprox = attackerStats.attack.logApprox();
+  const defenseLogApprox = defenderStats.defense.logApprox();
+  const attackRoll = Number(attackLogApprox) * random();
+  const defenseRoll = Number(defenseLogApprox) * random();
   return attackRoll > defenseRoll;
 }
 

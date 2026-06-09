@@ -41,7 +41,9 @@ export class FightJudge {
     }
     activeParticipant.moveList.push(moveNum);
     const opponentParticipant = getOpponentParticipant(participantFight);
-    const didHit = rollFightMoveHit(activeParticipant, opponentParticipant);
+    const seed = activeParticipant.seed ?? 0;
+    const didHit = rollFightMoveHit(activeParticipant, opponentParticipant, seed);
+    activeParticipant.seed = (seed + 1) >>> 0;
     const damage = didHit ? executeFightMove(moveDefinition, activeParticipant, opponentParticipant) : 0n;
     addFightFeedEntry(participantFight, activeParticipant, moveDefinition, damage, didHit);
     return true;
@@ -51,15 +53,7 @@ export class FightJudge {
 function getCalculatedFight(fight, participantRole) {
   const {attacker, defender, ...rest} = fight.details;
   const feed = rest.feed.map((entry) => ({...entry, isSelf: entry.actorRole === participantRole}));
-  return {
-    ...fight,
-    details: {
-      attacker: addCalculatedStats(attacker),
-      ...(defender ? {defender: addCalculatedStats(defender)} : {}),
-      ...rest,
-      feed,
-    },
-  };
+  return {...fight, details: {attacker: addCalculatedStats(attacker), ...(defender ? {defender: addCalculatedStats(defender)} : {}), ...rest, feed}};
 }
 
 function addCalculatedStats(participant) {
@@ -75,25 +69,20 @@ export function attachFightJudge(app) {
 
 function captureStartingStats(fight) {
   const {attacker, defender, ...rest} = fight.details;
-  return {
-    ...fight,
-    details: {
-      attacker: addStartingStats(attacker),
-      ...(defender ? {defender: addStartingStats(defender)} : {}),
-      ...rest,
-      feed: [],
-    },
-  };
+  return {...fight, details: {attacker: addStartingStats(attacker), ...(defender ? {defender: addStartingStats(defender)} : {}), ...rest, feed: []}};
 }
 
 function addStartingStats(participant) {
   const health = calculateFighterHealth(participant.stats);
   participant.stats.health = health;
-  return {...participant, moveList: [], startingStats: {...participant.stats, health}};
+  return {
+    ...participant,
+    moveList: [],
+    startingStats: {...participant.stats, health},
+  };
 }
 
 const getFightMove = (participantFight, moveID) => participantFight.fight.details[participantFight.role].moves.find(({id}) => id === moveID) || null;
-
 const getOpponentParticipant = (participantFight) => participantFight.fight.details[participantFight.role === 'attacker' ? 'defender' : 'attacker'];
 function addFightFeedEntry(participantFight, activeParticipant, moveDefinition, damage, didHit) {
   participantFight.fight.details.feed.push({
@@ -103,13 +92,10 @@ function addFightFeedEntry(participantFight, activeParticipant, moveDefinition, 
     result: didHit ? `${damage} damage` : 'miss',
   });
 }
-
-function fail(message) {
+const fail = (message) => {
   throw new Error(message);
-}
-
+};
 const getFightMoveOrThrow = (participantFight, moveID) => getFightMove(participantFight, moveID) ?? fail(`Unknown move:${moveID}`);
-
 function getParticipantFight(fightsByPlayerID, playerID) {
   return fightsByPlayerID.get(playerID) ?? fail(`No fight for player:${playerID}`);
 }

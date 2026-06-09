@@ -447,7 +447,7 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], seed: 5, stats: {...baseCombatStats, stamina: 10n}},
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], seed: 0, stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
           },
           id: 101,
           victory: null,
@@ -455,6 +455,7 @@ describe('FightJudge.attach', () => {
 
         await judge.attach(namedTwoPlayerFighters, fight);
 
+        assert.equal(judge.get(1).details.defender.stats.health, 1n);
         assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
         assert.equal(judge.get(1).details.attacker.stats.stamina, 8n);
         assert.equal(judge.get(1).details.defender.stats.health, 1n);
@@ -472,6 +473,8 @@ describe('FightJudge.attach', () => {
           move: 'Wild Kick',
           result: 'miss',
         }]);
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 11), true);
+        assert.equal(judge.get(1).details.defender.stats.health < 1n, true);
       }
       finally {
         Date.now = dateNow;
