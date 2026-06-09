@@ -1,18 +1,4 @@
-import {calculateFighterHealth} from './fight-judge-utils.js';
-
-export function captureStartingStats(fight) {
-  const {attacker, defender, ...rest} = fight.details;
-  const now = Date.now();
-  return {
-    ...fight,
-    details: {
-      attacker: addStartingStats(attacker, now),
-      ...(defender ? {defender: addStartingStats(defender, now)} : {}),
-      ...rest,
-      feed: [],
-    },
-  };
-}
+const STAMINA_REGEN_MS_PER_POINT = 100n * 1000n;
 
 export function recoverFightStamina(fight) {
   const now = Date.now();
@@ -22,34 +8,19 @@ export function recoverFightStamina(fight) {
   }
 }
 
-function addStartingStats(participant, now) {
-  const health = calculateFighterHealth(participant.stats);
-  participant.stats.health = health;
-  return {
-    ...participant,
-    moveList: [],
-    staminaRecoveredAt: now,
-    staminaRecoveryRemainder: 0n,
-    startingStats: {
-      ...participant.stats,
-      health,
-    },
-  };
-}
-
 function recoverParticipantStamina(participant, now) {
   const recoveryState = getRecoveryState(participant, now);
   if(!recoveryState) {
     return;
   }
-  const {elapsedSeconds, maxStamina, regenPool, lastRecoveredAt} = recoveryState;
-  const recoveredStamina = regenPool / 100n;
+  const {maxStamina, regenPool} = recoveryState;
+  const recoveredStamina = regenPool / STAMINA_REGEN_MS_PER_POINT;
   const missingStamina = maxStamina - participant.stats.stamina;
   const appliedStamina = clampRecoveredStamina(recoveredStamina, missingStamina);
 
   participant.stats.stamina += appliedStamina;
   participant.staminaRecoveryRemainder = getRecoveryRemainder(participant.stats.stamina, maxStamina, regenPool);
-  participant.staminaRecoveredAt = lastRecoveredAt + (elapsedSeconds * 1000);
+  participant.staminaRecoveredAt = now;
 }
 
 function getRecoveryState(participant, now) {
@@ -58,12 +29,12 @@ function getRecoveryState(participant, now) {
     return null;
   }
   const lastRecoveredAt = getLastRecoveredAt(participant, now);
-  const elapsedSeconds = Math.floor((now - lastRecoveredAt) / 1000);
-  if(elapsedSeconds <= 0) {
+  const elapsedMilliseconds = now - lastRecoveredAt;
+  if(elapsedMilliseconds <= 0) {
     return null;
   }
-  const regenPool = (participant.staminaRecoveryRemainder ?? 0n) + (maxStamina * BigInt(elapsedSeconds));
-  return {elapsedSeconds, lastRecoveredAt, maxStamina, regenPool};
+  const regenPool = (participant.staminaRecoveryRemainder ?? 0n) + (maxStamina * BigInt(elapsedMilliseconds));
+  return {maxStamina, regenPool};
 }
 
 function getMaxStamina(participant) {
@@ -85,5 +56,5 @@ function clampRecoveredStamina(recoveredStamina, missingStamina) {
 }
 
 function getRecoveryRemainder(stamina, maxStamina, regenPool) {
-  return stamina >= maxStamina ? 0n : (regenPool % 100n);
+  return stamina >= maxStamina ? 0n : (regenPool % STAMINA_REGEN_MS_PER_POINT);
 }
