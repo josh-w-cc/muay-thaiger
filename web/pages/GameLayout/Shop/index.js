@@ -5,6 +5,9 @@ import useInventoryStore from '@/data/inventory.js';
 import Items from './Items.js';
 
 
+export default Shop;
+
+
 function Shop() {
   const buy = useInventoryStore((state) => state.buy);
   const fighter = useFighterStore();
@@ -28,5 +31,3 @@ function ShopRows({buy, fighter}) {
     </div>
   ));
 }
-
-export default Shop;
