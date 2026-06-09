@@ -121,7 +121,7 @@ describe('useFightStore', () => {
 
     useFightStore.getState().markMoveUsed(2, 9_999);
 
-    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 100}, {id: 2, lastUsed: 9_999}]);
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 100}, {id: 2, lastUsed: 10_499}]);
   });
 
   it('consumes stamina as a percentage of max stamina when move is reused inside recovery', () => {
@@ -205,6 +205,88 @@ describe('useFightStore', () => {
       reason: 'gold',
     });
 
-    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 120}, {id: 2, lastUsed: 9_999}]);
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 120}, {id: 2, lastUsed: 10_499}]);
+  });
+
+  it('starts with an empty pending feed', () => {
+    expect(useFightStore.getState().pendingFeed).toEqual([]);
+  });
+
+  it('adds a pending feed item with attacker name from fighter details when a move is used', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Thaiger',
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    useFightStore.getState().addPendingFeedItem('Cross');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([
+      {attacker: 'Thaiger', isSelf: true, move: 'Cross'},
+    ]);
+  });
+
+  it('appends multiple pending feed items in click order', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Snowball',
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    useFightStore.getState().addPendingFeedItem('Jab');
+    useFightStore.getState().addPendingFeedItem('Knee');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([
+      {attacker: 'Snowball', isSelf: true, move: 'Jab'},
+      {attacker: 'Snowball', isSelf: true, move: 'Knee'},
+    ]);
+  });
+
+  it('does not add a pending feed item when attacker data is missing', () => {
+    useFightStore.getState().addPendingFeedItem('Cross');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([]);
+  });
+
+  it('clears pending feed when the server syncs new state', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Thaiger',
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+    useFightStore.getState().addPendingFeedItem('Cross');
+    expect(useFightStore.getState().pendingFeed).toHaveLength(1);
+
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Thaiger',
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    expect(useFightStore.getState().pendingFeed).toEqual([]);
   });
 });

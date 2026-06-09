@@ -6,7 +6,7 @@ import {connectSocketOnAppLoad, sendCommand} from '@/actions/websockets/index.js
 import useFightStore from '@/data/fight.js';
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
-const MOVE_CLICK_BATCH_MILLISECONDS = 500;
+export const MOVE_CLICK_BATCH_MILLISECONDS = 500;
 let moveBatch = [];
 let moveBatchDelta = 0;
 let moveCount = 0;
@@ -27,13 +27,16 @@ export function removeFighterActionCmd(actionID) {
   sendCommand({action_id: actionID, cmd: 'stop'});
 }
 
-export function moveCmd(moveID) {
+export function moveCmd(moveID, moveName) {
   if(!Number.isInteger(moveID)) {
     console.error(`Invalid move:${moveID}`);
     return;
   }
   if(!useFightStore.getState().markMoveUsed(moveID)) {
     return;
+  }
+  if(moveName) {
+    useFightStore.getState().addPendingFeedItem(moveName);
   }
   moveBatch.push({move_id: moveID, move_num: moveCount});
   moveCount += 1;

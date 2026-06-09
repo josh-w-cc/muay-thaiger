@@ -2,6 +2,7 @@ import {create} from 'zustand';
 import {parseBigIntStats} from 'shared/stats.js';
 import {mergeFightState} from './fightStateMerge.js';
 import {getMarkedMoveState} from './fightMoveUsage.js';
+import {MOVE_CLICK_BATCH_MILLISECONDS} from '@/actions/websockets/clientCommands.js';
 
 const useFightStore = create((set) => createFightState(set));
 
@@ -14,22 +15,28 @@ export function resetFightStore() {
 function createFightState(set, fight = null) {
   return {
     ...getServerFightState(fight),
+    pendingFeed: [],
     ...createFightActions(set),
   };
 }
 
 function createFightActions(set) {
   return {
+    addPendingFeedItem: (moveName) => set((state) => addPendingFeedItem(state, moveName)),
     markMoveUsed: (moveID, lastUsed = Date.now()) => {
+      const moveLastUsed = lastUsed + MOVE_CLICK_BATCH_MILLISECONDS;
       let canUseMove = true;
       set((state) => {
-        const nextMarkedMoveState = markMoveUsed(state, moveID, lastUsed);
+        const nextMarkedMoveState = markMoveUsed(state, moveID, moveLastUsed);
         canUseMove = nextMarkedMoveState !== null;
         return nextMarkedMoveState ?? state;
       });
       return canUseMove;
     },
-    syncServerState: (nextFight) => set((state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set)}), true),
+    syncServerState: (nextFight) => set(
+      (state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set), pendingFeed: []}),
+      true,
+    ),
   };
 }
 
@@ -71,6 +78,20 @@ function parseFightParticipant(participant) {
     ...participant,
     startingStats: parseBigIntStats(participant.startingStats),
     stats: parseBigIntStats(participant.stats),
+  };
+}
+
+function getAttackerName(state) {
+  return state.details?.attacker?.name;
+}
+
+function addPendingFeedItem(state, moveName) {
+  const attackerName = getAttackerName(state);
+  if(!attackerName || !moveName) {
+    return state;
+  }
+  return {
+    pendingFeed: [...state.pendingFeed, {attacker: attackerName, isSelf: true, move: moveName}],
   };
 }
 
