@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {describe, it} from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import Fastify from 'fastify';
 import patchBigIntPrototype from 'shared/bigInt.js';
 import {MOVE_IDS} from 'shared/moves.js';
@@ -109,6 +109,17 @@ describe('executeFightMove', () => {
 });
 
 describe('FightJudge.attach', () => {
+  const mathRandom = Math.random;
+
+  beforeEach(() => {
+    let randomCount = 0;
+    Math.random = () => (++randomCount % 2 === 1 ? 0.9 : 0.1);
+  });
+
+  afterEach(() => {
+    Math.random = mathRandom;
+  });
+
   const twoPlayerFighters = {
     find: async (fighterID) => ({
       11: {id: 11, player: 1},
@@ -566,6 +577,46 @@ describe('FightJudge.attach', () => {
           result: '4 damage',
         },
       ]);
+    });
+
+    it('marks misses as blocked while still charging stamina', async () => {
+      const dateNow = Date.now;
+      const mathRandom = Math.random;
+      Date.now = () => 10_000;
+      Math.random = (() => {
+        let randomCount = 0;
+        return () => (++randomCount % 2 === 1 ? 0.1 : 0.9);
+      })();
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 9_999}], stats: {...baseCombatStats, stamina: 11n}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(namedTwoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 9n);
+        assert.equal(judge.get(1).details.defender.stats.health, 1n);
+        assert.deepEqual(judge.get(1).details.feed, [{
+          actorRole: 'attacker',
+          attacker: 'Tiger',
+          isSelf: true,
+          move: 'Wild Kick',
+          result: 'blocked',
+        }]);
+      }
+      finally {
+        Date.now = dateNow;
+        Math.random = mathRandom;
+      }
     });
   });
 
