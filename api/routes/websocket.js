@@ -54,7 +54,7 @@ export async function onMessage(raw, socket, models, logger) {
 }
 
 function parseMessageIfActive(raw, socket, logger) {
-  const message = parseMessage(raw);
+  const message = parseJSON(raw);
   if(!message) {
     logWebSocketActivity(logger, 'warn', {raw_type: typeof raw}, 'websocket invalid message');
     return null;
@@ -69,10 +69,6 @@ function parseMessageIfActive(raw, socket, logger) {
 
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
-}
-
-function parseMessage(raw) {
-  return parseJSON(raw);
 }
 
 function resolveCommandError(error) {
