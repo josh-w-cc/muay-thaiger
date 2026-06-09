@@ -65,6 +65,7 @@ function getCalculatedFight(fight, participantRole) {
 function addCalculatedStats(participant) {
   return {...participant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
 }
+
 export function attachFightJudge(app) {
   const judge = new FightJudge();
   const models = {fighters: fightersModel(app.db), fights: fightsModel(app.db)};
@@ -99,7 +100,9 @@ function addStartingStats(participant) {
 }
 
 const getFightMove = (participantFight, moveID) => participantFight.fight.details[participantFight.role].moves.find(({id}) => id === moveID) || null;
+
 const getOpponentParticipant = (participantFight) => participantFight.fight.details[participantFight.role === 'attacker' ? 'defender' : 'attacker'];
+
 function fail(message) {
   throw new Error(message);
 }
