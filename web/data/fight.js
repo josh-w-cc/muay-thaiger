@@ -1,6 +1,7 @@
 import {create} from 'zustand';
 import {parseBigIntStats} from 'shared/stats.js';
 import {mergeFightState} from './fightStateMerge.js';
+import {MOVE_CLICK_BATCH_MILLISECONDS} from "@/actions/websockets/clientCommands.js";
 
 const useFightStore = create((set) => createFightState(set));
 
@@ -19,7 +20,7 @@ function createFightState(set, fight = null) {
 
 function createFightActions(set) {
   return {
-    markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed)),
+    markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed + MOVE_CLICK_BATCH_MILLISECONDS)),
     syncServerState: (nextFight) => set((state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set)}), true),
   };
 }

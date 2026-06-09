@@ -6,7 +6,7 @@ import {connectSocketOnAppLoad, sendCommand} from '@/actions/websockets/index.js
 import useFightStore from '@/data/fight.js';
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
-const MOVE_CLICK_BATCH_MILLISECONDS = 500;
+export const MOVE_CLICK_BATCH_MILLISECONDS = 500;
 let moveBatch = [];
 let moveBatchDelta = 0;
 let moveCount = 0;
