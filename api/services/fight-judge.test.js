@@ -88,6 +88,23 @@ describe('executeFightMove', () => {
         Date.now = dateNow;
       }
     });
+
+    it('rejects move usage when stamina is negative before first use', () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const move = {lastUsed: null};
+        const moveDefinition = {recovery: 5, staminaCost: 200};
+        const activeParticipant = {stats: {stamina: -1n}};
+
+        assert.equal(markMoveUsed(move, moveDefinition, activeParticipant), false);
+        assert.equal(activeParticipant.stats.stamina, -1n);
+        assert.equal(move.lastUsed, null);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
   });
 });
 
