@@ -3,6 +3,7 @@ import {
   routeToHubIfAuthorized,
 } from '@/actions/websockets/auth.js';
 import {connectSocketOnAppLoad, sendCommand} from '@/actions/websockets/index.js';
+import useFightStore from '@/data/fight.js';
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
 const MOVE_CLICK_BATCH_MILLISECONDS = 500;
@@ -31,6 +32,7 @@ export function moveCmd(moveID) {
     console.error(`Invalid move:${moveID}`);
     return;
   }
+  useFightStore.getState().markMoveUsed(moveID);
   moveBatch.push({move_id: moveID, move_num: moveCount});
   moveCount += 1;
 }

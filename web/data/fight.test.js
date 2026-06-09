@@ -105,4 +105,22 @@ describe('useFightStore', () => {
     expect(details.defender.stats.attack).toBe(3333333n);
     expect(details.defender.stats.defense).toBe(4444444n);
   });
+
+  it('updates attacker move lastUsed locally when a move is used on the client', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          moves: [{id: 1, lastUsed: 100}, {id: 2, lastUsed: 200}],
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    useFightStore.getState().markMoveUsed(2, 9_999);
+
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 100}, {id: 2, lastUsed: 9_999}]);
+  });
 });
