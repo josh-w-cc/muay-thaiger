@@ -56,10 +56,10 @@ function FightFighterImages({alt, isPunching, mirror, punchSrc, src}) {
         className={classnames(css.fightFighterImage, {[css.fightFighterImageHidden]: showPunch, [css.fightFighterImageMirror]: mirror})}
         src={src}
       />
-      {showPunch && (
+      {Boolean(punchSrc) && (
         <img
           alt={alt}
-          className={classnames(css.fightFighterImagePunch, {[css.fightFighterImagePunchMirror]: mirror})}
+          className={classnames({[css.fightFighterImagePunch]: !mirror, [css.fightFighterImagePunchMirror]: mirror, [css.fightFighterImagePunchVisible]: showPunch})}
           src={punchSrc}
         />
       )}

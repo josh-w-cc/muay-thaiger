@@ -44,11 +44,12 @@
 
 .fightFighterImage {
   display: block;
+  transition: opacity 100ms;
   width: 100%;
 }
 
 .fightFighterImageHidden {
-  visibility: hidden;
+  opacity: 0;
 }
 
 .fightFighterImageContainer {
@@ -64,21 +65,29 @@
 .fightFighterImagePunch {
   height: 100%;
   left: 0;
+  opacity: 0;
   position: absolute;
   top: 0;
+  transition: opacity 100ms;
   width: auto;
   z-index: 1;
 }
 
 .fightFighterImagePunchMirror {
   height: 100%;
+  opacity: 0;
   position: absolute;
   right: 0;
   top: 0;
   transform: scaleX(-1);
   transform-origin: right center;
+  transition: opacity 100ms;
   width: auto;
   z-index: 1;
+}
+
+.fightFighterImagePunchVisible {
+  opacity: 1;
 }
 
 .fightFighterLeft {
