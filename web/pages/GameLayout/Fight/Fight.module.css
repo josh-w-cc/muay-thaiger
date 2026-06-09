@@ -122,7 +122,8 @@
 }
 
 .tapperButtonFill {
-  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
   animation-name: tapperFill;
   animation-timing-function: linear;
   background-color: color-mix(in srgb, var(--color-red) 25%, transparent);
@@ -132,7 +133,7 @@
   position: absolute;
   right: 0;
   top: 0;
-  transform: scaleY(0);
+  transform: scaleX(1);
   transform-origin: right;
 }
 
@@ -141,11 +142,8 @@
 }
 
 @keyframes tapperFill {
-  0%,
-  100% { transform: scaleX(1); }
-
-  75%,
-  90% { transform: scaleX(0); }
+  0% { transform: scaleX(1); }
+  100% { transform: scaleX(0); }
 }
 
 .tapperButton:hover {
