@@ -1,6 +1,5 @@
 import {executeFightMove, getMoveDefinition, markMoveUsed} from './fight-judge-utils.js';
 
-const BASIC_IDLE_STRATEGY = 'basic idle';
 const IDLE_RECOVERY_BUFFER_SECONDS = 1;
 
 export function executeFightAction(participantFight, activeParticipant, move, moveDefinition, moveNum = null) {
@@ -18,9 +17,6 @@ export function executeFightAction(participantFight, activeParticipant, move, mo
 }
 
 export function applyIdleAttacks(fight) {
-  if(normalizeStrategy(fight.details?.strategy) !== BASIC_IDLE_STRATEGY) {
-    return;
-  }
   applyIdleParticipantAttacks(fight, 'attacker');
   applyIdleParticipantAttacks(fight, 'defender');
 }
@@ -57,8 +53,4 @@ function getOpponentParticipant(participantFight) {
 
 function canApplyIdleParticipant(participant) {
   return Boolean(participant && Array.isArray(participant.moves));
-}
-
-function normalizeStrategy(strategy) {
-  return typeof strategy === 'string' ? strategy.trim().toLowerCase() : '';
 }
