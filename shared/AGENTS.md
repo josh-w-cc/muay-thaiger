@@ -10,7 +10,6 @@ Pure JavaScript library shared by both `api/` and `web/` subprojects. Contains g
 |------|---------|-------------|
 | `bigInt.js` | `patchBigIntPrototype` (default) | Patches `BigInt.prototype` with `toFormattedNumber` and `logApprox`. Import for side effect (`import 'shared/bigInt.js'`). |
 | `moves.js` | `MOVE_DEFINITIONS`, `MOVE_IDS`, `MOVE_SEED_MOVES` | Move constants and seed data. |
-| `prng.js` | `createPRNG` (default) | Seeded deterministic PRNG (Mulberry32). Returns a `next()` function that yields floats in `[0, 1)`. |
 | `races.js` | `RACES` | Playable race definitions with innate stats. |
 | `seedData.js` | `createSeedEntries` | Utility for generating seed data arrays from definition/ID maps. |
 | `skills/` | `SKILL_DEFINITIONS`, `SKILL_IDS`, `SKILL_SEED_ACTIONS`, `SKILLS_BY_ACTION_ID` | Skill constants and reverse lookup by action ID. |
