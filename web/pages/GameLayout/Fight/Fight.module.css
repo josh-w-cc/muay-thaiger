@@ -47,6 +47,10 @@
   width: 100%;
 }
 
+.fightFighterImageHidden {
+  visibility: hidden;
+}
+
 .fightFighterImageContainer {
   overflow: visible;
   position: relative;

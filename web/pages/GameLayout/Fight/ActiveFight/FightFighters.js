@@ -53,7 +53,7 @@ function FightFighterImages({alt, isPunching, mirror, punchSrc, src}) {
       <img
         alt={alt}
         aria-hidden={showPunch ? true : undefined}
-        className={classnames(css.fightFighterImage, {[css.fightFighterImageMirror]: mirror})}
+        className={classnames(css.fightFighterImage, {[css.fightFighterImageHidden]: showPunch, [css.fightFighterImageMirror]: mirror})}
         src={src}
       />
       {showPunch && (
