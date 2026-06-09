@@ -1,6 +1,5 @@
 import Button from '@/components/Button.js';
 import useMovesStore from '@/data/moves.js';
-import useFightStore from '@/data/fight.js';
 import {moveCmd} from '@/actions/websockets/clientCommands.js';
 import {useMemo} from 'react';
 
@@ -25,7 +24,6 @@ export default function FightLoadout({details}) {
 }
 
 function FightLoadoutButtons({buttons}) {
-  const addPendingFeedItem = useFightStore((state) => state.addPendingFeedItem);
   return (
     <div className={css.fightLoadoutButtons}>
       {buttons.map((button, buttonIndex) => (
@@ -34,12 +32,7 @@ function FightLoadoutButtons({buttons}) {
           lastUsed={button.lastUsed}
           duration={button.duration ?? TAPPER_FILL_DURATIONS[buttonIndex]}
           key={button.label}
-          onClick={() => {
-            moveCmd(button.moveID);
-            if(Number.isInteger(button.moveID)) {
-              addPendingFeedItem(button.label);
-            }
-          }}
+          onClick={() => moveCmd(button.moveID, button.label)}
         >
           {button.label}
         </TapperButton>

@@ -33,12 +33,10 @@ function FightFeedItem({item}) {
   );
 }
 
+function reverseFeed(feed) {
+  return Array.isArray(feed) && feed.length > 0 ? [...feed].reverse() : [];
+}
+
 function getFightFeed(details, pendingFeed) {
-  const serverItems = Array.isArray(details?.feed) && details.feed.length > 0
-    ? [...details.feed].reverse()
-    : [];
-  const pendingItems = Array.isArray(pendingFeed) && pendingFeed.length > 0
-    ? [...pendingFeed].reverse()
-    : [];
-  return [...pendingItems, ...serverItems];
+  return [...reverseFeed(pendingFeed), ...reverseFeed(details?.feed)];
 }

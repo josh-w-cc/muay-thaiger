@@ -61,9 +61,13 @@ function parseFightParticipant(participant) {
   };
 }
 
-function addPendingFeedItem(state, moveName) {
+function getAttackerName(state) {
   const race = state.details?.attacker?.race;
-  const attackerName = RACES.find((r) => r.id === race)?.name;
+  return RACES.find((r) => r.id === race)?.name;
+}
+
+function addPendingFeedItem(state, moveName) {
+  const attackerName = getAttackerName(state);
   if(!attackerName || !moveName) {
     return state;
   }

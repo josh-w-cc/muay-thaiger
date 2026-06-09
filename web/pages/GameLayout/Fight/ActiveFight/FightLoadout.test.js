@@ -2,7 +2,6 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import useMovesStore, {resetMovesStore} from '@/data/moves.js';
-import useFightStore, {resetFightStore} from '@/data/fight.js';
 
 import FightLoadout from './FightLoadout.js';
 
@@ -20,7 +19,6 @@ describe('FightLoadout', () => {
     vi.clearAllMocks();
     vi.spyOn(Date, 'now').mockReturnValue(10_000);
     resetMovesStore();
-    resetFightStore();
     useMovesStore.getState().setMoves([
       {id: 1, name: 'Cross', recovery: 6},
       {id: 2, name: 'Knee', recovery: 2.5},
@@ -80,7 +78,7 @@ describe('FightLoadout', () => {
 
     await user.click(screen.getByRole('button', {name: 'Knee'}));
 
-    expect(moveCmd).toHaveBeenCalledWith(2);
+    expect(moveCmd).toHaveBeenCalledWith(2, 'Knee');
   });
 
   it('syncs fill animation start to move lastUsed and keeps fallback delays otherwise', () => {
@@ -170,52 +168,5 @@ describe('FightLoadout', () => {
     const crossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
 
     expect(crossFill).toHaveStyle({animationName: 'none', transform: 'scaleX(0)'});
-  });
-
-  it('adds a pending feed item when a move button is clicked', async () => {
-    const user = userEvent.setup();
-    useFightStore.getState().syncServerState({
-      details: {
-        attacker: {
-          race: 1,
-          moves: [{id: 1, lastUsed: 123}, {id: 2, lastUsed: 456}],
-          startingStats: {},
-          stats: {},
-        },
-      },
-      id: 44,
-      reason: 'gold',
-    });
-
-    render(
-      <FightLoadout
-        details={{
-          attacker: {moves: [{id: 1, lastUsed: 123}, {id: 2, lastUsed: 456}]},
-          strategy: 'Counter Rush',
-        }}
-      />,
-    );
-
-    await user.click(screen.getByRole('button', {name: 'Knee'}));
-
-    expect(useFightStore.getState().pendingFeed).toEqual([
-      {attacker: 'Tiger', isSelf: true, move: 'Knee'},
-    ]);
-  });
-
-  it('does not add a pending feed item when the strategy button is clicked', async () => {
-    const user = userEvent.setup();
-    render(
-      <FightLoadout
-        details={{
-          attacker: {moves: [{id: 1, lastUsed: 123}]},
-          strategy: 'Counter Rush',
-        }}
-      />,
-    );
-
-    await user.click(screen.getByRole('button', {name: 'Strategy: Counter Rush'}));
-
-    expect(useFightStore.getState().pendingFeed).toEqual([]);
   });
 });
