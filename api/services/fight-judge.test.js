@@ -122,14 +122,14 @@ describe('executeFightMove', () => {
 });
 
 describe('FightJudge.attach', () => {
-  const mathRandom = Math.random;
+  const originalMathRandom = Math.random;
 
   beforeEach(() => {
     setHitRollSequence();
   });
 
   afterEach(() => {
-    Math.random = mathRandom;
+    Math.random = originalMathRandom;
   });
 
   const twoPlayerFighters = {
@@ -591,7 +591,7 @@ describe('FightJudge.attach', () => {
       ]);
     });
 
-    it('marks misses as blocked while still charging stamina', async () => {
+    it('marks misses as blocked while still consuming stamina', async () => {
       const dateNow = Date.now;
       Date.now = () => 10_000;
       setMissRollSequence();
