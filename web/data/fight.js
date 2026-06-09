@@ -2,11 +2,14 @@ import {create} from 'zustand';
 import {parseBigIntStats} from 'shared/stats.js';
 import {mergeFightState} from './fightStateMerge.js';
 import {MOVE_CLICK_BATCH_MILLISECONDS} from '@/actions/websockets/clientCommands.js';
+
 const useFightStore = create((set) => createFightState(set));
 export default useFightStore;
+
 export function resetFightStore() {
   useFightStore.setState(createFightState(useFightStore.setState), true);
 }
+
 function createFightState(set, fight = null) {
   return {
     ...getServerFightState(fight),
@@ -14,6 +17,7 @@ function createFightState(set, fight = null) {
     ...createFightActions(set),
   };
 }
+
 function createFightActions(set) {
   return {
     addPendingFeedItem: (moveName) => set((state) => addPendingFeedItem(state, moveName)),
@@ -24,6 +28,7 @@ function createFightActions(set) {
     ),
   };
 }
+
 function getInitialFightState() {
   return {
     attacker: null, created_at: null,
@@ -33,6 +38,7 @@ function getInitialFightState() {
     victory: null,
   };
 }
+
 function getServerFightState(fight) {
   if(!fight || typeof fight !== 'object') {
     return getInitialFightState();
@@ -43,6 +49,7 @@ function getServerFightState(fight) {
     details: parseFightDetails(fight.details),
   };
 }
+
 function parseFightDetails(details) {
   return {
     ...details,
@@ -50,6 +57,7 @@ function parseFightDetails(details) {
     ...(details.defender ? {defender: parseFightParticipant(details.defender)} : {}),
   };
 }
+
 function parseFightParticipant(participant) {
   return {
     ...participant,
@@ -57,9 +65,11 @@ function parseFightParticipant(participant) {
     stats: parseBigIntStats(participant.stats),
   };
 }
+
 function getAttackerName(state) {
   return state.details?.attacker?.name;
 }
+
 function addPendingFeedItem(state, moveName) {
   const attackerName = getAttackerName(state);
   if(!attackerName || !moveName) {
@@ -69,6 +79,7 @@ function addPendingFeedItem(state, moveName) {
     pendingFeed: [...state.pendingFeed, {attacker: attackerName, isSelf: true, move: moveName}],
   };
 }
+
 function markMoveUsed(state, moveID, lastUsed) {
   const moves = getMarkedMoves(state.details?.attacker?.moves, moveID, lastUsed);
   if(!moves) {
@@ -84,6 +95,7 @@ function markMoveUsed(state, moveID, lastUsed) {
     },
   };
 }
+
 function getMarkedMoves(moves, moveID, lastUsed) {
   if(!Number.isInteger(moveID) || !Number.isFinite(lastUsed) || !Array.isArray(moves)) {
     return null;
