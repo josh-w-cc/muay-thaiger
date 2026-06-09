@@ -12,9 +12,10 @@ const BOT_MULTI_CHAR_RANK_PATTERN = /^(?:ZZ|A{2,5})$/;
 const RANK_Z_CHAR_CODE = 'Z'.charCodeAt(0);
 
 export function createBot(rank) {
+  const lastUsed = Date.now();
   return {
     id: null,
-    moves: BOT_MOVE_IDS.map((id) => ({id, lastUsed: null})),
+    moves: BOT_MOVE_IDS.map((id) => ({id, lastUsed})),
     race: getRandomBotRace(),
     stats: createBotStats(rank),
   };
