@@ -12,6 +12,7 @@ export function resetFightStore() {
 function createFightState(set, fight = null) {
   return {
     ...getServerFightState(fight),
+    markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed)),
     syncServerState: (nextFight) => set(createFightState(set, nextFight), true),
   };
 }
@@ -55,4 +56,37 @@ function parseFightParticipant(participant) {
     startingStats: parseBigIntStats(participant.startingStats),
     stats: parseBigIntStats(participant.stats),
   };
+}
+
+function markMoveUsed(state, moveID, lastUsed) {
+  const moves = getMarkedMoves(state.details?.attacker?.moves, moveID, lastUsed);
+  if(!moves) {
+    return state;
+  }
+
+  return {
+    details: {
+      ...state.details,
+      attacker: {
+        ...state.details.attacker,
+        moves,
+      },
+    },
+  };
+}
+
+function getMarkedMoves(moves, moveID, lastUsed) {
+  if(!Number.isInteger(moveID) || !Number.isFinite(lastUsed) || !Array.isArray(moves)) {
+    return null;
+  }
+
+  let didUpdate = false;
+  const nextMoves = moves.map((move) => {
+    if(move.id !== moveID) {
+      return move;
+    }
+    didUpdate = true;
+    return {...move, lastUsed};
+  });
+  return didUpdate ? nextMoves : null;
 }

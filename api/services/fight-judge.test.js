@@ -5,7 +5,7 @@ import patchBigIntPrototype from 'shared/bigInt.js';
 import {MOVE_IDS} from 'shared/moves.js';
 
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
-import {executeFightMove} from './fight-judge-utils.js';
+import {executeFightMove, markMoveUsed} from './fight-judge-utils.js';
 import {attachFightJudge, FightJudge} from './fight-judge.js';
 
 patchBigIntPrototype();
@@ -52,6 +52,59 @@ describe('executeFightMove', () => {
     executeFightMove(moveDefinition, activeParticipant, opponentParticipant);
 
     assert.equal(opponentParticipant.stats.health, 8n);
+  });
+
+  describe('markMoveUsed', () => {
+    it('rejects move usage when stamina cost exceeds available stamina', () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const move = {lastUsed: 999};
+        const moveDefinition = {recovery: 5, staminaCost: 200};
+        const activeParticipant = {stats: {stamina: 1n}};
+
+        assert.equal(markMoveUsed(move, moveDefinition, activeParticipant), false);
+        assert.equal(activeParticipant.stats.stamina, 1n);
+        assert.equal(move.lastUsed, 999);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('rejects move usage when stamina is already negative', () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const move = {lastUsed: 999};
+        const moveDefinition = {recovery: 5, staminaCost: 200};
+        const activeParticipant = {stats: {stamina: -1n}};
+
+        assert.equal(markMoveUsed(move, moveDefinition, activeParticipant), false);
+        assert.equal(activeParticipant.stats.stamina, -1n);
+        assert.equal(move.lastUsed, 999);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('rejects move usage when stamina is negative before first use', () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const move = {lastUsed: null};
+        const moveDefinition = {recovery: 5, staminaCost: 200};
+        const activeParticipant = {stats: {stamina: -1n}};
+
+        assert.equal(markMoveUsed(move, moveDefinition, activeParticipant), false);
+        assert.equal(activeParticipant.stats.stamina, -1n);
+        assert.equal(move.lastUsed, null);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
   });
 });
 
@@ -140,14 +193,14 @@ describe('FightJudge.attach', () => {
 
     it('does not consume stamina when move recovery has elapsed', async () => {
       const dateNow = Date.now;
-      Date.now = () => 1000;
+      Date.now = () => 10_000;
       try {
         const judge = new FightJudge();
         const fight = {
           attacker: 11,
           defender: 12,
           details: {
-            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 997}], stats: {...baseCombatStats, stamina: 10n}},
+            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 7_000}], stats: {...baseCombatStats, stamina: 10n}},
             defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
           },
           id: 101,
@@ -166,14 +219,14 @@ describe('FightJudge.attach', () => {
 
     it('consumes stamina as a percentage when move is reused inside recovery', async () => {
       const dateNow = Date.now;
-      Date.now = () => 1000;
+      Date.now = () => 10_000;
       try {
         const judge = new FightJudge();
         const fight = {
           attacker: 11,
           defender: 12,
           details: {
-            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], stats: {...baseCombatStats, stamina: 11n}},
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 5_001}], stats: {...baseCombatStats, stamina: 11n}},
             defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
           },
           id: 101,
@@ -192,7 +245,7 @@ describe('FightJudge.attach', () => {
 
     it('uses a strict recovery threshold for stamina cost checks', async () => {
       const dateNow = Date.now;
-      Date.now = () => 1000;
+      Date.now = () => 10_000;
       try {
         const judge = new FightJudge();
         const fight = {
@@ -200,7 +253,7 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {
-              moves: [{id: MOVE_IDS.wildKick, lastUsed: 995}, {id: MOVE_IDS.wildPunch, lastUsed: 998}],
+              moves: [{id: MOVE_IDS.wildKick, lastUsed: 5_000}, {id: MOVE_IDS.wildPunch, lastUsed: 7_001}],
               stats: {...baseCombatStats, stamina: 10n},
             },
             defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
@@ -315,6 +368,35 @@ describe('FightJudge.attach', () => {
         now = 60000;
 
         assert.equal(judge.get(1).details.attacker.stats.stamina, 16n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('rejects move execution when stamina is already negative', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], stats: {...baseCombatStats, stamina: -1n}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), false);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, -1n);
+        assert.equal(judge.get(1).details.attacker.moves[0].lastUsed, 999);
+        assert.equal(judge.get(1).details.attacker.moveList.length, 0);
+        assert.equal(judge.get(1).details.defender.stats.health, 1n);
       }
       finally {
         Date.now = dateNow;

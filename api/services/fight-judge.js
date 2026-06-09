@@ -39,12 +39,11 @@ export class FightJudge {
     if(activeParticipant.moveList.includes(moveNum)) {
       return false;
     }
-    const move = getFightMove(participantFight, moveID);
-    if(!move) {
-      throw new Error(`Unknown move:${moveID}`);
+    const move = getFightMoveOrThrow(participantFight, moveID),
+      moveDefinition = getMoveDefinition(moveID);
+    if(!markMoveUsed(move, moveDefinition, activeParticipant)) {
+      return false;
     }
-    const moveDefinition = getMoveDefinition(moveID);
-    markMoveUsed(move, moveDefinition, activeParticipant);
     activeParticipant.moveList.push(moveNum);
     const damage = executeFightMove(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
     participantFight.fight.details.feed.push(
@@ -84,10 +83,12 @@ const getFightMove = (participantFight, moveID) => participantFight.fight.detail
 
 const getOpponentParticipant = (participantFight) => participantFight.fight.details[participantFight.role === 'attacker' ? 'defender' : 'attacker'];
 
+function fail(message) {
+  throw new Error(message);
+}
+
+const getFightMoveOrThrow = (participantFight, moveID) => getFightMove(participantFight, moveID) ?? fail(`Unknown move:${moveID}`);
+
 function getParticipantFight(fightsByPlayerID, playerID) {
-  const participantFight = fightsByPlayerID.get(playerID);
-  if(!participantFight) {
-    throw new Error(`No fight for player:${playerID}`);
-  }
-  return participantFight;
+  return fightsByPlayerID.get(playerID) ?? fail(`No fight for player:${playerID}`);
 }
