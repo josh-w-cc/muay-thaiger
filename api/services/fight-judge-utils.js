@@ -35,9 +35,19 @@ export function getMoveDefinition(moveID) {
 export function markMoveUsed(move, moveDefinition, activeParticipant) {
   const now = Date.now();
   if(move.lastUsed != null && move.lastUsed > (now - (moveDefinition.recovery * 1000))) {
-    activeParticipant.stats.stamina -= (activeParticipant.stats.stamina * BigInt(moveDefinition.staminaCost)) / 100n;
+    const currentStamina = activeParticipant.stats.stamina;
+    if(currentStamina < 0n) {
+      return false;
+    }
+    const staminaCost = (currentStamina * BigInt(moveDefinition.staminaCost)) / 100n;
+    const remainingStamina = currentStamina - staminaCost;
+    if(remainingStamina < 0n) {
+      return false;
+    }
+    activeParticipant.stats.stamina = remainingStamina;
   }
   move.lastUsed = now;
+  return true;
 }
 
 export function executeFightMove(moveDefinition, activeParticipant, opponentParticipant) {
