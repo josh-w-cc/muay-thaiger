@@ -169,16 +169,12 @@ describe('fights.create', () => {
     assert.deepEqual(inserted.details.attacker.moves, [1, 2]);
     assert.equal(inserted.details.attacker.race, 1);
     assert.deepEqual(inserted.details.attacker.stats, {speed: '10', vigor: '9'});
-    assert.equal(typeof inserted.details.attacker.seed, 'number');
-    assert.ok(inserted.details.attacker.seed >= 0);
-    assert.ok(inserted.details.attacker.seed < 2 ** 32);
+    assert.equal(inserted.details.attacker.seed, undefined);
     assert.deepEqual(inserted.details.defender.moves, [2]);
     assert.equal(inserted.details.defender.race, 2);
     assert.deepEqual(inserted.details.defender.stats, {speed: '8', vigor: '7'});
     assert.equal(inserted.details.rank, 'bronze');
-    assert.equal(typeof inserted.details.defender.seed, 'number');
-    assert.ok(inserted.details.defender.seed >= 0);
-    assert.ok(inserted.details.defender.seed < 2 ** 32);
+    assert.equal(inserted.details.defender.seed, undefined);
   });
 
   it('inserts only attacker details when defender is missing', async () => {
@@ -201,9 +197,7 @@ describe('fights.create', () => {
     assert.deepEqual(inserted.details.attacker.moves, [1]);
     assert.equal(inserted.details.attacker.race, 1);
     assert.deepEqual(inserted.details.attacker.stats, {speed: '10', vigor: '9'});
-    assert.equal(typeof inserted.details.attacker.seed, 'number');
-    assert.ok(inserted.details.attacker.seed >= 0);
-    assert.ok(inserted.details.attacker.seed < 2 ** 32);
+    assert.equal(inserted.details.attacker.seed, undefined);
     assert.equal(inserted.details.defender, undefined);
     assert.equal(inserted.details.rank, 'ZZ');
   });
