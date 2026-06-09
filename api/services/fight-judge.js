@@ -106,6 +106,7 @@ const getOpponentParticipant = (participantFight) => participantFight.fight.deta
 function fail(message) {
   throw new Error(message);
 }
+
 const getFightMoveOrThrow = (participantFight, moveID) => getFightMove(participantFight, moveID) ?? fail(`Unknown move:${moveID}`);
 
 function getParticipantFight(fightsByPlayerID, playerID) {
