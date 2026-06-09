@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {describe, it} from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 import Fastify from 'fastify';
 import patchBigIntPrototype from 'shared/bigInt.js';
 import {MOVE_IDS} from 'shared/moves.js';
@@ -11,6 +11,19 @@ import {attachFightJudge, FightJudge} from './fight-judge.js';
 patchBigIntPrototype();
 
 const baseCombatStats = {agility: 1n, constitution: 1n, durability: 1n, reach: 1n, skill: 1n, stamina: 1n, strength: 1n};
+
+function setHitRollSequence() {
+  setRandomSequence(0.9, 0.1);
+}
+
+function setMissRollSequence() {
+  setRandomSequence(0.1, 0.9);
+}
+
+function setRandomSequence(attackerRoll, defenderRoll) {
+  let randomCount = 0;
+  Math.random = () => (++randomCount % 2 === 1 ? attackerRoll : defenderRoll);
+}
 
 describe('FightJudge.load', () => {
   it('stores unresolved fights by player ID and discards duplicate player entries', async () => {
@@ -109,6 +122,16 @@ describe('executeFightMove', () => {
 });
 
 describe('FightJudge.attach', () => {
+  const originalMathRandom = Math.random;
+
+  beforeEach(() => {
+    setHitRollSequence();
+  });
+
+  afterEach(() => {
+    Math.random = originalMathRandom;
+  });
+
   const twoPlayerFighters = {
     find: async (fighterID) => ({
       11: {id: 11, player: 1},
@@ -566,6 +589,41 @@ describe('FightJudge.attach', () => {
           result: '4 damage',
         },
       ]);
+    });
+
+    it('marks misses as blocked while still consuming stamina', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 10_000;
+      setMissRollSequence();
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 9_999}], stats: {...baseCombatStats, stamina: 11n}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(namedTwoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 9n);
+        assert.equal(judge.get(1).details.defender.stats.health, 1n);
+        assert.deepEqual(judge.get(1).details.feed, [{
+          actorRole: 'attacker',
+          attacker: 'Tiger',
+          isSelf: true,
+          move: 'Wild Kick',
+          result: 'blocked',
+        }]);
+      }
+      finally {
+        Date.now = dateNow;
+      }
     });
   });
 
