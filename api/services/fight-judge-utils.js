@@ -34,20 +34,25 @@ export function getMoveDefinition(moveID) {
 
 export function markMoveUsed(move, moveDefinition, activeParticipant) {
   const now = Date.now();
-  const currentStamina = activeParticipant.stats.stamina;
-  if(currentStamina < 0n) {
+  if(activeParticipant.stats.stamina < 0n) {
     return false;
   }
   if(move.lastUsed != null && move.lastUsed > (now - (moveDefinition.recovery * 1000))) {
-    const maxStamina = activeParticipant.startingStats?.stamina ?? currentStamina;
-    const staminaCost = (maxStamina * BigInt(moveDefinition.staminaCost)) / 100n;
-    const remainingStamina = currentStamina - staminaCost;
-    if(remainingStamina < 0n) {
+    if(!applyStaminaCost(moveDefinition, activeParticipant)) {
       return false;
     }
-    activeParticipant.stats.stamina = remainingStamina;
   }
   move.lastUsed = now;
+  return true;
+}
+
+function applyStaminaCost(moveDefinition, activeParticipant) {
+  const maxStamina = activeParticipant.startingStats?.stamina ?? activeParticipant.stats.stamina;
+  const remainingStamina = activeParticipant.stats.stamina - (maxStamina * BigInt(moveDefinition.staminaCost)) / 100n;
+  if(remainingStamina < 0n) {
+    return false;
+  }
+  activeParticipant.stats.stamina = remainingStamina;
   return true;
 }
 
