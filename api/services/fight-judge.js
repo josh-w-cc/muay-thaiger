@@ -1,7 +1,7 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition,
-  markMoveUsed} from './fight-judge-utils.js';
+import {executeFightAction, applyIdleAttacks} from './fight-judge-actions.js';
+import {calculateFighterHealth, calculateFighterStats, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -25,7 +25,11 @@ export class FightJudge {
 
   get(playerID) {
     const participantFight = this.#fightsByPlayerID.get(playerID);
-    return participantFight ? getCalculatedFight(participantFight.fight, participantFight.role) : null;
+    if(!participantFight) {
+      return null;
+    }
+    applyIdleAttacks(participantFight.fight);
+    return getCalculatedFight(participantFight.fight, participantFight.role);
   }
 
   move(playerID, moveID, moveNum) {
@@ -36,15 +40,7 @@ export class FightJudge {
     }
     const move = getFightMoveOrThrow(participantFight, moveID),
       moveDefinition = getMoveDefinition(moveID);
-    if(!markMoveUsed(move, moveDefinition, activeParticipant)) {
-      return false;
-    }
-    activeParticipant.moveList.push(moveNum);
-    const damage = executeFightMove(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
-    participantFight.fight.details.feed.push(
-      {actorRole: participantFight.role, attacker: activeParticipant.name, move: moveDefinition.name, result: `${damage} damage`},
-    );
-    return true;
+    return executeFightAction(participantFight, activeParticipant, move, moveDefinition, moveNum);
   }
 }
 
@@ -100,8 +96,6 @@ function addStartingStats(participant) {
 }
 
 const getFightMove = (participantFight, moveID) => participantFight.fight.details[participantFight.role].moves.find(({id}) => id === moveID) || null;
-
-const getOpponentParticipant = (participantFight) => participantFight.fight.details[participantFight.role === 'attacker' ? 'defender' : 'attacker'];
 
 function fail(message) {
   throw new Error(message);
