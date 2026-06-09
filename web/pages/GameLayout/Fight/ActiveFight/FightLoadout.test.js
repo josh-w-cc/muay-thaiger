@@ -127,6 +127,34 @@ describe('FightLoadout', () => {
     expect(updatedCrossFill).not.toBe(originalCrossFill);
   });
 
+  it('keeps move fill anchored when server sync rerenders with unchanged lastUsed', () => {
+    const {rerender} = render(
+      <FightLoadout
+        details={{
+          attacker: {moves: [{id: 1, lastUsed: 9_000}]},
+          strategy: 'Counter Rush',
+        }}
+      />,
+    );
+
+    const originalCrossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
+    expect(originalCrossFill).toHaveStyle({animationDelay: '-1s'});
+
+    Date.now.mockReturnValue(11_000);
+    rerender(
+      <FightLoadout
+        details={{
+          attacker: {moves: [{id: 1, lastUsed: 9_000}]},
+          strategy: 'Counter Rush',
+        }}
+      />,
+    );
+
+    const updatedCrossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
+    expect(updatedCrossFill).toHaveStyle({animationDelay: '-1s'});
+    expect(updatedCrossFill).toBe(originalCrossFill);
+  });
+
   it('stops move fill animation after recovery has elapsed', () => {
     render(
       <FightLoadout
