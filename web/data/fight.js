@@ -1,6 +1,5 @@
 import {create} from 'zustand';
 import {parseBigIntStats} from 'shared/stats.js';
-import {RACES} from 'shared/races.js';
 
 const useFightStore = create((set) => createFightState(set));
 
@@ -62,8 +61,7 @@ function parseFightParticipant(participant) {
 }
 
 function getAttackerName(state) {
-  const race = state.details?.attacker?.race;
-  return RACES.find((r) => r.id === race)?.name;
+  return state.details?.attacker?.name;
 }
 
 function addPendingFeedItem(state, moveName) {

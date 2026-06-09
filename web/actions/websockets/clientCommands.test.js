@@ -82,7 +82,7 @@ describe('client websocket commands', () => {
     useFightStore.getState().syncServerState({
       details: {
         attacker: {
-          race: 1,
+          name: 'Tiger',
           moves: [{id: 3, lastUsed: 100}],
           startingStats: {},
           stats: {},

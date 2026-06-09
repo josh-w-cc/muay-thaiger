@@ -128,11 +128,11 @@ describe('useFightStore', () => {
     expect(useFightStore.getState().pendingFeed).toEqual([]);
   });
 
-  it('adds a pending feed item with attacker name derived from race when a move is used', () => {
+  it('adds a pending feed item with attacker name from fighter details when a move is used', () => {
     useFightStore.getState().syncServerState({
       details: {
         attacker: {
-          race: 1,
+          name: 'Thaiger',
           startingStats: {},
           stats: {},
         },
@@ -144,7 +144,7 @@ describe('useFightStore', () => {
     useFightStore.getState().addPendingFeedItem('Cross');
 
     expect(useFightStore.getState().pendingFeed).toEqual([
-      {attacker: 'Tiger', isSelf: true, move: 'Cross'},
+      {attacker: 'Thaiger', isSelf: true, move: 'Cross'},
     ]);
   });
 
@@ -152,7 +152,7 @@ describe('useFightStore', () => {
     useFightStore.getState().syncServerState({
       details: {
         attacker: {
-          race: 2,
+          name: 'Snowball',
           startingStats: {},
           stats: {},
         },
@@ -165,8 +165,8 @@ describe('useFightStore', () => {
     useFightStore.getState().addPendingFeedItem('Knee');
 
     expect(useFightStore.getState().pendingFeed).toEqual([
-      {attacker: 'Snow Leopard', isSelf: true, move: 'Jab'},
-      {attacker: 'Snow Leopard', isSelf: true, move: 'Knee'},
+      {attacker: 'Snowball', isSelf: true, move: 'Jab'},
+      {attacker: 'Snowball', isSelf: true, move: 'Knee'},
     ]);
   });
 
@@ -180,7 +180,7 @@ describe('useFightStore', () => {
     useFightStore.getState().syncServerState({
       details: {
         attacker: {
-          race: 1,
+          name: 'Thaiger',
           startingStats: {},
           stats: {},
         },
@@ -194,7 +194,7 @@ describe('useFightStore', () => {
     useFightStore.getState().syncServerState({
       details: {
         attacker: {
-          race: 1,
+          name: 'Thaiger',
           startingStats: {},
           stats: {},
         },

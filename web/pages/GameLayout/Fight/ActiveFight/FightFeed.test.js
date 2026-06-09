@@ -36,7 +36,7 @@ describe('FightFeed', () => {
   it('renders pending feed items above server feed items with no damage value', () => {
     useFightStore.getState().syncServerState({
       details: {
-        attacker: {race: 1, startingStats: {}, stats: {}},
+        attacker: {name: 'Tiger', startingStats: {}, stats: {}},
       },
       id: 1,
       reason: 'gold',
@@ -63,7 +63,7 @@ describe('FightFeed', () => {
   it('renders multiple pending items in reverse click order', () => {
     useFightStore.getState().syncServerState({
       details: {
-        attacker: {race: 1, startingStats: {}, stats: {}},
+        attacker: {name: 'Tiger', startingStats: {}, stats: {}},
       },
       id: 1,
       reason: 'gold',
