@@ -1,7 +1,8 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {calculateFighterHealth, calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition,
-  markMoveUsed} from './fight-judge-utils.js';
+import {captureStartingStats} from './fight-starting-stats.js';
+import {recoverFightStamina} from './fight-stamina.js';
+import {calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition, markMoveUsed} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -25,12 +26,16 @@ export class FightJudge {
 
   get(playerID) {
     const participantFight = this.#fightsByPlayerID.get(playerID);
+    if(participantFight) {
+      recoverFightStamina(participantFight.fight);
+    }
     return participantFight ? getCalculatedFight(participantFight.fight, participantFight.role) : null;
   }
 
   move(playerID, moveID, moveNum) {
-    const participantFight = getParticipantFight(this.#fightsByPlayerID, playerID),
-      activeParticipant = participantFight.fight.details[participantFight.role];
+    const participantFight = getParticipantFight(this.#fightsByPlayerID, playerID);
+    recoverFightStamina(participantFight.fight);
+    const activeParticipant = participantFight.fight.details[participantFight.role];
     if(activeParticipant.moveList.includes(moveNum)) {
       return false;
     }
@@ -63,7 +68,8 @@ function getCalculatedFight(fight, participantRole) {
 }
 
 function addCalculatedStats(participant) {
-  return {...participant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
+  const {staminaRecoveredAt, staminaRecoveryRemainder, ...visibleParticipant} = participant;
+  return {...visibleParticipant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
 }
 
 export function attachFightJudge(app) {
@@ -71,32 +77,6 @@ export function attachFightJudge(app) {
   const models = {fighters: fightersModel(app.db), fights: fightsModel(app.db)};
   app.decorate('fightJudge', judge);
   app.addHook('onReady', () => judge.load(models));
-}
-
-function captureStartingStats(fight) {
-  const {attacker, defender, ...rest} = fight.details;
-  return {
-    ...fight,
-    details: {
-      attacker: addStartingStats(attacker),
-      ...(defender ? {defender: addStartingStats(defender)} : {}),
-      ...rest,
-      feed: [],
-    },
-  };
-}
-
-function addStartingStats(participant) {
-  const health = calculateFighterHealth(participant.stats);
-  participant.stats.health = health;
-  return {
-    ...participant,
-    moveList: [],
-    startingStats: {
-      ...participant.stats,
-      health,
-    },
-  };
 }
 
 const getFightMove = (participantFight, moveID) => participantFight.fight.details[participantFight.role].moves.find(({id}) => id === moveID) || null;
