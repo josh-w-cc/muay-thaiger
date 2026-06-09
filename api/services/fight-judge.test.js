@@ -127,10 +127,95 @@ describe('FightJudge.attach', () => {
 
         assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
         assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890123);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 1n);
         assert.deepEqual(judge.get(1).details.attacker.moveList, [10]);
         assert.equal(judge.get(1).details.defender.stats.health, -5n);
         assert.equal(judge.get(2).details.defender.moves[0].lastUsed, 3);
         assert.deepEqual(judge.get(2).details.defender.moveList, []);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('does not consume stamina when move recovery has elapsed', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 997}], stats: {...baseCombatStats, stamina: 10n}},
+            defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildPunch, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 10n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('consumes stamina as a percentage when move is reused inside recovery', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], stats: {...baseCombatStats, stamina: 11n}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 9n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
+    it('uses a strict recovery threshold for stamina cost checks', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {
+              moves: [{id: MOVE_IDS.wildKick, lastUsed: 995}, {id: MOVE_IDS.wildPunch, lastUsed: 998}],
+              stats: {...baseCombatStats, stamina: 10n},
+            },
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 10n);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildPunch, 11), true);
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 9n);
       }
       finally {
         Date.now = dateNow;

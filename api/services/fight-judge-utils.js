@@ -32,6 +32,14 @@ export function getMoveDefinition(moveID) {
   return moveDefinition;
 }
 
+export function markMoveUsed(move, moveDefinition, activeParticipant) {
+  const now = Date.now();
+  if(move.lastUsed != null && move.lastUsed > (now - moveDefinition.recovery)) {
+    activeParticipant.stats.stamina -= (activeParticipant.stats.stamina * BigInt(moveDefinition.staminaCost)) / 100n;
+  }
+  move.lastUsed = now;
+}
+
 export function executeFightMove(moveDefinition, activeParticipant, opponentParticipant) {
   const attackerPower = activeParticipant?.stats ? calculateFighterStats(activeParticipant.stats).power : 1n;
   let damage = 0n;
