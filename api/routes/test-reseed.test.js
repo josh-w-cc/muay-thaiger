@@ -9,8 +9,8 @@ import testReseedRoutes from '../routes/test-reseed.js';
 
 
 describe('POST /api/test/reseed', () => {
-  it('truncates tables and reseeds data, returns 204', async () => {
-    const {knex, calls} = mockKnexMulti([[], [], [], [], []], []);
+  it('truncates tables and reseeds reference data without fighter rows, returns 204', async () => {
+    const {knex, calls} = mockKnexMulti([[], [], []], []);
     const app = Fastify();
     app.decorate('db', knex);
     await app.register(testReseedRoutes);
@@ -37,14 +37,14 @@ describe('POST /api/test/reseed', () => {
       Object.values(SKILL_IDS).toSorted((left, right) => left - right),
     );
     assert.equal(calls[5][0], 'table');
-    assert.equal(calls[5][1], 'players');
+    assert.equal(calls[5][1], 'races');
     assert.equal(calls[6][0], 'insert');
-    assert.equal(calls[7][0], 'table');
-    assert.equal(calls[7][1], 'races');
-    assert.equal(calls[8][0], 'insert');
-    assert.equal(calls[9][0], 'table');
-    assert.equal(calls[9][1], 'fighters');
-    assert.equal(calls[10][0], 'insert');
+    assert.deepEqual(
+      calls
+        .filter(([type]) => type === 'table')
+        .map(([, table]) => table),
+      ['moves', 'actions', 'races'],
+    );
     await app.close();
   });
 });
