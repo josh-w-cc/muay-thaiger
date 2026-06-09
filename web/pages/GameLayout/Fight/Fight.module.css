@@ -17,8 +17,23 @@
   padding: var(--space-xs) 0;
 }
 
+.fightFeedItemEnter {
+  animation: fightFeedItemEnter 280ms ease-out;
+}
+
 .fightFeedItem:last-child {
   border-bottom: 0;
+}
+
+@keyframes fightFeedItemEnter {
+  0% {
+    background-color: color-mix(in srgb, var(--color-gold) 15%, transparent);
+    transform: translateY(-0.25rem);
+  }
+  100% {
+    background-color: transparent;
+    transform: translateY(0);
+  }
 }
 
 .fightFeedAttackerEnemy {
