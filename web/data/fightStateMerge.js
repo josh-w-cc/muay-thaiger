@@ -1,34 +1,30 @@
 export function mergeFightState(state, nextFightState) {
-  if(!hasSameFightID(state, nextFightState)) {
+  if(getFightID(state) !== getFightID(nextFightState)) {
     return nextFightState;
   }
-  const mergedDetails = mergeFightDetails(state?.details, nextFightState?.details);
-  return mergedDetails
-    ? {...nextFightState, details: mergedDetails}
-    : nextFightState;
+  const nextMoves = getAttackerMoves(nextFightState);
+  const moves = mergeMoveLastUsed(getAttackerMoves(state), nextMoves);
+  if(moves === nextMoves) {
+    return nextFightState;
+  }
+  return {
+    ...nextFightState,
+    details: {
+      ...nextFightState.details,
+      attacker: {
+        ...nextFightState.details.attacker,
+        moves,
+      },
+    },
+  };
 }
 
-function hasSameFightID(state, nextFightState) {
-  return state?.id === nextFightState?.id;
+function getFightID(fightState) {
+  return fightState ? fightState.id : null;
 }
 
-function mergeFightDetails(localDetails, serverDetails) {
-  const mergedAttacker = mergeAttacker(localDetails?.attacker, serverDetails?.attacker);
-  if(!mergedAttacker) {
-    return null;
-  }
-  return {...serverDetails, attacker: mergedAttacker};
-}
-
-function mergeAttacker(localAttacker, serverAttacker) {
-  if(!serverAttacker) {
-    return null;
-  }
-  const moves = mergeMoveLastUsed(localAttacker?.moves, serverAttacker.moves);
-  if(moves === serverAttacker.moves) {
-    return null;
-  }
-  return {...serverAttacker, moves};
+function getAttackerMoves(fightState) {
+  return fightState?.details?.attacker?.moves;
 }
 
 function mergeMoveLastUsed(localMoves, serverMoves) {
