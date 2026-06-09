@@ -32,7 +32,9 @@ export function moveCmd(moveID) {
     console.error(`Invalid move:${moveID}`);
     return;
   }
-  useFightStore.getState().markMoveUsed(moveID);
+  if(!useFightStore.getState().markMoveUsed(moveID)) {
+    return;
+  }
   moveBatch.push({move_id: moveID, move_num: moveCount});
   moveCount += 1;
 }

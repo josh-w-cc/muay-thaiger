@@ -76,6 +76,30 @@ describe('client websocket commands', () => {
     expect(sendCommand).not.toHaveBeenCalled();
   });
 
+  it('does not queue or send a move when client stamina is insufficient', async () => {
+    const {moveCmd} = await import('./clientCommands.js');
+    const {default: useFightStore} = await import('@/data/fight.js');
+    vi.setSystemTime(10_000);
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          moves: [{id: 2, lastUsed: 9_000}],
+          startingStats: {stamina: 100n},
+          stats: {stamina: 10n},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    moveCmd(2);
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).not.toHaveBeenCalled();
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 2, lastUsed: 9_000}]);
+    expect(useFightStore.getState().details.attacker.stats.stamina).toBe(10n);
+  });
+
   it('batches repeated clicks for the same move as separate move entries', async () => {
     const {moveCmd} = await import('./clientCommands.js');
 

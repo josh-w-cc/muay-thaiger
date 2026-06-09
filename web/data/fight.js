@@ -1,6 +1,7 @@
 import {create} from 'zustand';
 import {parseBigIntStats} from 'shared/stats.js';
 import {mergeFightState} from './fightStateMerge.js';
+import {getMarkedMoveState} from './fightMoveUsage.js';
 
 const useFightStore = create((set) => createFightState(set));
 
@@ -19,7 +20,15 @@ function createFightState(set, fight = null) {
 
 function createFightActions(set) {
   return {
-    markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed)),
+    markMoveUsed: (moveID, lastUsed = Date.now()) => {
+      let canUseMove = true;
+      set((state) => {
+        const nextMarkedMoveState = markMoveUsed(state, moveID, lastUsed);
+        canUseMove = nextMarkedMoveState !== null;
+        return nextMarkedMoveState ?? state;
+      });
+      return canUseMove;
+    },
     syncServerState: (nextFight) => set((state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set)}), true),
   };
 }
@@ -66,34 +75,18 @@ function parseFightParticipant(participant) {
 }
 
 function markMoveUsed(state, moveID, lastUsed) {
-  const moves = getMarkedMoves(state.details?.attacker?.moves, moveID, lastUsed);
-  if(!moves) {
+  const markedMoveState = getMarkedMoveState(state.details?.attacker, moveID, lastUsed);
+  if(!markedMoveState.canUseMove) {
+    return null;
+  }
+  if(!markedMoveState.attacker) {
     return state;
   }
 
   return {
     details: {
       ...state.details,
-      attacker: {
-        ...state.details.attacker,
-        moves,
-      },
+      attacker: markedMoveState.attacker,
     },
   };
-}
-
-function getMarkedMoves(moves, moveID, lastUsed) {
-  if(!Number.isInteger(moveID) || !Number.isFinite(lastUsed) || !Array.isArray(moves)) {
-    return null;
-  }
-
-  let didUpdate = false;
-  const nextMoves = moves.map((move) => {
-    if(move.id !== moveID) {
-      return move;
-    }
-    didUpdate = true;
-    return {...move, lastUsed};
-  });
-  return didUpdate ? nextMoves : null;
 }
