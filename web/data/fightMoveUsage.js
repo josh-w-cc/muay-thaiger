@@ -1,4 +1,5 @@
 import {MOVE_DEFINITIONS_BY_ID} from 'shared/moves.js';
+import {getStaminaCostFromPercentage, isMoveInRecoveryWindow} from 'shared/moveUsage.js';
 
 export function getMarkedMoveState(attacker, moveID, lastUsed) {
   if(!canMarkMove(attacker, moveID, lastUsed)) {
@@ -46,12 +47,10 @@ function getNextStats(attacker, move, moveID, now) {
 
 function shouldConsumeStamina(move, moveID, now) {
   const moveDefinition = MOVE_DEFINITIONS_BY_ID[moveID];
-  if(!moveDefinition || move.lastUsed == null) {
+  if(!moveDefinition) {
     return false;
   }
-
-  const recoveryThreshold = now - (moveDefinition.recovery * 1000);
-  return move.lastUsed > recoveryThreshold;
+  return isMoveInRecoveryWindow(move.lastUsed, moveDefinition.recovery, now);
 }
 
 function hasBigIntStamina(attacker) {
@@ -62,6 +61,5 @@ function hasBigIntStamina(attacker) {
 }
 
 function getStaminaCost(maxStamina, moveID) {
-  const staminaCost = BigInt(MOVE_DEFINITIONS_BY_ID[moveID].staminaCost);
-  return (maxStamina * staminaCost) / 100n;
+  return getStaminaCostFromPercentage(maxStamina, MOVE_DEFINITIONS_BY_ID[moveID].staminaCost);
 }
