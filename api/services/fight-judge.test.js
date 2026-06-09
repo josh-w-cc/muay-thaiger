@@ -162,7 +162,7 @@ describe('FightJudge.attach', () => {
 
     it('updates lastUsed and applies move effects for the active player move', async () => {
       const dateNow = Date.now;
-      const random = Math.random;
+      const originalRandom = Math.random;
       Date.now = () => 1234567890123;
       Math.random = () => 0.25;
       try {
@@ -190,7 +190,7 @@ describe('FightJudge.attach', () => {
       }
       finally {
         Date.now = dateNow;
-        Math.random = random;
+        Math.random = originalRandom;
       }
     });
 
@@ -348,7 +348,7 @@ describe('FightJudge.attach', () => {
 
     it('discards duplicate moveNum entries', async () => {
       const dateNow = Date.now;
-      const random = Math.random;
+      const originalRandom = Math.random;
       Date.now = () => 1234567890123;
       Math.random = () => 0.25;
       try {
@@ -373,12 +373,12 @@ describe('FightJudge.attach', () => {
       }
       finally {
         Date.now = dateNow;
-        Math.random = random;
+        Math.random = originalRandom;
       }
     });
 
     it('adds a feed entry when a move is executed', async () => {
-      const random = Math.random;
+      const originalRandom = Math.random;
       Math.random = () => 0.25;
       try {
         const judge = new FightJudge();
@@ -446,7 +446,7 @@ describe('FightJudge.attach', () => {
         ]);
       }
       finally {
-        Math.random = random;
+        Math.random = originalRandom;
       }
     });
   });

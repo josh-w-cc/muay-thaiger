@@ -24,7 +24,7 @@ describe('MOVE_SEED_MOVES', () => {
 
 describe('MOVE_DEFINITIONS', () => {
   it('randomizes Wild Punch damage between 1-5', () => {
-    const random = Math.random;
+    const originalRandom = Math.random;
     const calls = [];
     const opponent = {
       takeDamage: (amount) => calls.push(amount),
@@ -37,14 +37,14 @@ describe('MOVE_DEFINITIONS', () => {
       MOVE_DEFINITIONS.wildPunch.affect({}, opponent);
     }
     finally {
-      Math.random = random;
+      Math.random = originalRandom;
     }
 
     deepEqual(calls, [1, 5]);
   });
 
   it('randomizes Wild Kick damage between 1-10', () => {
-    const random = Math.random;
+    const originalRandom = Math.random;
     const calls = [];
     const opponent = {
       takeDamage: (amount) => calls.push(amount),
@@ -57,7 +57,7 @@ describe('MOVE_DEFINITIONS', () => {
       MOVE_DEFINITIONS.wildKick.affect({}, opponent);
     }
     finally {
-      Math.random = random;
+      Math.random = originalRandom;
     }
 
     deepEqual(calls, [1, 10]);
