@@ -222,6 +222,37 @@ describe('FightJudge.attach', () => {
       }
     });
 
+    it('recalculates power from reduced stamina and applies it to move damage', async () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 998}], stats: {...baseCombatStats, stamina: 10n}},
+            defender: {moves: [], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.get(1).details.attacker.stats.power, 4n);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildPunch, 10), true);
+
+        assert.equal(judge.get(1).details.attacker.stats.stamina, 9n);
+        assert.equal(judge.get(1).details.attacker.stats.power, 2n);
+        assert.equal(judge.get(1).details.defender.stats.health, -3n);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
+
     it('throws when the player has no active fight move or fight', async () => {
       const judge = new FightJudge();
       const fight = {
