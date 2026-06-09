@@ -71,6 +71,23 @@ describe('executeFightMove', () => {
         Date.now = dateNow;
       }
     });
+
+    it('rejects move usage when stamina is already negative', () => {
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const move = {lastUsed: 999};
+        const moveDefinition = {recovery: 5, staminaCost: 200};
+        const activeParticipant = {stats: {stamina: -1n}};
+
+        assert.equal(markMoveUsed(move, moveDefinition, activeParticipant), false);
+        assert.equal(activeParticipant.stats.stamina, -1n);
+        assert.equal(move.lastUsed, 999);
+      }
+      finally {
+        Date.now = dateNow;
+      }
+    });
   });
 });
 
@@ -241,7 +258,7 @@ describe('FightJudge.attach', () => {
       }
     });
 
-    it('rejects move execution when stamina would be negative', async () => {
+    it('rejects move execution when stamina is already negative', async () => {
       const dateNow = Date.now;
       Date.now = () => 1000;
       try {
