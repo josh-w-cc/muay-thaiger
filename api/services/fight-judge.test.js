@@ -112,8 +112,7 @@ describe('FightJudge.attach', () => {
   const mathRandom = Math.random;
 
   beforeEach(() => {
-    let randomCount = 0;
-    Math.random = () => (++randomCount % 2 === 1 ? 0.9 : 0.1);
+    setRandomSequence(0.9, 0.1);
   });
 
   afterEach(() => {
@@ -581,12 +580,8 @@ describe('FightJudge.attach', () => {
 
     it('marks misses as blocked while still charging stamina', async () => {
       const dateNow = Date.now;
-      const mathRandom = Math.random;
       Date.now = () => 10_000;
-      Math.random = (() => {
-        let randomCount = 0;
-        return () => (++randomCount % 2 === 1 ? 0.1 : 0.9);
-      })();
+      setRandomSequence(0.1, 0.9);
       try {
         const judge = new FightJudge();
         const fight = {
@@ -615,7 +610,6 @@ describe('FightJudge.attach', () => {
       }
       finally {
         Date.now = dateNow;
-        Math.random = mathRandom;
       }
     });
   });
@@ -643,6 +637,11 @@ describe('FightJudge.attach', () => {
     assert.deepEqual(judge.get(1).details.defender.moveList, []);
     assert.deepEqual(judge.get(1).details.feed, []);
   });
+
+  function setRandomSequence(attackerRoll, defenderRoll) {
+    let randomCount = 0;
+    Math.random = () => (++randomCount % 2 === 1 ? attackerRoll : defenderRoll);
+  }
 
   it('computes calculated attacker and defender stats from current fight details', async () => {
     const judge = new FightJudge();
