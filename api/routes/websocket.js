@@ -4,6 +4,7 @@ import fighterMovesModel from '../data/models/fighter-moves.js';
 import fightsModel from '../data/models/fights/index.js';
 import playersModel from '../data/models/players.js';
 import racesModel from '../data/models/races.js';
+import {parseJSON} from 'shared/json.js';
 import {processMessageCommand} from '../logic/websocket/websocket-commands.js';
 
 
@@ -53,7 +54,7 @@ export async function onMessage(raw, socket, models, logger) {
 }
 
 function parseMessageIfActive(raw, socket, logger) {
-  const message = parseMessage(raw);
+  const message = parseJSON(raw);
   if(!message) {
     logWebSocketActivity(logger, 'warn', {raw_type: typeof raw}, 'websocket invalid message');
     return null;
@@ -68,15 +69,6 @@ function parseMessageIfActive(raw, socket, logger) {
 
 function isSocketOpen(socket) {
   return socket.readyState === socket.OPEN;
-}
-
-function parseMessage(raw) {
-  try {
-    return JSON.parse(raw);
-  }
-  catch {
-    return null;
-  }
 }
 
 function resolveCommandError(error) {
