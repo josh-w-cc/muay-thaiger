@@ -54,7 +54,7 @@ describe('client websocket commands', () => {
     expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 3, move_num: 0}]});
   });
 
-  it('updates the active fight move lastUsed on the client before the batch is sent', async () => {
+  it('updates the active fight move lastUsed slightly in the future before the batch is sent', async () => {
     const {moveCmd} = await import('./clientCommands.js');
     const {default: useFightStore} = await import('@/data/fight.js');
     vi.setSystemTime(12_345);
@@ -72,7 +72,31 @@ describe('client websocket commands', () => {
 
     moveCmd(3);
 
-    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 3, lastUsed: 12_345}, {id: 4, lastUsed: 200}]);
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 3, lastUsed: 12_595}, {id: 4, lastUsed: 200}]);
+    expect(sendCommand).not.toHaveBeenCalled();
+  });
+
+  it('anchors local lastUsed to the next expected batch sync when one is already pending', async () => {
+    const {moveCmd} = await import('./clientCommands.js');
+    const {default: useFightStore} = await import('@/data/fight.js');
+    vi.setSystemTime(20_000);
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          moves: [{id: 3, lastUsed: 100}, {id: 4, lastUsed: 200}],
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    moveCmd(3);
+    vi.setSystemTime(20_300);
+    moveCmd(4);
+
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 3, lastUsed: 20_250}, {id: 4, lastUsed: 20_500}]);
     expect(sendCommand).not.toHaveBeenCalled();
   });
 
