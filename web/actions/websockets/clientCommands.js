@@ -37,6 +37,25 @@ export function moveCmd(moveID) {
   moveCount += 1;
 }
 
+export function syncMoveCount(fight) {
+  const maxMoveNum = getMaxMoveNum(fight);
+  if(maxMoveNum >= moveCount) {
+    moveCount = maxMoveNum + 1;
+  }
+}
+
+function getMaxMoveNum(fight) {
+  const moveList = getAttackerMoveList(fight);
+  if(!Array.isArray(moveList) || moveList.length === 0) {
+    return -1;
+  }
+  return Math.max(...moveList);
+}
+
+function getAttackerMoveList(fight) {
+  return fight?.details?.attacker?.moveList;
+}
+
 export function selectFighterCmd() {
   respondToAuth(connectSocketOnAppLoad());
   routeToHubIfAuthorized();
