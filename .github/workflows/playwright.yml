@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/playwright.yml'
       - 'docker-compose.yml'
-      - 'api/Dockerfile'
+      - 'api/config/Dockerfile'
       - 'playwright/Dockerfile'
       - 'shared/**'
       - 'web/Dockerfile'
@@ -59,7 +59,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: /tmp/docker-images.tar.gz
-          key: docker-images-${{ runner.os }}-${{ hashFiles('docker-compose.yml', 'api/Dockerfile', 'web/Dockerfile', 'playwright/Dockerfile') }}
+          key: docker-images-${{ runner.os }}-${{ hashFiles('docker-compose.yml', 'api/config/Dockerfile', 'web/Dockerfile', 'playwright/Dockerfile') }}
           restore-keys: |
             docker-images-${{ runner.os }}-
 
@@ -72,14 +72,14 @@ jobs:
       - name: Pull Docker base images
         if: steps.docker-cache.outputs.cache-hit != 'true' || steps.docker-load.outcome == 'failure'
         run: |
-          base=$(awk '/^FROM/{print $2}' api/Dockerfile web/Dockerfile playwright/Dockerfile)
+          base=$(awk '/^FROM/{print $2}' api/config/Dockerfile web/Dockerfile playwright/Dockerfile)
           echo postgres:18 $base | xargs -n1 docker pull
 
       - name: Save Docker base images to cache
         if: steps.docker-cache.outputs.cache-hit != 'true'
         run: |
           set -o pipefail
-          base=$(awk '/^FROM/{print $2}' api/Dockerfile web/Dockerfile playwright/Dockerfile)
+          base=$(awk '/^FROM/{print $2}' api/config/Dockerfile web/Dockerfile playwright/Dockerfile)
           docker save postgres:18 $base | gzip > /tmp/docker-images.tar.gz
 
       - name: Start services
