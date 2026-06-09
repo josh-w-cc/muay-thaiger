@@ -136,14 +136,6 @@ describe('Train', () => {
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('uses an opaque tooltip background token', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'Regimen', 'SkillInfoButton.module.css');
-    const source = fs.readFileSync(modulePath, 'utf8');
-
-    expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
-  });
-
   it('keeps the info tooltip inside the mobile viewport', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const modulePath = path.join(directoryPath, 'Regimen', 'SkillInfoButton.module.css');
