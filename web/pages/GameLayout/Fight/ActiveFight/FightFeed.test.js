@@ -108,5 +108,8 @@ describe('FightFeed', () => {
     const updatedItems = screen.getAllByRole('listitem');
     expect(updatedItems[1]).toBe(initialItems[0]);
     expect(updatedItems[2]).toBe(initialItems[1]);
+    expect(updatedItems[0].className).toContain('fightFeedItemEnter');
+    expect(updatedItems[1].className).not.toContain('fightFeedItemEnter');
+    expect(updatedItems[2].className).not.toContain('fightFeedItemEnter');
   });
 });
