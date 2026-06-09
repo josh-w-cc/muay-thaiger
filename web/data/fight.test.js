@@ -123,4 +123,86 @@ describe('useFightStore', () => {
 
     expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 100}, {id: 2, lastUsed: 9_999}]);
   });
+
+  it('starts with an empty pending feed', () => {
+    expect(useFightStore.getState().pendingFeed).toEqual([]);
+  });
+
+  it('adds a pending feed item with attacker name derived from race when a move is used', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          race: 1,
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    useFightStore.getState().addPendingFeedItem('Cross');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([
+      {attacker: 'Tiger', isSelf: true, move: 'Cross'},
+    ]);
+  });
+
+  it('appends multiple pending feed items in click order', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          race: 2,
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    useFightStore.getState().addPendingFeedItem('Jab');
+    useFightStore.getState().addPendingFeedItem('Knee');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([
+      {attacker: 'Snow Leopard', isSelf: true, move: 'Jab'},
+      {attacker: 'Snow Leopard', isSelf: true, move: 'Knee'},
+    ]);
+  });
+
+  it('does not add a pending feed item when attacker data is missing', () => {
+    useFightStore.getState().addPendingFeedItem('Cross');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([]);
+  });
+
+  it('clears pending feed when the server syncs new state', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          race: 1,
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+    useFightStore.getState().addPendingFeedItem('Cross');
+    expect(useFightStore.getState().pendingFeed).toHaveLength(1);
+
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          race: 1,
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    expect(useFightStore.getState().pendingFeed).toEqual([]);
+  });
 });

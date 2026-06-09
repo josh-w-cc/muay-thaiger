@@ -1,5 +1,6 @@
 import {create} from 'zustand';
 import {parseBigIntStats} from 'shared/stats.js';
+import {RACES} from 'shared/races.js';
 
 const useFightStore = create((set) => createFightState(set));
 
@@ -12,7 +13,9 @@ export function resetFightStore() {
 function createFightState(set, fight = null) {
   return {
     ...getServerFightState(fight),
+    addPendingFeedItem: (moveName) => set((state) => addPendingFeedItem(state, moveName)),
     markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed)),
+    pendingFeed: [],
     syncServerState: (nextFight) => set(createFightState(set, nextFight), true),
   };
 }
@@ -55,6 +58,17 @@ function parseFightParticipant(participant) {
     ...participant,
     startingStats: parseBigIntStats(participant.startingStats),
     stats: parseBigIntStats(participant.stats),
+  };
+}
+
+function addPendingFeedItem(state, moveName) {
+  const race = state.details?.attacker?.race;
+  const attackerName = RACES.find((r) => r.id === race)?.name;
+  if(!attackerName || !moveName) {
+    return state;
+  }
+  return {
+    pendingFeed: [...state.pendingFeed, {attacker: attackerName, isSelf: true, move: moveName}],
   };
 }
 

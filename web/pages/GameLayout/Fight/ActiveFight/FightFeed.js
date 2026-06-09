@@ -1,8 +1,10 @@
+import useFightStore from '@/data/fight.js';
 import css from '../Fight.module.css';
 
 
 export default function FightFeed({details}) {
-  const feedItems = getFightFeed(details);
+  const pendingFeed = useFightStore((state) => state.pendingFeed);
+  const feedItems = getFightFeed(details, pendingFeed);
 
   return (
     <div className={css.fightFeed}>
@@ -21,15 +23,22 @@ function FightFeedItem({item}) {
       <strong className={attackerClassName}>{item.attacker}</strong>
       {' throws '}
       <strong>{item.move}</strong>
-      {' — '}
-      {item.result}
+      {item.result != null && (
+        <>
+          {' — '}
+          {item.result}
+        </>
+      )}
     </li>
   );
 }
 
-function getFightFeed(details) {
-  if(Array.isArray(details?.feed) && details.feed.length > 0) {
-    return [...details.feed].reverse();
-  }
-  return [];
+function getFightFeed(details, pendingFeed) {
+  const serverItems = Array.isArray(details?.feed) && details.feed.length > 0
+    ? [...details.feed].reverse()
+    : [];
+  const pendingItems = Array.isArray(pendingFeed) && pendingFeed.length > 0
+    ? [...pendingFeed].reverse()
+    : [];
+  return [...pendingItems, ...serverItems];
 }
