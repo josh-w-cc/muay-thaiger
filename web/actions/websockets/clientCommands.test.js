@@ -72,7 +72,7 @@ describe('client websocket commands', () => {
 
     moveCmd(3);
 
-    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 3, lastUsed: 12_345}, {id: 4, lastUsed: 200}]);
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 3, lastUsed: 12_845}, {id: 4, lastUsed: 200}]);
     expect(sendCommand).not.toHaveBeenCalled();
   });
 
