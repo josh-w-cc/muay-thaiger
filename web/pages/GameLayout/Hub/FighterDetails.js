@@ -1,7 +1,7 @@
 import BaseStats from '@/data/baseStats.js';
 import useFighterStore from '@/data/fighter.js';
 
-import css from './Hub.module.css';
+import css from './FighterDetails.module.css';
 
 export default function FighterDetails() {
   const fighter = useFighterStore();

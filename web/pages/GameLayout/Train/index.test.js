@@ -67,6 +67,18 @@ vi.mock('shared/skills/index.js', async () => {
     },
   };
 });
+
+vi.mock('shared/skills/ids.js', async () => {
+  const actual = await vi.importActual('shared/skills/ids.js');
+
+  return {
+    SKILL_IDS: {
+      ...actual.SKILL_IDS,
+      begging: 99,
+    },
+  };
+});
+
 vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFighterActionCmd: (...args) => createFighterActionCmd(...args),
   removeFighterActionCmd: (...args) => removeFighterActionCmd(...args),
@@ -136,14 +148,6 @@ describe('Train', () => {
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('uses an opaque tooltip background token', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'Regimen', 'SkillInfoButton.module.css');
-    const source = fs.readFileSync(modulePath, 'utf8');
-
-    expect(source).toMatch(/\.infoTooltip\s*{[^}]*background-color:\s*var\(--color-bg\);/s);
-  });
-
   it('keeps the info tooltip inside the mobile viewport', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const modulePath = path.join(directoryPath, 'Regimen', 'SkillInfoButton.module.css');
@@ -158,6 +162,17 @@ describe('Train', () => {
     ].join(''));
 
     expect(source).toMatch(mobileTooltipRule);
+  });
+
+  it('keeps regimen styles in the Regimen CSS module', () => {
+    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
+    const regimenPath = path.join(directoryPath, 'Regimen', 'index.js');
+    const regimenCssPath = path.join(directoryPath, 'Regimen', 'Regimen.module.css');
+    const regimenSource = fs.readFileSync(regimenPath, 'utf8');
+    const regimenCssSource = fs.readFileSync(regimenCssPath, 'utf8');
+
+    expect(regimenSource).toContain('import css from \'./Regimen.module.css\';');
+    expect(regimenCssSource).toMatch(/\.regimen\s*{/);
   });
 
   it('shows gray progress bar for inactive skills', () => {

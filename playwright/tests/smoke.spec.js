@@ -35,3 +35,11 @@ test('choosing a fighter stores player token and routes to hub', async ({page}) 
   await expect(page.getByRole('heading', {name: 'Leaderboard:'})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Trainable Stat Leaders:'})).toBeVisible();
 });
+
+test('server down route shows recovery messaging', async ({page}) => {
+  await page.goto('/server-down');
+  await expect(page).toHaveURL(/\/server-down$/);
+  await expect(page.getByRole('heading', {name: 'Server Unavailable'})).toBeVisible();
+  await expect(page.getByText(/unable to connect to the game server/i)).toBeVisible();
+  await expect(page.getByRole('button', {name: 'Return Home'})).toBeVisible();
+});

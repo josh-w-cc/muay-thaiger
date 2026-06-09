@@ -172,3 +172,10 @@
   padding: var(--space-xs) 0;
   width: calc((100% - var(--space-sm)) / 2);
 }
+
+.fightDetailsJSON {
+  margin: 0;
+  max-width: 100%;
+  white-space: pre-wrap;
+
+}

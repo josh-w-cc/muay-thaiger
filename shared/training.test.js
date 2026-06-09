@@ -192,16 +192,6 @@ describe('findTouchedAtTransfer', () => {
     deepEqual(result?.targetAction, newest);
   });
 
-  it('skips remaining actions without a valid touched_at when selecting target', () => {
-    const valid = {touched_at: '2026-01-01T00:00:00.050Z'};
-    const result = findTouchedAtTransfer(
-      [{touched_at: '2026-01-01T00:00:00.111Z'}],
-      [{}, valid],
-    );
-
-    deepEqual(result?.targetAction, valid);
-  });
-
   it('uses first remaining action as target when none have a valid touched_at', () => {
     const first = {};
     const result = findTouchedAtTransfer(

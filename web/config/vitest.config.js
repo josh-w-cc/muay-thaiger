@@ -3,19 +3,6 @@ import {transformWithOxc} from 'vite';
 import {defineConfig} from 'vitest/config';
 
 
-function jsxInJs() {
-  return {
-    enforce: 'pre',
-    name: 'jsx-in-js',
-    async transform(code, id) {
-      if(!id.endsWith('.js')) {
-        return null;
-      }
-      return transformWithOxc(code, id, {lang: 'jsx'});
-    },
-  };
-}
-
 export default defineConfig({
   plugins: [react(), jsxInJs()],
   resolve: {
@@ -51,3 +38,16 @@ export default defineConfig({
     setupFiles: ['./config/vitest.setup.js'],
   },
 });
+
+function jsxInJs() {
+  return {
+    enforce: 'pre',
+    name: 'jsx-in-js',
+    async transform(code, id) {
+      if(!id.endsWith('.js')) {
+        return null;
+      }
+      return transformWithOxc(code, id, {lang: 'jsx'});
+    },
+  };
+}
