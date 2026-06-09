@@ -22,7 +22,10 @@ function createFightActions(set) {
   return {
     addPendingFeedItem: (moveName) => set((state) => addPendingFeedItem(state, moveName)),
     markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed)),
-    syncServerState: (nextFight) => set((state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set), pendingFeed: []}), true),
+    syncServerState: (nextFight) => set(
+      (state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set), pendingFeed: []}),
+      true,
+    ),
   };
 }
 
