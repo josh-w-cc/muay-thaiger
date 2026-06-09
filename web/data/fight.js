@@ -1,6 +1,7 @@
 import {create} from 'zustand';
 import {parseBigIntStats} from 'shared/stats.js';
 import {mergeFightState} from './fightStateMerge.js';
+import {MOVE_CLICK_BATCH_MILLISECONDS} from "@/actions/websockets/clientCommands.js";
 
 const useFightStore = create((set) => createFightState(set));
 
@@ -13,14 +14,19 @@ export function resetFightStore() {
 function createFightState(set, fight = null) {
   return {
     ...getServerFightState(fight),
+    pendingFeed: [],
     ...createFightActions(set),
   };
 }
 
 function createFightActions(set) {
   return {
-    markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed)),
-    syncServerState: (nextFight) => set((state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set)}), true),
+    addPendingFeedItem: (moveName) => set((state) => addPendingFeedItem(state, moveName)),
+    markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed + MOVE_CLICK_BATCH_MILLISECONDS)),
+    syncServerState: (nextFight) => set(
+      (state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set), pendingFeed: []}),
+      true,
+    ),
   };
 }
 
@@ -62,6 +68,20 @@ function parseFightParticipant(participant) {
     ...participant,
     startingStats: parseBigIntStats(participant.startingStats),
     stats: parseBigIntStats(participant.stats),
+  };
+}
+
+function getAttackerName(state) {
+  return state.details?.attacker?.name;
+}
+
+function addPendingFeedItem(state, moveName) {
+  const attackerName = getAttackerName(state);
+  if(!attackerName || !moveName) {
+    return state;
+  }
+  return {
+    pendingFeed: [...state.pendingFeed, {attacker: attackerName, isSelf: true, move: moveName}],
   };
 }
 
