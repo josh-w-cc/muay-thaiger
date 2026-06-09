@@ -47,8 +47,34 @@
   width: 100%;
 }
 
+.fightFighterImageContainer {
+  overflow: visible;
+  position: relative;
+  width: 100%;
+}
+
 .fightFighterImageMirror {
   transform: scaleX(-1);
+}
+
+.fightFighterImagePunch {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: auto;
+  z-index: 1;
+}
+
+.fightFighterImagePunchMirror {
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: scaleX(-1);
+  transform-origin: right center;
+  width: auto;
+  z-index: 1;
 }
 
 .fightFighterLeft {
