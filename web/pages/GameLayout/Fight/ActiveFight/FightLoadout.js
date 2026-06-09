@@ -67,7 +67,7 @@ function getLoadoutMove(moveDefinitions, moveID) {
 }
 
 function TapperButton({delay, duration, children, lastUsed, onClick}) {
-  const animationDelay = getAnimationDelay(delay, lastUsed);
+  const animationStyle = getAnimationStyle(delay, duration, lastUsed);
   const animationKey = getAnimationKey(delay, lastUsed);
   return (
     <Button className={css.tapperButton} onClick={onClick}>
@@ -75,20 +75,25 @@ function TapperButton({delay, duration, children, lastUsed, onClick}) {
         aria-hidden="true"
         className={css.tapperButtonFill}
         key={animationKey}
-        style={{animationDelay, animationDuration: `${duration ?? TAPPER_FILL_DURATIONS.at(-1)}s`}}
+        style={animationStyle}
       />
       <span className={css.tapperButtonLabel}>{children}</span>
     </Button>
   );
 }
 
-function getAnimationDelay(delay, lastUsed) {
+function getAnimationStyle(delay, duration, lastUsed) {
+  const normalizedDuration = duration ?? TAPPER_FILL_DURATIONS.at(-1);
+  const animationDuration = `${normalizedDuration}s`;
   const lastUsedTime = Number(lastUsed);
   if(Number.isFinite(lastUsedTime)) {
     const elapsed = Math.max(0, (Date.now() - lastUsedTime) / 1000);
-    return `-${elapsed}s`;
+    if(elapsed > normalizedDuration) {
+      return {animationDuration, animationName: 'none', transform: 'scaleX(0)'};
+    }
+    return {animationDelay: `-${elapsed}s`, animationDuration};
   }
-  return `${delay}s`;
+  return {animationDelay: `${delay}s`, animationDuration};
 }
 
 function getAnimationKey(delay, lastUsed) {
