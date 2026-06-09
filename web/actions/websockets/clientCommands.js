@@ -48,15 +48,11 @@ export function syncMoveCount(fight) {
 }
 
 function getMaxMoveNum(fight) {
-  const moveList = getAttackerMoveList(fight);
+  const moveList = fight?.details?.attacker?.moveList;
   if(!Array.isArray(moveList) || moveList.length === 0) {
     return -1;
   }
   return Math.max(...moveList);
-}
-
-function getAttackerMoveList(fight) {
-  return fight?.details?.attacker?.moveList;
 }
 
 export function selectFighterCmd() {
