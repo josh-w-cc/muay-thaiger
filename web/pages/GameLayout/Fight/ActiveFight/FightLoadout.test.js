@@ -78,7 +78,7 @@ describe('FightLoadout', () => {
 
     await user.click(screen.getByRole('button', {name: 'Knee'}));
 
-    expect(moveCmd).toHaveBeenCalledWith(2);
+    expect(moveCmd).toHaveBeenCalledWith(2, 'Knee');
   });
 
   it('syncs fill animation start to move lastUsed and keeps fallback delays otherwise', () => {

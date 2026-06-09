@@ -1,35 +1,45 @@
+import useFightStore from '@/data/fight.js';
 import css from '../Fight.module.css';
 
 
 export default function FightFeed({details}) {
-  const feedItems = getFightFeed(details);
+  const pendingFeed = useFightStore((state) => state.pendingFeed);
+  const feedItems = getFightFeed(details, pendingFeed);
 
   return (
     <div className={css.fightFeed}>
       <ul className={css.fightFeedList}>
-        {feedItems.map((item, index) => <FightFeedItem item={item} key={index} />)}
+        {feedItems.map(({feedKey, item, shouldAnimate}) => <FightFeedItem item={item} key={feedKey} shouldAnimate={shouldAnimate} />)}
       </ul>
     </div>
   );
 }
 
-function FightFeedItem({item}) {
+function FightFeedItem({item, shouldAnimate}) {
   const attackerClassName = item.isSelf ? css.fightFeedAttackerSelf : css.fightFeedAttackerEnemy;
+  const itemClassName = shouldAnimate ? `${css.fightFeedItem} ${css.fightFeedItemEnter}` : css.fightFeedItem;
 
   return (
-    <li className={css.fightFeedItem}>
+    <li className={itemClassName}>
       <strong className={attackerClassName}>{item.attacker}</strong>
       {' throws '}
       <strong>{item.move}</strong>
-      {' — '}
-      {item.result}
+      {item.result != null && (
+        <>
+          {' — '}
+          {item.result}
+        </>
+      )}
     </li>
   );
 }
 
-function getFightFeed(details) {
-  if(Array.isArray(details?.feed) && details.feed.length > 0) {
-    return [...details.feed].reverse();
-  }
-  return [];
+function reverseFeed(feed, source) {
+  return Array.isArray(feed) && feed.length > 0
+    ? feed.map((item, index) => ({feedKey: `${source}-${index}`, item, shouldAnimate: source === 'pending'})).reverse()
+    : [];
+}
+
+function getFightFeed(details, pendingFeed) {
+  return [...reverseFeed(pendingFeed, 'pending'), ...reverseFeed(details?.feed, 'server')];
 }

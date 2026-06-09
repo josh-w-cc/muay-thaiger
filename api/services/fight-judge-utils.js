@@ -34,19 +34,25 @@ export function getMoveDefinition(moveID) {
 
 export function markMoveUsed(move, moveDefinition, activeParticipant) {
   const now = Date.now();
-  const currentStamina = activeParticipant.stats.stamina;
-  if(currentStamina < 0n) {
+  if(activeParticipant.stats.stamina < 0n) {
     return false;
   }
   if(move.lastUsed != null && move.lastUsed > (now - (moveDefinition.recovery * 1000))) {
-    const staminaCost = (currentStamina * BigInt(moveDefinition.staminaCost)) / 100n;
-    const remainingStamina = currentStamina - staminaCost;
-    if(remainingStamina < 0n) {
+    if(!applyStaminaCost(moveDefinition, activeParticipant)) {
       return false;
     }
-    activeParticipant.stats.stamina = remainingStamina;
   }
   move.lastUsed = now;
+  return true;
+}
+
+function applyStaminaCost(moveDefinition, activeParticipant) {
+  const maxStamina = activeParticipant.startingStats.stamina;
+  const remainingStamina = activeParticipant.stats.stamina - (maxStamina * BigInt(moveDefinition.staminaCost)) / 100n;
+  if(remainingStamina < 0n) {
+    return false;
+  }
+  activeParticipant.stats.stamina = remainingStamina;
   return true;
 }
 
@@ -60,6 +66,14 @@ export function executeFightMove(moveDefinition, activeParticipant, opponentPart
   return damage;
 }
 
+export function getMoveResult(moveDefinition, activeParticipant, opponentParticipant) {
+  if(!isMoveHit(activeParticipant, opponentParticipant)) {
+    return 'blocked';
+  }
+  const damage = executeFightMove(moveDefinition, activeParticipant, opponentParticipant);
+  return `${damage} damage`;
+}
+
 function createMoveActor(participant, incomingDamageScale = 1n, onDamage = null) {
   return {
     takeDamage: (amount) => {
@@ -68,6 +82,14 @@ function createMoveActor(participant, incomingDamageScale = 1n, onDamage = null)
       onDamage?.(damage);
     },
   };
+}
+
+function isMoveHit(activeParticipant, opponentParticipant) {
+  const attack = calculateFighterStats(activeParticipant.stats).attack;
+  const defense = calculateFighterStats(opponentParticipant.stats).defense;
+  const attackRoll = Number(attack.logApprox()) * Math.random();
+  const defenseRoll = Number(defense.logApprox()) * Math.random();
+  return attackRoll > defenseRoll;
 }
 
 async function getFightParticipant(fighters, fighterID, role) {

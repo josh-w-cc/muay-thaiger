@@ -1,6 +1,6 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {executeFightMove, getFightParticipants, getMoveDefinition, markMoveUsed} from './fight-judge-utils.js';
+import {getFightParticipants, getMoveDefinition, getMoveResult, markMoveUsed} from './fight-judge-utils.js';
 import {
   captureStartingStats,
   getCalculatedFight,
@@ -59,9 +59,9 @@ export class FightJudge {
       return false;
     }
     activeParticipant.moveList.push(moveNum);
-    const damage = executeFightMove(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
+    const result = getMoveResult(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
     participantFight.fight.details.feed.push(
-      {actorRole: participantFight.role, attacker: activeParticipant.name, move: moveDefinition.name, result: `${damage} damage`},
+      {actorRole: participantFight.role, attacker: activeParticipant.name, move: moveDefinition.name, result},
     );
     this.#resolveFight(participantFight);
     return true;
