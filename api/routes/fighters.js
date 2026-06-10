@@ -1,4 +1,5 @@
 import fightersModel from '#api/data/models/fighters.js';
+import {withFoundItem} from './with-found-item.js';
 
 
 /**
@@ -11,9 +12,6 @@ export default async function fightersRoutes(app) {
 
   app.get('/fighters/:id', async (req, reply) => {
     const fighter = await fighters.find(Number(req.params.id));
-    if(!fighter) {
-      return reply.code(404).send({error: 'Not found'});
-    }
-    return fighter;
+    return withFoundItem(fighter, reply);
   });
 }

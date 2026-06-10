@@ -1,4 +1,5 @@
 import playersModel from '#api/data/models/players.js';
+import {withFoundItem} from './with-found-item.js';
 
 
 /**
@@ -14,10 +15,7 @@ export default async function playersRoutes(app) {
 
   app.get('/players/:id', async (req, reply) => {
     const player = await players.find(Number(req.params.id));
-    if(!player) {
-      return reply.code(404).send({error: 'Not found'});
-    }
-    return stripPrivatePlayerFields(player);
+    return withFoundItem(player, reply, stripPrivatePlayerFields);
   });
 }
 
