@@ -175,6 +175,22 @@ describe('Train', () => {
     expect(regimenCssSource).toMatch(/\.regimen\s*{/);
   });
 
+  it('keeps regimenRow styles in the RegimenRow CSS module, not in Train.module.css', () => {
+    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
+    const regimenRowPath = path.join(directoryPath, 'Regimen', 'RegimenRow.js');
+    const regimenRowCssPath = path.join(directoryPath, 'Regimen', 'RegimenRow.module.css');
+    const trainCssPath = path.join(directoryPath, 'Train.module.css');
+    const regimenRowSource = fs.readFileSync(regimenRowPath, 'utf8');
+    const regimenRowCssSource = fs.readFileSync(regimenRowCssPath, 'utf8');
+    const trainCssSource = fs.readFileSync(trainCssPath, 'utf8');
+
+    expect(regimenRowSource).toContain('import css from \'./RegimenRow.module.css\';');
+    expect(regimenRowCssSource).toMatch(/\.regimenRow\s*{/);
+    expect(regimenRowCssSource).toMatch(/\.regimenProgress\s*{/);
+    expect(trainCssSource).not.toMatch(/\.regimenRow\s*{/);
+    expect(trainCssSource).not.toMatch(/\.regimenProgress\s*{/);
+  });
+
   it('shows gray progress bar for inactive skills', () => {
     fighterActions.actions = [];
     render(<Train />);
