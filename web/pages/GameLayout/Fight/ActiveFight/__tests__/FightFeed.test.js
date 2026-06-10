@@ -2,7 +2,7 @@ import {render, screen} from '@testing-library/react';
 import {describe, expect, it, afterEach} from 'vitest';
 import useFightStore, {resetFightStore} from '@/data/fight.js';
 
-import FightFeed from './FightFeed.js';
+import FightFeed from '../FightFeed.js';
 
 describe('FightFeed', () => {
   afterEach(() => {
