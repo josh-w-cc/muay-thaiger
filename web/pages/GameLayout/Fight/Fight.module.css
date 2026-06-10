@@ -41,7 +41,7 @@
 }
 
 .fightFeedAttackerSelf {
-  color: var(--color-gold);
+  composes: statValueBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
 }
 
 .fightFighter {
