@@ -6,6 +6,7 @@ import {
   onAuth as onAuthMessage,
   onAuthInvalidToken as onAuthInvalidTokenMessage,
 } from '@/actions/websockets/auth.js';
+import {syncMoveCount} from '@/actions/websockets/clientCommands.js';
 import {parseSocketMessage} from '@/actions/websockets/state/websocketState.js';
 
 const onSocketCommand = {
@@ -51,4 +52,5 @@ function onPlayerState(message) {
   useFighterStore.getState().overwrite(message.fighter);
   usePlayerStore.getState().setPlayerID(message.fighter.player ?? null);
   usePlayerStore.getState().selectFighter(`${message.fighter.race}`);
+  syncMoveCount(message.fight);
 }

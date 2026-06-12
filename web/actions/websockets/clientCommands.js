@@ -44,6 +44,21 @@ export function moveCmd(moveID, moveName) {
   moveCount += 1;
 }
 
+export function syncMoveCount(fight) {
+  const maxMoveNum = getMaxMoveNum(fight);
+  if(maxMoveNum >= moveCount) {
+    moveCount = maxMoveNum + 1;
+  }
+}
+
+function getMaxMoveNum(fight) {
+  const moveList = fight.details.attacker.moveList;
+  if(!Array.isArray(moveList) || moveList.length === 0) {
+    return -1;
+  }
+  return Math.max(...moveList);
+}
+
 export function selectFighterCmd() {
   respondToAuth(connectSocketOnAppLoad());
   routeToHubIfAuthorized();

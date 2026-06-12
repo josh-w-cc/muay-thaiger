@@ -199,4 +199,48 @@ describe('client websocket commands', () => {
     expect(respondToAuth).toHaveBeenCalledWith(socket);
     expect(routeToHubIfAuthorized).toHaveBeenCalledTimes(1);
   });
+
+  it('initializes move count from the highest moveList value when fight data arrives', async () => {
+    const {moveCmd, syncMoveCount} = await import('./clientCommands.js');
+
+    syncMoveCount({details: {attacker: {moveList: [0, 1, 2]}}});
+
+    moveCmd(3);
+
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 3, move_num: 3}]});
+  });
+
+  it('does not decrease move count when fight data has lower moveList values', async () => {
+    const {moveCmd, syncMoveCount} = await import('./clientCommands.js');
+
+    moveCmd(3);
+    moveCmd(3);
+
+    syncMoveCount({details: {attacker: {moveList: [0]}}});
+
+    moveCmd(3);
+
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledWith({
+      cmd: 'move',
+      moves: [{move_id: 3, move_num: 0}, {move_id: 3, move_num: 1}, {move_id: 3, move_num: 2}],
+    });
+  });
+
+  it('does not change move count when fight has no moveList', async () => {
+    const {moveCmd, syncMoveCount} = await import('./clientCommands.js');
+
+    syncMoveCount(null);
+    syncMoveCount({details: {attacker: {}}});
+    syncMoveCount({details: {attacker: {moveList: []}}});
+
+    moveCmd(3);
+
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 3, move_num: 0}]});
+  });
 });
