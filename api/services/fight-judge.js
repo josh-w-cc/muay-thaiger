@@ -1,6 +1,5 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {getFightParticipants, getMoveDefinition, getMoveResult, markMoveUsed} from './fight-judge-utils.js';
 import {
   captureStartingStats,
   getCalculatedFight,
@@ -10,6 +9,8 @@ import {
   removeFightByID,
 } from './fight-judge-state.js';
 import {recoverFightStamina} from './fight-stamina.js';
+import {executeFightAction, applyIdleAttacks} from './fight-judge-actions.js';
+import {getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -40,10 +41,12 @@ export class FightJudge {
 
   get(playerID) {
     const participantFight = this.#fightsByPlayerID.get(playerID);
-    if(participantFight) {
-      recoverFightStamina(participantFight.fight);
+    if(!participantFight) {
+      return null;
     }
-    return participantFight ? getCalculatedFight(participantFight.fight, participantFight.role) : null;
+    recoverFightStamina(participantFight.fight);
+    applyIdleAttacks(participantFight.fight);
+    return getCalculatedFight(participantFight.fight, participantFight.role);
   }
 
   move(playerID, moveID, moveNum) {
@@ -53,16 +56,12 @@ export class FightJudge {
     if(participantFight.fight.victory != null || activeParticipant.moveList.includes(moveNum)) {
       return false;
     }
-    const move = getFightMoveOrThrow(participantFight, moveID);
-    const moveDefinition = getMoveDefinition(moveID);
-    if(!markMoveUsed(move, moveDefinition, activeParticipant)) {
+    const move = getFightMoveOrThrow(participantFight, moveID),
+      moveDefinition = getMoveDefinition(moveID);
+    const wasActionExecuted = executeFightAction(participantFight, activeParticipant, move, moveDefinition, moveNum);
+    if(!wasActionExecuted) {
       return false;
     }
-    activeParticipant.moveList.push(moveNum);
-    const result = getMoveResult(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
-    participantFight.fight.details.feed.push(
-      {actorRole: participantFight.role, attacker: activeParticipant.name, move: moveDefinition.name, result},
-    );
     this.#resolveFight(participantFight);
     return true;
   }

@@ -56,7 +56,7 @@ describe('client websocket commands', () => {
 
   it('updates the active fight move lastUsed on the client before the batch is sent', async () => {
     const {moveCmd} = await import('./clientCommands.js');
-    const {default: useFightStore} = await import('@/data/fight.js');
+    const {default: useFightStore} = await import('@/data/fight/index.js');
     vi.setSystemTime(12_345);
     useFightStore.getState().syncServerState({
       details: {
@@ -76,9 +76,37 @@ describe('client websocket commands', () => {
     expect(sendCommand).not.toHaveBeenCalled();
   });
 
+  it('queues and sends a move when client stamina is insufficient but keeps local state untouched', async () => {
+    const {moveCmd, TOO_TIRED_STAMINA_NEEDED_MESSAGE} = await import('./clientCommands.js');
+    const {default: useFightStore} = await import('@/data/fight/index.js');
+    const now = Date.now();
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Tiger',
+          moves: [{id: 2, lastUsed: now - 1_000}],
+          startingStats: {stamina: 100n},
+          stats: {stamina: 10n},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    moveCmd(2);
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 2, move_num: 0}]});
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 2, lastUsed: now - 1_000}]);
+    expect(useFightStore.getState().details.attacker.stats.stamina).toBe(10n);
+    expect(useFightStore.getState().pendingFeed).toEqual([
+      {attacker: 'Tiger', isSelf: true, move: TOO_TIRED_STAMINA_NEEDED_MESSAGE},
+    ]);
+  });
+
   it('adds a pending feed item when a move name is provided', async () => {
     const {moveCmd} = await import('./clientCommands.js');
-    const {default: useFightStore} = await import('@/data/fight.js');
+    const {default: useFightStore} = await import('@/data/fight/index.js');
     useFightStore.getState().syncServerState({
       details: {
         attacker: {
@@ -170,5 +198,49 @@ describe('client websocket commands', () => {
 
     expect(respondToAuth).toHaveBeenCalledWith(socket);
     expect(routeToHubIfAuthorized).toHaveBeenCalledTimes(1);
+  });
+
+  it('initializes move count from the highest moveList value when fight data arrives', async () => {
+    const {moveCmd, syncMoveCount} = await import('./clientCommands.js');
+
+    syncMoveCount({details: {attacker: {moveList: [0, 1, 2]}}});
+
+    moveCmd(3);
+
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 3, move_num: 3}]});
+  });
+
+  it('does not decrease move count when fight data has lower moveList values', async () => {
+    const {moveCmd, syncMoveCount} = await import('./clientCommands.js');
+
+    moveCmd(3);
+    moveCmd(3);
+
+    syncMoveCount({details: {attacker: {moveList: [0]}}});
+
+    moveCmd(3);
+
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledWith({
+      cmd: 'move',
+      moves: [{move_id: 3, move_num: 0}, {move_id: 3, move_num: 1}, {move_id: 3, move_num: 2}],
+    });
+  });
+
+  it('does not change move count when fight has no moveList', async () => {
+    const {moveCmd, syncMoveCount} = await import('./clientCommands.js');
+
+    syncMoveCount(null);
+    syncMoveCount({details: {attacker: {}}});
+    syncMoveCount({details: {attacker: {moveList: []}}});
+
+    moveCmd(3);
+
+    vi.advanceTimersByTime(500);
+
+    expect(sendCommand).toHaveBeenCalledWith({cmd: 'move', moves: [{move_id: 3, move_num: 0}]});
   });
 });

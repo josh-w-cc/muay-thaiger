@@ -1,4 +1,5 @@
 import actionsModel from '#api/data/models/actions.js';
+import {withFoundItem} from './with-found-item.js';
 
 
 /**
@@ -11,9 +12,6 @@ export default async function actionsRoutes(app) {
 
   app.get('/actions/:id', async (req, reply) => {
     const action = await actions.find(Number(req.params.id));
-    if(!action) {
-      return reply.code(404).send({error: 'Not found'});
-    }
-    return action;
+    return withFoundItem(action, reply);
   });
 }

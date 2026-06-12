@@ -185,7 +185,7 @@ describe('FightJudge.attach', () => {
 
     it('updates lastUsed and applies move effects for the active player move', async () => {
       const dateNow = Date.now;
-      Date.now = () => 1234567890123;
+      Date.now = () => 1000;
       try {
         const judge = new FightJudge();
         const fight = {
@@ -202,7 +202,7 @@ describe('FightJudge.attach', () => {
         await judge.attach(twoPlayerFighters, fight);
 
         assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
-        assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1234567890123);
+        assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 1000);
         assert.equal(judge.get(1).details.attacker.stats.stamina, 1n);
         assert.deepEqual(judge.get(1).details.attacker.moveList, [10]);
         assert.equal(judge.get(1).details.defender.stats.health, -5n);
@@ -535,69 +535,76 @@ describe('FightJudge.attach', () => {
     });
 
     it('adds a feed entry when a move is executed', async () => {
-      const judge = new FightJudge();
-      const fight = {
-        attacker: 11,
-        defender: 12,
-        details: {
-          attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1}], stats: {...baseCombatStats}},
-          defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats, constitution: 10n}},
-        },
-        id: 101,
-        victory: null,
-      };
+      const dateNow = Date.now;
+      Date.now = () => 1000;
+      try {
+        const judge = new FightJudge();
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 9_999}], stats: {...baseCombatStats, constitution: 10n}},
+          },
+          id: 101,
+          victory: null,
+        };
 
-      await judge.attach(namedTwoPlayerFighters, fight);
+        await judge.attach(namedTwoPlayerFighters, fight);
 
-      judge.move(1, MOVE_IDS.wildKick, 10);
-      assert.deepEqual(judge.get(1).details.feed, [{
-        actorRole: 'attacker',
-        attacker: 'Tiger',
-        isSelf: true,
-        move: 'Wild Kick',
-        result: '6 damage',
-      }]);
-      assert.deepEqual(judge.get(2).details.feed, [{
-        actorRole: 'attacker',
-        attacker: 'Tiger',
-        isSelf: false,
-        move: 'Wild Kick',
-        result: '6 damage',
-      }]);
-
-      judge.move(2, MOVE_IDS.wildPunch, 11);
-      assert.deepEqual(judge.get(1).details.feed, [
-        {
+        judge.move(1, MOVE_IDS.wildKick, 10);
+        assert.deepEqual(judge.get(1).details.feed, [{
           actorRole: 'attacker',
           attacker: 'Tiger',
           isSelf: true,
           move: 'Wild Kick',
           result: '6 damage',
-        },
-        {
-          actorRole: 'defender',
-          attacker: 'Snow Leopard',
-          isSelf: false,
-          move: 'Wild Punch',
-          result: '4 damage',
-        },
-      ]);
-      assert.deepEqual(judge.get(2).details.feed, [
-        {
+        }]);
+        assert.deepEqual(judge.get(2).details.feed, [{
           actorRole: 'attacker',
           attacker: 'Tiger',
           isSelf: false,
           move: 'Wild Kick',
           result: '6 damage',
-        },
-        {
-          actorRole: 'defender',
-          attacker: 'Snow Leopard',
-          isSelf: true,
-          move: 'Wild Punch',
-          result: '4 damage',
-        },
-      ]);
+        }]);
+
+        judge.move(2, MOVE_IDS.wildPunch, 11);
+        assert.deepEqual(judge.get(1).details.feed, [
+          {
+            actorRole: 'attacker',
+            attacker: 'Tiger',
+            isSelf: true,
+            move: 'Wild Kick',
+            result: '6 damage',
+          },
+          {
+            actorRole: 'defender',
+            attacker: 'Snow Leopard',
+            isSelf: false,
+            move: 'Wild Punch',
+            result: '4 damage',
+          },
+        ]);
+        assert.deepEqual(judge.get(2).details.feed, [
+          {
+            actorRole: 'attacker',
+            attacker: 'Tiger',
+            isSelf: false,
+            move: 'Wild Kick',
+            result: '6 damage',
+          },
+          {
+            actorRole: 'defender',
+            attacker: 'Snow Leopard',
+            isSelf: true,
+            move: 'Wild Punch',
+            result: '4 damage',
+          },
+        ]);
+      }
+      finally {
+        Date.now = dateNow;
+      }
     });
 
     it('marks victory, updates fights storage, and removes resolved fights after timeout', async () => {
@@ -658,7 +665,7 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 9_999}], stats: {...baseCombatStats, stamina: 11n}},
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 9_999}], stats: {...baseCombatStats}},
           },
           id: 101,
           victory: null,
@@ -667,9 +674,10 @@ describe('FightJudge.attach', () => {
         await judge.attach(namedTwoPlayerFighters, fight);
 
         assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
-        assert.equal(judge.get(1).details.attacker.stats.stamina, 9n);
-        assert.equal(judge.get(1).details.defender.stats.health, 1n);
-        assert.deepEqual(judge.get(1).details.feed, [{
+        const updatedFight = judge.get(1);
+        assert.equal(updatedFight.details.attacker.stats.stamina, 9n);
+        assert.equal(updatedFight.details.defender.stats.health, 1n);
+        assert.deepEqual(updatedFight.details.feed, [{
           actorRole: 'attacker',
           attacker: 'Tiger',
           isSelf: true,
@@ -705,6 +713,70 @@ describe('FightJudge.attach', () => {
     assert.deepEqual(judge.get(1).details.attacker.moveList, []);
     assert.deepEqual(judge.get(1).details.defender.moveList, []);
     assert.deepEqual(judge.get(1).details.feed, []);
+  });
+
+  it('executes idle attacks when move recovery plus one second has elapsed', async () => {
+    const dateNow = Date.now;
+    Date.now = () => 10_000;
+    try {
+      const judge = new FightJudge();
+      const fight = {
+        attacker: 11,
+        defender: 12,
+        details: {
+          strategy: 'Some Other Strategy',
+          attacker: {
+            moves: [{id: MOVE_IDS.wildPunch, lastUsed: 5_999}, {id: MOVE_IDS.wildKick, lastUsed: null}],
+            stats: {...baseCombatStats},
+          },
+          defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 9_999}], stats: {...baseCombatStats}},
+        },
+        id: 101,
+        victory: null,
+      };
+
+      await judge.attach(twoPlayerFighters, fight);
+
+      assert.equal(judge.get(1).details.attacker.moves[0].lastUsed, 10_000);
+      assert.equal(judge.get(1).details.attacker.moves[1].lastUsed, 10_000);
+      assert.equal(judge.get(1).details.defender.stats.health, -9n);
+      assert.deepEqual(judge.get(1).details.attacker.moveList, []);
+      assert.deepEqual(judge.get(1).details.feed.map(({actorRole, move}) => ({actorRole, move})), [
+        {actorRole: 'attacker', move: 'Wild Punch'},
+        {actorRole: 'attacker', move: 'Wild Kick'},
+      ]);
+    }
+    finally {
+      Date.now = dateNow;
+    }
+  });
+
+  it('uses a strict `(recovery + 1)` threshold for idle attacks', async () => {
+    const dateNow = Date.now;
+    Date.now = () => 10_000;
+    try {
+      const judge = new FightJudge();
+      const fight = {
+        attacker: 11,
+        defender: 12,
+        details: {
+          strategy: 'Another Strategy',
+          attacker: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 6_000}], stats: {...baseCombatStats}},
+          defender: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 9_999}], stats: {...baseCombatStats}},
+        },
+        id: 101,
+        victory: null,
+      };
+
+      await judge.attach(twoPlayerFighters, fight);
+
+      assert.equal(judge.get(1).details.attacker.moves[0].lastUsed, 6_000);
+      assert.equal(judge.get(1).details.defender.stats.health, 1n);
+      assert.deepEqual(judge.get(1).details.feed, []);
+    }
+    finally {
+      Date.now = dateNow;
+    }
   });
 
   it('computes calculated attacker and defender stats from current fight details', async () => {

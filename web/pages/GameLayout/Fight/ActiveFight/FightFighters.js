@@ -3,13 +3,13 @@ import {buildCard, formatCombatStat} from './fighterCardData.js';
 
 import css from '../Fight.module.css';
 
-export default function FightFighters({details}) {
+export default function FightFighters({details, isPunching}) {
   const {attackerCard, defenderCard} = getFighterCards(details);
 
   return (
     <>
       <div className={css.fightFighters}>
-        <FightFighterCard {...attackerCard} />
+        <FightFighterCard {...attackerCard} isPunching={isPunching} />
         <div aria-orientation="vertical" className={css.fightFighterDivider} role="separator" />
         <FightFighterCard {...defenderCard} />
       </div>
@@ -36,18 +36,40 @@ function getFighterCards(details) {
   };
 }
 
-function FightFighterCard({alt, className, hp, mirror, src, stamina}) {
+function FightFighterCard({alt, className, hp, isPunching, mirror, punchSrc, src, stamina}) {
   return (
     <div className={classnames(css.fightFighter, className)}>
       <FightStatBar barClassName={css.fightStaminaBar} current={stamina.current} label={stamina.label} max={stamina.max} />
-      <img
-        alt={alt}
-        className={classnames(css.fightFighterImage, {[css.fightFighterImageMirror]: mirror})}
-        src={src}
-      />
+      <FightFighterImages alt={alt} isPunching={isPunching} mirror={mirror} punchSrc={punchSrc} src={src} />
       <FightStatBar barClassName={css.fightHealthBar} current={hp.current} label={hp.label} max={hp.max} />
     </div>
   );
+}
+
+function FightFighterImages({alt, isPunching, mirror, punchSrc, src}) {
+  const showPunch = isPunching && Boolean(punchSrc);
+  const punchClassName = getPunchClassName(mirror, showPunch);
+  return (
+    <div className={css.fightFighterImageContainer}>
+      <img
+        alt={alt}
+        aria-hidden={showPunch ? true : undefined}
+        className={classnames(css.fightFighterImage, {[css.fightFighterImageHidden]: showPunch, [css.fightFighterImageMirror]: mirror})}
+        src={src}
+      />
+      {Boolean(punchSrc) && (
+        <img alt={alt} aria-hidden={!showPunch ? true : undefined} className={punchClassName} src={punchSrc} />
+      )}
+    </div>
+  );
+}
+
+function getPunchClassName(mirror, showPunch) {
+  return classnames({
+    [css.fightFighterImagePunch]: !mirror,
+    [css.fightFighterImagePunchMirror]: mirror,
+    [css.fightFighterImagePunchVisible]: showPunch,
+  });
 }
 
 function FightFighterStats({attack, defense}) {

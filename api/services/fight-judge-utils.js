@@ -1,4 +1,5 @@
 import {MOVE_DEFINITIONS_BY_ID} from 'shared/moves.js';
+import {getRemainingStaminaAfterCost, isMoveInRecoveryWindow} from 'shared/moveUsage.js';
 
 export async function getFightParticipants(fighters, fight) {
   const participants = await Promise.all([
@@ -37,7 +38,7 @@ export function markMoveUsed(move, moveDefinition, activeParticipant) {
   if(activeParticipant.stats.stamina < 0n) {
     return false;
   }
-  if(move.lastUsed != null && move.lastUsed > (now - (moveDefinition.recovery * 1000))) {
+  if(isMoveInRecoveryWindow(move.lastUsed, moveDefinition.recovery, now)) {
     if(!applyStaminaCost(moveDefinition, activeParticipant)) {
       return false;
     }
@@ -48,7 +49,7 @@ export function markMoveUsed(move, moveDefinition, activeParticipant) {
 
 function applyStaminaCost(moveDefinition, activeParticipant) {
   const maxStamina = activeParticipant.startingStats.stamina;
-  const remainingStamina = activeParticipant.stats.stamina - (maxStamina * BigInt(moveDefinition.staminaCost)) / 100n;
+  const remainingStamina = getRemainingStaminaAfterCost(activeParticipant.stats.stamina, maxStamina, moveDefinition.staminaCost);
   if(remainingStamina < 0n) {
     return false;
   }

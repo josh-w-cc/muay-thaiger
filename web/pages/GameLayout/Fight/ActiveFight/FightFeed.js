@@ -1,4 +1,4 @@
-import useFightStore from '@/data/fight.js';
+import useFightStore from '@/data/fight/index.js';
 import css from '../Fight.module.css';
 
 
@@ -26,6 +26,7 @@ function FightFeedItem({item, shouldAnimate}) {
       <strong>{item.move}</strong>
       {item.result != null && (
         <>
+          <br />
           {' — '}
           {item.result}
         </>
@@ -36,7 +37,11 @@ function FightFeedItem({item, shouldAnimate}) {
 
 function reverseFeed(feed, source) {
   return Array.isArray(feed) && feed.length > 0
-    ? feed.map((item, index) => ({feedKey: `${source}-${index}`, item, shouldAnimate: source === 'pending'})).reverse()
+    ? feed.map((item, index) => ({
+        feedKey: `${source}-${index}`,
+        item,
+        shouldAnimate: source === 'pending' || source === 'server',
+      })).reverse()
     : [];
 }
 
