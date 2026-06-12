@@ -52,7 +52,10 @@ export function syncMoveCount(fight) {
 }
 
 function getMaxMoveNum(fight) {
-  const moveList = fight.details.attacker.moveList;
+  if(!fight) {
+    return -1;
+  }
+  const {moveList} = fight.details.attacker;
   if(!Array.isArray(moveList) || moveList.length === 0) {
     return -1;
   }
