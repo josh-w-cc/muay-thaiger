@@ -1,4 +1,4 @@
-import useFightStore from '@/data/fight.js';
+import useFightStore from '@/data/fight/index.js';
 import css from '../Fight.module.css';
 
 
@@ -26,6 +26,7 @@ function FightFeedItem({item, shouldAnimate}) {
       <strong>{item.move}</strong>
       {item.result != null && (
         <>
+          <br />
           {' — '}
           {item.result}
         </>
