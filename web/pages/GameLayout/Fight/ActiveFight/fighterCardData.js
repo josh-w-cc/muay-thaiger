@@ -1,7 +1,10 @@
 import SnowLeopardMuayThaiReady from '../assets/SnowLeopardMuayThaiReady.png';
+import SnowLeopardMuayThaiPunch from '../assets/SnowLeopardMuayThaiPunch.png';
 import TigerMuayThai from '../assets/TigerMuayThai.png';
+import TigerPunch from '../assets/TigerPunch.png';
 
 const RACE_FIGHT_IMAGES = {1: TigerMuayThai, 2: SnowLeopardMuayThaiReady};
+const RACE_PUNCH_IMAGES = {1: TigerPunch, 2: SnowLeopardMuayThaiPunch};
 const RACE_DISPLAY_NAMES = {1: 'Tiger', 2: 'Snow leopard'};
 
 export function buildCard(participant) {
@@ -13,6 +16,7 @@ export function buildCard(participant) {
     attack: participant.stats.attack,
     defense: participant.stats.defense,
     hp,
+    punchSrc: RACE_PUNCH_IMAGES[participant.race],
     src: RACE_FIGHT_IMAGES[participant.race],
     stamina,
   };
