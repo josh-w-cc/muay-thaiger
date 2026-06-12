@@ -535,7 +535,7 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1}], stats: {...baseCombatStats}},
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 9_999}], stats: {...baseCombatStats}},
           },
           id: 101,
           victory: null,
@@ -609,7 +609,7 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 9_999}], stats: {...baseCombatStats, stamina: 11n}},
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 9_999}], stats: {...baseCombatStats}},
           },
           id: 101,
           victory: null,
@@ -618,9 +618,10 @@ describe('FightJudge.attach', () => {
         await judge.attach(namedTwoPlayerFighters, fight);
 
         assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
-        assert.equal(judge.get(1).details.attacker.stats.stamina, 9n);
-        assert.equal(judge.get(1).details.defender.stats.health, 1n);
-        assert.deepEqual(judge.get(1).details.feed, [{
+        const updatedFight = judge.get(1);
+        assert.equal(updatedFight.details.attacker.stats.stamina, 9n);
+        assert.equal(updatedFight.details.defender.stats.health, 1n);
+        assert.deepEqual(updatedFight.details.feed, [{
           actorRole: 'attacker',
           attacker: 'Tiger',
           isSelf: true,
