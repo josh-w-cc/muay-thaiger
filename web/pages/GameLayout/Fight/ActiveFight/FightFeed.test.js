@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import {describe, expect, it, afterEach} from 'vitest';
-import useFightStore, {resetFightStore} from '@/data/fight.js';
+import useFightStore, {resetFightStore} from '@/data/fight/index.js';
 
 import FightFeed from './FightFeed.js';
 
@@ -77,5 +77,36 @@ describe('FightFeed', () => {
     expect(items).toHaveLength(2);
     expect(items[0]).toHaveTextContent('Tiger throws Cross');
     expect(items[1]).toHaveTextContent('Tiger throws Jab');
+  });
+
+  it('keeps existing server items mounted when a new item is added', () => {
+    const {rerender} = render(
+      <FightFeed
+        details={{
+          feed: [
+            {attacker: 'Tiger', isSelf: true, move: 'Hook', result: 'Lands for 12!'},
+            {attacker: 'Snow Leopard', isSelf: false, move: 'Knee', result: 'Lands for 9!'},
+          ],
+        }}
+      />,
+    );
+
+    const initialItems = screen.getAllByRole('listitem');
+
+    rerender(
+      <FightFeed
+        details={{
+          feed: [
+            {attacker: 'Tiger', isSelf: true, move: 'Hook', result: 'Lands for 12!'},
+            {attacker: 'Snow Leopard', isSelf: false, move: 'Knee', result: 'Lands for 9!'},
+            {attacker: 'Tiger', isSelf: true, move: 'Elbow', result: 'Lands for 14!'},
+          ],
+        }}
+      />,
+    );
+
+    const updatedItems = screen.getAllByRole('listitem');
+    expect(updatedItems[1]).toBe(initialItems[0]);
+    expect(updatedItems[2]).toBe(initialItems[1]);
   });
 });

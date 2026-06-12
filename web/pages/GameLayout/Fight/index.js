@@ -1,5 +1,5 @@
 import useFighterStore from '@/data/fighter.js';
-import useFightStore from '@/data/fight.js';
+import useFightStore from '@/data/fight/index.js';
 import {createFightCmd} from '@/actions/websockets/clientCommands.js';
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';

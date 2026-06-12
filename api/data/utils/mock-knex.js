@@ -9,10 +9,10 @@ export function mockKnex(result) {
 
 export function mockKnexMulti(tableResults, rawResults = []) {
   const calls = [];
-  let tableIdx = 0;
-  let rawIdx = 0;
-  const knex = (table) => (calls.push(['table', table]), buildChain(calls, tableResults[tableIdx++]));
-  knex.raw = (...args) => (calls.push(['raw', ...args]), Promise.resolve(rawResults[rawIdx++] ?? {rowCount: 0, rows: []}));
+  let tableIndex = 0;
+  let rawIndex = 0;
+  const knex = (table) => (calls.push(['table', table]), buildChain(calls, tableResults[tableIndex++]));
+  knex.raw = (...args) => (calls.push(['raw', ...args]), Promise.resolve(rawResults[rawIndex++] ?? {rowCount: 0, rows: []}));
   knex.transaction = (fn) => fn(knex);
   return {calls, knex};
 }
