@@ -26,6 +26,7 @@ function FightFeedItem({item, shouldAnimate}) {
       <strong>{item.move}</strong>
       {item.result != null && (
         <>
+          <br />
           {' — '}
           {item.result}
         </>
