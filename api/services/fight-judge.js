@@ -1,8 +1,9 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
+import {executeFightAction, applyIdleAttacks} from './fight-judge-actions.js';
 import {captureStartingStats} from './fight-starting-stats.js';
 import {recoverFightStamina} from './fight-stamina.js';
-import {calculateFighterStats, executeFightMove, getFightParticipants, getMoveDefinition, markMoveUsed} from './fight-judge-utils.js';
+import {calculateFighterStats, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
@@ -26,10 +27,12 @@ export class FightJudge {
 
   get(playerID) {
     const participantFight = this.#fightsByPlayerID.get(playerID);
-    if(participantFight) {
-      recoverFightStamina(participantFight.fight);
+    if(!participantFight) {
+      return null;
     }
-    return participantFight ? getCalculatedFight(participantFight.fight, participantFight.role) : null;
+    recoverFightStamina(participantFight.fight);
+    applyIdleAttacks(participantFight.fight);
+    return getCalculatedFight(participantFight.fight, participantFight.role);
   }
 
   move(playerID, moveID, moveNum) {
@@ -41,15 +44,7 @@ export class FightJudge {
     }
     const move = getFightMoveOrThrow(participantFight, moveID),
       moveDefinition = getMoveDefinition(moveID);
-    if(!markMoveUsed(move, moveDefinition, activeParticipant)) {
-      return false;
-    }
-    activeParticipant.moveList.push(moveNum);
-    const result = getMoveResult(moveDefinition, activeParticipant, getOpponentParticipant(participantFight));
-    participantFight.fight.details.feed.push(
-      {actorRole: participantFight.role, attacker: activeParticipant.name, move: moveDefinition.name, result},
-    );
-    return true;
+    return executeFightAction(participantFight, activeParticipant, move, moveDefinition, moveNum);
   }
 }
 
@@ -81,8 +76,6 @@ export function attachFightJudge(app) {
 
 const getFightMove = (participantFight, moveID) => participantFight.fight.details[participantFight.role].moves.find(({id}) => id === moveID) || null;
 
-const getOpponentParticipant = (participantFight) => participantFight.fight.details[participantFight.role === 'attacker' ? 'defender' : 'attacker'];
-
 function fail(message) {
   throw new Error(message);
 }
@@ -91,20 +84,4 @@ const getFightMoveOrThrow = (participantFight, moveID) => getFightMove(participa
 
 function getParticipantFight(fightsByPlayerID, playerID) {
   return fightsByPlayerID.get(playerID) ?? fail(`No fight for player:${playerID}`);
-}
-
-function getMoveResult(moveDefinition, activeParticipant, opponentParticipant) {
-  if(!isMoveHit(activeParticipant, opponentParticipant)) {
-    return 'blocked';
-  }
-  const damage = executeFightMove(moveDefinition, activeParticipant, opponentParticipant);
-  return `${damage} damage`;
-}
-
-function isMoveHit(activeParticipant, opponentParticipant) {
-  const attack = calculateFighterStats(activeParticipant.stats).attack;
-  const defense = calculateFighterStats(opponentParticipant.stats).defense;
-  const attackRoll = Number(attack.logApprox()) * Math.random();
-  const defenseRoll = Number(defense.logApprox()) * Math.random();
-  return attackRoll > defenseRoll;
 }
