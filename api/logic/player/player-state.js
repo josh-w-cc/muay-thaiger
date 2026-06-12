@@ -1,5 +1,6 @@
 import fighterActionsModel from '../../data/models/fighter-actions.js';
 import fightersModel from '../../data/models/fighters.js';
+import {getScheduledTrainingActions} from 'shared/training.js';
 import {applyTraining} from '../training/training.js';
 
 const HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
@@ -19,13 +20,13 @@ export async function applyOfflineTraining(db, models = null) {
 }
 
 export async function getPlayerState({fighterActions, fightJudge, fighters}, playerID, fighter) {
-  const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
-  const state = {actions, fighter: updatedFighter};
   const fight = getActiveFight(fightJudge, playerID);
   if(fight) {
-    state.fight = fight;
+    const actions = await pauseScheduledActions({fighterActions}, fighter);
+    return {actions, fight, fighter};
   }
-  return state;
+  const {actions, fighter: updatedFighter} = await applyTraining({fighterActions, fighters}, fighter);
+  return {actions, fighter: updatedFighter};
 }
 
 function getActiveFight(fightJudge, playerID) {
@@ -81,4 +82,22 @@ function getOfflineTrainingModels(db, models) {
 
 function shouldSyncOfflineFighter(fighter) {
   return Boolean(fighter && !fighter.retired);
+}
+
+async function pauseScheduledActions({fighterActions}, fighter) {
+  const actions = await fighterActions.listByFighterID(fighter.id);
+  const scheduledActionIDs = new Set(
+    getScheduledTrainingActions(actions).map(({action: scheduledAction}) => scheduledAction.id),
+  );
+  if(!scheduledActionIDs.size) {
+    return actions;
+  }
+  const scheduledActions = actions.filter((action) => scheduledActionIDs.has(action.id));
+  const touchedAt = new Date();
+  await Promise.all(scheduledActions.map((action) => fighterActions.touch(action.id, touchedAt)));
+  return actions.map((action) => (
+    scheduledActionIDs.has(action.id)
+      ? {...action, touched_at: touchedAt.toISOString()}
+      : action
+  ));
 }

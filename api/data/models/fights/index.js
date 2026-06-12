@@ -1,5 +1,3 @@
-import {randomInt} from 'node:crypto';
-
 import {
   generateCreateFn,
   generateFindFn,
@@ -60,7 +58,6 @@ function serializeParticipantDetails(participant) {
   return {
     moves: participant.moves,
     race: participant.race,
-    seed: randomInt(2 ** 32),
     stats: serializeStats(participant.stats),
   };
 }

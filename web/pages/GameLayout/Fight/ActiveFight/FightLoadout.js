@@ -1,12 +1,13 @@
 import Button from '@/components/Button.js';
 import useMovesStore from '@/data/moves.js';
 import {moveCmd} from '@/actions/websockets/clientCommands.js';
+import {useMemo} from 'react';
 
 import {FIGHT_LOADOUT, TAPPER_FILL_DURATIONS} from './fightData.js';
 import css from '../Fight.module.css';
 
 
-export default function FightLoadout({details}) {
+export default function FightLoadout({details, onMove}) {
   const moveDefinitions = useMovesStore((state) => state.moves);
   const strategy = getFightStrategy(details);
   const moves = getFightMoves(details, moveDefinitions);
@@ -17,12 +18,12 @@ export default function FightLoadout({details}) {
 
   return (
     <div className={css.fightLoadout}>
-      <FightLoadoutButtons buttons={buttons} />
+      <FightLoadoutButtons buttons={buttons} onMove={onMove} />
     </div>
   );
 }
 
-function FightLoadoutButtons({buttons}) {
+function FightLoadoutButtons({buttons, onMove}) {
   return (
     <div className={css.fightLoadoutButtons}>
       {buttons.map((button, buttonIndex) => (
@@ -31,7 +32,7 @@ function FightLoadoutButtons({buttons}) {
           lastUsed={button.lastUsed}
           duration={button.duration ?? TAPPER_FILL_DURATIONS[buttonIndex]}
           key={button.label}
-          onClick={() => moveCmd(button.moveID)}
+          onClick={() => (moveCmd(button.moveID, button.label), button.moveID !== undefined && onMove?.())}
         >
           {button.label}
         </TapperButton>
@@ -67,7 +68,10 @@ function getLoadoutMove(moveDefinitions, moveID) {
 }
 
 function TapperButton({delay, duration, children, lastUsed, onClick}) {
-  const animationStyle = getAnimationStyle(delay, duration, lastUsed);
+  const animationStyle = useMemo(
+    () => getAnimationStyle(delay, duration, lastUsed),
+    [delay, duration, lastUsed],
+  );
   const animationKey = getAnimationKey(delay, lastUsed);
   return (
     <Button className={css.tapperButton} onClick={onClick}>

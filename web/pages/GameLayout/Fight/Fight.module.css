@@ -17,8 +17,23 @@
   padding: var(--space-xs) 0;
 }
 
+.fightFeedItemEnter {
+  animation: fightFeedItemEnter 280ms ease-out;
+}
+
 .fightFeedItem:last-child {
   border-bottom: 0;
+}
+
+@keyframes fightFeedItemEnter {
+  0% {
+    background-color: color-mix(in srgb, var(--color-gold) 15%, transparent);
+    transform: translateY(-0.25rem);
+  }
+  100% {
+    background-color: transparent;
+    transform: translateY(0);
+  }
 }
 
 .fightFeedAttackerEnemy {
@@ -44,11 +59,50 @@
 
 .fightFighterImage {
   display: block;
+  transition: opacity 100ms;
+  width: 100%;
+}
+
+.fightFighterImageHidden {
+  opacity: 0;
+}
+
+.fightFighterImageContainer {
+  overflow: visible;
+  position: relative;
   width: 100%;
 }
 
 .fightFighterImageMirror {
   transform: scaleX(-1);
+}
+
+.fightFighterImagePunch {
+  height: 100%;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  transition: opacity 100ms;
+  width: auto;
+  z-index: 1;
+}
+
+.fightFighterImagePunchMirror {
+  height: 100%;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: scaleX(-1);
+  transform-origin: right center;
+  transition: opacity 100ms;
+  width: auto;
+  z-index: 1;
+}
+
+.fightFighterImagePunchVisible {
+  opacity: 1;
 }
 
 .fightFighterLeft {

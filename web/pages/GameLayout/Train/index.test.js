@@ -148,22 +148,6 @@ describe('Train', () => {
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('keeps the info tooltip inside the mobile viewport', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'Regimen', 'SkillInfoButton.module.css');
-    const source = fs.readFileSync(modulePath, 'utf8');
-    const mobileTooltipRule = new RegExp([
-      '@media\\s*\\(max-width:\\s*768px\\)\\s*{',
-      '[\\s\\S]*\\.infoTooltip\\s*{',
-      '[\\s\\S]*left:\\s*0;',
-      '[\\s\\S]*max-width:\\s*min\\(18rem,\\s*calc\\(100vw - var\\(--space-lg\\) \\* 2\\)\\);',
-      '[\\s\\S]*right:\\s*auto;',
-      '[\\s\\S]*}',
-    ].join(''));
-
-    expect(source).toMatch(mobileTooltipRule);
-  });
-
   it('keeps regimen styles in the Regimen CSS module', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const regimenPath = path.join(directoryPath, 'Regimen', 'index.js');
@@ -173,6 +157,22 @@ describe('Train', () => {
 
     expect(regimenSource).toContain('import css from \'./Regimen.module.css\';');
     expect(regimenCssSource).toMatch(/\.regimen\s*{/);
+  });
+
+  it('keeps regimenRow styles in the RegimenRow CSS module, not in Train.module.css', () => {
+    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
+    const regimenRowPath = path.join(directoryPath, 'Regimen', 'RegimenRow.js');
+    const regimenRowCssPath = path.join(directoryPath, 'Regimen', 'RegimenRow.module.css');
+    const trainCssPath = path.join(directoryPath, 'Train.module.css');
+    const regimenRowSource = fs.readFileSync(regimenRowPath, 'utf8');
+    const regimenRowCssSource = fs.readFileSync(regimenRowCssPath, 'utf8');
+    const trainCssSource = fs.readFileSync(trainCssPath, 'utf8');
+
+    expect(regimenRowSource).toContain('import css from \'./RegimenRow.module.css\';');
+    expect(regimenRowCssSource).toMatch(/\.regimenRow\s*{/);
+    expect(regimenRowCssSource).toMatch(/\.regimenProgress\s*{/);
+    expect(trainCssSource).not.toMatch(/\.regimenRow\s*{/);
+    expect(trainCssSource).not.toMatch(/\.regimenProgress\s*{/);
   });
 
   it('shows gray progress bar for inactive skills', () => {

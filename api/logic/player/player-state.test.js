@@ -111,6 +111,41 @@ describe('getPlayerState', () => {
     assert.deepEqual(result, {actions: [], fight, fighter});
   });
 
+  it('touches scheduled actions to now and does not apply training during an active fight', async () => {
+    const fighter = {gold: '0', id: 9, player: 5, retired: false, stats: {}};
+    const fight = {attacker: 9, defender: null, details: {}, id: 3, reason: 'gold', victory: null};
+    const actions = [
+      {action: 2, fighter: 9, id: 7, touched_at: '2026-01-01T00:00:00.000Z'},
+      {action: 999, fighter: 9, id: 8, touched_at: '2026-01-01T00:00:00.000Z'},
+    ];
+    const touchCalls = [];
+    const fighterActions = {
+      listByFighterID: async () => actions,
+      touch: async (...args) => touchCalls.push(args),
+    };
+    const fighters = {
+      find: async () => null,
+      findCurrentByPlayerID: async () => fighter,
+      update: async () => {
+        throw new Error('fighters.update should not be called during active fights');
+      },
+    };
+    const fightJudge = {get: (playerID) => (playerID === 5 ? fight : null)};
+    const startedAt = Date.now();
+
+    const result = await getPlayerState({fighterActions, fightJudge, fighters}, 5, fighter);
+    const endedAt = Date.now();
+
+    assert.equal(touchCalls.length, 1);
+    assert.equal(touchCalls[0][0], 7);
+    assert.equal(typeof touchCalls[0][1]?.toISOString, 'function');
+    assert.deepEqual(result.fight, fight);
+    assert.equal(result.fighter, fighter);
+    assert.equal(result.actions[1], actions[1]);
+    const touchedAtMs = Date.parse(result.actions[0].touched_at);
+    assert.ok(touchedAtMs >= startedAt && touchedAtMs <= endedAt);
+  });
+
   it('throws when no fighter is provided', async () => {
     const fighterActions = {
       listByFighterID: async () => [],

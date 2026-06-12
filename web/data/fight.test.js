@@ -1,4 +1,4 @@
-import useFightStore, {resetFightStore} from './fight.js';
+import useFightStore, {resetFightStore} from './fight/index.js';
 
 
 describe('useFightStore', () => {
@@ -121,6 +121,172 @@ describe('useFightStore', () => {
 
     useFightStore.getState().markMoveUsed(2, 9_999);
 
-    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 100}, {id: 2, lastUsed: 9_999}]);
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 100}, {id: 2, lastUsed: 10_499}]);
+  });
+
+  it('consumes stamina as a percentage of max stamina when move is reused inside recovery', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          moves: [{id: 2, lastUsed: 7_000}],
+          startingStats: {stamina: 100n},
+          stats: {stamina: 100n},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    expect(useFightStore.getState().markMoveUsed(2, 10_000)).toBe(true);
+    expect(useFightStore.getState().details.attacker.stats.stamina).toBe(80n);
+
+    expect(useFightStore.getState().markMoveUsed(2, 10_001)).toBe(true);
+    expect(useFightStore.getState().details.attacker.stats.stamina).toBe(60n);
+  });
+
+  it('uses a strict recovery threshold before charging stamina', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          moves: [{id: 2, lastUsed: 5_000}],
+          startingStats: {stamina: 100n},
+          stats: {stamina: 100n},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    expect(useFightStore.getState().markMoveUsed(2, 10_000)).toBe(true);
+    expect(useFightStore.getState().details.attacker.stats.stamina).toBe(100n);
+  });
+
+  it('rejects move usage when stamina cost exceeds available stamina', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          moves: [{id: 2, lastUsed: 9_000}],
+          startingStats: {stamina: 100n},
+          stats: {stamina: 10n},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    expect(useFightStore.getState().markMoveUsed(2, 10_000)).toBe(false);
+    expect(useFightStore.getState().details.attacker.stats.stamina).toBe(10n);
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 2, lastUsed: 9_000}]);
+  });
+
+  it('keeps newer local move lastUsed when a stale server update arrives for the same fight', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          moves: [{id: 1, lastUsed: 100}, {id: 2, lastUsed: 200}],
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+    useFightStore.getState().markMoveUsed(2, 9_999);
+
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          moves: [{id: 1, lastUsed: 120}, {id: 2, lastUsed: 300}],
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    expect(useFightStore.getState().details.attacker.moves).toEqual([{id: 1, lastUsed: 120}, {id: 2, lastUsed: 10_499}]);
+  });
+
+  it('starts with an empty pending feed', () => {
+    expect(useFightStore.getState().pendingFeed).toEqual([]);
+  });
+
+  it('adds a pending feed item with attacker name from fighter details when a move is used', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Thaiger',
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    useFightStore.getState().addPendingFeedItem('Cross');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([
+      {attacker: 'Thaiger', isSelf: true, move: 'Cross'},
+    ]);
+  });
+
+  it('appends multiple pending feed items in click order', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Snowball',
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    useFightStore.getState().addPendingFeedItem('Jab');
+    useFightStore.getState().addPendingFeedItem('Knee');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([
+      {attacker: 'Snowball', isSelf: true, move: 'Jab'},
+      {attacker: 'Snowball', isSelf: true, move: 'Knee'},
+    ]);
+  });
+
+  it('does not add a pending feed item when attacker data is missing', () => {
+    useFightStore.getState().addPendingFeedItem('Cross');
+
+    expect(useFightStore.getState().pendingFeed).toEqual([]);
+  });
+
+  it('clears pending feed when the server syncs new state', () => {
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Thaiger',
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+    useFightStore.getState().addPendingFeedItem('Cross');
+    expect(useFightStore.getState().pendingFeed).toHaveLength(1);
+
+    useFightStore.getState().syncServerState({
+      details: {
+        attacker: {
+          name: 'Thaiger',
+          startingStats: {},
+          stats: {},
+        },
+      },
+      id: 44,
+      reason: 'gold',
+    });
+
+    expect(useFightStore.getState().pendingFeed).toEqual([]);
   });
 });
