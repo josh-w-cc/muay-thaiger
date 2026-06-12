@@ -1,3 +1,4 @@
+import {getMarkedMoveState} from '../fightMoveUsage.js';
 import {MOVE_CLICK_BATCH_MILLISECONDS} from '@/actions/websockets/clientCommands.js';
 import {mergeFightState} from '@/data/fightStateMerge.js';
 
@@ -6,7 +7,16 @@ import {getServerFightState} from './serverState.js';
 export function createFightActions(set) {
   return {
     addPendingFeedItem: (moveName) => set((state) => addPendingFeedItem(state, moveName)),
-    markMoveUsed: (moveID, lastUsed = Date.now()) => set((state) => markMoveUsed(state, moveID, lastUsed + MOVE_CLICK_BATCH_MILLISECONDS)),
+    markMoveUsed: (moveID, lastUsed = Date.now()) => {
+      const moveLastUsed = lastUsed + MOVE_CLICK_BATCH_MILLISECONDS;
+      let canUseMove = true;
+      set((state) => {
+        const nextMarkedMoveState = markMoveUsed(state, moveID, moveLastUsed);
+        canUseMove = nextMarkedMoveState !== null;
+        return nextMarkedMoveState ?? state;
+      });
+      return canUseMove;
+    },
     syncServerState: (nextFight) => set(
       (state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set), pendingFeed: []}),
       true,
@@ -29,32 +39,17 @@ function addPendingFeedItem(state, moveName) {
 }
 
 function markMoveUsed(state, moveID, lastUsed) {
-  const moves = getMarkedMoves(state.details?.attacker?.moves, moveID, lastUsed);
-  if(!moves) {
+  const markedMoveState = getMarkedMoveState(state.details?.attacker, moveID, lastUsed);
+  if(!markedMoveState.canUseMove) {
+    return null;
+  }
+  if(!markedMoveState.attacker) {
     return state;
   }
   return {
     details: {
       ...state.details,
-      attacker: {
-        ...state.details.attacker,
-        moves,
-      },
+      attacker: markedMoveState.attacker,
     },
   };
-}
-
-function getMarkedMoves(moves, moveID, lastUsed) {
-  if(!Number.isInteger(moveID) || !Number.isFinite(lastUsed) || !Array.isArray(moves)) {
-    return null;
-  }
-  let didUpdate = false;
-  const nextMoves = moves.map((move) => {
-    if(move.id !== moveID) {
-      return move;
-    }
-    didUpdate = true;
-    return {...move, lastUsed};
-  });
-  return didUpdate ? nextMoves : null;
 }
