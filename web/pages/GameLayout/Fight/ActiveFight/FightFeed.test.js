@@ -112,5 +112,40 @@ describe('FightFeed', () => {
     const updatedItems = screen.getAllByRole('listitem');
     expect(updatedItems[1]).toBe(initialItems[0]);
     expect(updatedItems[2]).toBe(initialItems[1]);
+    expect(updatedItems[0].className).toContain('fightFeedItemEnter');
+  });
+
+  it('animates each newly added server item when multiple entries are appended', () => {
+    const {rerender} = render(
+      <FightFeed
+        details={{
+          feed: [
+            {attacker: 'Tiger', isSelf: true, move: 'Hook', result: 'Lands for 12!'},
+            {attacker: 'Snow Leopard', isSelf: false, move: 'Knee', result: 'Lands for 9!'},
+          ],
+        }}
+      />,
+    );
+
+    const initialItems = screen.getAllByRole('listitem');
+
+    rerender(
+      <FightFeed
+        details={{
+          feed: [
+            {attacker: 'Tiger', isSelf: true, move: 'Hook', result: 'Lands for 12!'},
+            {attacker: 'Snow Leopard', isSelf: false, move: 'Knee', result: 'Lands for 9!'},
+            {attacker: 'Tiger', isSelf: true, move: 'Elbow', result: 'Lands for 14!'},
+            {attacker: 'Snow Leopard', isSelf: false, move: 'Teep', result: 'Lands for 10!'},
+          ],
+        }}
+      />,
+    );
+
+    const updatedItems = screen.getAllByRole('listitem');
+    expect(updatedItems[2]).toBe(initialItems[0]);
+    expect(updatedItems[3]).toBe(initialItems[1]);
+    expect(updatedItems[0].className).toContain('fightFeedItemEnter');
+    expect(updatedItems[1].className).toContain('fightFeedItemEnter');
   });
 });

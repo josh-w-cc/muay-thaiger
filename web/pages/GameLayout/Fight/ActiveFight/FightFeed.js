@@ -37,7 +37,11 @@ function FightFeedItem({item, shouldAnimate}) {
 
 function reverseFeed(feed, source) {
   return Array.isArray(feed) && feed.length > 0
-    ? feed.map((item, index) => ({feedKey: `${source}-${index}`, item, shouldAnimate: source === 'pending'})).reverse()
+    ? feed.map((item, index) => ({
+        feedKey: `${source}-${index}`,
+        item,
+        shouldAnimate: source === 'pending' || source === 'server',
+      })).reverse()
     : [];
 }
 
