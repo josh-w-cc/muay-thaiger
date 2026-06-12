@@ -4,9 +4,7 @@ import useFighterStore from '@/data/fighter.js';
 import useInventoryStore from '@/data/inventory.js';
 import Items from './Items.js';
 
-export default Shop;
-
-function Shop() {
+export default function Shop() {
   const buy = useInventoryStore((state) => state.buy);
   const fighter = useFighterStore();
 
