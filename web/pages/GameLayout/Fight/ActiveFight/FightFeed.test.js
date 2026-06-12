@@ -31,6 +31,8 @@ describe('FightFeed', () => {
     expect(items).toHaveLength(2);
     expect(items[0]).toHaveTextContent('Snow Leopard throws Knee — Lands for 9!');
     expect(items[1]).toHaveTextContent('Tiger throws Hook — Lands for 12!');
+    expect(items[0].querySelector('br')).toBeInTheDocument();
+    expect(items[1].querySelector('br')).toBeInTheDocument();
   });
 
   it('renders pending feed items above server feed items with no damage value', () => {
@@ -56,8 +58,10 @@ describe('FightFeed', () => {
     const items = screen.getAllByRole('listitem');
     expect(items).toHaveLength(2);
     expect(items[0]).toHaveTextContent('Tiger throws Cross');
+    expect(items[0].querySelector('br')).not.toBeInTheDocument();
     expect(items[0]).not.toHaveTextContent('—');
     expect(items[1]).toHaveTextContent('Snow Leopard throws Knee — Lands for 9!');
+    expect(items[1].querySelector('br')).toBeInTheDocument();
   });
 
   it('renders multiple pending items in reverse click order', () => {
