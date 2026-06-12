@@ -4,7 +4,7 @@ const {routerNavigate} = vi.hoisted(() => ({
 
 import useFighterActionsStore, {resetFighterActionsStore} from '@/data/fighterActions.js';
 import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
-import useFightStore, {resetFightStore} from '@/data/fight.js';
+import useFightStore, {resetFightStore} from '@/data/fight/index.js';
 import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './state/token.js';
 import {setWebsocketRouter} from './state/router.js';

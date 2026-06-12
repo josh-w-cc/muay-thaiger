@@ -1,15 +1,3 @@
-.regimenProgress {
-  align-items: center;
-  display: grid;
-  gap: var(--space-sm);
-  grid-template-columns: minmax(0, 1fr) auto auto;
-}
-
-.regimenRow {
-  display: grid;
-  gap: var(--space-xs);
-}
-
 .stats {
   composes: verticalListBase from '../../../components/primitive/css-modules/vertical-list-base.module.css';
 }

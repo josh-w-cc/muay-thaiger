@@ -1,6 +1,6 @@
 import useFighterActionsStore from '@/data/fighterActions.js';
 import useFighterStore from '@/data/fighter.js';
-import useFightStore from '@/data/fight.js';
+import useFightStore from '@/data/fight/index.js';
 import usePlayerStore from '@/data/player.js';
 import {
   onAuth as onAuthMessage,
