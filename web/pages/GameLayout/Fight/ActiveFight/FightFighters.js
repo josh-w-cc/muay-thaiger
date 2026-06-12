@@ -48,6 +48,7 @@ function FightFighterCard({alt, className, hp, isPunching, mirror, punchSrc, src
 
 function FightFighterImages({alt, isPunching, mirror, punchSrc, src}) {
   const showPunch = isPunching && Boolean(punchSrc);
+  const punchClassName = getPunchClassName(mirror, showPunch);
   return (
     <div className={css.fightFighterImageContainer}>
       <img
@@ -57,14 +58,18 @@ function FightFighterImages({alt, isPunching, mirror, punchSrc, src}) {
         src={src}
       />
       {Boolean(punchSrc) && (
-        <img
-          alt={alt}
-          className={classnames({[css.fightFighterImagePunch]: !mirror, [css.fightFighterImagePunchMirror]: mirror, [css.fightFighterImagePunchVisible]: showPunch})}
-          src={punchSrc}
-        />
+        <img alt={alt} aria-hidden={!showPunch ? true : undefined} className={punchClassName} src={punchSrc} />
       )}
     </div>
   );
+}
+
+function getPunchClassName(mirror, showPunch) {
+  return classnames({
+    [css.fightFighterImagePunch]: !mirror,
+    [css.fightFighterImagePunchMirror]: mirror,
+    [css.fightFighterImagePunchVisible]: showPunch,
+  });
 }
 
 function FightFighterStats({attack, defense}) {
