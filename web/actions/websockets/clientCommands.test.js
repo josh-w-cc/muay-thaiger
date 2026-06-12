@@ -56,7 +56,7 @@ describe('client websocket commands', () => {
 
   it('updates the active fight move lastUsed on the client before the batch is sent', async () => {
     const {moveCmd} = await import('./clientCommands.js');
-    const {default: useFightStore} = await import('@/data/fight.js');
+    const {default: useFightStore} = await import('@/data/fight/index.js');
     vi.setSystemTime(12_345);
     useFightStore.getState().syncServerState({
       details: {
@@ -78,7 +78,7 @@ describe('client websocket commands', () => {
 
   it('queues and sends a move when client stamina is insufficient but keeps local state untouched', async () => {
     const {moveCmd, TOO_TIRED_STAMINA_NEEDED_MESSAGE} = await import('./clientCommands.js');
-    const {default: useFightStore} = await import('@/data/fight.js');
+    const {default: useFightStore} = await import('@/data/fight/index.js');
     const now = Date.now();
     useFightStore.getState().syncServerState({
       details: {
@@ -106,7 +106,7 @@ describe('client websocket commands', () => {
 
   it('adds a pending feed item when a move name is provided', async () => {
     const {moveCmd} = await import('./clientCommands.js');
-    const {default: useFightStore} = await import('@/data/fight.js');
+    const {default: useFightStore} = await import('@/data/fight/index.js');
     useFightStore.getState().syncServerState({
       details: {
         attacker: {

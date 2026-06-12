@@ -1,25 +1,10 @@
-import {create} from 'zustand';
-import {parseBigIntStats} from 'shared/stats.js';
-import {mergeFightState} from './fightStateMerge.js';
-import {getMarkedMoveState} from './fightMoveUsage.js';
+import {getMarkedMoveState} from '../fightMoveUsage.js';
 import {MOVE_CLICK_BATCH_MILLISECONDS} from '@/actions/websockets/clientCommands.js';
+import {mergeFightState} from '@/data/fightStateMerge.js';
 
-const useFightStore = create((set) => createFightState(set));
-export default useFightStore;
+import {getServerFightState} from './serverState.js';
 
-export function resetFightStore() {
-  useFightStore.setState(createFightState(useFightStore.setState), true);
-}
-
-function createFightState(set, fight = null) {
-  return {
-    ...getServerFightState(fight),
-    pendingFeed: [],
-    ...createFightActions(set),
-  };
-}
-
-function createFightActions(set) {
+export function createFightActions(set) {
   return {
     addPendingFeedItem: (moveName) => set((state) => addPendingFeedItem(state, moveName)),
     markMoveUsed: (moveID, lastUsed = Date.now()) => {
@@ -36,43 +21,6 @@ function createFightActions(set) {
       (state) => ({...mergeFightState(state, getServerFightState(nextFight)), ...createFightActions(set), pendingFeed: []}),
       true,
     ),
-  };
-}
-
-function getInitialFightState() {
-  return {
-    attacker: null, created_at: null,
-    defender: null, details: null,
-    id: null, rank: null,
-    reason: null, updated_at: null,
-    victory: null,
-  };
-}
-
-function getServerFightState(fight) {
-  if(!fight || typeof fight !== 'object') {
-    return getInitialFightState();
-  }
-  return {
-    ...getInitialFightState(),
-    ...fight,
-    details: parseFightDetails(fight.details),
-  };
-}
-
-function parseFightDetails(details) {
-  return {
-    ...details,
-    attacker: parseFightParticipant(details.attacker),
-    ...(details.defender ? {defender: parseFightParticipant(details.defender)} : {}),
-  };
-}
-
-function parseFightParticipant(participant) {
-  return {
-    ...participant,
-    startingStats: parseBigIntStats(participant.startingStats),
-    stats: parseBigIntStats(participant.stats),
   };
 }
 

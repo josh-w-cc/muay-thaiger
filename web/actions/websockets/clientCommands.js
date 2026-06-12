@@ -3,7 +3,7 @@ import {
   routeToHubIfAuthorized,
 } from '@/actions/websockets/auth.js';
 import {connectSocketOnAppLoad, sendCommand} from '@/actions/websockets/index.js';
-import useFightStore from '@/data/fight.js';
+import useFightStore from '@/data/fight/index.js';
 import {TickerState} from '@/pages/Game/Ticker.js';
 import {isFightReason, normalizeFightReason} from 'shared/fights.js';
 export const MOVE_CLICK_BATCH_MILLISECONDS = 500;
