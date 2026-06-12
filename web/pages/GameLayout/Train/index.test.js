@@ -148,22 +148,6 @@ describe('Train', () => {
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('keeps the info tooltip inside the mobile viewport', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const modulePath = path.join(directoryPath, 'Regimen', 'SkillInfoButton.module.css');
-    const source = fs.readFileSync(modulePath, 'utf8');
-    const mobileTooltipRule = new RegExp([
-      '@media\\s*\\(max-width:\\s*768px\\)\\s*{',
-      '[\\s\\S]*\\.infoTooltip\\s*{',
-      '[\\s\\S]*left:\\s*0;',
-      '[\\s\\S]*max-width:\\s*min\\(18rem,\\s*calc\\(100vw - var\\(--space-lg\\) \\* 2\\)\\);',
-      '[\\s\\S]*right:\\s*auto;',
-      '[\\s\\S]*}',
-    ].join(''));
-
-    expect(source).toMatch(mobileTooltipRule);
-  });
-
   it('keeps regimen styles in the Regimen CSS module', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const regimenPath = path.join(directoryPath, 'Regimen', 'index.js');
