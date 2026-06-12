@@ -1,4 +1,4 @@
-import useFightStore from '@/data/fight.js';
+import useFightStore from '@/data/fight/index.js';
 import css from '../Fight.module.css';
 
 

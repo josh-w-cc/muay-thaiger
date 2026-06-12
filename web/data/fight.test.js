@@ -1,4 +1,4 @@
-import useFightStore, {resetFightStore} from './fight.js';
+import useFightStore, {resetFightStore} from './fight/index.js';
 
 
 describe('useFightStore', () => {

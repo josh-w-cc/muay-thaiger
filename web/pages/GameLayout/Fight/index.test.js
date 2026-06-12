@@ -22,7 +22,7 @@ vi.mock('@/data/fighter.js', () => ({
   default: () => fighter,
 }));
 
-vi.mock('@/data/fight.js', () => ({
+vi.mock('@/data/fight/index.js', () => ({
   default: () => fightState,
 }));
 
