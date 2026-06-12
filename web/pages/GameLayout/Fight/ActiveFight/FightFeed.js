@@ -39,7 +39,7 @@ function reverseFeed(feed, source) {
     ? feed.map((item, index) => ({
         feedKey: `${source}-${index}`,
         item,
-        shouldAnimate: source === 'pending' || (source === 'server' && index === feed.length - 1),
+        shouldAnimate: source === 'pending' || source === 'server',
       })).reverse()
     : [];
 }
