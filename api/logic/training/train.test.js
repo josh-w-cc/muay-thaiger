@@ -107,7 +107,7 @@ describe('train', () => {
     assert.equal(result.details.gold, 1n);
   });
 
-  it('starts w/ the most recent skill when multiple skills', () => {
+  it('starts w/ the oldest skill, but counts from the newest', () => {
     const now = Date.now();
     const fighter = {
       details: {
