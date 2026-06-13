@@ -107,6 +107,25 @@ describe('train', () => {
     assert.equal(result.details.gold, 1n);
   });
 
+  it('starts w/ the most recent skill when multiple skills', () => {
+    const now = Date.now();
+    const fighter = {
+      details: {
+        gold: 0n,
+        regimen: [
+          {enabled: true, id: 2, lastUsed: now - 5000},
+          {enabled: true, id: 1, lastUsed: now - 4000},
+        ],
+        stats: {...BASE_STATS},
+      },
+    };
+
+    const result = train(fighter, new Date(now));
+
+    assert.equal(result.details.stats.stamina, 2n);
+    assert.equal(result.details.gold, 1n);
+  });
+
   it('updates lastUsed for each fired skill in the returned regimen', () => {
     const now = Date.now();
     const originalLastUsed = now - 2000;
