@@ -24,6 +24,12 @@ describe('buildStateFromServerFighter', () => {
     expect(state.displayName).toBe('');
   });
 
+  it('defaults gold to zero when the gold field is absent', () => {
+    const state = buildStateFromServerFighter({id: 3, race: 1});
+
+    expect(state.gold).toBe(0n);
+  });
+
   it('uses fighter data values when they are valid', () => {
     const state = buildStateFromServerFighter({
       created_at: '2026-01-01T00:00:00.000Z',
