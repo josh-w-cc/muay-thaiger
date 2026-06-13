@@ -4,7 +4,7 @@ import {moveCmd} from '@/actions/websockets/clientCommands.js';
 import {useMemo} from 'react';
 
 import {FIGHT_LOADOUT, TAPPER_FILL_DURATIONS} from './fightData.js';
-import css from '../Fight.module.css';
+import css from './FightLoadout.module.css';
 
 
 export default function FightLoadout({details, onMove}) {

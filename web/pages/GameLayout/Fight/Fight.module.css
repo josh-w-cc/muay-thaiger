@@ -77,9 +77,8 @@
   transform: scaleX(-1);
 }
 
-.fightFighterImagePunch {
+.fightFighterImagePunchBase {
   height: 100%;
-  left: 0;
   opacity: 0;
   position: absolute;
   top: 0;
@@ -88,17 +87,18 @@
   z-index: 1;
 }
 
+.fightFighterImagePunch {
+  composes: fightFighterImagePunchBase;
+
+  left: 0;
+}
+
 .fightFighterImagePunchMirror {
-  height: 100%;
-  opacity: 0;
-  position: absolute;
+  composes: fightFighterImagePunchBase;
+
   right: 0;
-  top: 0;
   transform: scaleX(-1);
   transform-origin: right center;
-  transition: opacity 100ms;
-  width: auto;
-  z-index: 1;
 }
 
 .fightFighterImagePunchVisible {
@@ -157,64 +157,6 @@
   & .fill {
     background: linear-gradient(180deg, var(--color-gold-light) 0%, var(--color-gold) 25%, var(--color-gold-hover) 75%, black 100%);
   }
-}
-
-.fightLoadout {
-  margin-top: var(--space-sm);
-}
-
-.tapperButton {
-  background: linear-gradient(225deg, var(--color-white), var(--color-gold));
-  border-color: var(--color-gold);
-  box-shadow: -2px 2px 0 var(--color-red-hover);
-  color: var(--color-on-gold);
-  min-height: 4rem;
-  overflow: hidden;
-  padding: var(--space-md) var(--space-sm);
-  position: relative;
-  width: 100%;
-}
-
-.tapperButtonFill {
-  animation-fill-mode: forwards;
-  animation-iteration-count: 1;
-  animation-name: tapperFill;
-  animation-timing-function: linear;
-  background-color: color-mix(in srgb, var(--color-red) 25%, transparent);
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transform: scaleX(1);
-  transform-origin: right;
-}
-
-.tapperButtonLabel {
-  position: relative;
-}
-
-@keyframes tapperFill {
-  0% { transform: scaleX(1); }
-  100% { transform: scaleX(0); }
-}
-
-.tapperButton:hover {
-  background: linear-gradient(45deg, var(--color-white), var(--color-gold));
-  color: var(--color-red-hover);
-}
-
-.tapperButton:active {
-  box-shadow: 0 2px 0 var(--color-red-hover);
-  transform: translateY(2px);
-}
-
-.fightLoadoutButtons {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-top: var(--space-sm);
 }
 
 .fightFighterStats {
