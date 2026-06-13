@@ -22,14 +22,15 @@ HTTP endpoints below are registered under the `/api` prefix (except `/health`). 
 
 | Route file | Method | Path | Purpose |
 |------------|--------|------|---------|
-| `actions.js` | GET | `/api/actions` | List all fighter actions |
-| `actions.js` | GET | `/api/actions/:id` | Get fighter action by ID |
-| `fighters.js` | GET | `/api/fighters` | List all fighters |
-| `fighters.js` | GET | `/api/fighters/:id` | Get fighter by ID |
+| `resources/actions.js` | GET | `/api/actions` | List all fighter actions |
+| `resources/actions.js` | GET | `/api/actions/:id` | Get fighter action by ID |
+| `resources/fighters.js` | GET | `/api/fighters` | List all fighters |
+| `resources/fighters.js` | GET | `/api/fighters/:id` | Get fighter by ID |
 | `health.js` | GET | `/health` | Healthcheck (no `/api` prefix) |
-| `players.js` | GET | `/api/players` | List all players (private fields stripped) |
-| `players.js` | GET | `/api/players/:id` | Get player by ID (private fields stripped) |
-| `race.js` | GET | `/api/race` | List all playable races |
+| `resources/moves.js` | GET | `/api/moves` | List all moves |
+| `resources/players.js` | GET | `/api/players` | List all players (private fields stripped) |
+| `resources/players.js` | GET | `/api/players/:id` | Get player by ID (private fields stripped) |
+| `resources/race.js` | GET | `/api/race` | List all playable races |
 | `test-reseed.js` | POST | `/api/test/reseed` | Truncate and reseed DB for tests (non-production only) |
 | `websocket.js` | WS | `/ws/connect` | WebSocket connection entrypoint |
 

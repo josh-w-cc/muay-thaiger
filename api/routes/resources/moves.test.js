@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 
-import {mockKnex} from '../data/utils/mock-knex.js';
+import {mockKnex} from '../../data/utils/mock-knex.js';
 import movesRoutes from './moves.js';
 
 

@@ -4,12 +4,12 @@ import 'shared/bigInt.js';
 
 import dbPlugin from './data/db.js';
 import serveSPA from './plugins/serve-spa.js';
-import actionsRoutes from './routes/actions.js';
-import fightersRoutes from './routes/fighters.js';
 import healthRoutes from './routes/health.js';
-import movesRoutes from './routes/moves.js';
-import playersRoutes from './routes/players.js';
-import raceRoutes from './routes/race.js';
+import actionsRoutes from './routes/resources/actions.js';
+import fightersRoutes from './routes/resources/fighters.js';
+import movesRoutes from './routes/resources/moves.js';
+import playersRoutes from './routes/resources/players.js';
+import raceRoutes from './routes/resources/race.js';
 import websocketRoutes from './routes/websocket.js';
 import {attachFightJudge} from './services/fight-judge.js';
 import {attachScheduler} from './services/scheduler.js';

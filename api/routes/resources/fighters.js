@@ -1,5 +1,5 @@
 import fightersModel from '#api/data/models/fighters.js';
-import {withFoundItem} from './with-found-item.js';
+import {withFoundItem} from '../shared/route-handlers.js';
 
 
 /**
