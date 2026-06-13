@@ -67,6 +67,14 @@ export function executeFightMove(moveDefinition, activeParticipant, opponentPart
   return damage;
 }
 
+export function getMoveResult(moveDefinition, activeParticipant, opponentParticipant) {
+  if(!isMoveHit(activeParticipant, opponentParticipant)) {
+    return 'blocked';
+  }
+  const damage = executeFightMove(moveDefinition, activeParticipant, opponentParticipant);
+  return `${damage} damage`;
+}
+
 function createMoveActor(participant, incomingDamageScale = 1n, onDamage = null) {
   return {
     takeDamage: (amount) => {
@@ -75,6 +83,14 @@ function createMoveActor(participant, incomingDamageScale = 1n, onDamage = null)
       onDamage?.(damage);
     },
   };
+}
+
+function isMoveHit(activeParticipant, opponentParticipant) {
+  const attack = calculateFighterStats(activeParticipant.stats).attack;
+  const defense = calculateFighterStats(opponentParticipant.stats).defense;
+  const attackRoll = Number(attack.logApprox()) * Math.random();
+  const defenseRoll = Number(defense.logApprox()) * Math.random();
+  return attackRoll > defenseRoll;
 }
 
 async function getFightParticipant(fighters, fighterID, role) {

@@ -254,7 +254,10 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 5_001}], stats: {...baseCombatStats, stamina: 11n}},
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+            defender: {
+              moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}],
+              stats: {...baseCombatStats, constitution: 20n, durability: 20n},
+            },
           },
           id: 101,
           victory: null,
@@ -281,7 +284,10 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], stats: {...baseCombatStats, stamina: 100n}},
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+            defender: {
+              moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}],
+              stats: {...baseCombatStats, constitution: 20n, durability: 20n},
+            },
           },
           id: 101,
           victory: null,
@@ -315,7 +321,7 @@ describe('FightJudge.attach', () => {
               moves: [{id: MOVE_IDS.wildKick, lastUsed: 5_000}, {id: MOVE_IDS.wildPunch, lastUsed: 7_001}],
               stats: {...baseCombatStats, stamina: 10n},
             },
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats, constitution: 10n}},
           },
           id: 101,
           victory: null,
@@ -345,7 +351,10 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 999}], stats: {...baseCombatStats, stamina: 100n}},
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}], stats: {...baseCombatStats}},
+            defender: {
+              moves: [{id: MOVE_IDS.wildPunch, lastUsed: 3}],
+              stats: {...baseCombatStats, constitution: 20n, durability: 20n},
+            },
           },
           id: 101,
           victory: null,
@@ -546,7 +555,7 @@ describe('FightJudge.attach', () => {
           defender: 12,
           details: {
             attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1}], stats: {...baseCombatStats}},
-            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 9_999}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 9_999}], stats: {...baseCombatStats, constitution: 10n}},
           },
           id: 101,
           victory: null,
@@ -607,6 +616,53 @@ describe('FightJudge.attach', () => {
       finally {
         Math.random = originalRandom;
         Date.now = dateNow;
+      }
+    });
+
+    it('marks victory, updates fights storage, and removes resolved fights after timeout', async () => {
+      const setTimeoutOriginal = global.setTimeout;
+      const scheduledTimeouts = [];
+      global.setTimeout = (callback, delay) => {
+        scheduledTimeouts.push({callback, delay});
+        return 1;
+      };
+      try {
+        const updates = [];
+        const fights = {
+          listUnresolved: async () => [],
+          update: async (...args) => {
+            updates.push(args);
+            return null;
+          },
+        };
+        const judge = new FightJudge();
+        await judge.load({fighters: twoPlayerFighters, fights});
+        const fight = {
+          attacker: 11,
+          defender: 12,
+          details: {
+            attacker: {moves: [{id: MOVE_IDS.wildKick, lastUsed: 1}], stats: {...baseCombatStats}},
+            defender: {moves: [{id: MOVE_IDS.wildPunch, lastUsed: 2}], stats: {...baseCombatStats}},
+          },
+          id: 101,
+          victory: null,
+        };
+
+        await judge.attach(twoPlayerFighters, fight);
+
+        assert.equal(judge.move(1, MOVE_IDS.wildKick, 10), true);
+        assert.equal(judge.get(1).details.defender.stats.health < 0n, true);
+        assert.equal(judge.get(1).victory, true);
+        assert.equal(judge.move(2, MOVE_IDS.wildPunch, 11), false);
+        assert.deepEqual(updates, [[101, {victory: true}]]);
+        assert.deepEqual(scheduledTimeouts.map(({delay}) => delay), [60_000]);
+
+        scheduledTimeouts[0].callback();
+        assert.equal(judge.get(1), null);
+        assert.equal(judge.get(2), null);
+      }
+      finally {
+        global.setTimeout = setTimeoutOriginal;
       }
     });
 

@@ -1,15 +1,29 @@
 import fightersModel from '../data/models/fighters.js';
 import fightsModel from '../data/models/fights/index.js';
-import {executeFightAction, applyIdleAttacks} from './fight-judge-actions.js';
-import {captureStartingStats} from './fight-starting-stats.js';
+import {
+  captureStartingStats,
+  getCalculatedFight,
+  getFightMoveOrThrow,
+  getOpponentParticipant,
+  getParticipantFight,
+  removeFightByID,
+} from './fight-judge-state.js';
 import {recoverFightStamina} from './fight-stamina.js';
-import {calculateFighterStats, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
+import {executeFightAction, applyIdleAttacks} from './fight-judge-actions.js';
+import {getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
 
 export class FightJudge {
   #fightsByPlayerID = new Map();
+  #fights = null;
+  #fightCleanupTimers = new Map();
 
   async load({fighters, fights}) {
+    for(const timeoutID of this.#fightCleanupTimers.values()) {
+      clearTimeout(timeoutID);
+    }
+    this.#fightCleanupTimers.clear();
     this.#fightsByPlayerID.clear();
+    this.#fights = fights;
     const unresolvedFights = await fights.listUnresolved();
     for(const fight of unresolvedFights) {
       await this.attach(fighters, fight);
@@ -39,32 +53,46 @@ export class FightJudge {
     const participantFight = getParticipantFight(this.#fightsByPlayerID, playerID);
     recoverFightStamina(participantFight.fight);
     const activeParticipant = participantFight.fight.details[participantFight.role];
-    if(activeParticipant.moveList.includes(moveNum)) {
+    if(participantFight.fight.victory != null || activeParticipant.moveList.includes(moveNum)) {
       return false;
     }
     const move = getFightMoveOrThrow(participantFight, moveID),
       moveDefinition = getMoveDefinition(moveID);
-    return executeFightAction(participantFight, activeParticipant, move, moveDefinition, moveNum);
+    const wasActionExecuted = executeFightAction(participantFight, activeParticipant, move, moveDefinition, moveNum);
+    if(!wasActionExecuted) {
+      return false;
+    }
+    this.#resolveFight(participantFight);
+    return true;
   }
-}
 
-function getCalculatedFight(fight, participantRole) {
-  const {attacker, defender, ...rest} = fight.details;
-  const feed = rest.feed.map((entry) => ({...entry, isSelf: entry.actorRole === participantRole}));
-  return {
-    ...fight,
-    details: {
-      attacker: addCalculatedStats(attacker),
-      ...(defender ? {defender: addCalculatedStats(defender)} : {}),
-      ...rest,
-      feed,
-    },
-  };
-}
+  #resolveFight(participantFight) {
+    const opponentParticipant = getOpponentParticipant(participantFight);
+    if(!opponentParticipant || opponentParticipant.stats.health >= 0n || participantFight.fight.victory != null) {
+      return;
+    }
+    const didAttackerWin = participantFight.role === 'attacker';
+    participantFight.fight.victory = didAttackerWin;
+    if(this.#fights) {
+      this.#fights.update(participantFight.fight.id, {victory: didAttackerWin}).catch(console.warn);
+    }
+    this.#scheduleFightCleanup(participantFight.fight.id);
+  }
 
-function addCalculatedStats(participant) {
-  const {staminaRecoveredAt, staminaRecoveryRemainder, ...visibleParticipant} = participant;
-  return {...visibleParticipant, stats: {...participant.stats, ...calculateFighterStats(participant.stats)}};
+  #scheduleFightCleanup(fightID) {
+    if(this.#fightCleanupTimers.has(fightID)) {
+      return;
+    }
+    const timeoutID = setTimeout(() => {
+      this.#fightCleanupTimers.delete(fightID);
+      this.#removeFight(fightID);
+    }, 60_000);
+    this.#fightCleanupTimers.set(fightID, timeoutID);
+  }
+
+  #removeFight(fightID) {
+    removeFightByID(this.#fightsByPlayerID, fightID);
+  }
 }
 
 export function attachFightJudge(app) {
@@ -72,16 +100,4 @@ export function attachFightJudge(app) {
   const models = {fighters: fightersModel(app.db), fights: fightsModel(app.db)};
   app.decorate('fightJudge', judge);
   app.addHook('onReady', () => judge.load(models));
-}
-
-const getFightMove = (participantFight, moveID) => participantFight.fight.details[participantFight.role].moves.find(({id}) => id === moveID) || null;
-
-function fail(message) {
-  throw new Error(message);
-}
-
-const getFightMoveOrThrow = (participantFight, moveID) => getFightMove(participantFight, moveID) ?? fail(`Unknown move:${moveID}`);
-
-function getParticipantFight(fightsByPlayerID, playerID) {
-  return fightsByPlayerID.get(playerID) ?? fail(`No fight for player:${playerID}`);
 }
