@@ -4,21 +4,21 @@ import {sortByProperty} from '#api/utils/sort-by-property.js';
 
 export default function train(fighter, now = new Date()) {
   const skills = determineSkillsUsed(fighter.details.regimen, now.getTime());
-  const {goldEarned, stats} = calculateTraining(fighter.details.stats, skills);
-  return updatedFighter(fighter, skills, stats, goldEarned);
+  const {gold, stats} = calculateTraining(fighter.details.stats, skills, fighter.details.gold);
+  return updatedFighter(fighter, skills, stats, gold);
 }
 
-function calculateTraining(stats, skills) {
+function calculateTraining(stats, skills, gold) {
   const newStats = structuredClone(stats);
-  let goldEarned = 0n;
+  let newGold = gold;
   const fighterProxy = {
     train: (stat, amount = 1n) => trainStat(newStats, stat, amount),
-    win: (g) => { goldEarned += g; },
+    win: (g) => { newGold += g; },
   };
   for(const skill of skills) {
     SKILLS_BY_ACTION_ID[skill.id].action(fighterProxy);
   }
-  return {goldEarned, stats: newStats};
+  return {gold: newGold, stats: newStats};
 }
 
 function determineSkillsUsed(regimen, now) {
@@ -40,7 +40,7 @@ function determineSkillsUsed(regimen, now) {
   return skillsUsed;
 }
 
-function updatedFighter(fighter, skills, stats, goldEarned) {
+function updatedFighter(fighter, skills, stats, gold) {
   const skillIDs = skills.map((s) => s.id);
   const unchangedSkills = fighter.details.regimen.filter((s) => !skillIDs.includes(s.id));
   const updatedSkills = [...new Set(skills)];
@@ -49,9 +49,9 @@ function updatedFighter(fighter, skills, stats, goldEarned) {
     ...fighter,
     details: {
       ...fighter.details,
+      gold,
       regimen: updatedRegimen,
       stats,
     },
-    gold: fighter.gold + goldEarned,
   };
 }

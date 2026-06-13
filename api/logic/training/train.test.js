@@ -18,40 +18,31 @@ const BASE_STATS = {
 describe('train', () => {
   it('returns unchanged stats and gold with an empty regimen', () => {
     const fighter = {
-      details: {regimen: [], stats: {...BASE_STATS}},
-      gold: 0n,
+      details: {gold: 0n, regimen: [], stats: {...BASE_STATS}},
     };
 
     const result = train(fighter);
 
     assert.deepEqual(result.details.stats, BASE_STATS);
-    assert.equal(result.gold, 0n);
+    assert.equal(result.details.gold, 0n);
   });
 
   it('returns unchanged stats when no skills are enabled', () => {
     const now = Date.now();
     const fighter = {
-      details: {
-        regimen: [{enabled: false, id: 2, lastUsed: now - 5000}],
-        stats: {...BASE_STATS},
-      },
-      gold: 0n,
+      details: {gold: 0n, regimen: [{enabled: false, id: 2, lastUsed: now - 5000}], stats: {...BASE_STATS}},
     };
 
     const result = train(fighter, new Date(now));
 
     assert.deepEqual(result.details.stats, BASE_STATS);
-    assert.equal(result.gold, 0n);
+    assert.equal(result.details.gold, 0n);
   });
 
   it('returns unchanged stats when not enough time has elapsed', () => {
     const now = Date.now();
     const fighter = {
-      details: {
-        regimen: [{enabled: true, id: 2, lastUsed: now}],
-        stats: {...BASE_STATS},
-      },
-      gold: 0n,
+      details: {gold: 0n, regimen: [{enabled: true, id: 2, lastUsed: now}], stats: {...BASE_STATS}},
     };
 
     const result = train(fighter, new Date(now));
@@ -62,11 +53,7 @@ describe('train', () => {
   it('trains stamina when the walking skill fires', () => {
     const now = Date.now();
     const fighter = {
-      details: {
-        regimen: [{enabled: true, id: 2, lastUsed: now - 2000}],
-        stats: {...BASE_STATS},
-      },
-      gold: 0n,
+      details: {gold: 0n, regimen: [{enabled: true, id: 2, lastUsed: now - 2000}], stats: {...BASE_STATS}},
     };
 
     const result = train(fighter, new Date(now));
@@ -78,10 +65,10 @@ describe('train', () => {
     const now = Date.now();
     const fighter = {
       details: {
+        gold: 0n,
         regimen: [{enabled: true, id: 2, lastUsed: now - 2000}],
         stats: {...BASE_STATS, vitality: 3n},
       },
-      gold: 0n,
     };
 
     const result = train(fighter, new Date(now));
@@ -92,16 +79,12 @@ describe('train', () => {
   it('increases gold when the begging skill fires', () => {
     const now = Date.now();
     const fighter = {
-      details: {
-        regimen: [{enabled: true, id: 1, lastUsed: now - 2000}],
-        stats: {...BASE_STATS},
-      },
-      gold: 0n,
+      details: {gold: 0n, regimen: [{enabled: true, id: 1, lastUsed: now - 2000}], stats: {...BASE_STATS}},
     };
 
     const result = train(fighter, new Date(now));
 
-    assert.equal(result.gold, 1n);
+    assert.equal(result.details.gold, 1n);
     assert.equal(result.details.stats.stamina, 0n);
   });
 
@@ -109,30 +92,26 @@ describe('train', () => {
     const now = Date.now();
     const fighter = {
       details: {
+        gold: 0n,
         regimen: [
           {enabled: true, id: 2, lastUsed: now - 3000},
           {enabled: true, id: 1, lastUsed: now - 3000},
         ],
         stats: {...BASE_STATS},
       },
-      gold: 0n,
     };
 
     const result = train(fighter, new Date(now));
 
     assert.equal(result.details.stats.stamina, 1n);
-    assert.equal(result.gold, 1n);
+    assert.equal(result.details.gold, 1n);
   });
 
   it('updates lastUsed for each fired skill in the returned regimen', () => {
     const now = Date.now();
     const originalLastUsed = now - 2000;
     const fighter = {
-      details: {
-        regimen: [{enabled: true, id: 2, lastUsed: originalLastUsed}],
-        stats: {...BASE_STATS},
-      },
-      gold: 0n,
+      details: {gold: 0n, regimen: [{enabled: true, id: 2, lastUsed: originalLastUsed}], stats: {...BASE_STATS}},
     };
 
     const result = train(fighter, new Date(now));
@@ -145,11 +124,7 @@ describe('train', () => {
   it('keeps fired skills in the returned regimen', () => {
     const now = Date.now();
     const fighter = {
-      details: {
-        regimen: [{enabled: true, id: 2, lastUsed: now - 2000}],
-        stats: {...BASE_STATS},
-      },
-      gold: 0n,
+      details: {gold: 0n, regimen: [{enabled: true, id: 2, lastUsed: now - 2000}], stats: {...BASE_STATS}},
     };
 
     const result = train(fighter, new Date(now));
@@ -163,13 +138,13 @@ describe('train', () => {
     const disabledLastUsed = now - 5000;
     const fighter = {
       details: {
+        gold: 0n,
         regimen: [
           {enabled: false, id: 2, lastUsed: disabledLastUsed},
           {enabled: true, id: 1, lastUsed: now - 2000},
         ],
         stats: {...BASE_STATS},
       },
-      gold: 0n,
     };
 
     const result = train(fighter, new Date(now));
@@ -179,3 +154,4 @@ describe('train', () => {
     assert.equal(disabled.lastUsed, disabledLastUsed);
   });
 });
+
