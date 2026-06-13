@@ -14,7 +14,7 @@ Pure JavaScript library shared by both `api/` and `web/` subprojects. Contains g
 | `seedData.js` | `createSeedEntries` | Utility for generating seed data arrays from definition/ID maps. |
 | `skills/` | `SKILL_DEFINITIONS`, `SKILL_IDS`, `SKILL_SEED_ACTIONS`, `SKILLS_BY_ACTION_ID` | Skill constants and reverse lookup by action ID. |
 | `stats.js` | `FIGHTER_STAT_KEYS`, `parseBigIntStats` | Stat key list and BigInt stat parser. |
-| `training.js` | `applyTrainingAction`, `applyTrainingActions`, `createTrainingTimeline`, `findTouchedAtTransfer`, `getMaxTouchedAtMs`, `getScheduledTrainingActions`, `getTrainingDurationMs` | Training application and scheduling logic. |
+| `training.js` | `applyTrainingAction`, `applyTrainingActions`, `createTrainingTimeline`, `findActiveTrainingAction`, `findTouchedAtTransfer`, `getMaxTouchedAtMs`, `getScheduledTrainingActions`, `getTrainingDurationMs` | Training application and scheduling logic. |
 | `trainingStat.js` | `trainStat` (default), `getTrainingEffect` | Per-stat training calculation. |
 | `trainingTimeline.js` | `createTrainingTimeline`, `findLatestAction`, `getActionTime`, `getScheduledActions` | Generic training timeline scheduling. |
 
