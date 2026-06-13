@@ -77,9 +77,8 @@
   transform: scaleX(-1);
 }
 
-.fightFighterImagePunch {
+.fightFighterImagePunchBase {
   height: 100%;
-  left: 0;
   opacity: 0;
   position: absolute;
   top: 0;
@@ -88,17 +87,18 @@
   z-index: 1;
 }
 
+.fightFighterImagePunch {
+  composes: fightFighterImagePunchBase;
+
+  left: 0;
+}
+
 .fightFighterImagePunchMirror {
-  height: 100%;
-  opacity: 0;
-  position: absolute;
+  composes: fightFighterImagePunchBase;
+
   right: 0;
-  top: 0;
   transform: scaleX(-1);
   transform-origin: right center;
-  transition: opacity 100ms;
-  width: auto;
-  z-index: 1;
 }
 
 .fightFighterImagePunchVisible {
