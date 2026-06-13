@@ -85,9 +85,6 @@ function tickMoveBatch(delta) {
 
 function flushMoveBatch() {
   moveBatchDelta = 0;
-  if(moveBatch.length === 0) {
-    return;
-  }
   const currentBatch = moveBatch;
   moveBatch = [];
   sendCommand({cmd: 'move', moves: currentBatch});

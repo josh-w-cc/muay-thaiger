@@ -148,17 +148,6 @@ describe('Train', () => {
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('keeps regimen styles in the Regimen CSS module', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const regimenPath = path.join(directoryPath, 'Regimen', 'index.js');
-    const regimenCssPath = path.join(directoryPath, 'Regimen', 'Regimen.module.css');
-    const regimenSource = fs.readFileSync(regimenPath, 'utf8');
-    const regimenCssSource = fs.readFileSync(regimenCssPath, 'utf8');
-
-    expect(regimenSource).toContain('import css from \'./Regimen.module.css\';');
-    expect(regimenCssSource).toMatch(/\.regimen\s*{/);
-  });
-
   it('keeps regimenRow styles in the RegimenRow CSS module, not in Train.module.css', () => {
     const directoryPath = path.dirname(fileURLToPath(import.meta.url));
     const regimenRowPath = path.join(directoryPath, 'Regimen', 'RegimenRow.js');

@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 
-import {mockKnex} from '../data/utils/mock-knex.js';
-import actionsRoutes from '../routes/actions.js';
+import {mockKnex} from '../../data/utils/mock-knex.js';
+import actionsRoutes from './actions.js';
 
 
 describe('GET /actions', () => {

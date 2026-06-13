@@ -24,21 +24,6 @@ export function createTrainingTimeline(actions, options = {}) {
   });
 }
 
-export function findTouchedAtTransfer(removedActions, remainingActions) {
-  if(!remainingActions.length) {
-    return null;
-  }
-  const maxRemovedMs = getMaxTouchedAtMs(removedActions);
-  if(maxRemovedMs === null) {
-    return null;
-  }
-  const maxRemainingMs = getMaxTouchedAtMs(remainingActions);
-  if(maxRemainingMs !== null && maxRemovedMs <= maxRemainingMs) {
-    return null;
-  }
-  return {targetAction: getActionWithMaxTouchedAt(remainingActions), touchedAt: new Date(maxRemovedMs)};
-}
-
 export function findActiveTrainingAction(actions, options = {}) {
   let now = new Date();
   if(options.now) {
@@ -53,6 +38,21 @@ export function findActiveTrainingAction(actions, options = {}) {
   const {latestActionTime} = findLatestAction(orderedActions, nowMs);
   const actionIndex = getActiveActionIndex(orderedActions, nowMs - latestActionTime);
   return orderedActions[actionIndex].action;
+}
+
+export function findTouchedAtTransfer(removedActions, remainingActions) {
+  if(!remainingActions.length) {
+    return null;
+  }
+  const maxRemovedMs = getMaxTouchedAtMs(removedActions);
+  if(maxRemovedMs === null) {
+    return null;
+  }
+  const maxRemainingMs = getMaxTouchedAtMs(remainingActions);
+  if(maxRemainingMs !== null && maxRemovedMs <= maxRemainingMs) {
+    return null;
+  }
+  return {targetAction: getActionWithMaxTouchedAt(remainingActions), touchedAt: new Date(maxRemovedMs)};
 }
 
 export function getMaxTouchedAtMs(actions) {

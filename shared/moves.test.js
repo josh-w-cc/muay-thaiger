@@ -23,18 +23,44 @@ describe('MOVE_SEED_MOVES', () => {
 });
 
 describe('MOVE_DEFINITIONS', () => {
-  it('applies each move affect to the opponent', () => {
+  it('randomizes Wild Punch damage between 1-5', () => {
+    const originalRandom = Math.random;
     const calls = [];
-    const fighter = {};
     const opponent = {
       takeDamage: (amount) => calls.push(amount),
     };
 
-    for(const move of Object.values(MOVE_DEFINITIONS)) {
-      move.affect(fighter, opponent);
+    try {
+      Math.random = () => 0;
+      MOVE_DEFINITIONS.wildPunch.affect({}, opponent);
+      Math.random = () => 0.999999;
+      MOVE_DEFINITIONS.wildPunch.affect({}, opponent);
+    }
+    finally {
+      Math.random = originalRandom;
     }
 
-    deepEqual(calls, [2, 3]);
+    deepEqual(calls, [1, 5]);
+  });
+
+  it('randomizes Wild Kick damage between 1-10', () => {
+    const originalRandom = Math.random;
+    const calls = [];
+    const opponent = {
+      takeDamage: (amount) => calls.push(amount),
+    };
+
+    try {
+      Math.random = () => 0;
+      MOVE_DEFINITIONS.wildKick.affect({}, opponent);
+      Math.random = () => 0.999999;
+      MOVE_DEFINITIONS.wildKick.affect({}, opponent);
+    }
+    finally {
+      Math.random = originalRandom;
+    }
+
+    deepEqual(calls, [1, 10]);
   });
 
   it('defines expected metadata for initial moves', () => {
