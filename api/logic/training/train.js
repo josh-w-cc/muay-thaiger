@@ -3,29 +3,29 @@ import trainStat from 'shared/trainingStat.js';
 import {sortByProperty} from '#api/utils/sort-by-property.js';
 
 export default function train(fighter, now = new Date()) {
-  const skills = determineSkillsUsed(fighter.details.regimen, now.getTime());
-  const {gold, stats} = calculateTraining(fighter.details.stats, skills, fighter.details.gold);
-  return updatedFighter(fighter, skills, stats, gold);
+  const enabledSkills = fighter.details.regimen.filter((s) => s.enabled);
+  if(!enabledSkills.length) {
+    return fighter;
+  }
+  const sFighter = structuredClone(fighter);
+  const skillsUsed = determineSkillsUsed(enabledSkills, now.getTime());
+  const {gold, stats} = calculateTraining(sFighter.details.stats, skillsUsed, sFighter.details.gold);
+  return updatedFighter(sFighter, skillsUsed, stats, gold);
 }
 
 function calculateTraining(stats, skills, gold) {
-  const newStats = structuredClone(stats);
-  let newGold = gold;
   const fighterProxy = {
-    train: (stat, amount = 1n) => trainStat(newStats, stat, amount),
-    win: (g) => { newGold += g; },
+    train: (stat, amount = 1n) => trainStat(stats, stat, amount),
+    win: (g) => { gold += g; },
   };
   for(const skill of skills) {
     SKILLS_BY_ACTION_ID[skill.id].action(fighterProxy);
   }
-  return {gold: newGold, stats: newStats};
+  return {gold: gold, stats: stats};
 }
 
-function determineSkillsUsed(regimen, now) {
-  const skills = sortByProperty(structuredClone(regimen.filter((s) => s.enabled)), 'lastUsed');
-  if(!skills.length) {
-    return [];
-  }
+function determineSkillsUsed(enabledSkills, now) {
+  const skills = sortByProperty(enabledSkills, 'lastUsed');
   let current = skills[skills.length - 1].lastUsed;
   const skillsUsed = [];
   while(current < now) {

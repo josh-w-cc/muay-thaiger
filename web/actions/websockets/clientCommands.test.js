@@ -234,6 +234,8 @@ describe('client websocket commands', () => {
     const {moveCmd, syncMoveCount} = await import('./clientCommands.js');
 
     syncMoveCount(null);
+    syncMoveCount({});
+    syncMoveCount({details: {}});
     syncMoveCount({details: {attacker: {}}});
     syncMoveCount({details: {attacker: {moveList: []}}});
 

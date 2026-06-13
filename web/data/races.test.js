@@ -15,4 +15,20 @@ describe('useRacesStore', () => {
       {id: 1, name: 'Tiger', stats: {speed: 4n, vigor: 2n}},
     ]);
   });
+
+  it('stores an empty race list when the payload is not an array', () => {
+    useRacesStore.getState().setRaces(null);
+
+    expect(useRacesStore.getState().races).toEqual([]);
+  });
+
+  it('normalizes missing race stats to empty objects', () => {
+    useRacesStore.getState().setRaces([
+      {id: 2, name: 'Lynx'},
+    ]);
+
+    expect(useRacesStore.getState().races).toEqual([
+      {id: 2, name: 'Lynx', stats: {}},
+    ]);
+  });
 });
