@@ -1,5 +1,5 @@
 import actionsModel from '#api/data/models/actions.js';
-import {withFoundItem} from './with-found-item.js';
+import {withFoundItem} from '../shared/route-handlers.js';
 
 
 /**
