@@ -1,10 +1,10 @@
 import fp from 'fastify-plugin';
 
 function IdleSystemPlugin(app) {
+  const {TrainingSystem} = app;
+
   function idle(fighter) {
-    console.log('fighter');
-    console.log(fighter);
-    return fighter;
+    return TrainingSystem.train(fighter);
   }
 
   app.decorate('IdleSystem', {idle});
