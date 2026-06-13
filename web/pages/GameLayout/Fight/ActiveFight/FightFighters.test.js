@@ -50,4 +50,16 @@ describe('FightFighters', () => {
     expect(tigerHealthBar).not.toHaveAttribute('style');
     expect(snowLeopardHealthBar).not.toHaveAttribute('style');
   });
+
+  it('shows the punch image and hides the regular attacker image when isPunching is true', () => {
+    render(<FightFighters details={details} isPunching={true} />);
+
+    const tigerImages = screen.getAllByAltText('Tiger Muay Thai fighter');
+    const mainImage = tigerImages.find((img) => img.classList.contains(css.fightFighterImage));
+    const punchImage = tigerImages.find((img) => img.classList.contains(css.fightFighterImagePunch));
+
+    expect(mainImage).toHaveAttribute('aria-hidden', 'true');
+    expect(punchImage).not.toHaveAttribute('aria-hidden');
+    expect(punchImage).toHaveClass(css.fightFighterImagePunchVisible);
+  });
 });
