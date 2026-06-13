@@ -26,20 +26,15 @@ describe('client websocket commands', () => {
     vi.useRealTimers();
   });
 
-  it('sends an idle command', async () => {
-    const {createFighterActionCmd} = await import('./clientCommands.js');
+  it.each([
+    ['createFighterActionCmd', 'idle'],
+    ['removeFighterActionCmd', 'stop'],
+  ])('sends %s with the expected command payload', async (commandName, cmd) => {
+    const commands = await import('./clientCommands.js');
 
-    createFighterActionCmd(2);
+    commands[commandName](2);
 
-    expect(sendCommand).toHaveBeenCalledWith({action_id: 2, cmd: 'idle'});
-  });
-
-  it('sends a stop command', async () => {
-    const {removeFighterActionCmd} = await import('./clientCommands.js');
-
-    removeFighterActionCmd(2);
-
-    expect(sendCommand).toHaveBeenCalledWith({action_id: 2, cmd: 'stop'});
+    expect(sendCommand).toHaveBeenCalledWith({action_id: 2, cmd});
   });
 
   it('sends a move command as a batched move list payload', async () => {

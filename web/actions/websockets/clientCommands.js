@@ -13,7 +13,7 @@ let moveBatchDelta = 0;
 let moveCount = 0;
 
 export function createFighterActionCmd(actionID) {
-  sendCommand({action_id: actionID, cmd: 'idle'});
+  sendFighterActionCommand(actionID, 'idle');
 }
 
 export function createFightCmd(reason, rank = '') {
@@ -25,7 +25,7 @@ export function createFightCmd(reason, rank = '') {
 }
 
 export function removeFighterActionCmd(actionID) {
-  sendCommand({action_id: actionID, cmd: 'stop'});
+  sendFighterActionCommand(actionID, 'stop');
 }
 
 export function moveCmd(moveID, moveName) {
@@ -65,6 +65,10 @@ function getMaxMoveNum(fight) {
 export function selectFighterCmd() {
   respondToAuth(connectSocketOnAppLoad());
   routeToHubIfAuthorized();
+}
+
+function sendFighterActionCommand(actionID, cmd) {
+  sendCommand({action_id: actionID, cmd});
 }
 
 function tickMoveBatch(delta) {
