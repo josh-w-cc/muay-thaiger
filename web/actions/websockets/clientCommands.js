@@ -52,14 +52,18 @@ export function syncMoveCount(fight) {
 }
 
 function getMaxMoveNum(fight) {
-  if(!fight) {
-    return -1;
-  }
-  const {moveList} = fight.details.attacker;
+  const moveList = getAttackerMoveList(fight);
   if(!Array.isArray(moveList) || moveList.length === 0) {
     return -1;
   }
   return Math.max(...moveList);
+}
+
+function getAttackerMoveList(fight) {
+  if(!fight || !fight.details || !fight.details.attacker) {
+    return null;
+  }
+  return fight.details.attacker.moveList;
 }
 
 export function selectFighterCmd() {
@@ -81,9 +85,6 @@ function tickMoveBatch(delta) {
 
 function flushMoveBatch() {
   moveBatchDelta = 0;
-  if(moveBatch.length === 0) {
-    return;
-  }
   const currentBatch = moveBatch;
   moveBatch = [];
   sendCommand({cmd: 'move', moves: currentBatch});
