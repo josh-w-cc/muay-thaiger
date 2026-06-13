@@ -13,12 +13,17 @@ import raceRoutes from './routes/resources/race.js';
 import websocketRoutes from './routes/websocket.js';
 import {attachFightJudge} from './services/fight-judge.js';
 import {attachScheduler} from './services/scheduler.js';
+import TrainingSystem from '#api/logic/training/index.js';
+import FightSystem from '#api/logic/fights/FightSystem.js';
+import IdleSystem from '#api/logic/IdleSystem.js';
+import PersistenceSystem from '#api/logic/PersistenceSystem.js';
 
 
 export default async function build(opts = {}) {
   const app = Fastify(opts);
 
   await app.register(dbPlugin);
+  registerSystems(app);
   attachFightJudge(app);
   app.decorate('websocketConnections', new Set());
   await app.register(websocket);
@@ -42,4 +47,12 @@ async function registerRoutes(app) {
   await app.register(playersRoutes, {prefix: '/api'});
   await app.register(raceRoutes, {prefix: '/api'});
   await app.register(websocketRoutes, {prefix: '/ws'});
+}
+
+
+function registerSystems(app) {
+  app.register(TrainingSystem);
+  app.register(FightSystem);
+  app.register(IdleSystem);
+  app.register(PersistenceSystem);
 }

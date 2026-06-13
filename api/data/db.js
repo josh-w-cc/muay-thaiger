@@ -13,4 +13,6 @@ async function db(app) {
   app.addHook('onClose', () => db.destroy());
 }
 
-export default fp(db);
+export default fp(db, {
+  name: 'db',
+});
