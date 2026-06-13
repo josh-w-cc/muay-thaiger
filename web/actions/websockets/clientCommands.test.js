@@ -27,9 +27,9 @@ describe('client websocket commands', () => {
   });
 
   it.each([
-    ['createFighterActionCmd', 'idle'],
-    ['removeFighterActionCmd', 'stop'],
-  ])('sends %s with the expected command payload', async (commandName, cmd) => {
+    ['idle', 'createFighterActionCmd'],
+    ['stop', 'removeFighterActionCmd'],
+  ])('sends a %s command with the expected payload', async (cmd, commandName) => {
     const commands = await import('./clientCommands.js');
 
     commands[commandName](2);
