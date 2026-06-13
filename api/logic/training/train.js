@@ -4,7 +4,7 @@ import {sortByProperty} from '#api/utils/sort-by-property.js';
 
 export default function train(fighter, now = new Date()) {
   const skills = determineSkillsUsed(fighter.details.regimen, now.getTime());
-  const {gold, stats} = calculateTraining(fighter.details.stats, skills);
+  const {gold, stats} = calculateTraining(fighter.details.stats, skills, fighter.details.gold);
   return updatedFighter(fighter, skills, stats, gold);
 }
 
