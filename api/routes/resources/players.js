@@ -1,5 +1,5 @@
 import playersModel from '#api/data/models/players.js';
-import {withFoundItem} from './with-found-item.js';
+import {withFoundItem} from '../shared/route-handlers.js';
 
 
 /**
