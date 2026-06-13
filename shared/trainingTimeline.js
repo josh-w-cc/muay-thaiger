@@ -14,12 +14,6 @@ export function createTrainingTimeline(actions, {
   });
 }
 
-export function getScheduledActions(actions, getDurationMs) {
-  return actions
-    .map((action, index) => ({action, durationMs: getDurationMs(action), index}))
-    .filter((action) => action.durationMs > 0);
-}
-
 export function findLatestAction(actions, nowMs) {
   let latestActionIndex = 0;
   let latestActionTime = getActionTime(actions[latestActionIndex].action, nowMs);
@@ -33,6 +27,35 @@ export function findLatestAction(actions, nowMs) {
   return {latestActionIndex, latestActionTime};
 }
 
+export function getActionTime(action, nowMs) {
+  const actionTime = Date.parse(action.touched_at || action.created_at || '');
+  if(Number.isNaN(actionTime)) {
+    return nowMs;
+  }
+  return actionTime;
+}
+
+export function getOrderedActions(actions, nowMs) {
+  return [...actions].sort((leftAction, rightAction) => {
+    const leftTime = getActionTime(leftAction.action, nowMs);
+    const rightTime = getActionTime(rightAction.action, nowMs);
+    if(leftTime === rightTime) {
+      return leftAction.index - rightAction.index;
+    }
+    return leftTime - rightTime;
+  });
+}
+
+export function getScheduledActions(actions, getDurationMs) {
+  return actions
+    .map((action, index) => ({action, durationMs: getDurationMs(action), index}))
+    .filter((action) => action.durationMs > 0);
+}
+
+function createEmptyTimeline() {
+  return {appliedActions: [], touchedAtByActionKey: new Map()};
+}
+
 function createTimelineFromScheduledActions({getTouchedAtKey, getTouchedAtValue, nowMs, scheduledActions}) {
   if(!scheduledActions.length) {
     return createEmptyTimeline();
@@ -44,14 +67,6 @@ function createTimelineFromScheduledActions({getTouchedAtKey, getTouchedAtValue,
     return createEmptyTimeline();
   }
   return runTrainingCycle(orderedActions, latestActionTime, remainingMs, getTouchedAtKey, getTouchedAtValue);
-}
-
-export function getActionTime(action, nowMs) {
-  const actionTime = Date.parse(action.touched_at || action.created_at || '');
-  if(Number.isNaN(actionTime)) {
-    return nowMs;
-  }
-  return actionTime;
 }
 
 function runTrainingCycle(actions, latestActionTime, startingRemainingMs, getTouchedAtKey, getTouchedAtValue) {
@@ -73,19 +88,4 @@ function runTrainingCycle(actions, latestActionTime, startingRemainingMs, getTou
     actionIndex = (actionIndex + 1) % actions.length;
   }
   return {appliedActions, touchedAtByActionKey};
-}
-
-export function getOrderedActions(actions, nowMs) {
-  return [...actions].sort((leftAction, rightAction) => {
-    const leftTime = getActionTime(leftAction.action, nowMs);
-    const rightTime = getActionTime(rightAction.action, nowMs);
-    if(leftTime === rightTime) {
-      return leftAction.index - rightAction.index;
-    }
-    return leftTime - rightTime;
-  });
-}
-
-function createEmptyTimeline() {
-  return {appliedActions: [], touchedAtByActionKey: new Map()};
 }
