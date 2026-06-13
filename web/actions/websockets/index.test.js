@@ -299,6 +299,20 @@ describe('player websocket helpers', () => {
     expect(reconnectedSocket.send).toHaveBeenCalledWith(JSON.stringify({action_id: 2, cmd: 'idle'}));
   });
 
+  it('does not send websocket command when no ready socket is available', () => {
+    globalThis.WebSocket = vi.fn(function () {
+      return {close: vi.fn(), readyState: 0, send: vi.fn()};
+    });
+    globalThis.WebSocket.OPEN = 1;
+    resetSocketState();
+
+    sendCommand({action_id: 2, cmd: 'idle'});
+
+    const socket = globalThis.WebSocket.mock.results[0].value;
+    expect(socket.send).not.toHaveBeenCalled();
+    expect(debugSpy).not.toHaveBeenCalledWith('WebSocket send cmd:', 'idle');
+  });
+
   it('reconnects when selecting fighter with unavailable websocket', () => {
     usePlayerStore.getState().selectFighter('1');
     const unavailableSocket = connectSocketOnAppLoad();
