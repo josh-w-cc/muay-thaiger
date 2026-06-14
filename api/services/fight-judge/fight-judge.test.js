@@ -4,7 +4,7 @@ import Fastify from 'fastify';
 import patchBigIntPrototype from 'shared/bigInt.js';
 import {MOVE_IDS} from 'shared/moves.js';
 
-import {mockKnexMulti} from '../data/utils/mock-knex.js';
+import {mockKnexMulti} from '../../data/utils/mock-knex.js';
 import {executeFightMove, markMoveUsed} from './fight-judge-utils.js';
 import {attachFightJudge, FightJudge} from './fight-judge.js';
 
