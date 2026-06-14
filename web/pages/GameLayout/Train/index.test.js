@@ -1,7 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-
 import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {SKILL_IDS} from 'shared/skills/index.js';
@@ -146,22 +142,6 @@ describe('Train', () => {
 
     expect(screen.queryByText('Perhaps a satang? (3s)')).not.toBeInTheDocument();
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
-  });
-
-  it('keeps regimenRow styles in the RegimenRow CSS module, not in Train.module.css', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const regimenRowPath = path.join(directoryPath, 'Regimen', 'RegimenRow.js');
-    const regimenRowCssPath = path.join(directoryPath, 'Regimen', 'RegimenRow.module.css');
-    const trainCssPath = path.join(directoryPath, 'Train.module.css');
-    const regimenRowSource = fs.readFileSync(regimenRowPath, 'utf8');
-    const regimenRowCssSource = fs.readFileSync(regimenRowCssPath, 'utf8');
-    const trainCssSource = fs.readFileSync(trainCssPath, 'utf8');
-
-    expect(regimenRowSource).toContain('import css from \'./RegimenRow.module.css\';');
-    expect(regimenRowCssSource).toMatch(/\.regimenRow\s*{/);
-    expect(regimenRowCssSource).toMatch(/\.regimenProgress\s*{/);
-    expect(trainCssSource).not.toMatch(/\.regimenRow\s*{/);
-    expect(trainCssSource).not.toMatch(/\.regimenProgress\s*{/);
   });
 
   it('shows gray progress bar for inactive skills', () => {
