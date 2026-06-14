@@ -1,4 +1,4 @@
-import {calculateFighterHealth} from './fight-judge-utils.js';
+import {calculateFighterHealth} from './fight-judge/fight-judge-utils.js';
 
 export function captureStartingStats(fight) {
   const {attacker, defender, ...rest} = fight.details;

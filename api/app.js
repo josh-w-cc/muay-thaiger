@@ -11,7 +11,7 @@ import movesRoutes from './routes/resources/moves.js';
 import playersRoutes from './routes/resources/players.js';
 import raceRoutes from './routes/resources/race.js';
 import websocketRoutes from './routes/websocket.js';
-import {attachFightJudge} from './services/fight-judge.js';
+import {attachFightJudge} from './services/fight-judge/fight-judge.js';
 import {attachScheduler} from './services/scheduler.js';
 import TrainingSystem from '#api/logic/training/index.js';
 import FightSystem from '#api/logic/fights/FightSystem.js';
