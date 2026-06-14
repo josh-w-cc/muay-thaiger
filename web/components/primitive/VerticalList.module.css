@@ -1,0 +1,3 @@
+.verticalList {
+  composes: verticalListBase from './css-modules/vertical-list-base.module.css';
+}

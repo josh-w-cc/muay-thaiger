@@ -1,19 +1,17 @@
-.details {
-  composes: verticalListBase from '../../../components/primitive/css-modules/vertical-list-base.module.css';
+.label {
+  color: var(--color-fg);
+  font-weight: 600;
 }
 
 .stat {
-  composes: statRowBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
-
+  align-items: baseline;
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: 1fr auto;
   margin: 0;
 }
 
-.label {
-  composes: statLabelBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
-}
-
 .value {
-  composes: statValueBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
-
+  color: var(--color-gold);
   margin: 0;
 }

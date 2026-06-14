@@ -1,3 +1,0 @@
-.stats {
-  composes: verticalListBase from '../../../components/primitive/css-modules/vertical-list-base.module.css';
-}

@@ -1,4 +1,6 @@
+import GoldLabel from '@/components/primitive/GoldLabel.js';
 import Section from '@/components/primitive/Section.js';
+import VerticalList from '@/components/primitive/VerticalList.js';
 
 import FighterDetails from './FighterDetails.js';
 import Leaderboard from './Leaderboard/index.js';
@@ -40,16 +42,16 @@ export default function Hub() {
 
 function Events() {
   return (
-    <ul className={css.events}>
+    <VerticalList className={css.events}>
       {EVENTS.map((event) => <Event event={event} key={event.title} />)}
-    </ul>
+    </VerticalList>
   );
 }
 
 function Event({event}) {
   return (
     <li className={css.event}>
-      <span className={css.outcome}>{event.outcome}</span>
+      <GoldLabel>{event.outcome}</GoldLabel>
       <strong>{event.title}</strong>
       <span>{event.detail}</span>
     </li>

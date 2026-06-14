@@ -1,3 +1,4 @@
+import VerticalList from '@/components/primitive/VerticalList.js';
 import BaseStats from '@/data/baseStats.js';
 import useFighterStore from '@/data/fighter.js';
 
@@ -14,14 +15,14 @@ export default function FighterDetails() {
   ];
 
   return (
-    <dl className={css.details}>
+    <VerticalList as="dl">
       {fields.map(({label, value}) => (
         <div className={css.stat} key={label}>
           <dt className={css.label}>{label}</dt>
           <dd className={css.value}>{value}</dd>
         </div>
       ))}
-    </dl>
+    </VerticalList>
   );
 }
 

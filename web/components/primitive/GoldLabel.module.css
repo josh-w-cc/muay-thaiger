@@ -1,0 +1,3 @@
+.goldLabel {
+  composes: goldLabelBase from './css-modules/gold-label-base.module.css';
+}

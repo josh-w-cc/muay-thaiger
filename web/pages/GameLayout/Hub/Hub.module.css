@@ -7,8 +7,6 @@
 }
 
 .events {
-  composes: verticalListBase from '../../../components/primitive/css-modules/vertical-list-base.module.css';
-
   list-style: none;
   padding: 0;
 }
@@ -16,8 +14,4 @@
 .events li:last-child {
   border-bottom: 0;
   padding-bottom: 0;
-}
-
-.outcome {
-  composes: goldLabelBase from '../../../components/primitive/css-modules/gold-label-base.module.css';
 }

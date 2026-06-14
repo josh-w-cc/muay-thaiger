@@ -1,0 +1,11 @@
+.label {
+  composes: statLabelBase from './css-modules/stat-row-base.module.css';
+}
+
+.statRow {
+  composes: statRowBase from './css-modules/stat-row-base.module.css';
+}
+
+.value {
+  composes: statValueBase from './css-modules/stat-row-base.module.css';
+}

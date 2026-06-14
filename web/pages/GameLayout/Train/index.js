@@ -1,10 +1,9 @@
 import Section from '@/components/primitive/Section.js';
+import VerticalList from '@/components/primitive/VerticalList.js';
 import useFighterStore from '@/data/fighter.js';
 
 import Regimen from './Regimen/index.js';
 import TrainStat from './TrainStat.js';
-
-import css from './Train.module.css';
 
 const STAT_FIELDS = [
   {name: 'Agility', stat: 'agility'},
@@ -20,7 +19,7 @@ export default function Train() {
   return (
     <>
       <Section>
-        <div className={css.stats}>{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</div>
+        <VerticalList as="div">{STAT_FIELDS.map(({name, stat}) => <TrainStat key={stat} name={name} stat={stat} />)}</VerticalList>
       </Section>
       <Section>
         <Regimen fighter={fighter} />
