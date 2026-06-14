@@ -7,7 +7,6 @@ import {
   generateFindFn,
   generateListFn,
   generateRemoveFn,
-  generateSearchFn,
   generateUpdateFn,
 } from './crud.js';
 import {mockKnex} from './mock-knex.js';
@@ -72,18 +71,6 @@ describe('generateRemoveFn', () => {
     assert.deepEqual(calls[0], ['table', 'items']);
     assert.deepEqual(calls[1], ['where', {id: 1}]);
     assert.deepEqual(calls[2], ['del']);
-  });
-});
-
-describe('generateSearchFn', () => {
-  it('searches records by params', async () => {
-    const {calls, knex} = mockKnex([]);
-    const search = generateSearchFn(knex, 'items');
-
-    await search({name: 'Test'});
-
-    assert.deepEqual(calls[0], ['table', 'items']);
-    assert.deepEqual(calls[1], ['where', {name: 'Test'}]);
   });
 });
 

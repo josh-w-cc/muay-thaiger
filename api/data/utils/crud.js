@@ -31,10 +31,6 @@ export function generateRemoveFn(db, table) {
   return (id) => db(table).where({id}).del();
 }
 
-export function generateSearchFn(db, table) {
-  return (params) => db(table).where(params);
-}
-
 export function generateUpdateFn(db, table) {
   return (id, data) => db(table).where({id}).update(data).returning('*').then((rows) => rows[0]);
 }
