@@ -1,0 +1,45 @@
+.fightFeed {
+  border-top: 1px solid var(--color-border-default);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+}
+
+.fightFeedAttackerEnemy {
+  color: var(--color-red);
+}
+
+.fightFeedAttackerSelf {
+  color: var(--color-gold);
+}
+
+.fightFeedItem {
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding: var(--space-xs) 0;
+}
+
+.fightFeedItem:last-child {
+  border-bottom: 0;
+}
+
+.fightFeedItemEnter {
+  animation: fightFeedItemEnter 280ms ease-out;
+}
+
+@keyframes fightFeedItemEnter {
+  0% {
+    background-color: color-mix(in srgb, var(--color-gold) 15%, transparent);
+    transform: translateY(-0.25rem);
+  }
+  100% {
+    background-color: transparent;
+    transform: translateY(0);
+  }
+}
+
+.fightFeedList {
+  list-style: none;
+  margin: var(--space-sm) 0 0;
+  max-height: 10rem;
+  overflow-y: auto;
+  padding-left: 0;
+}

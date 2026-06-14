@@ -3,6 +3,7 @@ import {describe, expect, it, afterEach} from 'vitest';
 import useFightStore, {resetFightStore} from '@/data/fight/index.js';
 
 import FightFeed from './FightFeed.js';
+import css from './FightFeed.module.css';
 
 describe('FightFeed', () => {
   afterEach(() => {
@@ -13,6 +14,28 @@ describe('FightFeed', () => {
     render(<FightFeed />);
 
     expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+  });
+
+  it('uses its own CSS module classes', () => {
+    render(
+      <FightFeed
+        details={{
+          feed: [
+            {attacker: 'Tiger', isSelf: true, move: 'Hook', result: 'Lands for 12!'},
+            {attacker: 'Snow Leopard', isSelf: false, move: 'Knee', result: 'Lands for 9!'},
+          ],
+        }}
+      />,
+    );
+
+    const list = screen.getByRole('list');
+    const items = screen.getAllByRole('listitem');
+
+    expect(list.parentElement).toHaveClass(css.fightFeed);
+    expect(list).toHaveClass(css.fightFeedList);
+    expect(items[0]).toHaveClass(css.fightFeedItem);
+    expect(items[0].querySelector('strong')).toHaveClass(css.fightFeedAttackerEnemy);
+    expect(items[1].querySelector('strong')).toHaveClass(css.fightFeedAttackerSelf);
   });
 
   it('renders server feed entries with newest first', () => {
@@ -112,7 +135,7 @@ describe('FightFeed', () => {
     const updatedItems = screen.getAllByRole('listitem');
     expect(updatedItems[1]).toBe(initialItems[0]);
     expect(updatedItems[2]).toBe(initialItems[1]);
-    expect(updatedItems[0].className).toContain('fightFeedItemEnter');
+    expect(updatedItems[0]).toHaveClass(css.fightFeedItemEnter);
   });
 
   it('animates each newly added server item when multiple entries are appended', () => {
@@ -145,7 +168,7 @@ describe('FightFeed', () => {
     const updatedItems = screen.getAllByRole('listitem');
     expect(updatedItems[2]).toBe(initialItems[0]);
     expect(updatedItems[3]).toBe(initialItems[1]);
-    expect(updatedItems[0].className).toContain('fightFeedItemEnter');
-    expect(updatedItems[1].className).toContain('fightFeedItemEnter');
+    expect(updatedItems[0]).toHaveClass(css.fightFeedItemEnter);
+    expect(updatedItems[1]).toHaveClass(css.fightFeedItemEnter);
   });
 });
