@@ -25,6 +25,14 @@
   animation: fightFeedItemEnter 280ms ease-out;
 }
 
+.fightFeedList {
+  list-style: none;
+  margin: var(--space-sm) 0 0;
+  max-height: 10rem;
+  overflow-y: auto;
+  padding-left: 0;
+}
+
 @keyframes fightFeedItemEnter {
   0% {
     background-color: color-mix(in srgb, var(--color-gold) 15%, transparent);
@@ -34,12 +42,4 @@
     background-color: transparent;
     transform: translateY(0);
   }
-}
-
-.fightFeedList {
-  list-style: none;
-  margin: var(--space-sm) 0 0;
-  max-height: 10rem;
-  overflow-y: auto;
-  padding-left: 0;
 }

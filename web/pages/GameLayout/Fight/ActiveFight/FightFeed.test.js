@@ -30,12 +30,14 @@ describe('FightFeed', () => {
 
     const list = screen.getByRole('list');
     const items = screen.getAllByRole('listitem');
+    const snowLeopardAttacker = screen.getByText('Snow Leopard');
+    const tigerAttacker = screen.getByText('Tiger');
 
     expect(list.parentElement).toHaveClass(css.fightFeed);
     expect(list).toHaveClass(css.fightFeedList);
     expect(items[0]).toHaveClass(css.fightFeedItem);
-    expect(items[0].querySelector('strong')).toHaveClass(css.fightFeedAttackerEnemy);
-    expect(items[1].querySelector('strong')).toHaveClass(css.fightFeedAttackerSelf);
+    expect(snowLeopardAttacker).toHaveClass(css.fightFeedAttackerEnemy);
+    expect(tigerAttacker).toHaveClass(css.fightFeedAttackerSelf);
   });
 
   it('renders server feed entries with newest first', () => {
