@@ -27,6 +27,10 @@ function createBotStats(rank) {
   );
 }
 
+function getRandomBotRace() {
+  return BOT_RACE_IDS[Math.floor(Math.random() * BOT_RACE_IDS.length)];
+}
+
 export function normalizeFightRank(rank) {
   return typeof rank === 'string' ? rank.trim() : '';
 }
@@ -57,8 +61,4 @@ function getBotRankScore(normalizedRank) {
     (total, character) => total + BigInt(RANK_Z_CHAR_CODE - character.charCodeAt(0)),
     0n,
   );
-}
-
-function getRandomBotRace() {
-  return BOT_RACE_IDS[Math.floor(Math.random() * BOT_RACE_IDS.length)];
 }
