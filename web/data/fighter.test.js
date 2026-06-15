@@ -1,8 +1,8 @@
 import {RACES} from 'shared/races.js';
 
-import BaseStats from './baseStats.js';
+import BaseStats from './fighter/baseStats.js';
 
-import useFighterStore, {resetFighterStore} from './fighter.js';
+import useFighterStore, {resetFighterStore} from './fighter/index.js';
 
 
 describe('useFighterStore', () => {

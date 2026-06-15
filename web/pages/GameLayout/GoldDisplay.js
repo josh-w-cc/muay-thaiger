@@ -1,4 +1,4 @@
-import useFighterStore from '@/data/fighter.js';
+import useFighterStore from '@/data/fighter/index.js';
 
 import css from './GoldDisplay.module.css';
 

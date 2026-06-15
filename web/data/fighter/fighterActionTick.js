@@ -1,6 +1,6 @@
 import {applyTrainingActions, createTrainingTimeline, findTouchedAtTransfer} from 'shared/training.js';
 
-import useFighterStore from '@/data/fighter.js';
+import useFighterStore from './index.js';
 
 
 export function runFighterActionTick(actions) {

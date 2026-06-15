@@ -1,7 +1,7 @@
 import {RACES} from 'shared/races.js';
 
-import BaseStats from './baseStats.js';
-import {buildStateFromServerFighter} from './serverFighterState.js';
+import BaseStats from './fighter/baseStats.js';
+import {buildStateFromServerFighter} from './fighter/serverFighterState.js';
 
 
 describe('buildStateFromServerFighter', () => {

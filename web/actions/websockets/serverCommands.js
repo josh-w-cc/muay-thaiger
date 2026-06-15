@@ -1,5 +1,5 @@
-import useFighterActionsStore from '@/data/fighterActions.js';
-import useFighterStore from '@/data/fighter.js';
+import useFighterActionsStore from '@/data/fighter/fighterActions.js';
+import useFighterStore from '@/data/fighter/index.js';
 import useFightStore from '@/data/fight/index.js';
 import usePlayerStore from '@/data/player.js';
 import {

@@ -1,6 +1,6 @@
 import Button from '@/components/Button.js';
 import Section from '@/components/primitive/Section.js';
-import useFighterStore from '@/data/fighter.js';
+import useFighterStore from '@/data/fighter/index.js';
 import useInventoryStore from '@/data/inventory.js';
 import Items from './Items.js';
 

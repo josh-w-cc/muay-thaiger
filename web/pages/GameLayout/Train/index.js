@@ -1,5 +1,5 @@
 import Section from '@/components/primitive/Section.js';
-import useFighterStore from '@/data/fighter.js';
+import useFighterStore from '@/data/fighter/index.js';
 
 import Regimen from './Regimen/index.js';
 import TrainStat from './TrainStat.js';
