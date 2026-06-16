@@ -1,8 +1,8 @@
-import fightersModel from '../data/models/fighters.js';
-import fightsModel from '../data/models/fights/index.js';
+import fightersModel from '../../data/models/fighters.js';
+import fightsModel from '../../data/models/fights/index.js';
 import {executeFightAction, applyIdleAttacks} from './fight-judge-actions.js';
-import {captureStartingStats} from './fight-starting-stats.js';
-import {recoverFightStamina} from './fight-stamina.js';
+import {captureStartingStats} from '../fight-starting-stats.js';
+import {recoverFightStamina} from '../fight-stamina.js';
 import {calculateFighterStats, getFightParticipants, getMoveDefinition} from './fight-judge-utils.js';
 
 export class FightJudge {
