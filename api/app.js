@@ -17,7 +17,7 @@ import TrainingSystem from '#api/logic/training/index.js';
 import FightSystem from '#api/logic/fights/FightSystem.js';
 import IdleSystem from '#api/logic/IdleSystem.js';
 import PersistenceSystem from '#api/logic/PersistenceSystem.js';
-import ConnectionPool from "#api/logic/websocket/index.js";
+import ConnectionPool from '#api/logic/websocket/index.js';
 
 
 export default async function build(opts = {}) {
