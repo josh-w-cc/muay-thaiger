@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import useFightStore from '@/data/fight/index.js';
 import css from '../Fight.module.css';
 
@@ -17,7 +18,7 @@ export default function FightFeed({details}) {
 
 function FightFeedItem({item, shouldAnimate}) {
   const attackerClassName = item.isSelf ? css.fightFeedAttackerSelf : css.fightFeedAttackerEnemy;
-  const itemClassName = shouldAnimate ? `${css.fightFeedItem} ${css.fightFeedItemEnter}` : css.fightFeedItem;
+  const itemClassName = cx(css.fightFeedItem, {[css.fightFeedItemEnter]: shouldAnimate});
 
   return (
     <li className={itemClassName}>
