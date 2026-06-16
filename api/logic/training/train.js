@@ -1,7 +1,6 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills/index.js';
+import {sortByProperty} from 'shared/sort.js';
 import trainStat from 'shared/trainingStat.js';
-
-import {sortByProperty} from '#api/utils/sort-by-property.js';
 
 
 export default function train(fighter, now = new Date()) {
