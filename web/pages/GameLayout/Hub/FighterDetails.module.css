@@ -2,18 +2,18 @@
   composes: verticalListBase from '../../../components/primitive/css-modules/vertical-list-base.module.css';
 }
 
+.label {
+  composes: label from '../../../components/primitive/css-modules/stat-display-base.module.css';
+}
+
 .stat {
-  composes: statRowBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
+  composes: stat from '../../../components/primitive/css-modules/stat-display-base.module.css';
 
   margin: 0;
 }
 
-.label {
-  composes: statLabelBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
-}
-
 .value {
-  composes: statValueBase from '../../../components/primitive/css-modules/stat-row-base.module.css';
+  composes: value from '../../../components/primitive/css-modules/stat-display-base.module.css';
 
   margin: 0;
 }
