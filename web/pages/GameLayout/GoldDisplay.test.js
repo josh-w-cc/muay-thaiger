@@ -3,7 +3,7 @@ import {render, screen} from '@testing-library/react';
 
 const fighter = vi.hoisted(() => ({gold: 0n}));
 
-vi.mock('@/data/fighter.js', () => ({
+vi.mock('@/data/fighter/index.js', () => ({
   default: () => fighter,
 }));
 
