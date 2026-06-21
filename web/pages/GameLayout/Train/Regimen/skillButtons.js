@@ -1,4 +1,4 @@
-import {SKILL_IDS} from 'shared/skills/index.js';
+import {SKILL_IDS} from 'shared/skills/ids.js';
 
 import startIdle from '@/actions/idle/start.js';
 import stopIdle from '@/actions/idle/stop.js';
