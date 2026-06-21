@@ -1,5 +1,5 @@
-import fightersModel from '../../data/models/fighters.js';
-import fightsModel from '../../data/models/fights/index.js';
+import fightersModel from '#api/data/models/fighters.js';
+import fightsModel from '#api/data/models/fights/index.js';
 import {executeFightAction, applyIdleAttacks} from './fight-judge-actions.js';
 import {captureStartingStats} from '../fight-starting-stats.js';
 import {recoverFightStamina} from '../fight-stamina.js';
