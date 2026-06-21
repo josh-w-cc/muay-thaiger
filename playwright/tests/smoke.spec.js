@@ -43,3 +43,17 @@ test('server down route shows recovery messaging', async ({page}) => {
   await expect(page.getByText(/unable to connect to the game server/i)).toBeVisible();
   await expect(page.getByRole('button', {name: 'Return Home'})).toBeVisible();
 });
+
+test('edit user route allows returning to hub for authenticated players', async ({page}) => {
+  await page.goto('/');
+  await page.getByRole('button', {name: 'CHOOSE'}).first().click();
+  await expect(page).toHaveURL(/\/hub$/);
+
+  await page.goto('/edit-user');
+  await expect(page).toHaveURL(/\/edit-user$/);
+  await expect(page.getByRole('heading', {name: 'Check back later'})).toBeVisible();
+
+  await page.getByRole('button', {name: 'Return to Hub'}).click();
+  await expect(page).toHaveURL(/\/hub$/);
+  await expect(page.getByRole('button', {name: 'Hub'})).toHaveAttribute('aria-current', 'page');
+});
