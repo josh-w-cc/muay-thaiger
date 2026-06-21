@@ -1,6 +1,6 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {SKILL_IDS} from 'shared/skills/index.js';
+import {SKILL_IDS} from 'shared/skills/ids.js';
 
 import Train from './index.js';
 
@@ -43,26 +43,17 @@ vi.mock('@/data/fighter.js', () => {
   return {default: mockedStore};
 });
 
-vi.mock('shared/skills/index.js', async () => {
-  const actual = await vi.importActual('shared/skills/index.js');
-
-  return {
-    ...actual,
-    SKILL_DEFINITIONS: {
-      begging: {
-        action,
-        description: 'Perhaps a satang?',
-        duration: 3,
-        name: '฿egging',
-        requires: () => true,
-      },
+vi.mock('shared/skills/definitions.js', () => ({
+  SKILL_DEFINITIONS: {
+    begging: {
+      action,
+      description: 'Perhaps a satang?',
+      duration: 3,
+      name: '฿egging',
+      requires: () => true,
     },
-    SKILL_IDS: {
-      ...actual.SKILL_IDS,
-      begging: 99,
-    },
-  };
-});
+  },
+}));
 
 vi.mock('shared/skills/ids.js', async () => {
   const actual = await vi.importActual('shared/skills/ids.js');
@@ -143,6 +134,7 @@ describe('Train', () => {
     expect(screen.queryByText('Perhaps a satang? (3s)')).not.toBeInTheDocument();
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
   });
+
 
   it('shows gray progress bar for inactive skills', () => {
     fighterActions.actions = [];

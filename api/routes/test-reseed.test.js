@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 import Fastify from 'fastify';
 import {MOVE_IDS} from 'shared/moves.js';
-import {SKILL_IDS} from 'shared/skills/index.js';
+import {SKILL_IDS} from 'shared/skills/ids.js';
 
 import {mockKnexMulti} from '../data/utils/mock-knex.js';
 import testReseedRoutes from '../routes/test-reseed.js';
