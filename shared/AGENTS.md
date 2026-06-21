@@ -12,6 +12,7 @@ Pure JavaScript library shared by both `api/` and `web/` subprojects. Contains g
 | `moves.js` | `MOVE_DEFINITIONS`, `MOVE_IDS`, `MOVE_SEED_MOVES` | Move constants and seed data. |
 | `races.js` | `RACES` | Playable race definitions with innate stats. |
 | `seedData.js` | `createSeedEntries` | Utility for generating seed data arrays from definition/ID maps. |
+| `sort.js` | `sortByProperty` | Sorts an array of objects by a named property, placing nullish values last. |
 | `skills/` | `SKILL_DEFINITIONS`, `SKILL_IDS`, `SKILL_SEED_ACTIONS`, `SKILLS_BY_ACTION_ID` | Skill constants and reverse lookup by action ID. |
 | `stats.js` | `FIGHTER_STAT_KEYS`, `parseBigIntStats` | Stat key list and BigInt stat parser. |
 | `training.js` | `applyTrainingAction`, `applyTrainingActions`, `createTrainingTimeline`, `findActiveTrainingAction`, `findTouchedAtTransfer`, `getMaxTouchedAtMs`, `getScheduledTrainingActions`, `getTrainingDurationMs` | Training application and scheduling logic. |
