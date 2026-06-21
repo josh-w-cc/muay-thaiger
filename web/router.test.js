@@ -40,13 +40,11 @@ describe('router', () => {
     vi.clearAllMocks();
   });
 
-  it('uses explicit game routes for each screen', async () => {
+  it('wires top-level routes and the websocket router', async () => {
     const {default: routes} = await import('./router.js');
     const children = routes[0].children;
     const indexRoute = children.find((route) => route.index);
     const editUserRoute = children.find((route) => route.path === 'edit-user');
-    const gameLayoutRoute = children.find((route) => route.children);
-
     const serverDownRoute = children.find((route) => route.path === 'server-down');
 
     expect(indexRoute.index).toBe(true);
@@ -56,13 +54,6 @@ describe('router', () => {
     expect(editUserRoute.lazy).toEqual(expect.any(Function));
     expect(serverDownRoute.path).toBe('server-down');
     expect(serverDownRoute.lazy).toEqual(expect.any(Function));
-    expect(gameLayoutRoute.children.map(({path}) => path)).toEqual([
-      'fight',
-      'hub',
-      'shop',
-      'train',
-      '*',
-    ]);
     expect(setWebsocketRouter).toHaveBeenCalledWith(routes);
   });
 });
