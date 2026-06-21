@@ -1,6 +1,6 @@
 import FightFeed from './FightFeed.js';
 import FightFighters from './FightFighters.js';
-import FightLoadout from './FightLoadout.js';
+import FightLoadout from './FightLoadout/index.js';
 import usePunchAnimation from './usePunchAnimation.js';
 
 
