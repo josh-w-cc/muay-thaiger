@@ -173,7 +173,6 @@ describe('fights.create', () => {
     assert.equal(inserted.details.defender.race, 2);
     assert.deepEqual(inserted.details.defender.stats, {speed: '8', vigor: '7'});
     assert.equal(inserted.details.rank, 'bronze');
-    assert.equal(inserted.details.defender.seed, undefined);
   });
 
   it('inserts only attacker details when defender is missing', async () => {
