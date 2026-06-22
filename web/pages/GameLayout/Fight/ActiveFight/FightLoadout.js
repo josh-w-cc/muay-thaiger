@@ -1,9 +1,10 @@
-import Button from '@/components/Button.js';
-import useMovesStore from '@/data/moves.js';
-import {moveCmd} from '@/actions/websockets/clientCommands.js';
-import {useMemo} from 'react';
+import React from 'react';
 
+import Button from '@/components/Button.js';
 import {FIGHT_LOADOUT, TAPPER_FILL_DURATIONS} from './fightData.js';
+import {moveCmd} from '@/actions/websockets/clientCommands.js';
+import useMovesStore from '@/data/moves.js';
+
 import css from './FightLoadout.module.css';
 
 
@@ -68,7 +69,7 @@ function getLoadoutMove(moveDefinitions, moveID) {
 }
 
 function TapperButton({delay, duration, children, lastUsed, onClick}) {
-  const animationStyle = useMemo(
+  const animationStyle = React.useMemo(
     () => getAnimationStyle(delay, duration, lastUsed),
     [delay, duration, lastUsed],
   );
