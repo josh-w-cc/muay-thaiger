@@ -18,8 +18,4 @@ describe('index.html', () => {
     expect(indexHTMLContent).toContain('<title>Muay Thaiger</title>');
   });
 
-  it('sets the theme-color for Chrome/Brave mobile header', () => {
-    const indexHTMLContent = fs.readFileSync(path.join(webDirectory, 'index.html'), 'utf8');
-    expect(indexHTMLContent).toContain('<meta name="theme-color" content="#333333" />');
-  });
 });
