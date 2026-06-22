@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {sortByProperty} from './sort-by-property.js';
+import {sortByProperty} from './sort.js';
 
 
 describe('sortByProperty', () => {

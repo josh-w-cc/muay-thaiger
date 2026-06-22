@@ -11,5 +11,6 @@ function IdleSystemPlugin(app) {
 }
 
 export default fp(IdleSystemPlugin, {
+  name: 'IdleSystem',
   dependencies: ['FightSystem', 'TrainingSystem'],
 });
