@@ -14,6 +14,7 @@ Layered structure: `routes/` → `logic/` → `data/`. For simple CRUD with no b
 - **CRUD generators** (`data/utils/crud.js`) export factory functions (`generateCreateFn`, `generateFindFn`, `generateListFn`, `generateRemoveFn`, `generateSearchFn`, `generateUpdateFn`) that take `(db, table)` as the first two parameters. Routes pass `app.db` (dependency injection) when calling the model factory. Data modules assemble their default export from these generators.
 - **Route handler generators** (`routes/shared/route-handlers.js`) export factory functions that create standard route handlers from model methods, reducing boilerplate in route files. `withFoundItem(model, handler)` wraps a callback with a find-or-404 guard, passing the found item to the callback.
 - **App factory** (`app.js`) exports `build(opts)` which creates and configures a Fastify instance. `index.js` calls `build({logger: true})` for production. Tests call `build()` directly and use `app.inject()` for in-memory HTTP testing. When adding tests, refactor `index.js` by extracting app setup into `app.js` using this pattern.
+- **Services** (`services/`) contain background schedulers attached to the Fastify lifecycle. `scheduler.js` registers recurring tasks: hourly offline-training application, per-minute player-state sync, and 500 ms active-fight-state sync.
 - The database client is a Fastify decorator (`app.db`), registered by `db.js`.
 
 ## Endpoints
@@ -33,6 +34,23 @@ HTTP endpoints below are registered under the `/api` prefix (except `/health`). 
 | `resources/race.js` | GET | `/api/race` | List all playable races |
 | `test-reseed.js` | POST | `/api/test/reseed` | Truncate and reseed DB for tests (non-production only) |
 | `websocket.js` | WS | `/ws/connect` | WebSocket connection entrypoint |
+
+### WebSocket Commands
+
+Messages over `/ws/connect` are JSON objects with a `cmd` field plus command-specific fields.
+
+| Command | Direction | Key fields | Purpose |
+|---------|-----------|------------|---------|
+| `auth` | client → server | `token` (`'new'` to create), `race` (ID, new players only) | Authenticate the connection |
+| `auth` | server → client | `display_name`, `player_id`, `token` | Auth success confirmation |
+| `auth-invalid-token` | server → client | — | Auth failure; client should clear token |
+| `fight` | client → server | `reason`, `rank` | Start a fight |
+| `idle` | client → server | `action_id` | Register a training action |
+| `move` | client → server | `moves` (array of `{move_id, move_num}`) | Submit moves during a fight |
+| `stop` | client → server | `action_id` | Unregister a training action |
+| `ok` | server → client | `metadata` | General success acknowledgment |
+| `player_state` | server → client | `actions`, `fighter`, `fight` | Server-push of current game state |
+| `error` | server → client | `error` | Command error code |
 
 ## Testing
 
