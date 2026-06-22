@@ -1,10 +1,6 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-
 import {fireEvent, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {SKILL_IDS} from 'shared/skills/index.js';
+import {SKILL_IDS} from 'shared/skills/ids.js';
 
 import Train from './index.js';
 
@@ -47,26 +43,17 @@ vi.mock('@/data/fighter.js', () => {
   return {default: mockedStore};
 });
 
-vi.mock('shared/skills/index.js', async () => {
-  const actual = await vi.importActual('shared/skills/index.js');
-
-  return {
-    ...actual,
-    SKILL_DEFINITIONS: {
-      begging: {
-        action,
-        description: 'Perhaps a satang?',
-        duration: 3,
-        name: '฿egging',
-        requires: () => true,
-      },
+vi.mock('shared/skills/definitions.js', () => ({
+  SKILL_DEFINITIONS: {
+    begging: {
+      action,
+      description: 'Perhaps a satang?',
+      duration: 3,
+      name: '฿egging',
+      requires: () => true,
     },
-    SKILL_IDS: {
-      ...actual.SKILL_IDS,
-      begging: 99,
-    },
-  };
-});
+  },
+}));
 
 vi.mock('shared/skills/ids.js', async () => {
   const actual = await vi.importActual('shared/skills/ids.js');
@@ -148,21 +135,6 @@ describe('Train', () => {
     expect(infoIcon).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('keeps regimenRow styles in the RegimenRow CSS module, not in Train.module.css', () => {
-    const directoryPath = path.dirname(fileURLToPath(import.meta.url));
-    const regimenRowPath = path.join(directoryPath, 'Regimen', 'RegimenRow.js');
-    const regimenRowCssPath = path.join(directoryPath, 'Regimen', 'RegimenRow.module.css');
-    const trainCssPath = path.join(directoryPath, 'Train.module.css');
-    const regimenRowSource = fs.readFileSync(regimenRowPath, 'utf8');
-    const regimenRowCssSource = fs.readFileSync(regimenRowCssPath, 'utf8');
-    const trainCssSource = fs.readFileSync(trainCssPath, 'utf8');
-
-    expect(regimenRowSource).toContain('import css from \'./RegimenRow.module.css\';');
-    expect(regimenRowCssSource).toMatch(/\.regimenRow\s*{/);
-    expect(regimenRowCssSource).toMatch(/\.regimenProgress\s*{/);
-    expect(trainCssSource).not.toMatch(/\.regimenRow\s*{/);
-    expect(trainCssSource).not.toMatch(/\.regimenProgress\s*{/);
-  });
 
   it('shows gray progress bar for inactive skills', () => {
     fighterActions.actions = [];

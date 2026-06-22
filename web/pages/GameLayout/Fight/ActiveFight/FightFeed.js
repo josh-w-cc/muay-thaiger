@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import useFightStore from '@/data/fight/index.js';
-import css from '../Fight.module.css';
+
+import css from './FightFeed.module.css';
 
 
 export default function FightFeed({details}) {

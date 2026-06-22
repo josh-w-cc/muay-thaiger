@@ -1,4 +1,5 @@
-import {SKILL_DEFINITIONS, SKILL_IDS} from 'shared/skills/index.js';
+import {SKILL_DEFINITIONS} from 'shared/skills/definitions.js';
+import {SKILL_IDS} from 'shared/skills/ids.js';
 import useFighterActionsStore from '@/data/fighterActions.js';
 
 import RegimenRow from './RegimenRow.js';

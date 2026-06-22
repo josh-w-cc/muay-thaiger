@@ -3,8 +3,7 @@ import {describe, expect, it, afterEach} from 'vitest';
 import useFightStore, {resetFightStore} from '@/data/fight/index.js';
 
 import FightFeed from './FightFeed.js';
-
-import css from '../Fight.module.css';
+import css from './FightFeed.module.css';
 
 describe('FightFeed', () => {
   afterEach(() => {
@@ -15,6 +14,30 @@ describe('FightFeed', () => {
     render(<FightFeed />);
 
     expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+  });
+
+  it('uses its own CSS module classes', () => {
+    render(
+      <FightFeed
+        details={{
+          feed: [
+            {attacker: 'Tiger', isSelf: true, move: 'Hook', result: 'Lands for 12!'},
+            {attacker: 'Snow Leopard', isSelf: false, move: 'Knee', result: 'Lands for 9!'},
+          ],
+        }}
+      />,
+    );
+
+    const list = screen.getByRole('list');
+    const items = screen.getAllByRole('listitem');
+    const snowLeopardAttacker = screen.getByText('Snow Leopard');
+    const tigerAttacker = screen.getByText('Tiger');
+
+    expect(list.parentElement).toHaveClass(css.fightFeed);
+    expect(list).toHaveClass(css.fightFeedList);
+    expect(items[0]).toHaveClass(css.fightFeedItem);
+    expect(snowLeopardAttacker).toHaveClass(css.fightFeedAttackerEnemy);
+    expect(tigerAttacker).toHaveClass(css.fightFeedAttackerSelf);
   });
 
   it('renders server feed entries with newest first', () => {
