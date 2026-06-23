@@ -36,7 +36,7 @@ describe('ZerothFight', () => {
   });
 
   it('spends all gold and shows the strength branch message', () => {
-    Object.assign(fighter, {gold: 150n, stamina: 1});
+    Object.assign(fighter, {gold: 150n, stamina: 1, strength: 0});
     render(<ZerothFight />);
 
     expect(fighter.spend).toHaveBeenCalledTimes(1);
