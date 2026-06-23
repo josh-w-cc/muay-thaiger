@@ -13,6 +13,10 @@ vi.mock('@/actions/websockets/clientCommands.js', () => ({
   moveCmd,
 }));
 
+function getButtonFill(buttonName) {
+  return screen.getByRole('button', {name: buttonName}).querySelector('[aria-hidden="true"]');
+}
+
 
 describe('FightLoadout', () => {
   beforeEach(() => {
@@ -170,7 +174,3 @@ describe('FightLoadout', () => {
     expect(crossFill).toHaveStyle({animationName: 'none', transform: 'scaleX(0)'});
   });
 });
-
-function getButtonFill(buttonName) {
-  return screen.getByRole('button', {name: buttonName}).querySelector('[aria-hidden="true"]');
-}
