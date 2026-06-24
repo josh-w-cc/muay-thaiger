@@ -1,6 +1,6 @@
 import useFighterStore from '@/data/fighter.js';
 
-import css from './TrainStat.module.css';
+import css from '@/components/primitive/css-modules/stat-display-base.module.css';
 
 export default function TrainStat({name, stat}) {
   const fighter = useFighterStore();
