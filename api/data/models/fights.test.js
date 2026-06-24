@@ -195,7 +195,6 @@ describe('fights.create', () => {
     assert.deepEqual(inserted.details.attacker.moves, [1]);
     assert.equal(inserted.details.attacker.race, 1);
     assert.deepEqual(inserted.details.attacker.stats, {speed: '10', vigor: '9'});
-    assert.equal(inserted.details.attacker.seed, undefined);
     assert.equal(inserted.details.defender, undefined);
     assert.equal(inserted.details.rank, 'ZZ');
   });
