@@ -20,15 +20,15 @@ export function createBot(rank) {
   };
 }
 
+export function normalizeFightRank(rank) {
+  return typeof rank === 'string' ? rank.trim() : '';
+}
+
 function createBotStats(rank) {
   const baseStat = BOT_BASE_STAT * getBotRankMultiplier(rank);
   return Object.fromEntries(
     FIGHTER_STAT_KEYS.map((stat) => [stat, baseStat.toString()]),
   );
-}
-
-export function normalizeFightRank(rank) {
-  return typeof rank === 'string' ? rank.trim() : '';
 }
 
 function getBotRankMultiplier(rank) {
@@ -38,13 +38,6 @@ function getBotRankMultiplier(rank) {
   }
 
   return BOT_RANK_MULTIPLIER_BASE ** getBotRankExponent(normalizedRank);
-}
-
-function normalizeBotRank(rank) {
-  const normalizedRank = typeof rank === 'string' ? rank.trim().toUpperCase() : '';
-  return (BOT_SINGLE_CHAR_RANK_PATTERN.test(normalizedRank) || BOT_MULTI_CHAR_RANK_PATTERN.test(normalizedRank))
-    ? normalizedRank
-    : '';
 }
 
 function getBotRankExponent(normalizedRank) {
@@ -57,6 +50,13 @@ function getBotRankScore(normalizedRank) {
     (total, character) => total + BigInt(RANK_Z_CHAR_CODE - character.charCodeAt(0)),
     0n,
   );
+}
+
+function normalizeBotRank(rank) {
+  const normalizedRank = typeof rank === 'string' ? rank.trim().toUpperCase() : '';
+  return (BOT_SINGLE_CHAR_RANK_PATTERN.test(normalizedRank) || BOT_MULTI_CHAR_RANK_PATTERN.test(normalizedRank))
+    ? normalizedRank
+    : '';
 }
 
 function getRandomBotRace() {
