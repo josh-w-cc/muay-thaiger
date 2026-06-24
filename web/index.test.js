@@ -17,5 +17,4 @@ describe('index.html', () => {
     const indexHTMLContent = fs.readFileSync(path.join(webDirectory, 'index.html'), 'utf8');
     expect(indexHTMLContent).toContain('<title>Muay Thaiger</title>');
   });
-
 });
