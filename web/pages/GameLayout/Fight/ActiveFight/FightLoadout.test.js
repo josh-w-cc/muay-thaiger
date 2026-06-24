@@ -13,6 +13,10 @@ vi.mock('@/actions/websockets/clientCommands.js', () => ({
   moveCmd,
 }));
 
+function getButtonFill(buttonName) {
+  return screen.getByRole('button', {name: buttonName}).querySelector('[aria-hidden="true"]');
+}
+
 
 describe('FightLoadout', () => {
   beforeEach(() => {
@@ -91,9 +95,9 @@ describe('FightLoadout', () => {
       />,
     );
 
-    const strategyFill = screen.getByRole('button', {name: 'Strategy: Counter Rush'}).querySelector('[aria-hidden="true"]');
-    const crossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
-    const kneeFill = screen.getByRole('button', {name: 'Knee'}).querySelector('[aria-hidden="true"]');
+    const strategyFill = getButtonFill('Strategy: Counter Rush');
+    const crossFill = getButtonFill('Cross');
+    const kneeFill = getButtonFill('Knee');
 
     expect(strategyFill).toHaveStyle({animationDelay: '0s'});
     expect(crossFill).toHaveStyle({animationDelay: '-6s', animationDuration: '6s'});
@@ -110,7 +114,7 @@ describe('FightLoadout', () => {
       />,
     );
 
-    const originalCrossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
+    const originalCrossFill = getButtonFill('Cross');
     expect(originalCrossFill).toHaveStyle({animationDelay: '-6s'});
 
     rerender(
@@ -122,7 +126,7 @@ describe('FightLoadout', () => {
       />,
     );
 
-    const updatedCrossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
+    const updatedCrossFill = getButtonFill('Cross');
     expect(updatedCrossFill).toHaveStyle({animationDelay: '-0.5s'});
     expect(updatedCrossFill).not.toBe(originalCrossFill);
   });
@@ -137,7 +141,7 @@ describe('FightLoadout', () => {
       />,
     );
 
-    const originalCrossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
+    const originalCrossFill = getButtonFill('Cross');
     expect(originalCrossFill).toHaveStyle({animationDelay: '-1s'});
 
     Date.now.mockReturnValue(11_000);
@@ -150,7 +154,7 @@ describe('FightLoadout', () => {
       />,
     );
 
-    const updatedCrossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
+    const updatedCrossFill = getButtonFill('Cross');
     expect(updatedCrossFill).toHaveStyle({animationDelay: '-1s'});
     expect(updatedCrossFill).toBe(originalCrossFill);
   });
@@ -165,7 +169,7 @@ describe('FightLoadout', () => {
       />,
     );
 
-    const crossFill = screen.getByRole('button', {name: 'Cross'}).querySelector('[aria-hidden="true"]');
+    const crossFill = getButtonFill('Cross');
 
     expect(crossFill).toHaveStyle({animationName: 'none', transform: 'scaleX(0)'});
   });
