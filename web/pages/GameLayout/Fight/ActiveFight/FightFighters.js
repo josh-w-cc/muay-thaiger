@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import {buildCard, formatCombatStat} from './fighterCardData.js';
 
-import css from '../Fight.module.css';
+import css from './FightFighters.module.css';
 
 export default function FightFighters({details, isPunching}) {
   const {attackerCard, defenderCard} = getFighterCards(details);

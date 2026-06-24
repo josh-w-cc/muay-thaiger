@@ -2,7 +2,7 @@ import {render, screen} from '@testing-library/react';
 import {describe, expect, it} from 'vitest';
 
 import FightFighters from './FightFighters.js';
-import css from '../Fight.module.css';
+import css from './FightFighters.module.css';
 
 const details = {
   attacker: {
