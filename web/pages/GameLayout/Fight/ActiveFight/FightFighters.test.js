@@ -18,35 +18,35 @@ const details = {
 };
 
 describe('FightFighters', () => {
-  it('renders stamina progress bars for both fighters', () => {
+  it('renders stanima progress bars for both fighters', () => {
     render(<FightFighters details={details} />);
 
-    expect(screen.getByRole('progressbar', {name: 'Tiger fighter stamina'})).toHaveAttribute('aria-valuenow', '150');
-    expect(screen.getByRole('progressbar', {name: 'Tiger fighter stamina'})).toHaveAttribute('aria-valuemax', '200');
-    expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter stamina'})).toHaveAttribute('aria-valuenow', '180');
-    expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter stamina'})).toHaveAttribute('aria-valuemax', '200');
+    expect(screen.getByRole('progressbar', {name: 'Tiger fighter stanima'})).toHaveAttribute('aria-valuenow', '150');
+    expect(screen.getByRole('progressbar', {name: 'Tiger fighter stanima'})).toHaveAttribute('aria-valuemax', '200');
+    expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter stanima'})).toHaveAttribute('aria-valuenow', '180');
+    expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter stanima'})).toHaveAttribute('aria-valuemax', '200');
     expect(screen.getByRole('progressbar', {name: 'Tiger fighter health'})).toHaveAttribute('aria-valuenow', '170');
     expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter health'})).toHaveAttribute('aria-valuenow', '143');
   });
 
-  it('uses stamina bar classes for the rendered stamina progress bars', () => {
+  it('uses stanima bar classes for the rendered stanima progress bars', () => {
     render(<FightFighters details={details} />);
 
-    const tigerStaminaBar = screen.getByRole('progressbar', {name: 'Tiger fighter stamina'});
-    const tigerStaminaBarFill = tigerStaminaBar.querySelector('div');
-    const snowLeopardStaminaBar = screen.getByRole('progressbar', {name: 'Snow leopard fighter stamina'});
-    const snowLeopardStaminaBarFill = snowLeopardStaminaBar.querySelector('div');
+    const tigerStanimaBar = screen.getByRole('progressbar', {name: 'Tiger fighter stanima'});
+    const tigerStanimaBarFill = tigerStanimaBar.querySelector('div');
+    const snowLeopardStanimaBar = screen.getByRole('progressbar', {name: 'Snow leopard fighter stanima'});
+    const snowLeopardStanimaBarFill = snowLeopardStanimaBar.querySelector('div');
     const tigerHealthBar = screen.getByRole('progressbar', {name: 'Tiger fighter health'});
     const snowLeopardHealthBar = screen.getByRole('progressbar', {name: 'Snow leopard fighter health'});
 
-    expect(tigerStaminaBar).toHaveClass(css.fightStaminaBar);
-    expect(tigerStaminaBarFill).toHaveClass(css.fill);
-    expect(snowLeopardStaminaBar).toHaveClass(css.fightStaminaBar);
-    expect(snowLeopardStaminaBarFill).toHaveClass(css.fill);
+    expect(tigerStanimaBar).toHaveClass(css.fightStaminaBar);
+    expect(tigerStanimaBarFill).toHaveClass(css.fill);
+    expect(snowLeopardStanimaBar).toHaveClass(css.fightStaminaBar);
+    expect(snowLeopardStanimaBarFill).toHaveClass(css.fill);
     expect(tigerHealthBar).toHaveClass(css.fightHealthBar);
     expect(snowLeopardHealthBar).toHaveClass(css.fightHealthBar);
-    expect(tigerStaminaBar).not.toHaveAttribute('style');
-    expect(snowLeopardStaminaBar).not.toHaveAttribute('style');
+    expect(tigerStanimaBar).not.toHaveAttribute('style');
+    expect(snowLeopardStanimaBar).not.toHaveAttribute('style');
     expect(tigerHealthBar).not.toHaveAttribute('style');
     expect(snowLeopardHealthBar).not.toHaveAttribute('style');
   });
