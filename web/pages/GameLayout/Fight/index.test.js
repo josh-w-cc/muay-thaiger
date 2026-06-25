@@ -126,7 +126,7 @@ describe('Fight', () => {
       .toHaveAttribute('src', expect.stringContaining(TigerMuayThai));
     expect(within(fightSection).getByRole('img', {name: 'Snow leopard Muay Thai fighter'}))
       .toHaveAttribute('src', expect.stringContaining(SnowLeopardMuayThaiReady));
-    expect(within(fightSection).getByRole('progressbar', {name: 'Tiger fighter stamina'})).toHaveAttribute('aria-valuenow', '150');
+    expect(within(fightSection).getByRole('progressbar', {name: 'Tiger fighter stanima'})).toHaveAttribute('aria-valuenow', '150');
     expect(within(fightSection).getByRole('progressbar', {name: 'Tiger fighter health'})).toHaveAttribute('aria-valuenow', '240');
     expect(within(fightSection).getByRole('progressbar', {name: 'Snow leopard fighter health'})).toHaveAttribute('aria-valuenow', '200');
     expect(fightSection).toHaveTextContent('A: 1.11e6');
