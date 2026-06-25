@@ -18,23 +18,23 @@ const details = {
 };
 
 describe('FightFighters', () => {
-  it('renders stamina progress bars for both fighters', () => {
+  it('renders stanima progress bars for both fighters', () => {
     render(<FightFighters details={details} />);
 
-    expect(screen.getByRole('progressbar', {name: 'Tiger fighter stamina'})).toHaveAttribute('aria-valuenow', '150');
-    expect(screen.getByRole('progressbar', {name: 'Tiger fighter stamina'})).toHaveAttribute('aria-valuemax', '200');
-    expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter stamina'})).toHaveAttribute('aria-valuenow', '180');
-    expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter stamina'})).toHaveAttribute('aria-valuemax', '200');
+    expect(screen.getByRole('progressbar', {name: 'Tiger fighter stanima'})).toHaveAttribute('aria-valuenow', '150');
+    expect(screen.getByRole('progressbar', {name: 'Tiger fighter stanima'})).toHaveAttribute('aria-valuemax', '200');
+    expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter stanima'})).toHaveAttribute('aria-valuenow', '180');
+    expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter stanima'})).toHaveAttribute('aria-valuemax', '200');
     expect(screen.getByRole('progressbar', {name: 'Tiger fighter health'})).toHaveAttribute('aria-valuenow', '170');
     expect(screen.getByRole('progressbar', {name: 'Snow leopard fighter health'})).toHaveAttribute('aria-valuenow', '143');
   });
 
-  it('uses stamina bar classes for the rendered stamina progress bars', () => {
+  it('uses stamina bar classes for the rendered stanima progress bars', () => {
     render(<FightFighters details={details} />);
 
-    const tigerStaminaBar = screen.getByRole('progressbar', {name: 'Tiger fighter stamina'});
+    const tigerStaminaBar = screen.getByRole('progressbar', {name: 'Tiger fighter stanima'});
     const tigerStaminaBarFill = tigerStaminaBar.querySelector('div');
-    const snowLeopardStaminaBar = screen.getByRole('progressbar', {name: 'Snow leopard fighter stamina'});
+    const snowLeopardStaminaBar = screen.getByRole('progressbar', {name: 'Snow leopard fighter stanima'});
     const snowLeopardStaminaBarFill = snowLeopardStaminaBar.querySelector('div');
     const tigerHealthBar = screen.getByRole('progressbar', {name: 'Tiger fighter health'});
     const snowLeopardHealthBar = screen.getByRole('progressbar', {name: 'Snow leopard fighter health'});

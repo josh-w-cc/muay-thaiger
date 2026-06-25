@@ -37,7 +37,7 @@ function getHealthBar(raceName, participant) {
 function getStaminaBar(raceName, participant) {
   return {
     current: participant.stats.stamina,
-    label: formatStatLabel(raceName, 'stamina'),
+    label: formatStatLabel(raceName, 'stanima'),
     max: participant.startingStats.stamina,
   };
 }
