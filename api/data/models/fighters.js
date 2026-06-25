@@ -25,17 +25,26 @@ export default function fighters(db) {
   };
 }
 
-function withDefaultStats(data) {
-  if(!data?.stats) {
-    return data;
+function castFighter(row) {
+  return castFighterGold(castStats(row));
+}
+
+function castFighterRows(rows) {
+  if(Array.isArray(rows)) {
+    return castStatsRows(rows).map(castFighterGold);
+  }
+
+  return castFighterGold(castStatsRows(rows));
+}
+
+function castFighterGold(row) {
+  if(!row) {
+    return null;
   }
 
   return {
-    ...data,
-    stats: {
-      ...Object.fromEntries(FIGHTER_STAT_KEYS.map((key) => [key, 0])),
-      ...data.stats,
-    },
+    ...row,
+    gold: BigInt(row.gold ?? 0),
   };
 }
 
@@ -50,29 +59,6 @@ function generateFindCurrentByPlayerIDFn(db) {
   };
 }
 
-function castFighterRows(rows) {
-  if(Array.isArray(rows)) {
-    return castStatsRows(rows).map(castFighterGold);
-  }
-
-  return castFighterGold(castStatsRows(rows));
-}
-
-function castFighter(row) {
-  return castFighterGold(castStats(row));
-}
-
-function castFighterGold(row) {
-  if(!row) {
-    return null;
-  }
-
-  return {
-    ...row,
-    gold: BigInt(row.gold ?? 0),
-  };
-}
-
 function serializeFighterStats(data) {
   if(!data?.stats) {
     return data;
@@ -83,5 +69,19 @@ function serializeFighterStats(data) {
     stats: Object.fromEntries(
       Object.entries(data.stats).map(([key, value]) => [key, value.toString()]),
     ),
+  };
+}
+
+function withDefaultStats(data) {
+  if(!data?.stats) {
+    return data;
+  }
+
+  return {
+    ...data,
+    stats: {
+      ...Object.fromEntries(FIGHTER_STAT_KEYS.map((key) => [key, 0])),
+      ...data.stats,
+    },
   };
 }
