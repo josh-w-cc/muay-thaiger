@@ -44,7 +44,7 @@ function trainStats(actions, fighter) {
   return {gold, stats};
 }
 
-function createFighterProxy(stats, onWin) {
+export function createFighterProxy(stats, onWin) {
   return {
     train: (stat, amount = 1n) => trainStat(stats, stat, amount),
     win: onWin,

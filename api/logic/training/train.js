@@ -1,6 +1,6 @@
 import {SKILLS_BY_ACTION_ID} from 'shared/skills/index.js';
 import {sortByProperty} from 'shared/sort.js';
-import trainStat from 'shared/trainingStat.js';
+import {createFighterProxy} from './training.js';
 
 
 export default function train(fighter, now = new Date()) {
@@ -16,10 +16,7 @@ export default function train(fighter, now = new Date()) {
 
 
 function calculateTraining(stats, skills, gold) {
-  const fighterProxy = {
-    train: (stat, amount = 1n) => trainStat(stats, stat, amount),
-    win: (g) => { gold += g; },
-  };
+  const fighterProxy = createFighterProxy(stats, (g) => { gold += g; });
   for(const skill of skills) {
     SKILLS_BY_ACTION_ID[skill.id].action(fighterProxy);
   }
