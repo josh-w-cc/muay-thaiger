@@ -57,3 +57,17 @@ test('edit user route allows returning to hub for authenticated players', async 
   await expect(page).toHaveURL(/\/hub$/);
   await expect(page.getByRole('button', {name: 'Hub'})).toHaveAttribute('aria-current', 'page');
 });
+
+test('ruesi route shows fallback and returns to hub', async ({page}) => {
+  await page.goto('/');
+  await page.getByRole('button', {name: 'CHOOSE'}).first().click();
+  await expect(page).toHaveURL(/\/hub$/);
+
+  await page.getByRole('button', {name: 'Ruesi'}).click();
+  await expect(page).toHaveURL(/\/ruesi$/);
+  await expect(page.getByRole('heading', {name: 'You broke it!?'})).toBeVisible();
+
+  await page.getByRole('button', {name: 'We have to go back'}).click();
+  await expect(page).toHaveURL(/\/hub$/);
+  await expect(page.getByRole('button', {name: 'Hub'})).toHaveAttribute('aria-current', 'page');
+});
