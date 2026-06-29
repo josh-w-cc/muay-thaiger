@@ -1,7 +1,7 @@
 import {FIGHTER_STAT_KEYS} from 'shared/stats.js';
-import {isFightReason, normalizeFightReason} from 'shared/fights.js';
+import {isFightReason, normalizeFightRank, normalizeFightReason} from 'shared/fights.js';
 import {createCommandError} from '../websocket/command-errors.js';
-import {createBot, normalizeFightRank} from './bot.js';
+import {createBot} from './bot.js';
 
 export async function createFight({fighterMoves, fighters, fights, fightJudge}, playerID, reason, rank = '') {
   const normalizedReason = normalizeFightReason(reason);

@@ -20,10 +20,6 @@ export function createBot(rank) {
   };
 }
 
-export function normalizeFightRank(rank) {
-  return typeof rank === 'string' ? rank.trim() : '';
-}
-
 function createBotStats(rank) {
   const baseStat = BOT_BASE_STAT * getBotRankMultiplier(rank);
   return Object.fromEntries(
