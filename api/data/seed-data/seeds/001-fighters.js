@@ -28,11 +28,6 @@ export const SEED_PLAYERS = [
   {display_name: 'TigerJab', id: 4, token: 'seed-token-tigerjab'},
 ];
 
-export const SEED_ACTIONS = SKILL_SEED_ACTIONS;
-export const SEED_MOVES = MOVE_SEED_MOVES;
-
-export const SEED_RACES = RACES;
-
 export async function seed(knex) {
   await insertMoves(knex);
   await insertActions(knex);
@@ -44,14 +39,14 @@ export async function seed(knex) {
 
 async function insertMoves(knex) {
   await knex('moves')
-    .insert(SEED_MOVES)
+    .insert(MOVE_SEED_MOVES)
     .onConflict('id')
     .ignore();
 }
 
 async function insertActions(knex) {
   await knex('actions')
-    .insert(SEED_ACTIONS)
+    .insert(SKILL_SEED_ACTIONS)
     .onConflict('id')
     .ignore();
 }
@@ -72,7 +67,7 @@ async function insertFighters(knex) {
 
 async function insertRaces(knex) {
   await knex('races')
-    .insert(SEED_RACES.map(serializeRace))
+    .insert(RACES.map(serializeRace))
     .onConflict('id')
     .ignore();
 }
