@@ -1,15 +1,15 @@
-.statLabelBase {
+.label {
   color: var(--color-fg);
   font-weight: 600;
 }
 
-.statRowBase {
+.row {
   align-items: baseline;
   display: grid;
   gap: var(--space-md);
   grid-template-columns: 1fr auto;
 }
 
-.statValueBase {
+.value {
   color: var(--color-gold);
 }
