@@ -17,7 +17,7 @@ Pure JavaScript library shared by both `api/` and `web/` subprojects. Contains g
 | `stats.js` | `FIGHTER_STAT_KEYS`, `parseBigIntStats` | Stat key list and BigInt stat parser. |
 | `training.js` | `applyTrainingAction`, `applyTrainingActions`, `createTrainingTimeline`, `findActiveTrainingAction`, `findTouchedAtTransfer`, `getMaxTouchedAtMs`, `getScheduledTrainingActions`, `getTrainingDurationMs` | Training application and scheduling logic. |
 | `trainingStat.js` | `trainStat` (default), `getTrainingEffect` | Per-stat training calculation. |
-| `trainingTimeline.js` | `createTrainingTimeline`, `findLatestAction`, `getActionTime`, `getScheduledActions` | Generic training timeline scheduling. |
+| `trainingTimeline.js` | `createTrainingTimeline`, `findLatestAction`, `getOrderedActions`, `getScheduledActions` | Generic training timeline scheduling. |
 
 ## Developer commands
 
