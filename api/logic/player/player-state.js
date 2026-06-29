@@ -1,5 +1,5 @@
-import fighterActionsModel from '../../data/models/fighter-actions.js';
-import fightersModel from '../../data/models/fighters.js';
+import fighterActionsModel from '#api/data/models/fighter-actions.js';
+import fightersModel from '#api/data/models/fighters.js';
 import {getScheduledTrainingActions} from 'shared/training.js';
 import {applyTraining} from '../training/training.js';
 
