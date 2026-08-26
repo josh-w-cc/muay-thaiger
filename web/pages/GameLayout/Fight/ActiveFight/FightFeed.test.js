@@ -56,6 +56,8 @@ describe('FightFeed', () => {
     expect(items).toHaveLength(2);
     expect(items[0]).toHaveTextContent('Snow Leopard throws Knee — Lands for 9!');
     expect(items[1]).toHaveTextContent('Tiger throws Hook — Lands for 12!');
+    expect(items[0]).toHaveClass(css.fightFeedItem, css.fightFeedItemEnter);
+    expect(items[1]).toHaveClass(css.fightFeedItem, css.fightFeedItemEnter);
     expect(items[0].querySelector('br')).toBeInTheDocument();
     expect(items[1].querySelector('br')).toBeInTheDocument();
   });
@@ -137,7 +139,7 @@ describe('FightFeed', () => {
     const updatedItems = screen.getAllByRole('listitem');
     expect(updatedItems[1]).toBe(initialItems[0]);
     expect(updatedItems[2]).toBe(initialItems[1]);
-    expect(updatedItems[0]).toHaveClass(css.fightFeedItemEnter);
+    expect(updatedItems[0]).toHaveClass(css.fightFeedItem, css.fightFeedItemEnter);
   });
 
   it('animates each newly added server item when multiple entries are appended', () => {
@@ -170,7 +172,7 @@ describe('FightFeed', () => {
     const updatedItems = screen.getAllByRole('listitem');
     expect(updatedItems[2]).toBe(initialItems[0]);
     expect(updatedItems[3]).toBe(initialItems[1]);
-    expect(updatedItems[0]).toHaveClass(css.fightFeedItemEnter);
-    expect(updatedItems[1]).toHaveClass(css.fightFeedItemEnter);
+    expect(updatedItems[0]).toHaveClass(css.fightFeedItem, css.fightFeedItemEnter);
+    expect(updatedItems[1]).toHaveClass(css.fightFeedItem, css.fightFeedItemEnter);
   });
 });
