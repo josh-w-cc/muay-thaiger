@@ -26,7 +26,7 @@ const fighter = vi.hoisted(() => ({
   vitality: 15,
 }));
 
-vi.mock('@/data/fighter.js', () => ({
+vi.mock('@/data/fighter/index.js', () => ({
   default: () => fighter,
 }));
 

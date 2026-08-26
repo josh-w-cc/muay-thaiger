@@ -2,8 +2,8 @@ const {routerNavigate} = vi.hoisted(() => ({
   routerNavigate: vi.fn(),
 }));
 
-import useFighterActionsStore, {resetFighterActionsStore} from '@/data/fighterActions.js';
-import useFighterStore, {resetFighterStore} from '@/data/fighter.js';
+import useFighterActionsStore, {resetFighterActionsStore} from '@/data/fighter/fighterActions.js';
+import useFighterStore, {resetFighterStore} from '@/data/fighter/index.js';
 import useFightStore, {resetFightStore} from '@/data/fight/index.js';
 import usePlayerStore, {resetPlayerStore} from '@/data/player.js';
 import {PLAYER_TOKEN_STORAGE_KEY, setPlayerToken} from './state/token.js';

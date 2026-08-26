@@ -18,7 +18,7 @@ const {fighter, fightState, createFightCmd, moveCmd, needsZerothFight} = vi.hois
   needsZerothFight: vi.fn(),
 }));
 
-vi.mock('@/data/fighter.js', () => ({
+vi.mock('@/data/fighter/index.js', () => ({
   default: () => fighter,
 }));
 

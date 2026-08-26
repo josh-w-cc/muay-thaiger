@@ -1,6 +1,6 @@
 import {SKILL_DEFINITIONS} from 'shared/skills/definitions.js';
 import {SKILL_IDS} from 'shared/skills/ids.js';
-import useFighterActionsStore from '@/data/fighterActions.js';
+import useFighterActionsStore from '@/data/fighter/fighterActions.js';
 
 import RegimenRow from './RegimenRow.js';
 import {isActionEnabled} from './skillButtons.js';

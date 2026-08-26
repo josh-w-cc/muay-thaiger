@@ -9,7 +9,7 @@ const fighter = vi.hoisted(() => ({
   race: '1',
 }));
 
-vi.mock('@/data/fighter.js', () => ({
+vi.mock('@/data/fighter/index.js', () => ({
   default: () => fighter,
 }));
 

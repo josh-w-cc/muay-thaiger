@@ -1,5 +1,5 @@
-import BaseStats from '@/data/baseStats.js';
-import useFighterStore from '@/data/fighter.js';
+import BaseStats from '@/data/fighter/baseStats.js';
+import useFighterStore from '@/data/fighter/index.js';
 
 import css from './FighterDetails.module.css';
 

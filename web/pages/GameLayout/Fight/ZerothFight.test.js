@@ -7,7 +7,7 @@ const {fighter} = vi.hoisted(() => ({
   fighter: {gold: 0n, spend: vi.fn(), stamina: 1, strength: 1},
 }));
 
-vi.mock('@/data/fighter.js', () => ({
+vi.mock('@/data/fighter/index.js', () => ({
   default: () => fighter,
 }));
 

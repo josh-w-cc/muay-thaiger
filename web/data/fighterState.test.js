@@ -1,4 +1,4 @@
-import {isFightIdling} from './fighterState.js';
+import {isFightIdling} from './fighter/fighterState.js';
 
 
 describe('fighterState helpers', () => {

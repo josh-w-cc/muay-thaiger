@@ -1,6 +1,6 @@
-import {getMarkedMoveState} from '../fightMoveUsage.js';
 import {MOVE_CLICK_BATCH_MILLISECONDS} from '@/actions/websockets/clientCommands.js';
-import {mergeFightState} from '@/data/fightStateMerge.js';
+import {getMarkedMoveState} from './fightMoveUsage.js';
+import {mergeFightState} from './fightStateMerge.js';
 
 import {getServerFightState} from './serverState.js';
 

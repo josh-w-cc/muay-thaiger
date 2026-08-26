@@ -31,13 +31,13 @@ const fighterActions = vi.hoisted(() => ({
   ],
 }));
 
-vi.mock('@/data/fighterActions.js', () => ({
+vi.mock('@/data/fighter/fighterActions.js', () => ({
   default: Object.assign(() => fighterActions, {
     getState: () => ({addAction, removeAction}),
   }),
 }));
 
-vi.mock('@/data/fighter.js', () => {
+vi.mock('@/data/fighter/index.js', () => {
   const mockedStore = () => fighter;
   mockedStore.getState = () => fighter;
   return {default: mockedStore};

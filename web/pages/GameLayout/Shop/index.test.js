@@ -9,7 +9,7 @@ const {buy, fighter} = vi.hoisted(() => ({
   fighter: {id: 1},
 }));
 
-vi.mock('@/data/fighter.js', () => ({
+vi.mock('@/data/fighter/index.js', () => ({
   default: () => fighter,
 }));
 

@@ -1,5 +1,5 @@
-import useFighterActionsStore, {resetFighterActionsStore} from './fighterActions.js';
-import useFighterStore, {resetFighterStore} from './fighter.js';
+import useFighterActionsStore, {resetFighterActionsStore} from './fighter/fighterActions.js';
+import useFighterStore, {resetFighterStore} from './fighter/index.js';
 
 
 describe('useFighterActionsStore', () => {

@@ -1,5 +1,5 @@
 import {removeFighterActionCmd} from '@/actions/websockets/clientCommands.js';
-import useFighterActionsStore from '@/data/fighterActions.js';
+import useFighterActionsStore from '@/data/fighter/fighterActions.js';
 import getActionIDBySkillKey from './getActionIDBySkillKey.js';
 
 

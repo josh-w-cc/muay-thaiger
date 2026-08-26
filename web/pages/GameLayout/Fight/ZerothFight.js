@@ -1,6 +1,6 @@
 import React from 'react';
 
-import useFighterStore from '@/data/fighter.js';
+import useFighterStore from '@/data/fighter/index.js';
 
 
 import css from './ZerothFight.module.css';

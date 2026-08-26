@@ -1,6 +1,6 @@
 import {RACES} from 'shared/races.js';
 
-import BaseStats from './baseStats.js';
+import BaseStats from './fighter/baseStats.js';
 
 
 describe('BaseStats', () => {

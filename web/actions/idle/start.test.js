@@ -12,7 +12,7 @@ vi.mock('@/actions/websockets/clientCommands.js', () => ({
   createFighterActionCmd: (...args) => createFighterActionCmd(...args),
 }));
 
-vi.mock('@/data/fighterActions.js', () => ({
+vi.mock('@/data/fighter/fighterActions.js', () => ({
   default: {
     getState: () => ({addAction}),
   },
