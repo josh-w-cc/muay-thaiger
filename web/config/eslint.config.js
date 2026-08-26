@@ -40,6 +40,13 @@ export default [
         skipBlankLines: true,
         skipComments: true,
       }],
+      'no-restricted-imports': ['error', {
+        paths: [{
+          importNames: ['useCallback', 'useContext', 'useEffect', 'useId', 'useLayoutEffect', 'useMemo', 'useReducer', 'useRef', 'useState'],
+          message: 'Use React.useState, React.useEffect, etc. instead of named imports.',
+          name: 'react',
+        }],
+      }],
       'react/jsx-uses-vars': 'error',
       '@stylistic/arrow-parens': ['error', 'always'],
       '@stylistic/brace-style': ['error', 'stroustrup', {allowSingleLine: true}],
