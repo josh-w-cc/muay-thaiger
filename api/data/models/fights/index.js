@@ -6,6 +6,7 @@ import {
   generateUpdateFn,
 } from '../../utils/crud.js';
 import {castFight, castFightRows} from './fights.js';
+import {serializeStats} from '../../utils/stats.js';
 
 
 export default function fights(db) {
@@ -74,12 +75,6 @@ function hasStats(stats) {
   }
 
   return Object.keys(stats).length > 0;
-}
-
-function serializeStats(stats) {
-  return Object.fromEntries(
-    Object.entries(stats).map(([key, value]) => [key, value.toString()]),
-  );
 }
 
 async function findActiveFightByFighterID(db, fighterID) {
