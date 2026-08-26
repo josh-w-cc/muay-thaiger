@@ -27,7 +27,7 @@ export function findLatestAction(actions, nowMs) {
   return {latestActionIndex, latestActionTime};
 }
 
-export function getActionTime(action, nowMs) {
+function getActionTime(action, nowMs) {
   const actionTime = Date.parse(action.touched_at || action.created_at || '');
   if(Number.isNaN(actionTime)) {
     return nowMs;
