@@ -1,11 +1,20 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {FIGHT_REASONS, isFightReason, normalizeFightReason} from './fights.js';
+import {FIGHT_REASONS, isFightReason, normalizeFightRank, normalizeFightReason} from './fights.js';
 
 describe('fights', () => {
   it('defines shared fight reasons', () => {
     assert.deepEqual(FIGHT_REASONS, ['gold', 'rank']);
+  });
+
+  it('normalizes fight rank strings', () => {
+    assert.equal(normalizeFightRank(' A '), 'A');
+    assert.equal(normalizeFightRank(''), '');
+    assert.equal(normalizeFightRank('  '), '');
+    assert.equal(normalizeFightRank(null), '');
+    assert.equal(normalizeFightRank(undefined), '');
+    assert.equal(normalizeFightRank(1), '');
   });
 
   it('normalizes fight reason strings', () => {

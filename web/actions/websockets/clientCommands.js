@@ -5,7 +5,7 @@ import {
 import {connectSocketOnAppLoad, sendCommand} from '@/actions/websockets/index.js';
 import useFightStore from '@/data/fight/index.js';
 import {TickerState} from '@/pages/Game/Ticker.js';
-import {isFightReason, normalizeFightReason} from 'shared/fights.js';
+import {isFightReason, normalizeFightRank, normalizeFightReason} from 'shared/fights.js';
 export const MOVE_CLICK_BATCH_MILLISECONDS = 500;
 export const TOO_TIRED_STAMINA_NEEDED_MESSAGE = 'too tired, stanima needed';
 let moveBatch = [];
@@ -21,7 +21,7 @@ export function createFightCmd(reason, rank = '') {
   if(!isFightReason(normalizedReason)) {
     throw new Error('invalid-fight-reason');
   }
-  sendCommand({cmd: 'fight', reason: normalizedReason, rank});
+  sendCommand({cmd: 'fight', reason: normalizedReason, rank: normalizeFightRank(rank)});
 }
 
 export function removeFighterActionCmd(actionID) {
