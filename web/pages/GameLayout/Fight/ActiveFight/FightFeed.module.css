@@ -13,7 +13,8 @@
 }
 
 .fightFeedItem {
-  border-bottom: 1px solid var(--color-border-subtle);
+  composes: cardListItemBase from '../../../../components/primitive/css-modules/card-list-base.module.css';
+
   padding: var(--space-xs) 0;
 }
 
@@ -26,11 +27,11 @@
 }
 
 .fightFeedList {
-  list-style: none;
+  composes: cardListBase from '../../../../components/primitive/css-modules/card-list-base.module.css';
+
   margin: var(--space-sm) 0 0;
   max-height: 10rem;
   overflow-y: auto;
-  padding-left: 0;
 }
 
 @keyframes fightFeedItemEnter {

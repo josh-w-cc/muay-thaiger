@@ -1,5 +1,6 @@
 .event {
-  border-bottom: 1px solid var(--color-border-subtle);
+  composes: cardListItemBase from '../../../components/primitive/css-modules/card-list-base.module.css';
+
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
@@ -7,10 +8,8 @@
 }
 
 .events {
+  composes: cardListBase from '../../../components/primitive/css-modules/card-list-base.module.css';
   composes: verticalListBase from '../../../components/primitive/css-modules/vertical-list-base.module.css';
-
-  list-style: none;
-  padding: 0;
 }
 
 .events li:last-child {
