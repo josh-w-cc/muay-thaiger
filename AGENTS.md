@@ -45,6 +45,8 @@ Subprojects have additional details in local `AGENTS.md` files.
 
 The root `package.json` provides aggregate scripts. Subproject commands (e.g., `npm run migrate`) must be run from the subproject directory — see subproject AGENTS.md files.
 
+If local dependencies have not been installed yet and a command fails with `not found` errors (for example `eslint: not found`), run `npm run prepare` first.
+
 **After making changes, always run `npm run lint` and `npm test` from the repo root to verify your work passes lint checks and tests before finalizing.**
 
 | Task | Command |
