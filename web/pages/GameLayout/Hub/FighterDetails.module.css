@@ -3,17 +3,19 @@
 }
 
 .label {
-  composes: label from '../../../components/primitive/css-modules/stat-display-base.module.css';
+  color: var(--color-fg);
+  font-weight: 600;
 }
 
 .stat {
-  composes: stat from '../../../components/primitive/css-modules/stat-display-base.module.css';
-
+  align-items: baseline;
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: 1fr auto;
   margin: 0;
 }
 
 .value {
-  composes: value from '../../../components/primitive/css-modules/stat-display-base.module.css';
-
+  color: var(--color-gold);
   margin: 0;
 }

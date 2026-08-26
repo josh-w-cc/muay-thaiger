@@ -17,7 +17,3 @@
   border-bottom: 0;
   padding-bottom: 0;
 }
-
-.outcome {
-  composes: goldLabelBase from '../../../components/primitive/css-modules/gold-label-base.module.css';
-}

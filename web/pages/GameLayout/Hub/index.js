@@ -1,3 +1,4 @@
+import GoldLabel from '@/components/primitive/GoldLabel.js';
 import Section from '@/components/primitive/Section.js';
 
 import FighterDetails from './FighterDetails.js';
@@ -49,7 +50,7 @@ function Events() {
 function Event({event}) {
   return (
     <li className={css.event}>
-      <span className={css.outcome}>{event.outcome}</span>
+      <GoldLabel>{event.outcome}</GoldLabel>
       <strong>{event.title}</strong>
       <span>{event.detail}</span>
     </li>
